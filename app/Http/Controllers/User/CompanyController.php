@@ -10,11 +10,13 @@ use App\Http\Traits\Notify;
 use App\Models\Badge;
 use App\Models\Company;
 use App\Http\Traits\Upload;
+use App\Models\Customer;
 use App\Models\Division;
 use App\Models\Item;
 use App\Models\SalesCenter;
 use App\Models\Stock;
 use App\Models\StockIn;
+use App\Models\StockInDetails;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -304,37 +306,92 @@ class CompanyController extends Controller
             return back()->with('error', 'Item name is required');
         }
 
-        $rules = [
-            'name' => 'required|string|max:255',
-            'unit' => 'nullable',
-        ];
+        try {
 
-        $message = [
-            'name.required' => __('Item name field is required'),
-        ];
+            $rules = [
+                'name' => 'required|string|max:255',
+                'unit' => 'nullable',
+            ];
 
-        $validate = Validator::make($purifiedData, $rules, $message);
+            $message = [
+                'name.required' => __('Item name field is required'),
+            ];
 
-        if ($validate->fails()) {
-            return back()->withInput()->withErrors($validate);
+            $validate = Validator::make($purifiedData, $rules, $message);
+
+            if ($validate->fails()) {
+                return back()->withInput()->withErrors($validate);
+            }
+
+            $item = new Item();
+            $item->name = $request->name;
+            $item->unit = $request->unit;
+            $item->company_id = optional($loggedInUser->activeCompany)->id;
+
+            if ($request->hasFile('image')) {
+                try {
+                    $item->image = $this->uploadImage($request->image, config('location.itemImage.path'), config('location.itemImage.size'));
+                } catch (\Exception $exp) {
+                    return back()->with('error', 'Logo could not be uploaded.');
+                }
+            }
+
+            $item->save();
+
+            DB::beginTransaction();
+            return back()->with('success', 'Item Created Successfully');
+
+        } catch (\Exception $e) {
+            return back()->with('error', 'Something went wrong');
         }
-
-        $item = new Item();
-        $item->name = $request->name;
-        $item->unit = $request->unit;
-        $item->company_id = optional($loggedInUser->activeCompany)->id;
-        $item->save();
-        return back()->with('success', 'Item Created Successfully');
     }
 
     public function updateItem(Request $request, $id){
-        $item = Item::findOrFail($id);
 
-        $item->name = $request->name;
-        $item->unit = $request->unit;
-        $item->save();
+        $purifiedData = Purify::clean($request->except('_token', '_method'));
 
-        return back()->with('success', 'Item Update Successfully');
+        if ($request->name == null){
+            return back()->with('error', 'Item name is required');
+        }
+
+        try {
+            $rules = [
+                'name' => 'required|string|max:255',
+                'unit' => 'nullable',
+            ];
+
+            $message = [
+                'name.required' => __('Item name field is required'),
+            ];
+
+            $validate = Validator::make($purifiedData, $rules, $message);
+
+            if ($validate->fails()) {
+                return back()->withInput()->withErrors($validate);
+            }
+
+            $item = Item::findOrFail($id);
+
+            $item->name = $request->name;
+            $item->unit = $request->unit;
+
+            if ($request->hasFile('image')) {
+                try {
+                    $item->image = $this->uploadImage($request->image, config('location.itemImage.path'), config('location.itemImage.size'));
+                } catch (\Exception $exp) {
+                    return back()->with('error', 'Logo could not be uploaded.');
+                }
+            }
+
+            $item->save();
+
+            return back()->with('success', 'Item Update Successfully');
+
+        } catch (\Exception $e) {
+
+            return back()->with('error', 'Something went wrong');
+        }
+
     }
 
     public function deleteItem($id){
@@ -343,8 +400,31 @@ class CompanyController extends Controller
         return back()->with('success', 'Item Deleted Successfully!');
     }
 
-    public function stockList(){
-        $data['stockLists'] = Stock::latest()->paginate(config('basic.paginate'));
+    public function stockList(Request $request){
+
+        $admin = $this->user;
+        $search = $request->all();
+        $fromDate = Carbon::parse($request->from_date);
+        $toDate = Carbon::parse($request->to_date)->addDay();
+
+        $data['stockLists'] = Stock::with('item:id,name')
+            ->when(isset($search['name']), function ($query) use ($search) {
+                return $query->whereHas('item', function ($q) use ($search) {
+                    $q->whereRaw("name REGEXP '[[:<:]]{$search['name']}[[:>:]]'");
+                });
+            })
+            ->when(isset($search['from_date']), function ($q2) use ($fromDate) {
+                return $q2->whereDate('last_stock_date', '>=', $fromDate);
+            })
+            ->when(isset($search['to_date']), function ($q2) use ($fromDate, $toDate) {
+                return $q2->whereBetween('last_stock_date', [$fromDate, $toDate]);
+            })
+            ->where('company_id', $admin->active_company_id)
+            ->whereNull('sales_center_id')
+            ->latest()
+            ->select('id', 'item_id', 'quantity', 'cost_per_unit', 'last_cost_per_unit', 'stock_date', 'last_stock_date')
+            ->paginate(config('basic.paginate'));
+
         return view($this->theme.'user.stock.index', $data);
     }
 
@@ -398,9 +478,14 @@ class CompanyController extends Controller
 
     }
 
-    public function stockDetails($id){
-        $data['singleStock'] = Stock::findOrFail($id);
-        return view($this->theme.'user.stock.details', $data);
+    public function stockDetails($item = null, $id = null){
+
+        $data['stock'] = Stock::select('id', 'item_id', 'last_stock_date')->findOrFail($id);
+
+        $data['singleStockDetails'] = StockInDetails::with('item')->where('item_id', $data['stock']->item_id)->latest()->get();
+        $data['totalItemCost'] = $data['singleStockDetails']->sum('total_unit_cost');
+
+        return view($this->theme.'user.stock.details', $data, compact('item'));
     }
 
     public function getSelectedItemUnit(Request $request) {
@@ -409,6 +494,83 @@ class CompanyController extends Controller
                 ->value('unit');
 
         return response()->json(['unit' => $unit]);
+    }
+
+    public function customerList(){
+        $admin = $this->user;
+
+        $data['customers'] = Customer::with('division:id,name', 'district:id,name', 'upazila:id,name', 'union:id,name')
+            ->select('id', 'division_id', 'district_id', 'upazila_id', 'union_id', 'name', 'email', 'phone', 'national_id', 'address')
+            ->where('company_id', $admin->active_company_id)
+            ->latest()->paginate(config('basic.paginate'));
+
+        return view($this->theme.'user.customer.index', $data);
+    }
+
+    public function createCustomer(){
+        $data['allDivisions'] = Division::where('status', 1)->get();
+        return view($this->theme.'user.customer.create', $data);
+    }
+
+    public function customerStore(Request $request){
+        $loggedInUser = $this->user;
+
+        $purifiedData = Purify::clean($request->except('_token', '_method'));
+
+        $rules = [
+            'name' => 'required|string|max:100',
+            'email' => 'nullable|email|unique:customers,email',
+            'phone' => 'required|unique:customers,phone',
+            'national_id' => 'nullable',
+            'division_id' => 'required|exists:divisions,id',
+            'district_id' => 'required|exists:districts,id',
+            'upazila_id' => 'nullable|exists:upazilas,id',
+            'union_id' => 'nullable|exists:unions,id',
+            'address' => 'required',
+        ];
+
+        $messages = [
+            'name.required' => __('Name is required'),
+            'email.email' => __('Invalid email format'),
+            'email.unique' => __('Email is already taken'),
+            'phone.required' => __('Phone number is required'),
+            'phone.unique' => __('Phone number is already taken'),
+            'division_id.exists' => __('Invalid division selected'),
+            'district_id.exists' => __('Invalid district selected'),
+            'upazila_id.exists' => __('Invalid upazila selected'),
+            'union_id.exists' => __('Invalid union selected'),
+            'address.required' => __('Address is required'),
+        ];
+
+        $validate = Validator::make($purifiedData, $rules, $messages);
+
+        if ($validate->fails()) {
+            return back()->withInput()->withErrors($validate);
+        }
+
+        try {
+            DB::beginTransaction();
+
+            $customer = new Customer();
+
+            $customer->name = $request->name;
+            $customer->company_id = $loggedInUser->active_company_id;
+            $customer->email = $request->email;
+            $customer->phone = $request->phone;
+            $customer->national_id = $request->national_id;
+            $customer->division_id = $request->division_id;
+            $customer->district_id = $request->district_id;
+            $customer->upazila_id = $request->upazila_id;
+            $customer->union_id = $request->union_id;
+            $customer->address = $request->address;
+            $customer->save();
+
+            DB::commit();
+
+            return back()->with('success', 'Customer Created Successfully');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Something went wrong');
+        }
     }
 
 }

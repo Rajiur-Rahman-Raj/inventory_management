@@ -5,12 +5,13 @@
         <div class="row mt-4 mb-2">
             <div class="col ms-2">
                 <div class="header-text-full">
-                    <h4 class="dashboard_breadcurmb_heading mb-1"><?php echo app('translator')->get('Item Stock Details'); ?></h4>
+                    <h4 class="dashboard_breadcurmb_heading mb-1"><?php echo e(snake2Title($item)); ?> <?php echo app('translator')->get('Stock Details'); ?></h4>
                     <nav aria-label="breadcrumb" class="ms-2">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="<?php echo e(route('user.home')); ?>"><?php echo app('translator')->get('Dashboard'); ?></a>
+                            <li class="breadcrumb-item"><a href="<?php echo e(route('user.home')); ?>"><?php echo app('translator')->get('Dashboard'); ?></a></li>
+                            <li class="breadcrumb-item"><a href="<?php echo e(route('user.stockList')); ?>"><?php echo app('translator')->get('Stock In'); ?></a>
                             </li>
-                            <li class="breadcrumb-item active" aria-current="page"><?php echo app('translator')->get('Item Stock Details'); ?></li>
+                            <li class="breadcrumb-item active" aria-current="page"><?php echo app('translator')->get('Details'); ?></li>
                         </ol>
                     </nav>
                 </div>
@@ -36,47 +37,42 @@
                                                 <div class="border-bottom">
                                                     <div class="investmentDate d-flex justify-content-between">
                                                         <h6 class="font-weight-bold text-dark"><i
-                                                                class="far fa-calendar-check me-2 text-primary"></i> <?php echo app('translator')->get('Stock Date'); ?>
+                                                                class="far fa-calendar-check me-2 text-primary"></i> <?php echo app('translator')->get('Last Stock Date'); ?>
                                                             : </h6>
-                                                        <p><?php echo e(dateTime(customDate($singleStock->stock_date))); ?></p>
+                                                        <p><?php echo e(dateTime(customDate($stock->last_stock_date))); ?></p>
                                                     </div>
                                                 </div>
 
-                                                <?php if($singleStock->items != null): ?>
+                                                <?php if(sizeof($singleStockDetails) > 0): ?>
                                                     <ul class="list-style-none p-0 stock_list_style">
-                                                        <li class="my-3">
-                                                        <span class="custom-text">
-                                                            <i class="far fa-check-circle mr-2 text-success"
-                                                               aria-hidden="true"></i>
-                                                            <?php echo app('translator')->get('Item Details'); ?>
-                                                        </span>
-                                                        </li>
 
                                                         <table class="table table-bordered">
                                                             <thead>
                                                             <tr>
                                                                 <th scope="col">Item</th>
                                                                 <th scope="col">Quantity</th>
-                                                                <th scope="col">Cost</th>
+                                                                <th scope="col">Cost Per Unit</th>
+                                                                <th scope="col">Total Unit Cost</th>
+                                                                <th scope="col">Stock Date</th>
                                                             </tr>
                                                             </thead>
                                                             <tbody>
 
-                                                            <?php
-                                                                $totalItemCost = 0;
-                                                            ?>
 
-                                                            <?php $__currentLoopData = $singleStock->items; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                            <?php $__currentLoopData = $singleStockDetails; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $stockInDetail): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+
                                                                 <tr>
-                                                                    <td data-label="Item"><?php echo e($singleStock->item($item['item_id'])->name); ?></td>
-                                                                    <td data-label="Quantity"><?php echo e($item['item_quantity']); ?> <?php echo e($basic->currency_symbol); ?></td>
-                                                                    <td data-label="Cost"><?php echo e($item['item_total_cost']); ?> <?php echo e($basic->currency_symbol); ?></td>
+                                                                    <td data-label="Item"><?php echo e(ucwords(optional($stockInDetail->item)->name)); ?></td>
+                                                                    <td data-label="Quantity"><?php echo e($stockInDetail->quantity); ?></td>
+                                                                    <td data-label="Cost"><?php echo e($stockInDetail->cost_per_unit); ?> <?php echo e($basic->currency_symbol); ?></td>
+                                                                    <td data-label="Cost"><?php echo e($stockInDetail->total_unit_cost); ?> <?php echo e($basic->currency_symbol); ?></td>
+                                                                    <td data-label="Cost"><?php echo e(customDate($stockInDetail->stock_date)); ?></td>
                                                                 </tr>
                                                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
                                                             <tr>
-                                                                <td colspan="2" class="text-right">Total Price</td>
-                                                                <td><?php echo e($singleStock->sub_total); ?> <?php echo e($basic->currency_symbol); ?></td>
+                                                                <td colspan="4" class="text-right"><?php echo app('translator')->get('Total Price'); ?></td>
+                                                                <td> = <?php echo e($totalItemCost); ?> <?php echo e($basic->currency_symbol); ?></td>
                                                             </tr>
                                                             </tbody>
                                                         </table>

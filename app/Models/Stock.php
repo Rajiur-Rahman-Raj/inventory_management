@@ -11,10 +11,8 @@ class Stock extends Model
 
     protected $guarded = ['id'];
 
-
-    public function item($itemId){
-        $item = Item::findOrFail($itemId);
-        return $item;
+    public function item(){
+        return $this->belongsTo(Item::class, 'item_id');
     }
 
 }

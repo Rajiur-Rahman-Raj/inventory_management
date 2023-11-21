@@ -26,7 +26,7 @@
                 <form action="" method="get" enctype="multipart/form-data">
                     <div class="row g-3 align-items-end">
                         <div class="input-box col-lg-3">
-                            <label for=""><?php echo app('translator')->get('Name'); ?></label>
+                            <label for=""><?php echo app('translator')->get('Item Name'); ?></label>
                             <input
                                 type="text"
                                 name="name"
@@ -36,14 +36,14 @@
                         </div>
 
                         <div class="input-box col-lg-3">
-                            <label for="from_date"><?php echo app('translator')->get('From Date'); ?></label>
+                            <label for="from_date"><?php echo app('translator')->get('Last Stock From Date'); ?></label>
                             <input
                                 type="text" class="form-control datepicker from_date" name="from_date"
                                 value="<?php echo e(old('from_date',request()->from_date)); ?>" placeholder="<?php echo app('translator')->get('From date'); ?>"
                                 autocomplete="off" readonly/>
                         </div>
                         <div class="input-box col-lg-3">
-                            <label for="to_date"><?php echo app('translator')->get('To Date'); ?></label>
+                            <label for="to_date"><?php echo app('translator')->get('Last Stock To Date'); ?></label>
                             <input
                                 type="text" class="form-control datepicker to_date" name="to_date"
                                 value="<?php echo e(old('to_date',request()->to_date)); ?>" placeholder="<?php echo app('translator')->get('To date'); ?>"
@@ -67,8 +67,10 @@
                     <thead>
                     <tr>
                         <th scope="col"><?php echo app('translator')->get('SL'); ?></th>
-                        <th scope="col"><?php echo app('translator')->get('Stock Date'); ?></th>
-                        <th scope="col"><?php echo app('translator')->get('Total Cost'); ?></th>
+                        <th scope="col"><?php echo app('translator')->get('Item Name'); ?></th>
+                        <th scope="col"><?php echo app('translator')->get('Quantity'); ?></th>
+                        <th scope="col"><?php echo app('translator')->get('Last Cost Per Unit'); ?></th>
+                        <th scope="col"><?php echo app('translator')->get('Last Stock Date'); ?></th>
                         <th scope="col"><?php echo app('translator')->get('Action'); ?></th>
                     </tr>
 
@@ -78,8 +80,10 @@
                         <tr>
                             <td data-label="<?php echo app('translator')->get('SL'); ?>"><?php echo e(loopIndex($stockLists) + $key); ?></td>
 
-                            <td data-label="<?php echo app('translator')->get('Stock Date'); ?>"><?php echo e(customDate($stockList->stock_date)); ?></td>
-                            <td data-label="<?php echo app('translator')->get('Total Cost'); ?>"><?php echo e($stockList->sub_total); ?> <?php echo e($basic->currency_symbol); ?></td>
+                            <td data-label="<?php echo app('translator')->get('Item Name'); ?>"> <?php echo e(optional($stockList->item)->name); ?> </td>
+                            <td data-label="<?php echo app('translator')->get('Quantity'); ?>" class="font-weight-bold">  <?php echo e($stockList->quantity); ?> </td>
+                            <td data-label="<?php echo app('translator')->get('Last Cost Per Unit'); ?>"> <?php echo e($stockList->last_cost_per_unit); ?> <?php echo e($basic->currency_symbol); ?> </td>
+                            <td data-label="<?php echo app('translator')->get('Last Stock Date'); ?>"> <?php echo e(customDate($stockList->last_stock_date)); ?> </td>
 
                             <td data-label="Action">
                                 <div class="sidebar-dropdown-items">
@@ -93,31 +97,32 @@
 
                                     <ul class="dropdown-menu dropdown-menu-end">
                                         <li>
-                                            <a href="<?php echo e(route('user.stockDetails', $stockList->id)); ?>"
+
+                                            <a href="<?php echo e(route('user.stockDetails', [slug(optional($stockList->item)->name), $stockList->id])); ?>"
                                                class="dropdown-item"> <i class="fal fa-eye"></i> <?php echo app('translator')->get('Details'); ?> </a>
                                         </li>
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
                                     </ul>
                                 </div>
                             </td>

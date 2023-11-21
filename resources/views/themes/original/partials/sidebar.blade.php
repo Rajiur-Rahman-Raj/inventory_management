@@ -36,7 +36,11 @@
         </li>
 
         <li>
-            <a class="{{menuActive(['user.salesCenter'])}}" href="{{ route('user.salesCenterList') }}"><i class="fab fa-adversal"></i>@lang('Sales Center')</a>
+            <a class="{{menuActive(['user.customerList'])}}" href="{{ route('user.customerList') }}"><i class="fal fa-users"></i> @lang('Customer List')</a>
+        </li>
+
+        <li>
+            <a class="{{menuActive(['user.salesCenterList'])}}" href="{{ route('user.salesCenterList') }}"><i class="fab fa-adversal"></i>@lang('Sales Center')</a>
         </li>
 
         <li>
@@ -45,6 +49,10 @@
 
         <li>
             <a class="{{menuActive(['user.stockList'])}}" href="{{ route('user.stockList') }}"><i class="fal fa-layer-group"></i>@lang('Stock In')</a>
+        </li>
+
+        <li>
+            <a class="{{menuActive(['user.stockList'])}}" href="{{ route('user.stockList') }}"><i class="fal fa-shopping-bag"></i> @lang('Manage Sales')</a>
         </li>
 
 

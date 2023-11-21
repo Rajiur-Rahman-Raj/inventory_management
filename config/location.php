@@ -75,4 +75,8 @@ return [
         'path' => 'assets/uploads/company/',
         'size' => '400x200'
     ],
+    'itemImage' => [
+        'path' => 'assets/uploads/item/',
+        'size' => '400x300'
+    ],
 ];

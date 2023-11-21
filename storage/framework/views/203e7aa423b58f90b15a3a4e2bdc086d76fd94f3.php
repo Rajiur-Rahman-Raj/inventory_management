@@ -36,7 +36,11 @@
         </li>
 
         <li>
-            <a class="<?php echo e(menuActive(['user.salesCenter'])); ?>" href="<?php echo e(route('user.salesCenterList')); ?>"><i class="fab fa-adversal"></i><?php echo app('translator')->get('Sales Center'); ?></a>
+            <a class="<?php echo e(menuActive(['user.customerList'])); ?>" href="<?php echo e(route('user.customerList')); ?>"><i class="fal fa-users"></i> <?php echo app('translator')->get('Customer List'); ?></a>
+        </li>
+
+        <li>
+            <a class="<?php echo e(menuActive(['user.salesCenterList'])); ?>" href="<?php echo e(route('user.salesCenterList')); ?>"><i class="fab fa-adversal"></i><?php echo app('translator')->get('Sales Center'); ?></a>
         </li>
 
         <li>
@@ -45,6 +49,10 @@
 
         <li>
             <a class="<?php echo e(menuActive(['user.stockList'])); ?>" href="<?php echo e(route('user.stockList')); ?>"><i class="fal fa-layer-group"></i><?php echo app('translator')->get('Stock In'); ?></a>
+        </li>
+
+        <li>
+            <a class="<?php echo e(menuActive(['user.stockList'])); ?>" href="<?php echo e(route('user.stockList')); ?>"><i class="fal fa-shopping-bag"></i> <?php echo app('translator')->get('Manage Sales'); ?></a>
         </li>
 
 

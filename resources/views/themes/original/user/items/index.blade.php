@@ -54,7 +54,7 @@
                     <thead>
                     <tr>
                         <th scope="col">@lang('SL')</th>
-                        <th scope="col">@lang('Item Name')</th>
+                        <th scope="col">@lang('Item')</th>
                         <th scope="col">@lang('Unit')</th>
                         <th scope="col">@lang('Action')</th>
                     </tr>
@@ -65,7 +65,17 @@
                         <tr>
                             <td data-label="@lang('SL')">{{loopIndex($itemLists) + $key}}</td>
 
-                            <td data-label="@lang('Item Name')">{{ $itemList->name }}</td>
+                            <td data-label="@lang('Image')">
+                                <div class="d-flex gap-2">
+                                    <div class="logo-brand">
+                                        <img src="{{ getFile(config('location.itemImage.path').$itemList->image) }}" alt="">
+                                    </div>
+                                    <div class="product-summary">
+                                        <p class="font-weight-bold mt-3">{{ $itemList->name }}</p>
+                                    </div>
+                                </div>
+                            </td>
+
                             <td data-label="@lang('Unit')">{{ $itemList->unit }}</td>
 
                             <td data-label="Action">
@@ -114,8 +124,9 @@
         {{--  Add Item modal --}}
         <div class="modal fade" id="addItemModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
              aria-labelledby="staticBackdropLabel" aria-hidden="true">
-            <div class="modal-dialog modal-md">
-                <form action="{{ route('user.itemStore') }}" method="post" class="login-form">
+            <div class="modal-dialog modal-md profile-setting">
+                <form action="{{ route('user.itemStore') }}" method="post" class="login-form"
+                      enctype="multipart/form-data">
                     @csrf
                     <div class="modal-content">
                         <div class="modal-header">
@@ -147,7 +158,7 @@
                                             @enderror
                                         </div>
 
-                                        <div class="input-box col-12 m-0">
+                                        <div class="input-box col-12 m-0 mt-3">
                                             <label for="">@lang('Unit')</label>
                                             <div class="input-group">
                                                 <input
@@ -158,6 +169,20 @@
                                             </div>
                                             @error('unit')
                                             <span class="text-danger">{{ $message }}</span>
+                                            @enderror
+                                        </div>
+
+                                        <div class="input-box col-12 m-0 mt-3">
+                                            <label for="" class="golden-text">@lang('Item Image') <span
+                                                    class="text-danger">*</span></label>
+                                            <div class="attach-file">
+                                               <span class="prev">
+                                                  @lang('Image')
+                                               </span>
+                                                <input type="file" name="image" class="form-control"/>
+                                            </div>
+                                            @error('logo')
+                                            <span class="text-danger">{{trans($message)}}</span>
                                             @enderror
                                         </div>
 
@@ -179,8 +204,8 @@
         {{--  Edit Item modal --}}
         <div class="modal fade" id="editItemModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
              aria-labelledby="staticBackdropLabel" aria-hidden="true">
-            <div class="modal-dialog modal-md">
-                <form action="" method="post" class="edit-item-form">
+            <div class="modal-dialog modal-md profile-setting">
+                <form action="" method="post" class="edit-item-form" enctype="multipart/form-data">
                     @csrf
                     @method('put')
                     <div class="modal-content">
@@ -203,7 +228,8 @@
                                             <label for="">@lang('Item Name')</label>
                                             <div class="input-group">
                                                 <input
-                                                    type="text" class="form-control @error('name') is-invalid @enderror item-name"
+                                                    type="text"
+                                                    class="form-control @error('name') is-invalid @enderror item-name"
                                                     name="name"
                                                     value="{{old('name')}}"
                                                     placeholder="@lang('Enter Item Name')" required>
@@ -217,13 +243,28 @@
                                             <label for="">@lang('Unit')</label>
                                             <div class="input-group">
                                                 <input
-                                                    type="text" class="form-control @error('unit') is-invalid @enderror item-unit"
+                                                    type="text"
+                                                    class="form-control @error('unit') is-invalid @enderror item-unit"
                                                     name="unit"
                                                     value="{{old('unit')}}"
                                                     placeholder="@lang('Item Unit')" required>
                                             </div>
                                             @error('unit')
                                             <span class="text-danger">{{ $message }}</span>
+                                            @enderror
+                                        </div>
+
+                                        <div class="input-box col-12 m-0 mt-3">
+                                            <label for="" class="golden-text">@lang('Item Image') <span
+                                                    class="text-danger">*</span></label>
+                                            <div class="attach-file">
+                                               <span class="prev">
+                                                  @lang('Image')
+                                               </span>
+                                                <input type="file" name="image" class="form-control"/>
+                                            </div>
+                                            @error('logo')
+                                            <span class="text-danger">{{trans($message)}}</span>
                                             @enderror
                                         </div>
 

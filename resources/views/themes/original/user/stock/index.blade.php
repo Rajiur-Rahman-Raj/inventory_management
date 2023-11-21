@@ -27,7 +27,7 @@
                 <form action="" method="get" enctype="multipart/form-data">
                     <div class="row g-3 align-items-end">
                         <div class="input-box col-lg-3">
-                            <label for="">@lang('Name')</label>
+                            <label for="">@lang('Item Name')</label>
                             <input
                                 type="text"
                                 name="name"
@@ -37,14 +37,14 @@
                         </div>
 
                         <div class="input-box col-lg-3">
-                            <label for="from_date">@lang('From Date')</label>
+                            <label for="from_date">@lang('Last Stock From Date')</label>
                             <input
                                 type="text" class="form-control datepicker from_date" name="from_date"
                                 value="{{ old('from_date',request()->from_date) }}" placeholder="@lang('From date')"
                                 autocomplete="off" readonly/>
                         </div>
                         <div class="input-box col-lg-3">
-                            <label for="to_date">@lang('To Date')</label>
+                            <label for="to_date">@lang('Last Stock To Date')</label>
                             <input
                                 type="text" class="form-control datepicker to_date" name="to_date"
                                 value="{{ old('to_date',request()->to_date) }}" placeholder="@lang('To date')"
@@ -68,8 +68,10 @@
                     <thead>
                     <tr>
                         <th scope="col">@lang('SL')</th>
-                        <th scope="col">@lang('Stock Date')</th>
-                        <th scope="col">@lang('Total Cost')</th>
+                        <th scope="col">@lang('Item Name')</th>
+                        <th scope="col">@lang('Quantity')</th>
+                        <th scope="col">@lang('Last Cost Per Unit')</th>
+                        <th scope="col">@lang('Last Stock Date')</th>
                         <th scope="col">@lang('Action')</th>
                     </tr>
 
@@ -79,8 +81,10 @@
                         <tr>
                             <td data-label="@lang('SL')">{{loopIndex($stockLists) + $key}}</td>
 
-                            <td data-label="@lang('Stock Date')">{{ customDate($stockList->stock_date) }}</td>
-                            <td data-label="@lang('Total Cost')">{{ $stockList->sub_total }} {{ $basic->currency_symbol }}</td>
+                            <td data-label="@lang('Item Name')"> {{ optional($stockList->item)->name }} </td>
+                            <td data-label="@lang('Quantity')" class="font-weight-bold">  {{ $stockList->quantity }} </td>
+                            <td data-label="@lang('Last Cost Per Unit')"> {{ $stockList->last_cost_per_unit }} {{ $basic->currency_symbol }} </td>
+                            <td data-label="@lang('Last Stock Date')"> {{ customDate($stockList->last_stock_date) }} </td>
 
                             <td data-label="Action">
                                 <div class="sidebar-dropdown-items">
@@ -94,31 +98,32 @@
 
                                     <ul class="dropdown-menu dropdown-menu-end">
                                         <li>
-                                            <a href="{{ route('user.stockDetails', $stockList->id) }}"
+{{--                                            <a href="{{ route('user.stockDetails', $stockList->id) }}"--}}
+                                            <a href="{{ route('user.stockDetails', [slug(optional($stockList->item)->name), $stockList->id]) }}"
                                                class="dropdown-item"> <i class="fal fa-eye"></i> @lang('Details') </a>
                                         </li>
-{{--                                        <li>--}}
-{{--                                            <a class="dropdown-item btn editItem"--}}
-{{--                                               data-route="{{route('user.updateItem', $itemList->id)}}"--}}
-{{--                                               data-property="{{ $itemList }}">--}}
-{{--                                                <i class="fas fa-edit"></i> @lang('Details')--}}
-{{--                                            </a>--}}
-{{--                                        </li>--}}
-{{--                                        <li>--}}
-{{--                                            <a class="dropdown-item btn editItem"--}}
-{{--                                               data-route="{{route('user.updateItem', $itemList->id)}}"--}}
-{{--                                               data-property="{{ $itemList }}">--}}
-{{--                                                <i class="fas fa-edit"></i> @lang('Edit')--}}
-{{--                                            </a>--}}
-{{--                                        </li>--}}
+                                        {{--                                        <li>--}}
+                                        {{--                                            <a class="dropdown-item btn editItem"--}}
+                                        {{--                                               data-route="{{route('user.updateItem', $itemList->id)}}"--}}
+                                        {{--                                               data-property="{{ $itemList }}">--}}
+                                        {{--                                                <i class="fas fa-edit"></i> @lang('Details')--}}
+                                        {{--                                            </a>--}}
+                                        {{--                                        </li>--}}
+                                        {{--                                        <li>--}}
+                                        {{--                                            <a class="dropdown-item btn editItem"--}}
+                                        {{--                                               data-route="{{route('user.updateItem', $itemList->id)}}"--}}
+                                        {{--                                               data-property="{{ $itemList }}">--}}
+                                        {{--                                                <i class="fas fa-edit"></i> @lang('Edit')--}}
+                                        {{--                                            </a>--}}
+                                        {{--                                        </li>--}}
 
-{{--                                        <li>--}}
-{{--                                            <a class="dropdown-item btn deleteItem"--}}
-{{--                                               data-route="{{route('user.deleteItem', $itemList->id)}}"--}}
-{{--                                               data-property="{{ $itemList }}">--}}
-{{--                                                <i class="fas fa-trash-alt"></i> @lang('Delete')--}}
-{{--                                            </a>--}}
-{{--                                        </li>--}}
+                                        {{--                                        <li>--}}
+                                        {{--                                            <a class="dropdown-item btn deleteItem"--}}
+                                        {{--                                               data-route="{{route('user.deleteItem', $itemList->id)}}"--}}
+                                        {{--                                               data-property="{{ $itemList }}">--}}
+                                        {{--                                                <i class="fas fa-trash-alt"></i> @lang('Delete')--}}
+                                        {{--                                            </a>--}}
+                                        {{--                                        </li>--}}
                                     </ul>
                                 </div>
                             </td>

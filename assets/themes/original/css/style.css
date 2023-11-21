@@ -99,6 +99,34 @@ select:-webkit-autofill:focus {
   background: var(--bgLight) !important;
   color: var(--bgDark);
 }
+
+.badge-custom {
+    border-radius: 50px;
+    font-family: "Jost", sans-serif;
+    font-weight: 500;
+    font-size: 15px;
+    position: relative;
+    background: #cc54f4 !important;
+    color: white;
+    padding: 5px 5px 5px 20px;
+}
+
+.badge-custom::before {
+    position: absolute;
+    left: 5px;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    width: 10px;
+    height: 10px;
+    border-radius: 10px;
+    background: #26cc8c;
+}
+
+.badge-primary{
+    background: var(--primary) !important;
+}
+
 .badge::before {
   content: "";
   position: absolute;
@@ -7575,4 +7603,20 @@ button.gold-btn.copyReferalLink {
 }
 .append_group{
     border-left: 3px solid #FFFFFF !important;
+}
+
+.logo-brand {
+    max-height: 55px;
+    max-width: 70px;
+    flex-shrink: 0;
+}
+.logo-brand img {
+    border-radius: 5px;
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+}
+.product-summary {
+    text-align: left;
+    flex: 1;
 }

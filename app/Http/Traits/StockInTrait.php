@@ -17,13 +17,14 @@ trait StockInTrait
             $stockInDetails->quantity = $request->item_quantity[$key];
             $stockInDetails->cost_per_unit = $request->cost_per_unit[$key];
             $stockInDetails->total_unit_cost = $request->total_unit_cost[$key];
+            $stockInDetails->stock_date = $request->stock_date;
             $stockInDetails->save();
         }
     }
 
     public function storeStocks($request, $loggedInUser){
-        foreach ($request->item_id as $key => $value){
 
+        foreach ($request->item_id as $key => $value){
             $stock = Stock::firstOrNew([
                 'company_id' => $loggedInUser->active_company_id,
                 'item_id' => $value,
@@ -32,8 +33,11 @@ trait StockInTrait
             $stock->company_id = $loggedInUser->active_company_id;
             $stock->item_id = $value;
             $stock->quantity += $request->item_quantity[$key];
-            $stock->cost_per_unit = ($stock->last_cost_per_unit)??$request->cost_per_unit[$key];
+            $stock->cost_per_unit = ($stock->last_cost_per_unit) ?? $request->cost_per_unit[$key];
             $stock->last_cost_per_unit = $request->cost_per_unit[$key];
+
+            $stock->stock_date = ($stock->last_stock_date) ?? $request->stock_date;
+            $stock->last_stock_date = $request->stock_date;
             $stock->save();
         }
 

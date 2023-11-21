@@ -12,7 +12,8 @@
                             <h3 class="dashboard_breadcurmb_heading mb-1">@lang('Create Company')</h3>
                             <nav aria-label="breadcrumb" class="ms-2">
                                 <ol class="breadcrumb">
-                                    <li class="breadcrumb-item"><a href="{{ route('user.home') }}">@lang('Dashboard')</a>
+                                    <li class="breadcrumb-item"><a
+                                            href="{{ route('user.home') }}">@lang('Dashboard')</a>
                                     </li>
                                     <li class="breadcrumb-item active" aria-current="page">@lang('Create Company')</li>
                                 </ol>
@@ -32,7 +33,8 @@
                     <div class="row g-4 g-lg-5">
                         <div class="col-lg-12">
                             <div id="tab1" class="content active">
-                                <form action="{{ route('user.companyStore')}}" method="post" enctype="multipart/form-data">
+                                <form action="{{ route('user.companyStore')}}" method="post"
+                                      enctype="multipart/form-data">
                                     @csrf
                                     <div class="row g-4">
                                         <div class="input-box col-md-6">
@@ -84,7 +86,8 @@
                                         </div>
 
                                         <div class="input-box col-12">
-                                            <label for="address">@lang('Company Address') <span class="text-danger">*</span></label>
+                                            <label for="address">@lang('Company Address') <span
+                                                    class="text-danger">*</span></label>
                                             <textarea class="form-control @error('address') is-invalid @enderror"
                                                       cols="30" rows="3" placeholder="@lang('Company Address')"
                                                       name="address">{{ old('address') }}</textarea>
@@ -95,7 +98,7 @@
                                         </div>
 
                                         <div class="col-md-12 mb-4 input-box">
-                                            <label for="" class="golden-text">@lang('Company Logo') <span class="text-danger">*</span></label>
+                                            <label for="" class="golden-text">@lang('Company Logo') </label>
                                             <div class="attach-file">
                                                <span class="prev">
                                                   @lang('Upload Logo')
@@ -108,7 +111,8 @@
                                         </div>
 
                                         <div class="input-box col-12">
-                                            <button class="btn-custom w-100" type="submit">@lang('Create Company')</button>
+                                            <button class="btn-custom w-100"
+                                                    type="submit">@lang('Create Company')</button>
                                         </div>
                                     </div>
                                 </form>

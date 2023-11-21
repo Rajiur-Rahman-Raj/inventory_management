@@ -175,6 +175,9 @@ Route::group(['middleware' => ['auth', 'Maintenance'], 'prefix' => 'user', 'as' 
         Route::get('edit-company/{id}', 'User\CompanyController@companyEdit')->name('companyEdit');
         Route::post('update-company/{id}', 'User\CompanyController@companyUpdate')->name('companyUpdate');
 
+        Route::get('customer-list', 'User\CompanyController@customerList')->name('customerList');
+        Route::get('create-customer', 'User\CompanyController@createCustomer')->name('createCustomer');
+        Route::post('store-customer', 'User\CompanyController@customerStore')->name('customerStore');
 
         Route::put('active/company/{id}', 'User\CompanyController@activeCompany')->name('activeCompany');
         Route::get('company/active/{id}', 'User\CompanyController@companyActive')->name('companyActive');
@@ -200,6 +203,8 @@ Route::group(['middleware' => ['auth', 'Maintenance'], 'prefix' => 'user', 'as' 
         Route::put('update-stock/{id}', 'User\CompanyController@updateStock')->name('updateStock');
         Route::delete('delete/stock/{id}', 'User\CompanyController@deleteStock')->name('deleteStock');
         Route::get('stock-details/{id}', 'User\CompanyController@stockDetails')->name('stockDetails');
+
+        Route::get('stock-details/{item?}/{id?}', 'User\CompanyController@stockDetails')->name('stockDetails');
 
 
         Route::post('selected-item-unit', 'User\CompanyController@getSelectedItemUnit')->name('getSelectedItemUnit');

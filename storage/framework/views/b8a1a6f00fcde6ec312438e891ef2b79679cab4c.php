@@ -53,7 +53,7 @@
                     <thead>
                     <tr>
                         <th scope="col"><?php echo app('translator')->get('SL'); ?></th>
-                        <th scope="col"><?php echo app('translator')->get('Item Name'); ?></th>
+                        <th scope="col"><?php echo app('translator')->get('Item'); ?></th>
                         <th scope="col"><?php echo app('translator')->get('Unit'); ?></th>
                         <th scope="col"><?php echo app('translator')->get('Action'); ?></th>
                     </tr>
@@ -64,7 +64,17 @@
                         <tr>
                             <td data-label="<?php echo app('translator')->get('SL'); ?>"><?php echo e(loopIndex($itemLists) + $key); ?></td>
 
-                            <td data-label="<?php echo app('translator')->get('Item Name'); ?>"><?php echo e($itemList->name); ?></td>
+                            <td data-label="<?php echo app('translator')->get('Image'); ?>">
+                                <div class="d-flex gap-2">
+                                    <div class="logo-brand">
+                                        <img src="<?php echo e(getFile(config('location.itemImage.path').$itemList->image)); ?>" alt="">
+                                    </div>
+                                    <div class="product-summary">
+                                        <p class="font-weight-bold mt-3"><?php echo e($itemList->name); ?></p>
+                                    </div>
+                                </div>
+                            </td>
+
                             <td data-label="<?php echo app('translator')->get('Unit'); ?>"><?php echo e($itemList->unit); ?></td>
 
                             <td data-label="Action">
@@ -113,8 +123,9 @@
         
         <div class="modal fade" id="addItemModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
              aria-labelledby="staticBackdropLabel" aria-hidden="true">
-            <div class="modal-dialog modal-md">
-                <form action="<?php echo e(route('user.itemStore')); ?>" method="post" class="login-form">
+            <div class="modal-dialog modal-md profile-setting">
+                <form action="<?php echo e(route('user.itemStore')); ?>" method="post" class="login-form"
+                      enctype="multipart/form-data">
                     <?php echo csrf_field(); ?>
                     <div class="modal-content">
                         <div class="modal-header">
@@ -160,7 +171,7 @@ endif;
 unset($__errorArgs, $__bag); ?>
                                         </div>
 
-                                        <div class="input-box col-12 m-0">
+                                        <div class="input-box col-12 m-0 mt-3">
                                             <label for=""><?php echo app('translator')->get('Unit'); ?></label>
                                             <div class="input-group">
                                                 <input
@@ -188,6 +199,27 @@ endif;
 unset($__errorArgs, $__bag); ?>
                                         </div>
 
+                                        <div class="input-box col-12 m-0 mt-3">
+                                            <label for="" class="golden-text"><?php echo app('translator')->get('Item Image'); ?> <span
+                                                    class="text-danger">*</span></label>
+                                            <div class="attach-file">
+                                               <span class="prev">
+                                                  <?php echo app('translator')->get('Image'); ?>
+                                               </span>
+                                                <input type="file" name="image" class="form-control"/>
+                                            </div>
+                                            <?php $__errorArgs = ['logo'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                            <span class="text-danger"><?php echo e(trans($message)); ?></span>
+                                            <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                                        </div>
+
                                     </div>
                                 </div>
                             </div>
@@ -206,8 +238,8 @@ unset($__errorArgs, $__bag); ?>
         
         <div class="modal fade" id="editItemModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
              aria-labelledby="staticBackdropLabel" aria-hidden="true">
-            <div class="modal-dialog modal-md">
-                <form action="" method="post" class="edit-item-form">
+            <div class="modal-dialog modal-md profile-setting">
+                <form action="" method="post" class="edit-item-form" enctype="multipart/form-data">
                     <?php echo csrf_field(); ?>
                     <?php echo method_field('put'); ?>
                     <div class="modal-content">
@@ -230,7 +262,8 @@ unset($__errorArgs, $__bag); ?>
                                             <label for=""><?php echo app('translator')->get('Item Name'); ?></label>
                                             <div class="input-group">
                                                 <input
-                                                    type="text" class="form-control <?php $__errorArgs = ['name'];
+                                                    type="text"
+                                                    class="form-control <?php $__errorArgs = ['name'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
@@ -258,7 +291,8 @@ unset($__errorArgs, $__bag); ?>
                                             <label for=""><?php echo app('translator')->get('Unit'); ?></label>
                                             <div class="input-group">
                                                 <input
-                                                    type="text" class="form-control <?php $__errorArgs = ['unit'];
+                                                    type="text"
+                                                    class="form-control <?php $__errorArgs = ['unit'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
@@ -276,6 +310,27 @@ if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
 $message = $__bag->first($__errorArgs[0]); ?>
                                             <span class="text-danger"><?php echo e($message); ?></span>
+                                            <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                                        </div>
+
+                                        <div class="input-box col-12 m-0 mt-3">
+                                            <label for="" class="golden-text"><?php echo app('translator')->get('Item Image'); ?> <span
+                                                    class="text-danger">*</span></label>
+                                            <div class="attach-file">
+                                               <span class="prev">
+                                                  <?php echo app('translator')->get('Image'); ?>
+                                               </span>
+                                                <input type="file" name="image" class="form-control"/>
+                                            </div>
+                                            <?php $__errorArgs = ['logo'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                            <span class="text-danger"><?php echo e(trans($message)); ?></span>
                                             <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
