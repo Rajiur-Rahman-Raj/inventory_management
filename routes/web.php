@@ -169,46 +169,54 @@ Route::group(['middleware' => ['auth', 'Maintenance'], 'prefix' => 'user', 'as' 
 
 
         //Inventory Route Start
+
+        // Company List
         Route::get('company-list', 'User\CompanyController@index')->name('companyList');
         Route::get('create-company', 'User\CompanyController@createCompany')->name('createCompany');
         Route::post('store-company', 'User\CompanyController@companyStore')->name('companyStore');
         Route::get('edit-company/{id}', 'User\CompanyController@companyEdit')->name('companyEdit');
         Route::post('update-company/{id}', 'User\CompanyController@companyUpdate')->name('companyUpdate');
 
-        Route::get('customer-list', 'User\CompanyController@customerList')->name('customerList');
-        Route::get('create-customer', 'User\CompanyController@createCustomer')->name('createCustomer');
-        Route::post('store-customer', 'User\CompanyController@customerStore')->name('customerStore');
-
         Route::put('active/company/{id}', 'User\CompanyController@activeCompany')->name('activeCompany');
         Route::get('company/active/{id}', 'User\CompanyController@companyActive')->name('companyActive');
         Route::put('inactive/company/{id}', 'User\CompanyController@inactiveCompany')->name('inactiveCompany');
         Route::delete('delete/company/{id}', 'User\CompanyController@deleteCompany')->name('deleteCompany');
 
+        // Customer List
+        Route::get('customer-list', 'User\CompanyController@customerList')->name('customerList');
+        Route::get('create-customer', 'User\CompanyController@createCustomer')->name('createCustomer');
+        Route::post('store-customer', 'User\CompanyController@customerStore')->name('customerStore');
+        Route::get('customer-details/{id}', 'User\CompanyController@customerDetails')->name('customerDetails');
+        Route::get('customer-edit/{id}', 'User\CompanyController@customerEdit')->name('customerEdit');
+        Route::post('customer-update/{id}', 'User\CompanyController@customerUpdate')->name('customerUpdate');
+        Route::delete('delete/customer/{id}', 'User\CompanyController@deleteCustomer')->name('deleteCustomer');
 
+        // Sales Center
         Route::get('sales-center-list', 'User\CompanyController@salesCenterList')->name('salesCenterList');
         Route::get('sales-center-create', 'User\CompanyController@createSalesCenter')->name('createSalesCenter');
         Route::post('store-sales-center', 'User\CompanyController@storeSalesCenter')->name('storeSalesCenter');
         Route::get('sales-center-details/{id}', 'User\CompanyController@salesCenterDetails')->name('salesCenterDetails');
         Route::delete('delete/center/{id}', 'User\CompanyController@deleteSalesCenter')->name('deleteSalesCenter');
 
-
+        // Item List
         Route::get('item-list', 'User\CompanyController@itemList')->name('itemList');
         Route::post('store-item', 'User\CompanyController@itemStore')->name('itemStore');
         Route::put('update-item/{id}', 'User\CompanyController@updateItem')->name('updateItem');
         Route::delete('delete/item/{id}', 'User\CompanyController@deleteItem')->name('deleteItem');
 
+        // Stock In
         Route::get('stock-list', 'User\CompanyController@stockList')->name('stockList');
         Route::get('add-stock', 'User\CompanyController@addStock')->name('addStock');
         Route::post('stock-store', 'User\CompanyController@stockStore')->name('stockStore');
         Route::put('update-stock/{id}', 'User\CompanyController@updateStock')->name('updateStock');
         Route::delete('delete/stock/{id}', 'User\CompanyController@deleteStock')->name('deleteStock');
         Route::get('stock-details/{id}', 'User\CompanyController@stockDetails')->name('stockDetails');
-
         Route::get('stock-details/{item?}/{id?}', 'User\CompanyController@stockDetails')->name('stockDetails');
-
-
         Route::post('selected-item-unit', 'User\CompanyController@getSelectedItemUnit')->name('getSelectedItemUnit');
 
+        // Manage Sales
+        Route::get('manage-sales', 'User\CompanyController@manageSales')->name('manageSales');
+        Route::post('get-selected-items', 'User\CompanyController@getSelectedItems')->name('getSelectedItems');
 
 
         //Inventory Route End

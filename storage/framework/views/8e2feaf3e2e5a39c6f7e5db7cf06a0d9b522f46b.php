@@ -32,29 +32,29 @@
                                 name="name"
                                 value="<?php echo e(old('name', @request()->name)); ?>"
                                 class="form-control"
-                                placeholder="<?php echo app('translator')->get('Center Name'); ?>"
+                                placeholder="<?php echo app('translator')->get('Customer Name'); ?>"
                             />
                         </div>
 
                         <div class="input-box col-lg-2">
-                            <label for=""><?php echo app('translator')->get('Code'); ?></label>
+                            <label for=""><?php echo app('translator')->get('Email'); ?></label>
                             <input
                                 type="text"
-                                name="code"
-                                value="<?php echo e(old('name', @request()->code)); ?>"
+                                name="email"
+                                value="<?php echo e(old('email', @request()->email)); ?>"
                                 class="form-control"
-                                placeholder="<?php echo app('translator')->get('Center Code'); ?>"
+                                placeholder="<?php echo app('translator')->get('Customer Email'); ?>"
                             />
                         </div>
 
                         <div class="input-box col-lg-2">
-                            <label for=""><?php echo app('translator')->get('Owner'); ?></label>
-                            <select class="form-select" name="owner" aria-label="Default select example">
-                                <option value=""><?php echo app('translator')->get('All'); ?></option>
-                                
-                                
-                                
-                            </select>
+                            <label for=""><?php echo app('translator')->get('Phone'); ?></label>
+                            <input
+                                type="text"
+                                name="phone"
+                                value="<?php echo e(old('phone', @request()->phone)); ?>"
+                                class="form-control"
+                                placeholder="<?php echo app('translator')->get('Customer Phone'); ?>"/>
                         </div>
 
                         <div class="input-box col-lg-2">
@@ -71,6 +71,7 @@
                                 value="<?php echo e(old('to_date',request()->to_date)); ?>" placeholder="<?php echo app('translator')->get('To date'); ?>"
                                 autocomplete="off" readonly disabled="true"/>
                         </div>
+
                         <div class="input-box col-lg-2">
                             <button class="btn-custom w-100" type="submit"><i class="fal fa-search"></i><?php echo app('translator')->get('Search'); ?>
                             </button>
@@ -93,6 +94,7 @@
                         <th scope="col"><?php echo app('translator')->get('Phone'); ?></th>
                         <th scope="col"><?php echo app('translator')->get('Division'); ?></th>
                         <th scope="col"><?php echo app('translator')->get('District'); ?></th>
+                        <th scope="col"><?php echo app('translator')->get('Join Date'); ?></th>
                         <th scope="col"><?php echo app('translator')->get('Action'); ?></th>
                     </tr>
                     </thead>
@@ -117,6 +119,7 @@
                             <td data-label="<?php echo app('translator')->get('Phone'); ?>"><?php echo e($customer->phone); ?></td>
                             <td data-label="<?php echo app('translator')->get('Division'); ?>"><?php echo e(optional($customer->division)->name); ?></td>
                             <td data-label="<?php echo app('translator')->get('District'); ?>"><?php echo e(optional($customer->district)->name); ?></td>
+                            <td data-label="<?php echo app('translator')->get('Join Date'); ?>"><?php echo e(dateTime($customer->created_at)); ?></td>
 
                             <td data-label="Action">
                                 <div class="sidebar-dropdown-items">
@@ -131,13 +134,19 @@
 
                                     <ul class="dropdown-menu dropdown-menu-end">
                                         <li>
-                                            <a href="<?php echo e(route('user.salesCenterDetails', $customer->id)); ?>"
+                                            <a href="<?php echo e(route('user.customerDetails', $customer->id)); ?>"
                                                class="dropdown-item"> <i class="fal fa-eye"></i> <?php echo app('translator')->get('Details'); ?> </a>
                                         </li>
 
                                         <li>
-                                            <a class="dropdown-item btn deleteCenter"
-                                               data-route="<?php echo e(route('user.deleteSalesCenter', $customer->id)); ?>"
+                                            <a class="dropdown-item btn" href="<?php echo e(route('user.customerEdit', $customer->id)); ?>">
+                                                <i class="fas fa-edit"></i> <?php echo app('translator')->get('Edit'); ?>
+                                            </a>
+                                        </li>
+
+                                        <li>
+                                            <a class="dropdown-item btn deleteCustomer"
+                                               data-route="<?php echo e(route('user.deleteCustomer', $customer->id)); ?>"
                                                data-property="<?php echo e($customer); ?>">
                                                 <i class="fas fa-trash-alt"></i> <?php echo app('translator')->get('Delete'); ?>
                                             </a>
@@ -160,7 +169,7 @@
 
     <?php $__env->startPush('loadModal'); ?>
         <!-- Modal -->
-        <div class="modal fade" id="deleteCenterModal" tabindex="-1" aria-labelledby="editModalLabel"
+        <div class="modal fade" id="deleteCustomerModal" tabindex="-1" aria-labelledby="editModalLabel"
              aria-hidden="true">
             <div class="modal-dialog modal-dialog-top modal-md">
                 <div class="modal-content">
@@ -171,12 +180,12 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <span class="delete-center-name"></span>
+                        <span class="delete-customer-name"></span>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn-custom btn2 btn-secondary close_invest_modal close__btn"
                                 data-bs-dismiss="modal"><?php echo app('translator')->get('No'); ?></button>
-                        <form action="" method="post" class="deleteCenterRoute">
+                        <form action="" method="post" class="deleteCustomerRoute">
                             <?php echo csrf_field(); ?>
                             <?php echo method_field('delete'); ?>
                             <button type="submit"
@@ -203,16 +212,16 @@
                 $('.to_date').removeAttr('disabled');
             });
 
-            $(document).on('click', '.deleteCenter', function () {
-                var deleteCenterModal = new bootstrap.Modal(document.getElementById('deleteCenterModal'))
-                deleteCenterModal.show();
+            $(document).on('click', '.deleteCustomer', function () {
+                var deleteCustomerModal = new bootstrap.Modal(document.getElementById('deleteCustomerModal'))
+                deleteCustomerModal.show();
 
                 let dataRoute = $(this).data('route');
                 let dataProperty = $(this).data('property');
 
-                $('.deleteCenterRoute').attr('action', dataRoute)
+                $('.deleteCustomerRoute').attr('action', dataRoute)
 
-                $('.delete-center-name').text(`Are you sure to delete ${dataProperty.name}?`)
+                $('.delete-customer-name').text(`Are you sure to delete ${dataProperty.name}?`)
 
             });
         });

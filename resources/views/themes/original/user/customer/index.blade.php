@@ -33,29 +33,29 @@
                                 name="name"
                                 value="{{ old('name', @request()->name) }}"
                                 class="form-control"
-                                placeholder="@lang('Center Name')"
+                                placeholder="@lang('Customer Name')"
                             />
                         </div>
 
                         <div class="input-box col-lg-2">
-                            <label for="">@lang('Code')</label>
+                            <label for="">@lang('Email')</label>
                             <input
                                 type="text"
-                                name="code"
-                                value="{{ old('name', @request()->code) }}"
+                                name="email"
+                                value="{{ old('email', @request()->email) }}"
                                 class="form-control"
-                                placeholder="@lang('Center Code')"
+                                placeholder="@lang('Customer Email')"
                             />
                         </div>
 
                         <div class="input-box col-lg-2">
-                            <label for="">@lang('Owner')</label>
-                            <select class="form-select" name="owner" aria-label="Default select example">
-                                <option value="">@lang('All')</option>
-                                {{--                                @foreach($centerLists as $centerList)--}}
-                                {{--                                    <option value="{{ $centerList->id }}" {{ old('owner', @request()->owner) == $centerList->id ? 'selected' : '' }}>{{ $centerList->owner_name }}</option>--}}
-                                {{--                                @endforeach--}}
-                            </select>
+                            <label for="">@lang('Phone')</label>
+                            <input
+                                type="text"
+                                name="phone"
+                                value="{{ old('phone', @request()->phone) }}"
+                                class="form-control"
+                                placeholder="@lang('Customer Phone')"/>
                         </div>
 
                         <div class="input-box col-lg-2">
@@ -72,6 +72,7 @@
                                 value="{{ old('to_date',request()->to_date) }}" placeholder="@lang('To date')"
                                 autocomplete="off" readonly disabled="true"/>
                         </div>
+
                         <div class="input-box col-lg-2">
                             <button class="btn-custom w-100" type="submit"><i class="fal fa-search"></i>@lang('Search')
                             </button>
@@ -94,6 +95,7 @@
                         <th scope="col">@lang('Phone')</th>
                         <th scope="col">@lang('Division')</th>
                         <th scope="col">@lang('District')</th>
+                        <th scope="col">@lang('Join Date')</th>
                         <th scope="col">@lang('Action')</th>
                     </tr>
                     </thead>
@@ -118,6 +120,7 @@
                             <td data-label="@lang('Phone')">{{ $customer->phone }}</td>
                             <td data-label="@lang('Division')">{{ optional($customer->division)->name }}</td>
                             <td data-label="@lang('District')">{{ optional($customer->district)->name }}</td>
+                            <td data-label="@lang('Join Date')">{{ dateTime($customer->created_at) }}</td>
 
                             <td data-label="Action">
                                 <div class="sidebar-dropdown-items">
@@ -132,13 +135,19 @@
 
                                     <ul class="dropdown-menu dropdown-menu-end">
                                         <li>
-                                            <a href="{{ route('user.salesCenterDetails', $customer->id) }}"
+                                            <a href="{{ route('user.customerDetails', $customer->id) }}"
                                                class="dropdown-item"> <i class="fal fa-eye"></i> @lang('Details') </a>
                                         </li>
 
                                         <li>
-                                            <a class="dropdown-item btn deleteCenter"
-                                               data-route="{{route('user.deleteSalesCenter', $customer->id)}}"
+                                            <a class="dropdown-item btn" href="{{ route('user.customerEdit', $customer->id) }}">
+                                                <i class="fas fa-edit"></i> @lang('Edit')
+                                            </a>
+                                        </li>
+
+                                        <li>
+                                            <a class="dropdown-item btn deleteCustomer"
+                                               data-route="{{route('user.deleteCustomer', $customer->id)}}"
                                                data-property="{{ $customer }}">
                                                 <i class="fas fa-trash-alt"></i> @lang('Delete')
                                             </a>
@@ -161,7 +170,7 @@
 
     @push('loadModal')
         <!-- Modal -->
-        <div class="modal fade" id="deleteCenterModal" tabindex="-1" aria-labelledby="editModalLabel"
+        <div class="modal fade" id="deleteCustomerModal" tabindex="-1" aria-labelledby="editModalLabel"
              aria-hidden="true">
             <div class="modal-dialog modal-dialog-top modal-md">
                 <div class="modal-content">
@@ -172,12 +181,12 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <span class="delete-center-name"></span>
+                        <span class="delete-customer-name"></span>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn-custom btn2 btn-secondary close_invest_modal close__btn"
                                 data-bs-dismiss="modal">@lang('No')</button>
-                        <form action="" method="post" class="deleteCenterRoute">
+                        <form action="" method="post" class="deleteCustomerRoute">
                             @csrf
                             @method('delete')
                             <button type="submit"
@@ -204,16 +213,16 @@
                 $('.to_date').removeAttr('disabled');
             });
 
-            $(document).on('click', '.deleteCenter', function () {
-                var deleteCenterModal = new bootstrap.Modal(document.getElementById('deleteCenterModal'))
-                deleteCenterModal.show();
+            $(document).on('click', '.deleteCustomer', function () {
+                var deleteCustomerModal = new bootstrap.Modal(document.getElementById('deleteCustomerModal'))
+                deleteCustomerModal.show();
 
                 let dataRoute = $(this).data('route');
                 let dataProperty = $(this).data('property');
 
-                $('.deleteCenterRoute').attr('action', dataRoute)
+                $('.deleteCustomerRoute').attr('action', dataRoute)
 
-                $('.delete-center-name').text(`Are you sure to delete ${dataProperty.name}?`)
+                $('.delete-customer-name').text(`Are you sure to delete ${dataProperty.name}?`)
 
             });
         });

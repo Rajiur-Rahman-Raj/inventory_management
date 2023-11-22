@@ -11,7 +11,8 @@
                             <h3 class="dashboard_breadcurmb_heading mb-1"><?php echo app('translator')->get('Create Company'); ?></h3>
                             <nav aria-label="breadcrumb" class="ms-2">
                                 <ol class="breadcrumb">
-                                    <li class="breadcrumb-item"><a href="<?php echo e(route('user.home')); ?>"><?php echo app('translator')->get('Dashboard'); ?></a>
+                                    <li class="breadcrumb-item"><a
+                                            href="<?php echo e(route('user.home')); ?>"><?php echo app('translator')->get('Dashboard'); ?></a>
                                     </li>
                                     <li class="breadcrumb-item active" aria-current="page"><?php echo app('translator')->get('Create Company'); ?></li>
                                 </ol>
@@ -31,7 +32,8 @@
                     <div class="row g-4 g-lg-5">
                         <div class="col-lg-12">
                             <div id="tab1" class="content active">
-                                <form action="<?php echo e(route('user.companyStore')); ?>" method="post" enctype="multipart/form-data">
+                                <form action="<?php echo e(route('user.companyStore')); ?>" method="post"
+                                      enctype="multipart/form-data">
                                     <?php echo csrf_field(); ?>
                                     <div class="row g-4">
                                         <div class="input-box col-md-6">
@@ -83,7 +85,8 @@
                                         </div>
 
                                         <div class="input-box col-12">
-                                            <label for="address"><?php echo app('translator')->get('Company Address'); ?> <span class="text-danger">*</span></label>
+                                            <label for="address"><?php echo app('translator')->get('Company Address'); ?> <span
+                                                    class="text-danger">*</span></label>
                                             <textarea class="form-control <?php $__errorArgs = ['address'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
@@ -101,7 +104,7 @@ unset($__errorArgs, $__bag); ?>"
                                         </div>
 
                                         <div class="col-md-12 mb-4 input-box">
-                                            <label for="" class="golden-text"><?php echo app('translator')->get('Company Logo'); ?> <span class="text-danger">*</span></label>
+                                            <label for="" class="golden-text"><?php echo app('translator')->get('Company Logo'); ?> </label>
                                             <div class="attach-file">
                                                <span class="prev">
                                                   <?php echo app('translator')->get('Upload Logo'); ?>
@@ -121,7 +124,8 @@ unset($__errorArgs, $__bag); ?>
                                         </div>
 
                                         <div class="input-box col-12">
-                                            <button class="btn-custom w-100" type="submit"><?php echo app('translator')->get('Create Company'); ?></button>
+                                            <button class="btn-custom w-100"
+                                                    type="submit"><?php echo app('translator')->get('Create Company'); ?></button>
                                         </div>
                                     </div>
                                 </form>

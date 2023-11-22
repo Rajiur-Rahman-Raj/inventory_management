@@ -52,7 +52,8 @@
                             <select class="form-select" name="owner" aria-label="Default select example">
                                 <option value=""><?php echo app('translator')->get('All'); ?></option>
                                 <?php $__currentLoopData = $centerLists; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $centerList): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                    <option value="<?php echo e($centerList->id); ?>" <?php echo e(old('owner', @request()->owner) == $centerList->id ? 'selected' : ''); ?>><?php echo e($centerList->owner_name); ?></option>
+                                    <option
+                                        value="<?php echo e($centerList->id); ?>" <?php echo e(old('owner', @request()->owner) == $centerList->id ? 'selected' : ''); ?>><?php echo e($centerList->owner_name); ?></option>
                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </select>
                         </div>
@@ -106,7 +107,7 @@
                                 <div>
                                     <a href="" target="_blank">
                                         <img
-                                            src="<?php echo e(getFile(config('location.user.path').optional($centerList->user)->image)); ?>">
+                                            src="<?php echo e(getFile(config('location.salesCenter.path').$centerList->image)); ?>">
                                     </a>
                                 </div>
                                 <div>
@@ -140,6 +141,13 @@
                                             <a href="<?php echo e(route('user.salesCenterDetails', $centerList->id)); ?>"
                                                class="dropdown-item"> <i class="fal fa-eye"></i> <?php echo app('translator')->get('Details'); ?> </a>
                                         </li>
+
+
+
+
+
+
+
 
                                         <li>
                                             <a class="dropdown-item btn deleteCenter"

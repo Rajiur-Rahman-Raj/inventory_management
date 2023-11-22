@@ -13,6 +13,7 @@
                     <img src="<?php echo e(getFile(config('location.badge.path').optional($user->userBadge)->badge_icon)); ?>" alt="" class="rank-badge">
                 <?php endif; ?>
             </div>
+
             <div class="content">
                 <h5 class="mt-1 mb-1"><?php echo e(__(auth()->user()->fullname)); ?></h5>
                 <span class=""><?php echo e(__(auth()->user()->username)); ?></span>
@@ -20,6 +21,7 @@
                     <p class="text-small mb-0"><?php echo app('translator')->get(optional($user->userBadge->details)->rank_name); ?> - (<?php echo app('translator')->get((optional($user->userBadge->details)->rank_level)); ?>)</p>
                 <?php endif; ?>
             </div>
+
         </div>
         <button class="sidebar-toggler d-lg-none" onclick="toggleSideMenu()">
             <i class="fal fa-times"></i>
@@ -52,7 +54,7 @@
         </li>
 
         <li>
-            <a class="<?php echo e(menuActive(['user.stockList'])); ?>" href="<?php echo e(route('user.stockList')); ?>"><i class="fal fa-shopping-bag"></i> <?php echo app('translator')->get('Manage Sales'); ?></a>
+            <a class="<?php echo e(menuActive(['user.stockList'])); ?>" href="<?php echo e(route('user.manageSales')); ?>"><i class="fal fa-shopping-bag"></i> <?php echo app('translator')->get('Manage Sales'); ?></a>
         </li>
 
 

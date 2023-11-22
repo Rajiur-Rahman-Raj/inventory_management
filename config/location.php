@@ -79,4 +79,8 @@ return [
         'path' => 'assets/uploads/item/',
         'size' => '400x300'
     ],
+    'salesCenter' => [
+        'path' => 'assets/uploads/salesCenter/',
+        'size' => '200x200'
+    ],
 ];

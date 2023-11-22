@@ -53,7 +53,8 @@
                             <select class="form-select" name="owner" aria-label="Default select example">
                                 <option value="">@lang('All')</option>
                                 @foreach($centerLists as $centerList)
-                                    <option value="{{ $centerList->id }}" {{ old('owner', @request()->owner) == $centerList->id ? 'selected' : '' }}>{{ $centerList->owner_name }}</option>
+                                    <option
+                                        value="{{ $centerList->id }}" {{ old('owner', @request()->owner) == $centerList->id ? 'selected' : '' }}>{{ $centerList->owner_name }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -107,7 +108,7 @@
                                 <div>
                                     <a href="" target="_blank">
                                         <img
-                                            src="{{ getFile(config('location.user.path').optional($centerList->user)->image) }}">
+                                            src="{{ getFile(config('location.salesCenter.path').$centerList->image) }}">
                                     </a>
                                 </div>
                                 <div>
@@ -141,6 +142,13 @@
                                             <a href="{{ route('user.salesCenterDetails', $centerList->id) }}"
                                                class="dropdown-item"> <i class="fal fa-eye"></i> @lang('Details') </a>
                                         </li>
+
+{{--                                        <li>--}}
+{{--                                            <a class="dropdown-item btn"--}}
+{{--                                               href="{{ route('user.salesCenterEdit', $centerList->id) }}">--}}
+{{--                                                <i class="fas fa-edit"></i> @lang('Edit')--}}
+{{--                                            </a>--}}
+{{--                                        </li>--}}
 
                                         <li>
                                             <a class="dropdown-item btn deleteCenter"

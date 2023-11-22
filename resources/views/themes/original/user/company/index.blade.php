@@ -1,5 +1,5 @@
 @extends($theme.'layouts.user')
-@section('title', 'badges')
+@section('title', 'Company List')
 
 @section('content')
     <section class="payment-gateway">

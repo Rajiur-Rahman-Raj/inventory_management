@@ -37,6 +37,7 @@ class SalesCenterStoreRequest extends FormRequest
             'upazila_id' => ['nullable'],
             'union_id' => ['nullable'],
             'address' => ['required'],
+            'image' => ['nullable'],
         ];
     }
 

@@ -1,4 +1,4 @@
-<?php $__env->startSection('title', 'badges'); ?>
+<?php $__env->startSection('title', 'Company List'); ?>
 
 <?php $__env->startSection('content'); ?>
     <section class="payment-gateway">

@@ -13,6 +13,7 @@
                     <img src="{{ getFile(config('location.badge.path').optional($user->userBadge)->badge_icon) }}" alt="" class="rank-badge">
                 @endif
             </div>
+
             <div class="content">
                 <h5 class="mt-1 mb-1">{{ __(auth()->user()->fullname) }}</h5>
                 <span class="">{{ __(auth()->user()->username) }}</span>
@@ -20,6 +21,7 @@
                     <p class="text-small mb-0">@lang(optional($user->userBadge->details)->rank_name) - (@lang((optional($user->userBadge->details)->rank_level)))</p>
                 @endif
             </div>
+
         </div>
         <button class="sidebar-toggler d-lg-none" onclick="toggleSideMenu()">
             <i class="fal fa-times"></i>
@@ -52,7 +54,7 @@
         </li>
 
         <li>
-            <a class="{{menuActive(['user.stockList'])}}" href="{{ route('user.stockList') }}"><i class="fal fa-shopping-bag"></i> @lang('Manage Sales')</a>
+            <a class="{{menuActive(['user.stockList'])}}" href="{{ route('user.manageSales') }}"><i class="fal fa-shopping-bag"></i> @lang('Manage Sales')</a>
         </li>
 
 

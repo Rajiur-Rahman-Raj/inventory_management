@@ -40,8 +40,7 @@
                                     @csrf
                                     <div class="row g-4">
                                         <div class="input-box col-md-6">
-                                            <label for="name">@lang('Center Name') <span
-                                                    class="text-danger">*</span></label>
+                                            <label for="name">@lang('Center Name') </label>
                                             <input type="text"
                                                    class="form-control"
                                                    name="name"
@@ -53,8 +52,7 @@
                                         </div>
 
                                         <div class="input-box col-md-6">
-                                            <label for="name">@lang('Code') <span
-                                                    class="text-danger">*</span></label>
+                                            <label for="name">@lang('Code') </label>
                                             <input type="text"
                                                    class="form-control"
                                                    name="code"
@@ -66,8 +64,7 @@
                                         </div>
 
                                         <div class="input-box col-md-6">
-                                            <label for="owner_name">@lang('Owner Name') <span
-                                                    class="text-danger">*</span></label>
+                                            <label for="owner_name">@lang('Owner Name')</label>
                                             <input type="text"
                                                    name="owner_name"
                                                    placeholder="@lang('Owner Name')"
@@ -79,7 +76,7 @@
                                         </div>
 
                                         <div class="input-box col-md-6">
-                                            <label for="phone">@lang('Phone') <span class="text-danger">*</span></label>
+                                            <label for="phone">@lang('Phone')</label>
                                             <input type="text"
                                                    name="phone"
                                                    placeholder="@lang('Owner Phone Number')"
@@ -91,7 +88,7 @@
                                         </div>
 
                                         <div class="input-box col-md-6">
-                                            <label for="email">@lang('Email') <span class="text-danger">*</span></label>
+                                            <label for="email">@lang('Email')</label>
                                             <input type="email"
                                                    name="email"
                                                    placeholder="@lang('Owner Email')"
@@ -105,8 +102,7 @@
                                         </div>
 
                                         <div class="input-box col-md-6">
-                                            <label for="password">@lang('Password') <span
-                                                    class="text-danger">*</span></label>
+                                            <label for="password">@lang('Password') </label>
                                             <input type="password"
                                                    name="password"
                                                    placeholder="@lang('password')"
@@ -119,7 +115,7 @@
 
                                         <div class="input-box col-md-6">
                                             <label for="national_id">@lang('National Id') <span
-                                                    class="text-dark"> <sup><em>(optional)</em></sup></span></label>
+                                                    class="text-dark"> <sup>(optional)</sup></span></label>
                                             <input type="text" name="national_id" placeholder="@lang('National Id')"
                                                    class="form-control" value="{{ old('national_id') }}"/>
                                             @if($errors->has('national_id'))
@@ -130,7 +126,7 @@
 
                                         <div class="input-box col-md-6">
                                             <label for="trade_id">@lang('Trade Id') <span
-                                                    class="text-dark"><sup><em>(optional)</em></sup></span></label>
+                                                    class="text-dark"><sup>(optional)</sup></span></label>
                                             <input type="text" name="trade_id" placeholder="@lang('Trade Id')"
                                                    class="form-control" value="{{ old('trade_id') }}"/>
                                             @if($errors->has('trade_id'))
@@ -140,8 +136,7 @@
                                         </div>
 
                                         <div class="input-box col-md-6">
-                                            <label for="division_id">@lang('Division') <span
-                                                    class="text-danger">*</span></label>
+                                            <label for="division_id">@lang('Division')</label>
                                             <select class="form-select js-example-basic-single selectedDivision"
                                                     name="division_id"
                                                     aria-label="Default select example">
@@ -160,8 +155,7 @@
                                         </div>
 
                                         <div class="input-box col-md-6">
-                                            <label for="district_id">@lang('District') <span
-                                                    class="text-danger">*</span></label>
+                                            <label for="district_id">@lang('District') </label>
                                             <select class="form-select js-example-basic-single selectedDistrict"
                                                     name="district_id"
                                                     aria-label="Default select example"
@@ -177,7 +171,7 @@
 
                                         <div class="input-box col-md-6">
                                             <label for="district_id">@lang('Upazila') <span
-                                                    class="text-dark"><sup><em>(optional)</em></sup></span></label>
+                                                    class="text-dark"><sup>(optional)</sup></span></label>
                                             <select class="form-select js-example-basic-single selectedUpazila"
                                                     name="upazila_id"
                                                     aria-label="Default select example"
@@ -193,7 +187,7 @@
 
                                         <div class="input-box col-md-6">
                                             <label for="union_id">@lang('Union') <span
-                                                    class="text-dark"><sup><em>(optional)</em></sup></span></label>
+                                                    class="text-dark"><sup>(optional)</sup></span></label>
                                             <select class="form-select js-example-basic-single selectedUnion"
                                                     name="union_id"
                                                     aria-label="Default select example"
@@ -207,17 +201,28 @@
                                             @endif
                                         </div>
 
-
                                         <div class="input-box col-12">
-                                            <label for="address">@lang('Sales Center Address') <span
-                                                    class="text-danger">*</span></label>
+                                            <label for="address">@lang('Sales Center Address') </label>
                                             <textarea class="form-control @error('address') is-invalid @enderror"
                                                       cols="30" rows="3" placeholder="@lang('Sales Center Address')"
-                                                      name="address">{{ old('address') }}</textarea>
+                                                      name="address"></textarea>
                                             @if($errors->has('address'))
                                                 <div class="error text-danger">@lang($errors->first('address'))
                                                 </div>
                                             @endif
+                                        </div>
+
+                                        <div class="col-md-12 mb-4 input-box">
+                                            <label for="" class="golden-text">@lang('Owner Photo') <span><sup>(optional)</sup></span> </label>
+                                            <div class="attach-file">
+                                               <span class="prev">
+                                                  @lang('Upload Logo')
+                                               </span>
+                                                <input type="file" name="image" class="form-control"/>
+                                            </div>
+                                            @error('image')
+                                            <span class="text-danger">{{trans($message)}}</span>
+                                            @enderror
                                         </div>
 
                                         <div class="input-box col-12">

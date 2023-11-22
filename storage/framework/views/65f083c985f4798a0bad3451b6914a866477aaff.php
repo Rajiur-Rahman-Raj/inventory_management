@@ -39,8 +39,7 @@
                                     <?php echo csrf_field(); ?>
                                     <div class="row g-4">
                                         <div class="input-box col-md-6">
-                                            <label for="name"><?php echo app('translator')->get('Center Name'); ?> <span
-                                                    class="text-danger">*</span></label>
+                                            <label for="name"><?php echo app('translator')->get('Center Name'); ?> </label>
                                             <input type="text"
                                                    class="form-control"
                                                    name="name"
@@ -52,8 +51,7 @@
                                         </div>
 
                                         <div class="input-box col-md-6">
-                                            <label for="name"><?php echo app('translator')->get('Code'); ?> <span
-                                                    class="text-danger">*</span></label>
+                                            <label for="name"><?php echo app('translator')->get('Code'); ?> </label>
                                             <input type="text"
                                                    class="form-control"
                                                    name="code"
@@ -65,8 +63,7 @@
                                         </div>
 
                                         <div class="input-box col-md-6">
-                                            <label for="owner_name"><?php echo app('translator')->get('Owner Name'); ?> <span
-                                                    class="text-danger">*</span></label>
+                                            <label for="owner_name"><?php echo app('translator')->get('Owner Name'); ?></label>
                                             <input type="text"
                                                    name="owner_name"
                                                    placeholder="<?php echo app('translator')->get('Owner Name'); ?>"
@@ -78,7 +75,7 @@
                                         </div>
 
                                         <div class="input-box col-md-6">
-                                            <label for="phone"><?php echo app('translator')->get('Phone'); ?> <span class="text-danger">*</span></label>
+                                            <label for="phone"><?php echo app('translator')->get('Phone'); ?></label>
                                             <input type="text"
                                                    name="phone"
                                                    placeholder="<?php echo app('translator')->get('Owner Phone Number'); ?>"
@@ -90,7 +87,7 @@
                                         </div>
 
                                         <div class="input-box col-md-6">
-                                            <label for="email"><?php echo app('translator')->get('Email'); ?> <span class="text-danger">*</span></label>
+                                            <label for="email"><?php echo app('translator')->get('Email'); ?></label>
                                             <input type="email"
                                                    name="email"
                                                    placeholder="<?php echo app('translator')->get('Owner Email'); ?>"
@@ -104,8 +101,7 @@
                                         </div>
 
                                         <div class="input-box col-md-6">
-                                            <label for="password"><?php echo app('translator')->get('Password'); ?> <span
-                                                    class="text-danger">*</span></label>
+                                            <label for="password"><?php echo app('translator')->get('Password'); ?> </label>
                                             <input type="password"
                                                    name="password"
                                                    placeholder="<?php echo app('translator')->get('password'); ?>"
@@ -118,7 +114,7 @@
 
                                         <div class="input-box col-md-6">
                                             <label for="national_id"><?php echo app('translator')->get('National Id'); ?> <span
-                                                    class="text-dark"> <sup><em>(optional)</em></sup></span></label>
+                                                    class="text-dark"> <sup>(optional)</sup></span></label>
                                             <input type="text" name="national_id" placeholder="<?php echo app('translator')->get('National Id'); ?>"
                                                    class="form-control" value="<?php echo e(old('national_id')); ?>"/>
                                             <?php if($errors->has('national_id')): ?>
@@ -129,7 +125,7 @@
 
                                         <div class="input-box col-md-6">
                                             <label for="trade_id"><?php echo app('translator')->get('Trade Id'); ?> <span
-                                                    class="text-dark"><sup><em>(optional)</em></sup></span></label>
+                                                    class="text-dark"><sup>(optional)</sup></span></label>
                                             <input type="text" name="trade_id" placeholder="<?php echo app('translator')->get('Trade Id'); ?>"
                                                    class="form-control" value="<?php echo e(old('trade_id')); ?>"/>
                                             <?php if($errors->has('trade_id')): ?>
@@ -139,8 +135,7 @@
                                         </div>
 
                                         <div class="input-box col-md-6">
-                                            <label for="division_id"><?php echo app('translator')->get('Division'); ?> <span
-                                                    class="text-danger">*</span></label>
+                                            <label for="division_id"><?php echo app('translator')->get('Division'); ?></label>
                                             <select class="form-select js-example-basic-single selectedDivision"
                                                     name="division_id"
                                                     aria-label="Default select example">
@@ -159,8 +154,7 @@
                                         </div>
 
                                         <div class="input-box col-md-6">
-                                            <label for="district_id"><?php echo app('translator')->get('District'); ?> <span
-                                                    class="text-danger">*</span></label>
+                                            <label for="district_id"><?php echo app('translator')->get('District'); ?> </label>
                                             <select class="form-select js-example-basic-single selectedDistrict"
                                                     name="district_id"
                                                     aria-label="Default select example"
@@ -176,7 +170,7 @@
 
                                         <div class="input-box col-md-6">
                                             <label for="district_id"><?php echo app('translator')->get('Upazila'); ?> <span
-                                                    class="text-dark"><sup><em>(optional)</em></sup></span></label>
+                                                    class="text-dark"><sup>(optional)</sup></span></label>
                                             <select class="form-select js-example-basic-single selectedUpazila"
                                                     name="upazila_id"
                                                     aria-label="Default select example"
@@ -192,7 +186,7 @@
 
                                         <div class="input-box col-md-6">
                                             <label for="union_id"><?php echo app('translator')->get('Union'); ?> <span
-                                                    class="text-dark"><sup><em>(optional)</em></sup></span></label>
+                                                    class="text-dark"><sup>(optional)</sup></span></label>
                                             <select class="form-select js-example-basic-single selectedUnion"
                                                     name="union_id"
                                                     aria-label="Default select example"
@@ -208,8 +202,7 @@
 
 
                                         <div class="input-box col-12">
-                                            <label for="address"><?php echo app('translator')->get('Sales Center Address'); ?> <span
-                                                    class="text-danger">*</span></label>
+                                            <label for="address"><?php echo app('translator')->get('Sales Center Address'); ?> </label>
                                             <textarea class="form-control <?php $__errorArgs = ['address'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
@@ -219,11 +212,31 @@ if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>"
                                                       cols="30" rows="3" placeholder="<?php echo app('translator')->get('Sales Center Address'); ?>"
-                                                      name="address"><?php echo e(old('address')); ?></textarea>
+                                                      name="address"></textarea>
                                             <?php if($errors->has('address')): ?>
                                                 <div class="error text-danger"><?php echo app('translator')->get($errors->first('address')); ?>
                                                 </div>
                                             <?php endif; ?>
+                                        </div>
+
+                                        <div class="col-md-12 mb-4 input-box">
+                                            <label for="" class="golden-text"><?php echo app('translator')->get('Owner Photo'); ?> <span><sup>(optional)</sup></span> </label>
+                                            <div class="attach-file">
+                                               <span class="prev">
+                                                  <?php echo app('translator')->get('Upload Logo'); ?>
+                                               </span>
+                                                <input type="file" name="image" class="form-control"/>
+                                            </div>
+                                            <?php $__errorArgs = ['image'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                            <span class="text-danger"><?php echo e(trans($message)); ?></span>
+                                            <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                                         </div>
 
                                         <div class="input-box col-12">
