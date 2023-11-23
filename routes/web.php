@@ -216,7 +216,17 @@ Route::group(['middleware' => ['auth', 'Maintenance'], 'prefix' => 'user', 'as' 
 
         // Manage Sales
         Route::get('manage-sales', 'User\CompanyController@manageSales')->name('manageSales');
+        Route::put('update-item-unit-price/{id}', 'User\CompanyController@updateItemUnitPrice')->name('updateItemUnitPrice');
         Route::post('get-selected-items', 'User\CompanyController@getSelectedItems')->name('getSelectedItems');
+        Route::post('get-selected-customer', 'User\CompanyController@getSelectedCustomer')->name('getSelectedCustomer');
+        Route::post('get-selected-sales-center', 'User\CompanyController@getSelectedSalesCenter')->name('getSelectedSalesCenter');
+
+
+        Route::post('store-cart-items', 'User\CompanyController@storeCartItems')->name('storeCartItems');
+        Route::delete('clear-cart-items', 'User\CompanyController@clearCartItems')->name('clearCartItems');
+        Route::delete('clear-single-cart-item/{id}', 'User\CompanyController@clearSingleCartItem')->name('clearSingleCartItem');
+
+
 
 
         //Inventory Route End

@@ -54,7 +54,7 @@
         </li>
 
         <li>
-            <a class="{{menuActive(['user.stockList'])}}" href="{{ route('user.manageSales') }}"><i class="fal fa-shopping-bag"></i> @lang('Manage Sales')</a>
+            <a class="{{menuActive(['user.manageSales'])}}" href="{{ route('user.manageSales') }}"><i class="fal fa-shopping-bag"></i> @lang('Manage Sales')</a>
         </li>
 
 

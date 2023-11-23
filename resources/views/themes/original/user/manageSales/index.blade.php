@@ -56,9 +56,23 @@
                                                 </div>
                                                 <div
                                                     class="shopping-icon d-flex align-items-center justify-content-between">
-                                                    <h4>{{ $stock->last_cost_per_unit }} {{ $basic->currency_symbol }}</h4>
-                                                    <button href="#"><i class="fa fa-cart-plus"></i></button>
+                                                    <h4>
+                                                        <button class="sellingPriceButton updateUnitPrice"
+                                                                data-property="{{ $stock }}"
+                                                                data-route="{{ route('user.updateItemUnitPrice', $stock->id) }}">{{ $stock->selling_price }} {{ $basic->currency_symbol }}</button>
+                                                    </h4>
+                                                    @if($stock->quantity > 0)
+                                                        <button class="btn btn-sm addToCartButton"
+                                                                data-property="{{ $stock }}"><i
+                                                                class="fa fa-cart-plus"></i></button>
+                                                    @else
+                                                        <button class="btn btn-sm addToCartButton opacity-0 disabled"><i
+                                                                class="fa fa-cart-plus"></i></button>
+                                                    @endif
                                                 </div>
+                                                <p>
+                                                    <span>Purchase Price:</span> {{ $stock->last_cost_per_unit }} {{ $basic->currency_symbol }}
+                                                </p>
                                             </div>
                                         </div>
                                     </div>
@@ -85,14 +99,14 @@
                                         <button class="nav-link active" id="home-tab" data-bs-toggle="tab"
                                                 data-bs-target="#home-tab-pane" type="button" role="tab"
                                                 aria-controls="home-tab-pane"
-                                                aria-selected="true">Customer
+                                                aria-selected="true">@lang('Customer')
                                         </button>
                                     </li>
                                     <li class="nav-item" role="presentation">
                                         <button class="nav-link" id="contact-tab" data-bs-toggle="tab"
                                                 data-bs-target="#contact-tab-pane" type="button" role="tab"
                                                 aria-controls="contact-tab-pane" aria-selected="false">
-                                            sales center
+                                            @lang('Sales Center')
                                         </button>
                                     </li>
                                 </ul>
@@ -102,8 +116,22 @@
                                     <div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel"
                                          aria-labelledby="home-tab" tabindex="0">
 
-                                        <div class="cutomer-select">
-                                            <select class="form-select js-example-basic-single selectedItems"
+                                        <div class="cutomer-select mt-2">
+                                            <label for="sales_center_id"
+                                                   class="mb-2">@lang('Which Sales Center?')</label>
+                                            <select class="form-select js-example-basic-single select-sales-center"
+                                                    name="customer_id"
+                                                    aria-label="Default select example">
+                                                <option value="" selected disabled>@lang('Select Sales Center')</option>
+                                                @foreach($salesCenters as $saleCenter)
+                                                    <option
+                                                        value="{{ $saleCenter->id }}" {{ old('sales_center_id') == $saleCenter->id ? 'selected' : ''}}> @lang($saleCenter->name)</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+
+                                        <div class="cutomer-select mt-3">
+                                            <select class="form-select js-example-basic-single select-customer"
                                                     name="customer_id"
                                                     aria-label="Default select example">
                                                 <option value="" selected disabled>@lang('Select Customer')</option>
@@ -114,14 +142,16 @@
                                                 @endforeach
                                             </select>
                                         </div>
+
                                         <div class="cautomer-details">
                                             <div class="mb-2">
-                                                <input type="email" class="form-control" id="exampleFormControlInput1"
-                                                       placeholder="Email address">
+                                                <input type="text" class="form-control customerPhone" value=""
+                                                       id="exampleFormControlInput1"
+                                                       placeholder="Customer Phone">
                                             </div>
                                             <div class="mb-3">
-                                    <textarea class="form-control" id="exampleFormControlTextarea1"
-                                              placeholder="Message" rows="5"></textarea>
+                                    <textarea class="form-control customerAddress" id="exampleFormControlTextarea1"
+                                              placeholder="Customer Address" rows="3" name="address"></textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -129,9 +159,10 @@
                                     <div class="tab-pane fade" id="contact-tab-pane" role="tabpanel"
                                          aria-labelledby="contact-tab" tabindex="0">
                                         <div class="cutomer-select">
-                                            <select class="form-select js-example-basic-single"
-                                                    name="sales_center_id"
-                                                    aria-label="Default select example">
+                                            <select
+                                                class="form-select js-example-basic-single select-sales-center selectSalesCenter"
+                                                name="sales_center_id"
+                                                aria-label="Default select example">
                                                 <option value="" selected disabled>@lang('Select Sales Center')</option>
 
                                                 @foreach($salesCenters as $saleCenter)
@@ -142,186 +173,289 @@
                                         </div>
                                         <div class="cautomer-details">
                                             <div class="mb-2">
-                                                <input type="email" class="form-control" id="exampleFormControlInput1"
-                                                       placeholder="Email address">
+                                                <input type="email" class="form-control owner-name"
+                                                       id="exampleFormControlInput1"
+                                                       placeholder="Owner Name">
                                             </div>
-                                            <div class="mb-3">
-                                    <textarea class="form-control" id="exampleFormControlTextarea1"
-                                              placeholder="Message" rows="5"></textarea>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="cart-box">
-                            <div class="cart-top d-flex align-items-center justify-content-between">
-                                <h6>items in cart</h6>
-                                <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#cartModal">
-                                    <i class="fa fa-times"></i>clear cart
-                                </button>
-                            </div>
-                            <div class="cat-item d-flex">
-                                <div class="tittle">UltraVision 4K Monitor</div>
-                                <div class="quantity"><input type="number" value="1"></div>
-                                <div class="prize">
-                                    <h6>$190</h6>
-                                </div>
-                                <div class="remove">
-                                    <a href="#"><i class="fa fa-times"></i></a>
-                                </div>
-                            </div>
-                            <div class="cat-item d-flex">
-                                <div class="tittle">UltraVision 4K Monitor</div>
-                                <div class="quantity"><input type="number" value="1"></div>
-                                <div class="prize">
-                                    <h6>$190</h6>
-                                </div>
-                                <div class="remove">
-                                    <a href="#"><i class="fa fa-times"></i></a>
-                                </div>
-                            </div>
-                            <div class="cat-item d-flex">
-                                <div class="tittle">UltraVision 4K Monitor</div>
-                                <div class="quantity"><input type="number" value="1"></div>
-                                <div class="prize">
-                                    <h6>$190</h6>
-                                </div>
-                                <div class="remove">
-                                    <a href="#"><i class="fa fa-times"></i></a>
-                                </div>
-                            </div>
-                            <div class="clear-cart">
-                                <div class="modal fade" id="cartModal" tabindex="-1" aria-labelledby="cartModal"
-                                     aria-hidden="true">
-                                    <div class="modal-dialog modal-dialog-centered">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h1 class="modal-title fs-5" id="cartModal"></h1>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                        aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <h4>are you sure</h4>
-                                                <h6>You won't be able to revert those!</h6>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-primary">Yes, remove it!</button>
-                                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
-                                                    Cancel
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="total-box">
-                            <div class="amount">
-                                <div class="input-group mb-3">
 
-                                    <input type="text" class="form-control" aria-label="Amount (to the nearest dollar)">
-                                    <span class="input-group-text">$</span>
+                                            <div class="mb-2">
+                                                <input type="email" class="form-control owner-phone"
+                                                       id="exampleFormControlInput1"
+                                                       placeholder="Owner Phone">
+                                            </div>
+
+                                            <div class="mb-3">
+                                    <textarea class="form-control sales-center-address" id="exampleFormControlTextarea1"
+                                              placeholder="Sales Center Address" rows="5"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="total">
-                                <ul>
-                                    <li>
-                                        <h5>subtotal</h5>
-                                        <h6>$2290</h6>
-                                    </li>
-                                    <li>
-                                        <h5>Discount</h5>
-                                        <h6>$0</h6>
-                                    </li>
-                                    <li>
-                                        <h5>Vat</h5>
-                                        <h6>(+6%) $68.70</h6>
-                                    </li>
-                                </ul>
-                                <div class="total-amount d-flex align-items-center justify-content-between">
-                                    <h5>total</h5>
-                                    <h6>$2358.7</h6>
-                                </div>
-                                <div class="order-btn d-flex flex-wrap">
-                                    <button class="cancel">cacel order</button>
-                                    <button type="button" class="porcced" data-bs-toggle="modal"
-                                            data-bs-target="#procced">procced order
+                        </div>
+
+                        @if(count($cartItems) > 0)
+                            <div class="cart-box">
+                                <div class="cart-top d-flex align-items-center justify-content-between">
+                                    <h6>items in cart</h6>
+                                    <button type="button" class="btn clearCart">
+                                        <i class="fa fa-times"></i>clear cart
                                     </button>
                                 </div>
-                                <div class="procced-modal">
-                                    <div class="modal fade" id="procced" tabindex="-1"
-                                         aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                        <div class="modal-dialog ">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h1 class="modal-title fs-5" id="exampleModalLabel">make
-                                                        payment</h1>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                            aria-label="Close"></button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <div
-                                                        class="total-amount d-flex align-items-center justify-content-between">
-                                                        <h5>total</h5>
-                                                        <h6>$2358.7</h6>
+
+                                @foreach($cartItems as $cartItem)
+                                    <div class="cat-item d-flex">
+                                        <div class="tittle">{{ optional($cartItem->item)->name }}</div>
+                                        <div class="quantity"><input type="number" value="{{ $cartItem->quantity }}">
+                                        </div>
+                                        <div class="prize">
+                                            <h6>{{ $cartItem->cost }} {{ $basic->currency_symbol }}</h6>
+                                        </div>
+                                        <div class="remove">
+                                            <a href="javascript:void(0)" class="clearSingleCartItem" data-route="{{ route('user.clearSingleCartItem', $cartItem->id) }}" data-name="{{ optional($cartItem->item)->name }}"><i class="fa fa-times"></i></a>
+                                        </div>
+                                    </div>
+                                @endforeach
+
+                            </div>
+
+                            <div class="total-box">
+                                <div class="amount">
+                                    <div class="input-group mb-3">
+
+                                        <input type="text" class="form-control"
+                                               aria-label="Amount (to the nearest dollar)">
+                                        <span class="input-group-text">$</span>
+                                    </div>
+                                </div>
+                                <div class="total">
+                                    <ul>
+                                        <li>
+                                            <h5>subtotal</h5>
+                                            <h6>$2290</h6>
+                                        </li>
+                                        <li>
+                                            <h5>Discount</h5>
+                                            <h6>$0</h6>
+                                        </li>
+                                        <li>
+                                            <h5>Vat</h5>
+                                            <h6>(+6%) $68.70</h6>
+                                        </li>
+                                    </ul>
+                                    <div class="total-amount d-flex align-items-center justify-content-between">
+                                        <h5>total</h5>
+                                        <h6>$2358.7</h6>
+                                    </div>
+                                    <div class="order-btn d-flex flex-wrap">
+                                        <button class="cancel">cacel order</button>
+                                        <button type="button" class="porcced" data-bs-toggle="modal"
+                                                data-bs-target="#procced">procced order
+                                        </button>
+                                    </div>
+                                    <div class="procced-modal">
+                                        <div class="modal fade" id="procced" tabindex="-1"
+                                             aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog ">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h1 class="modal-title fs-5" id="exampleModalLabel">make
+                                                            payment</h1>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                                aria-label="Close"></button>
                                                     </div>
-                                                    <div
-                                                        class="enter-amount d-flex justify-content-between align-items-center">
-                                                        <h6>Enter amount customer paid</h6>
-                                                        <input type="number" class="form-control"
-                                                               id="exampleFormControlInput1">
-                                                    </div>
-                                                    <div
-                                                        class="change-amount d-flex align-items-center justify-content-between">
-                                                        <h4>Change amount</h4>  <span>$-2358.70</span>
-                                                    </div>
-                                                    <div
-                                                        class="total-amount d-flex align-items-center justify-content-between">
-                                                        <h5>total</h5>
-                                                        <h6>$2358.7</h6>
-                                                    </div>
-                                                    <div class="file">
-                                                        <div class="mb-3">
-                                                            <label for="formFile" class="form-label">Document</label>
-                                                            <input class="form-control" type="file" id="formFile">
+                                                    <div class="modal-body">
+                                                        <div
+                                                            class="total-amount d-flex align-items-center justify-content-between">
+                                                            <h5>total</h5>
+                                                            <h6>$2358.7</h6>
                                                         </div>
-                                                        <div class="mb-3">
-                                                            <label for="formFile" class="form-label">Pay Date</label>
-                                                            <input class="form-control" type="date" id="formFile">
+                                                        <div
+                                                            class="enter-amount d-flex justify-content-between align-items-center">
+                                                            <h6>Enter amount customer paid</h6>
+                                                            <input type="number" class="form-control"
+                                                                   id="exampleFormControlInput1">
                                                         </div>
-                                                        <div class="mb-3">
-                                                            <label for="formFile" class="form-label">Payment
-                                                                Note</label>
-                                                            <textarea class="form-control"
-                                                                      id="exampleFormControlTextarea1"
-                                                                      placeholder="Message" rows="5"></textarea>
+                                                        <div
+                                                            class="change-amount d-flex align-items-center justify-content-between">
+                                                            <h4>Change amount</h4>  <span>$-2358.70</span>
+                                                        </div>
+                                                        <div
+                                                            class="total-amount d-flex align-items-center justify-content-between">
+                                                            <h5>total</h5>
+                                                            <h6>$2358.7</h6>
+                                                        </div>
+                                                        <div class="file">
+                                                            <div class="mb-3">
+                                                                <label for="formFile"
+                                                                       class="form-label">Document</label>
+                                                                <input class="form-control" type="file" id="formFile">
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label for="formFile" class="form-label">Pay
+                                                                    Date</label>
+                                                                <input class="form-control" type="date" id="formFile">
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label for="formFile" class="form-label">Payment
+                                                                    Note</label>
+                                                                <textarea class="form-control"
+                                                                          id="exampleFormControlTextarea1"
+                                                                          placeholder="Message" rows="5"></textarea>
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-danger"
-                                                            data-bs-dismiss="modal">cancel
-                                                    </button>
-                                                    <button type="button" class="btn btn-primary">Comfirm Paid</button>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-danger"
+                                                                data-bs-dismiss="modal">cancel
+                                                        </button>
+                                                        <button type="button" class="btn btn-primary">Comfirm Paid
+                                                        </button>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        @endif
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
+
+    <div class="clear-cart profile-setting">
+        <div class="modal fade" id="updateUnitPriceModal" tabindex="-1" aria-labelledby="cartModal"
+             aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="cartModal">Update Unit Price</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                    </div>
+                    <form action="" class="m-0 p-0 updateItemUnitPriceRoute" method="post">
+                        @csrf
+                        @method('put')
+                        <div class="modal-body">
+                            <div class="input-box col-md-12">
+                                <label for="selling_price">@lang('Cost Per Unit')</label>
+                                <div class="input-group">
+                                    <input type="text" name="selling_price"
+                                           class="form-control selling_cost_per_unit @error('selling_price') is-invalid @enderror"
+                                           onkeyup="this.value = this.value.replace (/^\.|[^\d\.]/g, '')"
+                                           value="{{ old('selling_price') }}">
+                                    <div class="input-group-append" readonly="">
+                                        <div class="form-control currency_symbol append_group">
+                                            {{ $basic->currency_symbol }}
+                                        </div>
+                                    </div>
+                                    @if($errors->has('selling_price'))
+                                        <div
+                                            class="error text-danger">@lang($errors->first('selling_price'))
+                                        </div>
+                                    @endif
+                                </div>
+
+                            </div>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
+                                Cancel
+                            </button>
+                            <button type="submit" class="btn btn-primary">Update</button>
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="clear-cart profile-setting">
+        <div class="modal fade" id="clearCartModal" tabindex="-1" aria-labelledby="clearCartModal"
+             aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="cartModal">Confirmation</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                    </div>
+                    <form action="{{ route('user.clearCartItems') }}" class="m-0 p-0 updateItemUnitPriceRoute"
+                          method="post">
+                        @csrf
+                        @method('delete')
+                        <div class="modal-body">
+                            <p>Are you sure clear all cart items?</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
+                                Cancel
+                            </button>
+                            <button type="submit" class="btn btn-primary">Clear</button>
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="clear-cart profile-setting">
+        <div class="modal fade" id="clearSingleCartModal" tabindex="-1" aria-labelledby="clearSingleCartModal"
+             aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="cartModal">Confirmation</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                    </div>
+                    <form action="" class="m-0 p-0 clearSingleCartItemRoute"
+                          method="post">
+                        @csrf
+                        @method('delete')
+                        <div class="modal-body">
+                            <p>Are you sure clear <span class="single-cart-item-name"></span> cart items?</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
+                                Cancel
+                            </button>
+                            <button type="submit" class="btn btn-primary">Clear</button>
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
 @endsection
 
 @push('script')
     <script>
         'use strict'
+
+        $('.select-customer').select2({
+            width: '100%',
+        }).on('select2:open', () => {
+            $(".select2-results:not(:has(a))").append(`<li style='list-style: none; padding: 10px;'><a style="width: 100%" href="{{ route('user.createCustomer') }}"
+                    class="btn btn-outline-primary" target="_blank">+ Create New Customer </a>
+                    </li>`);
+        });
+
+        $('.select-sales-center').select2({
+            width: '100%',
+        }).on('select2:open', () => {
+            $(".select2-results:not(:has(a))").append(`<li style='list-style: none; padding: 10px;'><a style="width: 100%" href="{{ route('user.createSalesCenter') }}"
+                    class="btn btn-outline-primary" target="_blank">+ Create Sales Center </a>
+                    </li>`);
+        });
 
         $(document).ready(function () {
             $('.selectedItems').on('change', function () {
@@ -331,12 +465,6 @@
         })
 
         function getSelectedItems(value) {
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-
             $.ajax({
                 url: "{{ route('user.getSelectedItems') }}",
                 method: 'POST',
@@ -353,7 +481,7 @@
                                     </div>`
                     } else {
                         stocks.forEach(function (stock) {
-                            itemsData += `
+                            itemsData +=`
                                 <div class="col-xl-4 col-lg-6">
                                     <div class="product-box shadow-sm p-3 mb-5 bg-body rounded">
                                        <div class="product-title">
@@ -373,8 +501,9 @@
                                           </div>
                                           <div class="shopping-icon d-flex align-items-center justify-content-between">
                                              <h4>${stock.last_cost_per_unit} {{ $basic->currency_symbol }}</h4>
-                                             <button href="#"><i class="fa fa-cart-plus"></i></button>
+                                             ${stock.quantity > 0 ? '<button href="#"><i class="fa fa-cart-plus"></i></button>' : '<button class="btn btn-sm addToCartButton opacity-0 disabled"><i class="fa fa-cart-plus"></i></button>'}
                                           </div>
+                                           <p><span>Purchase Price:</span> ${stock.last_cost_per_unit} {{ $basic->currency_symbol }}</p>
                                         </div>
                                     </div>
                                 </div>`;
@@ -388,6 +517,113 @@
                 }
             });
         }
+
+        $('.select-customer').on('change', function () {
+            let selectedValue = $(this).val();
+            getSelectedCustomer(selectedValue);
+        });
+
+        function getSelectedCustomer(value) {
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+
+            $.ajax({
+                url: "{{ route('user.getSelectedCustomer') }}",
+                method: 'POST',
+                data: {
+                    id: value,
+                },
+                success: function (response) {
+                    let customer = response.customer;
+                    $('.customerPhone').val(customer.phone);
+                    $('.customerAddress').val(customer.address);
+                },
+                error: function (xhr, status, error) {
+                    console.log(error);
+                }
+            });
+        }
+
+        $('.selectSalesCenter').on('change', function () {
+            let selectedValue = $(this).val();
+            getSelectedSalesCenter(selectedValue);
+        });
+
+        function getSelectedSalesCenter(value) {
+            $.ajax({
+                url: "{{ route('user.getSelectedSalesCenter') }}",
+                method: 'POST',
+                data: {
+                    id: value,
+                },
+                success: function (response) {
+                    let salesCenter = response.salesCenter;
+                    $('.owner-name').val(salesCenter.owner_name);
+                    $('.owner-phone').val(salesCenter.user.phone);
+                    $('.sales-center-address').val(salesCenter.address);
+                },
+                error: function (xhr, status, error) {
+                    console.log(error);
+                }
+            });
+        }
+
+        $('.addToCartButton').on('click', function () {
+            let dataProperty = $(this).data('property');
+            getAddToCartItems(dataProperty);
+        });
+
+        function getAddToCartItems(dataProperty) {
+            $.ajax({
+                url: "{{ route('user.storeCartItems') }}",
+                method: 'POST',
+                data: {
+                    data: dataProperty,
+                },
+                success: function (response) {
+                    console.log(response.cartItems);
+                    if (response.status){
+                        Notiflix.Notify.Success(response.message);
+                    }else{
+                        Notiflix.Notify.Warning(response.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log(error);
+                }
+            });
+        }
+
+
+        $(document).on('click', '.updateUnitPrice', function () {
+            var updateUnitPriceModal = new bootstrap.Modal(document.getElementById('updateUnitPriceModal'))
+            updateUnitPriceModal.show();
+
+            let dataRoute = $(this).data('route');
+            let dataProperty = $(this).data('property');
+            $('.updateItemUnitPriceRoute').attr('action', dataRoute)
+            $('.selling_cost_per_unit').val(dataProperty.selling_price);
+
+        });
+
+        $(document).on('click', '.clearCart', function () {
+            var clearCartModal = new bootstrap.Modal(document.getElementById('clearCartModal'))
+            clearCartModal.show();
+        });
+
+        $(document).on('click', '.clearSingleCartItem', function () {
+            var clearSingleCartModal = new bootstrap.Modal(document.getElementById('clearSingleCartModal'))
+            clearSingleCartModal.show();
+
+            let dataName = $(this).data('name');
+            let route    = $(this).data('route');
+
+            $('.single-cart-item-name').text(dataName);
+            $('.clearSingleCartItemRoute').attr('action', route);
+        });
 
     </script>
 @endpush

@@ -200,7 +200,6 @@
                                             <?php endif; ?>
                                         </div>
 
-
                                         <div class="input-box col-12">
                                             <label for="address"><?php echo app('translator')->get('Sales Center Address'); ?> </label>
                                             <textarea class="form-control <?php $__errorArgs = ['address'];

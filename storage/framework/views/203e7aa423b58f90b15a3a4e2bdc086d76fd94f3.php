@@ -54,7 +54,7 @@
         </li>
 
         <li>
-            <a class="<?php echo e(menuActive(['user.stockList'])); ?>" href="<?php echo e(route('user.manageSales')); ?>"><i class="fal fa-shopping-bag"></i> <?php echo app('translator')->get('Manage Sales'); ?></a>
+            <a class="<?php echo e(menuActive(['user.manageSales'])); ?>" href="<?php echo e(route('user.manageSales')); ?>"><i class="fal fa-shopping-bag"></i> <?php echo app('translator')->get('Manage Sales'); ?></a>
         </li>
 
 

@@ -35,6 +35,7 @@ trait StockInTrait
             $stock->quantity += $request->item_quantity[$key];
             $stock->cost_per_unit = ($stock->last_cost_per_unit) ?? $request->cost_per_unit[$key];
             $stock->last_cost_per_unit = $request->cost_per_unit[$key];
+            $stock->selling_price = $request->cost_per_unit[$key];
 
             $stock->stock_date = ($stock->last_stock_date) ?? $request->stock_date;
             $stock->last_stock_date = $request->stock_date;

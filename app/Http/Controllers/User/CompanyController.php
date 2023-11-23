@@ -8,6 +8,7 @@ use App\Http\Requests\CompanyUpdateRequest;
 use App\Http\Requests\SalesCenterStoreRequest;
 use App\Http\Traits\Notify;
 use App\Models\Badge;
+use App\Models\CartItems;
 use App\Models\Company;
 use App\Http\Traits\Upload;
 use App\Models\Customer;
@@ -711,7 +712,7 @@ class CompanyController extends Controller
             ->get();
 
         $data['stocks'] = Stock::with('item:id,name,image')->where('company_id', $admin->active_company_id)->whereNull('sales_center_id')
-            ->select('id', 'item_id', 'quantity', 'cost_per_unit', 'last_cost_per_unit')
+            ->select('id', 'item_id', 'quantity', 'cost_per_unit', 'last_cost_per_unit', 'selling_price')
             ->latest()
             ->get();
 
@@ -719,9 +720,20 @@ class CompanyController extends Controller
 
         $data['salesCenters'] = SalesCenter::where('company_id', $admin->active_company_id)->latest()->get();
 
+        $data['cartItems'] = CartItems::with('item')->where('company_id', $admin->active_company_id)->get();
+
         return view($this->theme . 'user.manageSales.index', $data);
     }
 
+
+    public function updateItemUnitPrice(Request $request, $id){
+        $admin = $this->user;
+        $stock = Stock::where('company_id', $admin->active_company_id)->whereNull('sales_center_id')->select('id', 'selling_price')->findOrFail($id);
+        $stock->selling_price = $request->selling_price;
+
+        $stock->save();
+        return back()->with('success', 'Item Price Updated Successfully!');
+    }
 
     public function getSelectedItems(Request $request)
     {
@@ -743,6 +755,155 @@ class CompanyController extends Controller
         });
 
         return response()->json(['stocks' => $stocks]);
+    }
+
+    public function getSelectedCustomer(Request $request)
+    {
+        $admin = $this->user;
+
+        $customer = Customer::where('company_id', $admin->active_company_id)->whereNull('sales_center_id')->select('id', 'name', 'phone', 'address')->findOrFail($request->id);
+
+        return response()->json(['customer' => $customer]);
+    }
+
+    public function getSelectedSalesCenter(Request $request){
+        $admin = $this->user;
+        $salesCenter = SalesCenter::with('user:id,phone')->where('company_id', $admin->active_company_id)->select('id', 'user_id', 'owner_name', 'address', 'code')->findOrFail($request->id);
+        return response()->json(['salesCenter' => $salesCenter]);
+    }
+
+
+//    public function storeCartItems(Request $request)
+//    {
+//        $admin = $this->user;
+//        $stock = $request->data;
+//
+//        $cartItem = CartItems::where('company_id', $admin->active_company_id)->where('stock_id', $stock['id'])->where('item_id', $stock['item_id'])->first();
+//
+//
+//        if ($cartItem){
+//            if ($cartItem['quantity'] < $stock['quantity']){
+//                CartItems::updateOrInsert(
+//                    [
+//                        'company_id' => $admin->active_company_id,
+//                        'stock_id' => $stock['id'],
+//                        'item_id' => $stock['item_id'],
+//
+//                    ],
+//                    [
+//                        'cost_per_unit' => $stock['last_cost_per_unit'],
+//                        'quantity' => DB::raw('quantity + 1'),
+//                        'cost' => DB::raw('quantity * cost_per_unit'),
+//                        'created_at' => Carbon::now(),
+//                        'updated_at' => Carbon::now()
+//                    ]
+//                );
+//
+//                $status = true;
+//                $message = "Cart item added successfully";
+//
+//            }else{
+//                $status = false;
+//                $message = "This item is out of stock";
+//            }
+//
+//        }else{
+//            CartItems::updateOrInsert(
+//                [
+//                    'company_id' => $admin->active_company_id,
+//                    'stock_id' => $stock['id'],
+//                    'item_id' => $stock['item_id'],
+//
+//                ],
+//                [
+//                    'cost_per_unit' => $stock['last_cost_per_unit'],
+//                    'quantity' => DB::raw('quantity + 1'),
+//                    'cost' => DB::raw('quantity * cost_per_unit'),
+//                    'created_at' => Carbon::now(),
+//                    'updated_at' => Carbon::now()
+//                ]
+//            );
+//
+//            $status = true;
+//            $message = "Cart item added successfully";
+//        }
+//
+//
+//
+//        $cartItems = CartItems::where('company_id', $admin->active_company_id)->whereNull('sales_center_id')->get();
+//
+//
+//        return response()->json([
+//            'cartItems' => $cartItems,
+//            'status' => $status,
+//            'message' => $message,
+//        ]);
+//    }
+
+
+    public function storeCartItems(Request $request)
+    {
+        $admin = $this->user;
+        $stock = $request->data;
+
+        $cartItem = CartItems::where('company_id', $admin->active_company_id)
+            ->where('stock_id', $stock['id'])
+            ->where('item_id', $stock['item_id'])
+            ->first();
+
+        if ($cartItem && $cartItem['quantity'] >= $stock['quantity']) {
+            $status = false;
+            $message = "This item is out of stock";
+        } else {
+            CartItems::updateOrInsert(
+                [
+                    'company_id' => $admin->active_company_id,
+                    'stock_id' => $stock['id'],
+                    'item_id' => $stock['item_id'],
+                ],
+                [
+                    'cost_per_unit' => $stock['last_cost_per_unit'],
+                    'quantity' => DB::raw('quantity + 1'),
+                    'cost' => DB::raw('quantity * cost_per_unit'),
+                    'created_at' => $cartItem ? $cartItem->created_at : Carbon::now(),
+                    'updated_at' => Carbon::now()
+                ]
+            );
+
+            $status = true;
+            $message = "Cart item added successfully";
+        }
+
+        $cartItems = CartItems::where('company_id', $admin->active_company_id)
+            ->whereNull('sales_center_id')
+            ->get();
+
+        return response()->json([
+            'cartItems' => $cartItems,
+            'status' => $status,
+            'message' => $message,
+        ]);
+    }
+
+
+
+    public function clearCartItems(){
+        $admin = $this->user;
+        CartItems::where('company_id', $admin->active_company_id)
+            ->whereNull('sales_center_id')
+            ->delete();
+
+        return back()->with('success', 'Cart items deleted successfully!');
+    }
+
+    public function clearSingleCartItem(Request $request, $id){
+        $admin = $this->user;
+        CartItems::where('company_id', $admin->active_company_id)
+            ->whereNull('sales_center_id')
+            ->findOrFail($id)
+            ->delete();
+
+        return back()->with('success', 'Cart item deleted successfully!');
     }
 
 }

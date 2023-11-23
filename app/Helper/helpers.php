@@ -469,4 +469,3 @@ function updateWallet($user_id, $amount, $action = 0)
     $user->save();
     return $balance;
 }
-
