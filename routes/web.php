@@ -224,7 +224,7 @@ Route::group(['middleware' => ['auth', 'Maintenance'], 'prefix' => 'user', 'as' 
 
         Route::post('store-cart-items', 'User\CompanyController@storeCartItems')->name('storeCartItems');
         Route::delete('clear-cart-items', 'User\CompanyController@clearCartItems')->name('clearCartItems');
-        Route::delete('clear-single-cart-item/{id}', 'User\CompanyController@clearSingleCartItem')->name('clearSingleCartItem');
+        Route::post('clear-single-cart-item', 'User\CompanyController@clearSingleCartItem')->name('clearSingleCartItem');
 
 
 

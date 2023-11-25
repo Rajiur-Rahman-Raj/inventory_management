@@ -10,9 +10,15 @@ class Stock extends Model
     use HasFactory;
 
     protected $guarded = ['id'];
+    protected $appends = ['item_price_route'];
 
-    public function item(){
+    public function item()
+    {
         return $this->belongsTo(Item::class, 'item_id');
     }
 
+    public function getItemPriceRouteAttribute()
+    {
+        return route('user.updateItemUnitPrice', $this->id);
+    }
 }

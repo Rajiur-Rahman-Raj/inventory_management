@@ -12,13 +12,13 @@
                                 <div class="product-top d-flex align-items-center flex-wrap ">
                                     <div class="input-group">
                                         <label for="" class="mb-2"><?php echo app('translator')->get('Filter By Items'); ?></label>
-                                        <select class="form-select js-example-basic-single selectedItems"
+                                        <select class="form-select js-example-basic-single selectedItems" data-oldselecteditems="<?php echo e(session('filterItemId')); ?>"
                                                 name="item_id"
                                                 aria-label="Default select example">
                                             <option value="all"><?php echo app('translator')->get('All Items'); ?></option>
                                             <?php $__currentLoopData = $items; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                 <option
-                                                    value="<?php echo e($item->id); ?>" <?php echo e(old('item_id') == $item->id ? 'selected' : ''); ?>> <?php echo app('translator')->get($item->name); ?></option>
+                                                    value="<?php echo e($item->id); ?>" <?php echo e(old('item_id', session('filterItemId')) == $item->id ? 'selected' : ''); ?>> <?php echo app('translator')->get($item->name); ?></option>
                                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                         </select>
                                     </div>
@@ -57,7 +57,7 @@
                                                     class="shopping-icon d-flex align-items-center justify-content-between">
                                                     <h4>
                                                         <button class="sellingPriceButton updateUnitPrice"
-                                                                data-property="<?php echo e($stock); ?>"
+                                                                data-sellingprice="<?php echo e($stock->selling_price); ?>"
                                                                 data-route="<?php echo e(route('user.updateItemUnitPrice', $stock->id)); ?>"><?php echo e($stock->selling_price); ?> <?php echo e($basic->currency_symbol); ?></button>
                                                     </h4>
                                                     <?php if($stock->quantity > 0): ?>
@@ -194,7 +194,7 @@
                             </div>
                         </div>
 
-                        <?php if(count($cartItems) > 0): ?>
+                        <div class="cart-items-area <?php echo e(count($cartItems) > 0 ? '' : 'd-none'); ?>">
                             <div class="cart-box">
                                 <div class="cart-top d-flex align-items-center justify-content-between">
                                     <h6>items in cart</h6>
@@ -203,49 +203,55 @@
                                     </button>
                                 </div>
 
-                                <?php $__currentLoopData = $cartItems; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $cartItem): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                    <div class="cat-item d-flex">
-                                        <div class="tittle"><?php echo e(optional($cartItem->item)->name); ?></div>
-                                        <div class="quantity"><input type="number" value="<?php echo e($cartItem->quantity); ?>">
+                                <div class="addCartItems">
+                                    <?php $__currentLoopData = $cartItems; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $cartItem): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <div class="cat-item d-flex">
+                                            <div class="tittle"><?php echo e(optional($cartItem->item)->name); ?></div>
+                                            <div class="quantity">
+                                                <input type="number" value="<?php echo e($cartItem->quantity); ?>"
+                                                       class="itemQuantityInput" data-cartitem="<?php echo e($cartItem->cost_per_unit); ?>" min="1">
+                                            </div>
+                                            <div class="prize">
+                                                <h6 class="cart-item-cost"><?php echo e($cartItem->cost); ?> <?php echo e($basic->currency_symbol); ?></h6>
+                                            </div>
+                                            <div class="remove">
+                                                <a href="javascript:void(0)" class="clearSingleCartItem" data-id="<?php echo e($cartItem->id); ?>">
+                                                    <i class="fa fa-times"></i></a>
+                                            </div>
                                         </div>
-                                        <div class="prize">
-                                            <h6><?php echo e($cartItem->cost); ?> <?php echo e($basic->currency_symbol); ?></h6>
-                                        </div>
-                                        <div class="remove">
-                                            <a href="javascript:void(0)" class="clearSingleCartItem" data-route="<?php echo e(route('user.clearSingleCartItem', $cartItem->id)); ?>" data-name="<?php echo e(optional($cartItem->item)->name); ?>"><i class="fa fa-times"></i></a>
-                                        </div>
-                                    </div>
-                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                </div>
                             </div>
 
                             <div class="total-box">
                                 <div class="amount">
                                     <div class="input-group mb-3">
+                                        <input type="text" class="form-control itemsDiscountInput"
+                                               aria-label="" placeholder="discount">
+                                        <span class="input-group-text">%</span>
 
-                                        <input type="text" class="form-control"
-                                               aria-label="Amount (to the nearest dollar)">
-                                        <span class="input-group-text">$</span>
                                     </div>
                                 </div>
                                 <div class="total">
                                     <ul>
                                         <li>
                                             <h5>subtotal</h5>
-                                            <h6>$2290</h6>
+                                            <h6><span
+                                                    class="sub-total-area"><?php echo e(getAmount($subTotal, config('basic.fraction_number'))); ?></span>
+                                                <span class="sub-total-area-span"><?php echo e($basic->currency_symbol); ?></span></h6>
                                         </li>
                                         <li>
                                             <h5>Discount</h5>
-                                            <h6>$0</h6>
+                                            <h6 class="discount-area">0 <?php echo e($basic->currency_symbol); ?></h6>
                                         </li>
-                                        <li>
-                                            <h5>Vat</h5>
-                                            <h6>(+6%) $68.70</h6>
-                                        </li>
+                                        
+                                        
+                                        
+                                        
                                     </ul>
                                     <div class="total-amount d-flex align-items-center justify-content-between">
                                         <h5>total</h5>
-                                        <h6>$2358.7</h6>
+                                        <h6 class="total-area"><?php echo e(getAmount($subTotal, config('basic.fraction_number'))); ?> <?php echo e($basic->currency_symbol); ?></h6>
                                     </div>
                                     <div class="order-btn d-flex flex-wrap">
                                         <button class="cancel">cacel order</button>
@@ -318,7 +324,7 @@
                                     </div>
                                 </div>
                             </div>
-                        <?php endif; ?>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -343,6 +349,7 @@
                             <div class="input-box col-md-12">
                                 <label for="selling_price"><?php echo app('translator')->get('Cost Per Unit'); ?></label>
                                 <div class="input-group">
+                                    <input type="hidden"  name="filter_item_id" class="filter_item_id" value="">
                                     <input type="text" name="selling_price"
                                            class="form-control selling_cost_per_unit <?php $__errorArgs = ['selling_price'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
@@ -413,6 +420,7 @@ unset($__errorArgs, $__bag); ?>"
         </div>
     </div>
 
+
     <div class="clear-cart profile-setting">
         <div class="modal fade" id="clearSingleCartModal" tabindex="-1" aria-labelledby="clearSingleCartModal"
              aria-hidden="true">
@@ -449,6 +457,11 @@ unset($__errorArgs, $__bag); ?>"
     <script>
         'use strict'
 
+        if (!isNaN(parseFloat($('.selectedItems').data('oldselecteditems')))){
+            getSelectedItems(parseFloat($('.selectedItems').data('oldselecteditems')));
+        }
+
+
         $('.select-customer').select2({
             width: '100%',
         }).on('select2:open', () => {
@@ -465,11 +478,9 @@ unset($__errorArgs, $__bag); ?>"
                     </li>`);
         });
 
-        $(document).ready(function () {
-            $('.selectedItems').on('change', function () {
-                let selectedValue = $(this).val();
-                getSelectedItems(selectedValue);
-            })
+        $('.selectedItems').on('change', function () {
+            let selectedValue = $(this).val();
+            getSelectedItems(selectedValue);
         })
 
         function getSelectedItems(value) {
@@ -490,31 +501,47 @@ unset($__errorArgs, $__bag); ?>"
                     } else {
                         stocks.forEach(function (stock) {
                             itemsData += `
-                                <div class="col-xl-4 col-lg-6">
-                                    <div class="product-box shadow-sm p-3 mb-5 bg-body rounded">
-                                       <div class="product-title">
-                                            ${stock.quantity > 0 ? '<a href="javascript:void(0)">in stock</a>' : '<a href="javascript:void(0)" class="text-danger border-danger">out of stock</a>'}
-                                       </div>
 
-                                        <div class="product-img">
-                                            <a href="javascript:void(0)">
-                                                <img class="img-fluid" src="${stock.item.image}" alt="">
-                                            </a>
-                                        </div>
-                                        <div class="product-content-box ">
-                                          <div class="product-content">
-                                            <h6>
-                                                <a href="javascript:void(0)">${stock.item.name}</a>
-                                            </h6>
-                                          </div>
-                                          <div class="shopping-icon d-flex align-items-center justify-content-between">
-                                             <h4>${stock.last_cost_per_unit} <?php echo e($basic->currency_symbol); ?></h4>
-                                             ${stock.quantity > 0 ? '<button href="#"><i class="fa fa-cart-plus"></i></button>' : '<button class="btn btn-sm addToCartButton opacity-0 disabled"><i class="fa fa-cart-plus"></i></button>'}
-                                          </div>
-                                           <p><span>Purchase Price:</span> ${stock.last_cost_per_unit} <?php echo e($basic->currency_symbol); ?></p>
-                                        </div>
-                                    </div>
-                                </div>`;
+
+                                <div class="col-xl-4 col-lg-6">
+                        <div class="product-box shadow-sm p-3 mb-5 bg-body rounded">
+                            <div class="product-title">
+                                ${stock.quantity > 0 ? '<a href="javascript:void(0)">in stock</a>' : '<a href="javascript:void(0)" class="text-danger border-danger">out of stock</a>'}
+                            </div>
+                            <div class="product-img">
+                                <a href="javascript:void(0)">
+                                    <img class="img-fluid"
+                                         src="${stock.item.image}"
+                                         alt="">
+                                </a>
+                            </div>
+                            <div class="product-content-box ">
+                                <div class="product-content">
+                                    <h6>
+                                        <a href="javascript:void(0)">${stock.item.name}</a>
+                                    </h6>
+
+                                </div>
+                                <div
+                                    class="shopping-icon d-flex align-items-center justify-content-between">
+                                    <h4>
+                                        <button class="sellingPriceButton updateUnitPrice"
+                                                data-filteritemid=${value}
+                                                data-sellingprice="${stock.selling_price}"
+                                                data-route="${stock.item_price_route}">${stock.selling_price} <?php echo e($basic->currency_symbol); ?></button>
+                                    </h4>
+
+                                    ${stock.quantity > 0 ? `<button class="btn btn-sm addToCartButton" data-property='${JSON.stringify(stock)}'><i class="fa fa-cart-plus"></i></button>` : `<button class="btn btn-sm addToCartButton opacity-0 disabled"><i class="fa fa-cart-plus"></i></button>`}
+                            </div>
+                            <p>
+                                <span>Purchase Price:</span> ${stock.last_cost_per_unit} <?php echo e($basic->currency_symbol); ?>
+
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+`;
                         });
                     }
 
@@ -579,7 +606,7 @@ unset($__errorArgs, $__bag); ?>"
             });
         }
 
-        $('.addToCartButton').on('click', function () {
+        $(document).on('click','.addToCartButton', function () {
             let dataProperty = $(this).data('property');
             getAddToCartItems(dataProperty);
         });
@@ -592,12 +619,46 @@ unset($__errorArgs, $__bag); ?>"
                     data: dataProperty,
                 },
                 success: function (response) {
-                    console.log(response.cartItems);
-                    if (response.status){
+                    if (response.status) {
                         Notiflix.Notify.Success(response.message);
-                    }else{
+                    } else {
                         Notiflix.Notify.Warning(response.message);
                     }
+
+                    let cartItems = response.cartItems;
+                    if (cartItems.length > 0){
+                        $('.cart-items-area').removeClass('d-none')
+                    }else {
+                        $('.cart-items-area').addClass('d-none')
+                    }
+
+
+                    let itemsData = '';
+
+                    cartItems.forEach(function (cartItem) {
+                            itemsData += `<div class="cat-item d-flex">
+                        <div class="tittle">${cartItem.item.name}</div>
+                        <div class="quantity">
+                            <input type="number" value="${cartItem.quantity}"
+                                   class="itemQuantityInput" data-cartitem="${cartItem.cost_per_unit}" min="1">
+                        </div>
+                        <div class="prize">
+                            <h6 class="cart-item-cost">${cartItem.cost} <?php echo e($basic->currency_symbol); ?></h6>
+                        </div>
+                        <div class="remove">
+                            <a href="javascript:void(0)" class="clearSingleCartItem" data-id="${cartItem.id}"
+                               data-name="${cartItem.item.name}">
+                               <i class="fa fa-times"></i></a>
+                        </div>
+                    </div>`;
+                        });
+
+                    $('.addCartItems').html(itemsData);
+
+                    // Recalculate subtotal and total
+                    updateSubtotal();
+                    updateTotal();
+
                 },
                 error: function (xhr, status, error) {
                     console.log(error);
@@ -611,9 +672,12 @@ unset($__errorArgs, $__bag); ?>"
             updateUnitPriceModal.show();
 
             let dataRoute = $(this).data('route');
-            let dataProperty = $(this).data('property');
+            let dataSellingPrice = $(this).data('sellingprice');
+            let datafilteritemid = $(this).data('filteritemid');
+
             $('.updateItemUnitPriceRoute').attr('action', dataRoute)
-            $('.selling_cost_per_unit').val(dataProperty.selling_price);
+            $('.selling_cost_per_unit').val(dataSellingPrice);
+            $('.filter_item_id').val(datafilteritemid);
 
         });
 
@@ -623,15 +687,117 @@ unset($__errorArgs, $__bag); ?>"
         });
 
         $(document).on('click', '.clearSingleCartItem', function () {
-            var clearSingleCartModal = new bootstrap.Modal(document.getElementById('clearSingleCartModal'))
-            clearSingleCartModal.show();
+            let cartId = $(this).data('id');
+            $.ajax({
+                url: "<?php echo e(route('user.clearSingleCartItem')); ?>",
+                method: 'POST',
+                data: {
+                    cartId: cartId,
+                },
+                success: function (response) {
+                    let cartItems = response.cartItems;
+                    if (cartItems.length > 0){
+                        $('.cart-items-area').removeClass('d-none')
+                    }else {
+                        $('.cart-items-area').addClass('d-none')
+                    }
 
-            let dataName = $(this).data('name');
-            let route    = $(this).data('route');
 
-            $('.single-cart-item-name').text(dataName);
-            $('.clearSingleCartItemRoute').attr('action', route);
+                    let itemsData = '';
+
+                    cartItems.forEach(function (cartItem) {
+                        itemsData += `<div class="cat-item d-flex">
+                        <div class="tittle">${cartItem.item.name}</div>
+                        <div class="quantity">
+                            <input type="number" value="${cartItem.quantity}"
+                                   class="itemQuantityInput" data-cartitem="${cartItem.cost_per_unit}" min="1">
+                        </div>
+                        <div class="prize">
+                            <h6 class="cart-item-cost">${cartItem.cost} <?php echo e($basic->currency_symbol); ?></h6>
+                        </div>
+                        <div class="remove">
+                            <a href="javascript:void(0)" class="clearSingleCartItem" data-id="${cartItem.id}"
+                               
+                        data-name="${cartItem.item.name}">
+                               <i class="fa fa-times"></i></a>
+                        </div>
+                    </div>`;
+                    });
+
+                    $('.addCartItems').html(itemsData);
+                    // Recalculate subtotal and total
+                    updateSubtotal();
+                    updateTotal();
+
+                },
+                error: function (xhr, status, error) {
+                    console.log(error);
+                }
+            });
+
         });
+
+
+
+        $('.itemQuantityInput').each(function (index, element) {
+            $(document).on('input', `.${element.className}`, function () {
+                let cartQuantity = isNaN(parseFloat($(this).val())) ? 0 : parseFloat($(this).val());
+                let costPerUnit = parseFloat($(this).data('cartitem')).toFixed(2);
+                let singleCartItemCost = cartQuantity * costPerUnit;
+                $(this).parent().siblings('.prize').find('.cart-item-cost').text(`${singleCartItemCost.toFixed(2)} <?php echo e($basic->currency_symbol); ?>`);
+
+                // Recalculate subtotal and total
+                updateSubtotal();
+                updateTotal();
+            })
+        });
+
+        function updateSubtotal() {
+            let subtotal = 0;
+            $('.itemQuantityInput').each(function (index, element) {
+                let cartQuantity = isNaN(parseFloat($(element).val())) ? 0 : parseFloat($(element).val());
+                let costPerUnit = parseFloat($(element).data('cartitem'));
+                subtotal += cartQuantity * costPerUnit;
+            });
+
+            $('.sub-total-area').text(`${subtotal.toFixed(2)} <?php echo e($basic->currency_symbol); ?>`);
+            $('.sub-total-area-span').addClass('d-none');
+        }
+
+        function updateTotal() {
+            let subTotal = parseFloat($('.sub-total-area').text());
+            let discount = parseFloat($('.itemsDiscountInput').val());
+
+            discount = isNaN(discount) ? 0 : discount;
+
+            let discountAmount = subTotal * discount / 100;
+            let totalAmount = subTotal - discountAmount;
+
+            // Update the discount and total amounts
+            $('.discount-area').text(`${discountAmount.toFixed(2)} <?php echo e($basic->currency_symbol); ?>`);
+            $('.total-area').text(`${totalAmount.toFixed(2)} <?php echo e($basic->currency_symbol); ?>`);
+        }
+
+        $(document).on('input', '.itemsDiscountInput', function () {
+            // Recalculate total after updating the discount
+            updateTotal();
+        });
+
+        $(document).on('input', '.itemQuantityInput', function () {
+            $('.itemQuantityInput').each(function (index, element) {
+                $(document).on('input', `.${element.className}`, function () {
+                    let cartQuantity = isNaN(parseFloat($(this).val())) ? 0 : parseFloat($(this).val());
+                    let costPerUnit = parseFloat($(this).data('cartitem')).toFixed(2);
+                    let singleCartItemCost = cartQuantity * costPerUnit;
+                    $(this).parent().siblings('.prize').find('.cart-item-cost').text(`${singleCartItemCost.toFixed(2)} <?php echo e($basic->currency_symbol); ?>`);
+
+                    // Recalculate subtotal and total
+                    updateSubtotal();
+                    updateTotal();
+                })
+            });
+        });
+
 
     </script>
 <?php $__env->stopPush(); ?>

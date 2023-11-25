@@ -722,17 +722,20 @@ class CompanyController extends Controller
 
         $data['cartItems'] = CartItems::with('item')->where('company_id', $admin->active_company_id)->get();
 
+        $data['subTotal']  = $data['cartItems']->sum('cost');
+
         return view($this->theme . 'user.manageSales.index', $data);
     }
 
 
     public function updateItemUnitPrice(Request $request, $id){
         $admin = $this->user;
+        $filter_item_id = $request->filter_item_id;
         $stock = Stock::where('company_id', $admin->active_company_id)->whereNull('sales_center_id')->select('id', 'selling_price')->findOrFail($id);
         $stock->selling_price = $request->selling_price;
 
         $stock->save();
-        return back()->with('success', 'Item Price Updated Successfully!');
+        return back()->with('success', 'Item Price Updated Successfully!')->with('filterItemId', $filter_item_id);
     }
 
     public function getSelectedItems(Request $request)
@@ -740,7 +743,7 @@ class CompanyController extends Controller
         $admin = $this->user;
 
         $query = Stock::with('item:id,name,image')
-            ->select('id', 'item_id', 'quantity', 'cost_per_unit', 'last_cost_per_unit')
+            ->select('id', 'item_id', 'quantity', 'cost_per_unit', 'last_cost_per_unit', 'selling_price')
             ->where('company_id', $admin->active_company_id)
             ->whereNull('sales_center_id');
 
@@ -773,74 +776,6 @@ class CompanyController extends Controller
     }
 
 
-//    public function storeCartItems(Request $request)
-//    {
-//        $admin = $this->user;
-//        $stock = $request->data;
-//
-//        $cartItem = CartItems::where('company_id', $admin->active_company_id)->where('stock_id', $stock['id'])->where('item_id', $stock['item_id'])->first();
-//
-//
-//        if ($cartItem){
-//            if ($cartItem['quantity'] < $stock['quantity']){
-//                CartItems::updateOrInsert(
-//                    [
-//                        'company_id' => $admin->active_company_id,
-//                        'stock_id' => $stock['id'],
-//                        'item_id' => $stock['item_id'],
-//
-//                    ],
-//                    [
-//                        'cost_per_unit' => $stock['last_cost_per_unit'],
-//                        'quantity' => DB::raw('quantity + 1'),
-//                        'cost' => DB::raw('quantity * cost_per_unit'),
-//                        'created_at' => Carbon::now(),
-//                        'updated_at' => Carbon::now()
-//                    ]
-//                );
-//
-//                $status = true;
-//                $message = "Cart item added successfully";
-//
-//            }else{
-//                $status = false;
-//                $message = "This item is out of stock";
-//            }
-//
-//        }else{
-//            CartItems::updateOrInsert(
-//                [
-//                    'company_id' => $admin->active_company_id,
-//                    'stock_id' => $stock['id'],
-//                    'item_id' => $stock['item_id'],
-//
-//                ],
-//                [
-//                    'cost_per_unit' => $stock['last_cost_per_unit'],
-//                    'quantity' => DB::raw('quantity + 1'),
-//                    'cost' => DB::raw('quantity * cost_per_unit'),
-//                    'created_at' => Carbon::now(),
-//                    'updated_at' => Carbon::now()
-//                ]
-//            );
-//
-//            $status = true;
-//            $message = "Cart item added successfully";
-//        }
-//
-//
-//
-//        $cartItems = CartItems::where('company_id', $admin->active_company_id)->whereNull('sales_center_id')->get();
-//
-//
-//        return response()->json([
-//            'cartItems' => $cartItems,
-//            'status' => $status,
-//            'message' => $message,
-//        ]);
-//    }
-
-
     public function storeCartItems(Request $request)
     {
         $admin = $this->user;
@@ -862,7 +797,7 @@ class CompanyController extends Controller
                     'item_id' => $stock['item_id'],
                 ],
                 [
-                    'cost_per_unit' => $stock['last_cost_per_unit'],
+                    'cost_per_unit' => $stock['selling_price'],
                     'quantity' => DB::raw('quantity + 1'),
                     'cost' => DB::raw('quantity * cost_per_unit'),
                     'created_at' => $cartItem ? $cartItem->created_at : Carbon::now(),
@@ -874,7 +809,7 @@ class CompanyController extends Controller
             $message = "Cart item added successfully";
         }
 
-        $cartItems = CartItems::where('company_id', $admin->active_company_id)
+        $cartItems = CartItems::with('item')->where('company_id', $admin->active_company_id)
             ->whereNull('sales_center_id')
             ->get();
 
@@ -896,14 +831,22 @@ class CompanyController extends Controller
         return back()->with('success', 'Cart items deleted successfully!');
     }
 
-    public function clearSingleCartItem(Request $request, $id){
+    public function clearSingleCartItem(Request $request){
         $admin = $this->user;
         CartItems::where('company_id', $admin->active_company_id)
             ->whereNull('sales_center_id')
-            ->findOrFail($id)
+            ->findOrFail($request->cartId)
             ->delete();
 
-        return back()->with('success', 'Cart item deleted successfully!');
+        $cartItems = CartItems::with('item')->where('company_id', $admin->active_company_id)
+            ->whereNull('sales_center_id')
+            ->get();
+
+        return response()->json([
+            'cartItems' => $cartItems,
+            'status' => true,
+            'message' => "Cart item deleted successfully",
+        ]);
     }
 
 }
