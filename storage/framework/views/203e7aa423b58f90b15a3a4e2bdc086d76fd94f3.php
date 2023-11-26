@@ -53,16 +53,40 @@
             <a class="<?php echo e(menuActive(['user.stockList'])); ?>" href="<?php echo e(route('user.stockList')); ?>"><i class="fal fa-layer-group"></i><?php echo app('translator')->get('Stock In'); ?></a>
         </li>
 
-        <li>
-            <a class="<?php echo e(menuActive(['user.manageSales'])); ?>" href="<?php echo e(route('user.manageSales')); ?>"><i class="fal fa-shopping-bag"></i> <?php echo app('translator')->get('Manage Sales'); ?></a>
-        </li>
+
+
 
 
         <?php
             $segments = request()->segments();
             $last  = end($segments);
-            $propertyMarketSegments = ['investment-properties', 'property-share-market', 'my-investment-properties', 'my-shared-properties', 'my-offered-properties', 'receive-offered-properties', 'offer-conversation'];
+            $manageSalesSegments = ['sales-items'];
         ?>
+
+        <li>
+            <a
+                class="dropdown-toggle <?php echo e(in_array($last, $manageSalesSegments) || in_array($segments[1], $manageSalesSegments) ? 'manageSalesActive' : ''); ?>"
+                data-bs-toggle="collapse"
+                href="#dropdownCollapsible"
+                role="button"
+                aria-expanded="false"
+                aria-controls="collapseExample">
+                <i class="fal fa-car-building"></i><?php echo app('translator')->get('Manage Sales'); ?>
+            </a>
+            <div class="collapse <?php echo e(menuActive(['user.salesItem', 'user.salesList'],4)); ?> dropdownCollapsible" id="dropdownCollapsible">
+                <ul class="">
+                    <li>
+                        <a class="" href="<?php echo e(route('user.salesList')); ?>"><i class="fal fa-sack-dollar"></i><?php echo app('translator')->get('Sales List'); ?></a>
+                    </li>
+                    <li>
+                        <a class="<?php echo e(($last == 'sales-items') ? 'active' : ''); ?>"  href="<?php echo e(route('user.salesItem')); ?>"><i class="fal fa-house-return"></i><?php echo app('translator')->get('Sales Item'); ?></a>
+                    </li>
+                </ul>
+            </div>
+        </li>
+
+
+
 
 
 

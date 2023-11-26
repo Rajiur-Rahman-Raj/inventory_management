@@ -15,6 +15,7 @@ use App\Models\Customer;
 use App\Models\District;
 use App\Models\Division;
 use App\Models\Item;
+use App\Models\Sale;
 use App\Models\SalesCenter;
 use App\Models\Stock;
 use App\Models\StockIn;
@@ -30,10 +31,11 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Stevebauman\Purify\Facades\Purify;
 use App\Http\Traits\StockInTrait;
+use App\Http\Traits\storeSalesTrait;
 
 class CompanyController extends Controller
 {
-    use Upload, Notify, StockInTrait;
+    use Upload, Notify, StockInTrait, storeSalesTrait;
 
     public function __construct()
     {
@@ -703,7 +705,13 @@ class CompanyController extends Controller
         return back()->with('success', "Customer Deleted Successfully!");
     }
 
-    public function manageSales()
+    public function salesList(){
+        $admin = $this->user;
+        $data['salesLists'] = Sale::with('salesCenter')->where('company_id', $admin->active_company_id)->latest()->paginate(config('basic.paginate'));
+        return view($this->theme.'user.manageSales.salesList', $data);
+    }
+
+    public function salesItem()
     {
         $admin = $this->user;
         $data['items'] = Item::where('company_id', $admin->active_company_id)
@@ -724,7 +732,7 @@ class CompanyController extends Controller
 
         $data['subTotal']  = $data['cartItems']->sum('cost');
 
-        return view($this->theme . 'user.manageSales.index', $data);
+        return view($this->theme . 'user.manageSales.salesItem', $data);
     }
 
 
@@ -847,6 +855,66 @@ class CompanyController extends Controller
             'status' => true,
             'message' => "Cart item deleted successfully",
         ]);
+    }
+
+    public function salesOrderStore(Request $request){
+        $admin = $this->user;
+        $purifiedData = Purify::clean($request->except('_token', '_method'));
+
+
+        try {
+            $rules = [
+//                'sales_center_id' => 'required|exists:sales_centers,id',
+//                'customer_id' => 'required|exists:customers,id',
+                'items' => 'nullable',
+                'payment_date' => 'required',
+                'payment_note' => 'nullable',
+            ];
+
+            $message = [
+//                'sales_center_id.required' => 'The sales center field is required.',
+//                'sales_center_id.exists' => 'The selected sales center is invalid.',
+//                'customer_id.required' => 'The customer field is required.',
+//                'customer_id.exists' => 'The selected customer is invalid.',
+                'payment_date.required' => 'The payment date field is required.',
+            ];
+
+            $validate = Validator::make($purifiedData, $rules, $message);
+
+            if ($validate->fails()) {
+                return back()->withInput()->withErrors($validate);
+            }
+            DB::beginTransaction();
+            $sale = new Sale();
+
+            $sale->company_id = $admin->active_company_id;
+            $sale->sales_center_id = $request->sales_center_id;
+            $sale->customer_id = $request->customer_id;
+            $sale->sub_total = $request->sub_total;
+            $sale->discount = $request->discount_amount;
+            $sale->total_amount = $request->total_amount;
+            $sale->customer_paid_amount = $request->customer_paid_amount;
+            $sale->due_amount = ($request->due_or_change_amount >= 0 ? $request->due_or_change_amount : 0);
+            $sale->payment_date = $request->payment_date;
+            $sale->payment_status = ($request->due_or_change_amount >= 0 ? 0 : 1);
+            $sale->payment_note = $request->payment_note;
+
+            $this->storeSalesItems($request, $sale);
+
+            $sale->save();
+
+            CartItems::where('company_id', $admin->active_company_id)
+                ->whereNull('sales_center_id')
+                ->delete();
+
+            DB::commit();
+            return back()->with('success', 'Order confirm successfully!');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Something went wrong');
+        }
+
     }
 
 }

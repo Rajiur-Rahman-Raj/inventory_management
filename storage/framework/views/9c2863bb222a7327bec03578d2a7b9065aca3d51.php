@@ -1,5 +1,9 @@
 <?php $__env->startSection('title', 'Manage Sales'); ?>
 
+<?php $__env->startPush('style'); ?>
+    <link href="<?php echo e(asset('assets/global/css/flatpickr.min.css')); ?>" rel="stylesheet">
+<?php $__env->stopPush(); ?>
+
 <?php $__env->startSection('content'); ?>
 
     <section class="pos-section section-1 ">
@@ -12,7 +16,8 @@
                                 <div class="product-top d-flex align-items-center flex-wrap ">
                                     <div class="input-group">
                                         <label for="" class="mb-2"><?php echo app('translator')->get('Filter By Items'); ?></label>
-                                        <select class="form-select js-example-basic-single selectedItems" data-oldselecteditems="<?php echo e(session('filterItemId')); ?>"
+                                        <select class="form-select js-example-basic-single selectedItems"
+                                                data-oldselecteditems="<?php echo e(session('filterItemId')); ?>"
                                                 name="item_id"
                                                 aria-label="Default select example">
                                             <option value="all"><?php echo app('translator')->get('All Items'); ?></option>
@@ -87,236 +92,307 @@
                         </div>
                     </div>
                 </div>
+
+
                 <div class="col-xl-4 col-lg-4">
-                    <div class="cart-side">
-                        <div class="tab-box">
-                            <div class="tab-tille">
-                                <h4><?php echo app('translator')->get('sales by'); ?></h4>
-                            </div>
-                            <div class="description-tab">
-                                <ul class="nav nav-tabs" id="myTab" role="tablist">
-                                    <li class="nav-item" role="presentation">
-                                        <button class="nav-link active" id="home-tab" data-bs-toggle="tab"
-                                                data-bs-target="#home-tab-pane" type="button" role="tab"
-                                                aria-controls="home-tab-pane"
-                                                aria-selected="true"><?php echo app('translator')->get('Customer'); ?>
-                                        </button>
-                                    </li>
-                                    <li class="nav-item" role="presentation">
-                                        <button class="nav-link" id="contact-tab" data-bs-toggle="tab"
-                                                data-bs-target="#contact-tab-pane" type="button" role="tab"
-                                                aria-controls="contact-tab-pane" aria-selected="false">
-                                            <?php echo app('translator')->get('Sales Center'); ?>
-                                        </button>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="description-content mt-2">
-                                <div class="tab-content" id="myTabContent">
-                                    <div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel"
-                                         aria-labelledby="home-tab" tabindex="0">
-
-                                        <div class="cutomer-select mt-2">
-                                            <label for="sales_center_id"
-                                                   class="mb-2"><?php echo app('translator')->get('Which Sales Center?'); ?></label>
-                                            <select class="form-select js-example-basic-single select-sales-center"
-                                                    name="customer_id"
-                                                    aria-label="Default select example">
-                                                <option value="" selected disabled><?php echo app('translator')->get('Select Sales Center'); ?></option>
-                                                <?php $__currentLoopData = $salesCenters; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $saleCenter): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                    <option
-                                                        value="<?php echo e($saleCenter->id); ?>" <?php echo e(old('sales_center_id') == $saleCenter->id ? 'selected' : ''); ?>> <?php echo app('translator')->get($saleCenter->name); ?></option>
-                                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                            </select>
-                                        </div>
-
-                                        <div class="cutomer-select mt-3">
-                                            <select class="form-select js-example-basic-single select-customer"
-                                                    name="customer_id"
-                                                    aria-label="Default select example">
-                                                <option value="" selected disabled><?php echo app('translator')->get('Select Customer'); ?></option>
-
-                                                <?php $__currentLoopData = $customers; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $customer): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                    <option
-                                                        value="<?php echo e($customer->id); ?>" <?php echo e(old('customer_id') == $customer->id ? 'selected' : ''); ?>> <?php echo app('translator')->get($customer->name); ?></option>
-                                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                            </select>
-                                        </div>
-
-                                        <div class="cautomer-details">
-                                            <div class="mb-2">
-                                                <input type="text" class="form-control customerPhone" value=""
-                                                       id="exampleFormControlInput1"
-                                                       placeholder="Customer Phone">
-                                            </div>
-                                            <div class="mb-3">
-                                    <textarea class="form-control customerAddress" id="exampleFormControlTextarea1"
-                                              placeholder="Customer Address" rows="3" name="address"></textarea>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="tab-pane fade" id="contact-tab-pane" role="tabpanel"
-                                         aria-labelledby="contact-tab" tabindex="0">
-                                        <div class="cutomer-select">
-                                            <select
-                                                class="form-select js-example-basic-single select-sales-center selectSalesCenter"
-                                                name="sales_center_id"
-                                                aria-label="Default select example">
-                                                <option value="" selected disabled><?php echo app('translator')->get('Select Sales Center'); ?></option>
-
-                                                <?php $__currentLoopData = $salesCenters; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $saleCenter): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                    <option
-                                                        value="<?php echo e($saleCenter->id); ?>" <?php echo e(old('sales_center_id') == $saleCenter->id ? 'selected' : ''); ?>> <?php echo app('translator')->get($saleCenter->name); ?></option>
-                                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                            </select>
-                                        </div>
-                                        <div class="cautomer-details">
-                                            <div class="mb-2">
-                                                <input type="email" class="form-control owner-name"
-                                                       id="exampleFormControlInput1"
-                                                       placeholder="Owner Name">
-                                            </div>
-
-                                            <div class="mb-2">
-                                                <input type="email" class="form-control owner-phone"
-                                                       id="exampleFormControlInput1"
-                                                       placeholder="Owner Phone">
-                                            </div>
-
-                                            <div class="mb-3">
-                                    <textarea class="form-control sales-center-address" id="exampleFormControlTextarea1"
-                                              placeholder="Sales Center Address" rows="5"></textarea>
-                                            </div>
-                                        </div>
-                                    </div>
+                    <form action="<?php echo e(route('user.salesOrderStore')); ?>" method="post" enctype="multipart/form-data">
+                        <?php echo csrf_field(); ?>
+                        <div class="cart-side">
+                            <div class="tab-box">
+                                <div class="tab-tille">
+                                    <h4><?php echo app('translator')->get('sales by'); ?></h4>
                                 </div>
-                            </div>
-                        </div>
-
-                        <div class="cart-items-area <?php echo e(count($cartItems) > 0 ? '' : 'd-none'); ?>">
-                            <div class="cart-box">
-                                <div class="cart-top d-flex align-items-center justify-content-between">
-                                    <h6>items in cart</h6>
-                                    <button type="button" class="btn clearCart">
-                                        <i class="fa fa-times"></i>clear cart
-                                    </button>
-                                </div>
-
-                                <div class="addCartItems">
-                                    <?php $__currentLoopData = $cartItems; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $cartItem): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                        <div class="cat-item d-flex">
-                                            <div class="tittle"><?php echo e(optional($cartItem->item)->name); ?></div>
-                                            <div class="quantity">
-                                                <input type="number" value="<?php echo e($cartItem->quantity); ?>"
-                                                       class="itemQuantityInput" data-cartitem="<?php echo e($cartItem->cost_per_unit); ?>" min="1">
-                                            </div>
-                                            <div class="prize">
-                                                <h6 class="cart-item-cost"><?php echo e($cartItem->cost); ?> <?php echo e($basic->currency_symbol); ?></h6>
-                                            </div>
-                                            <div class="remove">
-                                                <a href="javascript:void(0)" class="clearSingleCartItem" data-id="<?php echo e($cartItem->id); ?>">
-                                                    <i class="fa fa-times"></i></a>
-                                            </div>
-                                        </div>
-                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                </div>
-                            </div>
-
-                            <div class="total-box">
-                                <div class="amount">
-                                    <div class="input-group mb-3">
-                                        <input type="text" class="form-control itemsDiscountInput"
-                                               aria-label="" placeholder="discount">
-                                        <span class="input-group-text">%</span>
-
-                                    </div>
-                                </div>
-                                <div class="total">
-                                    <ul>
-                                        <li>
-                                            <h5>subtotal</h5>
-                                            <h6><span
-                                                    class="sub-total-area"><?php echo e(getAmount($subTotal, config('basic.fraction_number'))); ?></span>
-                                                <span class="sub-total-area-span"><?php echo e($basic->currency_symbol); ?></span></h6>
+                                <div class="description-tab">
+                                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                                        <li class="nav-item" role="presentation">
+                                            <button class="nav-link active" id="home-tab" data-bs-toggle="tab"
+                                                    data-bs-target="#home-tab-pane" type="button" role="tab"
+                                                    aria-controls="home-tab-pane"
+                                                    aria-selected="true"><?php echo app('translator')->get('Customer'); ?>
+                                            </button>
                                         </li>
-                                        <li>
-                                            <h5>Discount</h5>
-                                            <h6 class="discount-area">0 <?php echo e($basic->currency_symbol); ?></h6>
+                                        <li class="nav-item" role="presentation">
+                                            <button class="nav-link" id="contact-tab" data-bs-toggle="tab"
+                                                    data-bs-target="#contact-tab-pane" type="button" role="tab"
+                                                    aria-controls="contact-tab-pane" aria-selected="false">
+                                                <?php echo app('translator')->get('Sales Center'); ?>
+                                            </button>
                                         </li>
-                                        
-                                        
-                                        
-                                        
                                     </ul>
-                                    <div class="total-amount d-flex align-items-center justify-content-between">
-                                        <h5>total</h5>
-                                        <h6 class="total-area"><?php echo e(getAmount($subTotal, config('basic.fraction_number'))); ?> <?php echo e($basic->currency_symbol); ?></h6>
+                                </div>
+                                <div class="description-content mt-2">
+                                    <div class="tab-content" id="myTabContent">
+                                        <div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel"
+                                             aria-labelledby="home-tab" tabindex="0">
+
+                                            <div class="cutomer-select mt-2">
+                                                <label for="sales_center_id"
+                                                       class="mb-2"><?php echo app('translator')->get('Which Sales Center?'); ?></label>
+                                                <select class="form-select js-example-basic-single select-sales-center"
+                                                        name="sales_center_id"
+                                                        aria-label="Default select example">
+                                                    <option value="" selected
+                                                            disabled><?php echo app('translator')->get('Select Sales Center'); ?></option>
+                                                    <?php $__currentLoopData = $salesCenters; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $saleCenter): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                        <option
+                                                            value="<?php echo e($saleCenter->id); ?>" <?php echo e(old('sales_center_id', @request()->sales_center_id) == $saleCenter->id ? 'selected' : ''); ?>> <?php echo app('translator')->get($saleCenter->name); ?></option>
+                                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                </select>
+                                                <div class="invalid-feedback d-block">
+                                                    <?php $__errorArgs = ['sales_center_id'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> <?php echo app('translator')->get($message); ?> <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                                                </div>
+                                            </div>
+
+                                            <div class="cutomer-select mt-3">
+                                                <select class="form-select js-example-basic-single select-customer"
+                                                        name="customer_id"
+                                                        aria-label="Default select example">
+                                                    <option value="" selected disabled><?php echo app('translator')->get('Select Customer'); ?></option>
+
+                                                    <?php $__currentLoopData = $customers; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $customer): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                        <option
+                                                            value="<?php echo e($customer->id); ?>" <?php echo e(old('customer_id', @request()->customer_id) == $customer->id ? 'selected' : ''); ?>> <?php echo app('translator')->get($customer->name); ?></option>
+                                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                </select>
+                                                <div class="invalid-feedback d-block">
+                                                    <?php $__errorArgs = ['customer_id'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> <?php echo app('translator')->get($message); ?> <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                                                </div>
+                                            </div>
+
+                                            <div class="cautomer-details">
+                                                <div class="mb-2">
+                                                    <input type="text" class="form-control customerPhone"
+                                                           id="exampleFormControlInput1"
+                                                           name="customer_phone"
+                                                           value="<?php echo e(old('customer_name', @request()->customer_name)); ?>"
+                                                           placeholder="Customer Phone">
+                                                </div>
+                                                <div class="mb-3">
+                                    <textarea class="form-control customerAddress" id="exampleFormControlTextarea1"
+                                              placeholder="Customer Address" name="customer_address"
+                                              rows="3"><?php echo e(old('customer_address', @request()->customer_address)); ?></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="tab-pane fade" id="contact-tab-pane" role="tabpanel"
+                                             aria-labelledby="contact-tab" tabindex="0">
+                                            <div class="cutomer-select">
+                                                <select
+                                                    class="form-select js-example-basic-single select-sales-center selectSalesCenter"
+                                                    name="sales_center_id"
+                                                    aria-label="Default select example">
+                                                    <option value="" selected
+                                                            disabled><?php echo app('translator')->get('Select Sales Center'); ?></option>
+
+                                                    <?php $__currentLoopData = $salesCenters; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $saleCenter): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                        <option
+                                                            value="<?php echo e($saleCenter->id); ?>" <?php echo e(old('sales_center_id', @request()->sales_center_id) == $saleCenter->id ? 'selected' : ''); ?>> <?php echo app('translator')->get($saleCenter->name); ?></option>
+                                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                </select>
+                                            </div>
+                                            <div class="cautomer-details">
+                                                <div class="mb-2">
+                                                    <input type="text" class="form-control owner-name"
+                                                           id="exampleFormControlInput1"
+                                                           name="owner_name"
+                                                           value="<?php echo e(old('owner_name', @request()->owner_name)); ?>"
+                                                           placeholder="Owner Name">
+                                                </div>
+
+                                                <div class="mb-2">
+                                                    <input type="text" class="form-control owner-phone"
+                                                           id="exampleFormControlInput1"
+                                                           name="owner_phone"
+                                                           value="<?php echo e(old('owner_phone', @request()->owner_phone)); ?>"
+                                                           placeholder="Owner Phone">
+                                                </div>
+
+                                                <div class="mb-3">
+                                    <textarea class="form-control sales-center-address" id="exampleFormControlTextarea1"
+                                              placeholder="Sales Center Address" rows="5" name="sales_center_address"><?php echo e(old('sales_center_address', @request()->sales_center_address)); ?></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="order-btn d-flex flex-wrap">
-                                        <button class="cancel">cacel order</button>
-                                        <button type="button" class="porcced" data-bs-toggle="modal"
-                                                data-bs-target="#procced">procced order
+                                </div>
+                            </div>
+
+                            <div class="cart-items-area <?php echo e(count($cartItems) > 0 ? '' : 'd-none'); ?>">
+                                <div class="cart-box">
+                                    <div class="cart-top d-flex align-items-center justify-content-between">
+                                        <h6>items in cart</h6>
+                                        <button type="button" class="btn clearCart">
+                                            <i class="fa fa-times"></i>clear cart
                                         </button>
                                     </div>
-                                    <div class="procced-modal">
-                                        <div class="modal fade" id="procced" tabindex="-1"
-                                             aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                            <div class="modal-dialog ">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h1 class="modal-title fs-5" id="exampleModalLabel">make
-                                                            payment</h1>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                                aria-label="Close"></button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <div
-                                                            class="total-amount d-flex align-items-center justify-content-between">
-                                                            <h5>total</h5>
-                                                            <h6>$2358.7</h6>
-                                                        </div>
-                                                        <div
-                                                            class="enter-amount d-flex justify-content-between align-items-center">
-                                                            <h6>Enter amount customer paid</h6>
-                                                            <input type="number" class="form-control"
-                                                                   id="exampleFormControlInput1">
-                                                        </div>
-                                                        <div
-                                                            class="change-amount d-flex align-items-center justify-content-between">
-                                                            <h4>Change amount</h4>  <span>$-2358.70</span>
-                                                        </div>
-                                                        <div
-                                                            class="total-amount d-flex align-items-center justify-content-between">
-                                                            <h5>total</h5>
-                                                            <h6>$2358.7</h6>
-                                                        </div>
-                                                        <div class="file">
-                                                            <div class="mb-3">
-                                                                <label for="formFile"
-                                                                       class="form-label">Document</label>
-                                                                <input class="form-control" type="file" id="formFile">
+
+                                    <div class="addCartItems">
+                                        <?php $__currentLoopData = $cartItems; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $cartItem): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                            <div class="cat-item d-flex">
+                                                <div class="tittle"><?php echo e(optional($cartItem->item)->name); ?></div>
+                                                <input type="hidden" name="item_name[]"
+                                                       value="<?php echo e(optional($cartItem->item)->name); ?>">
+                                                <div class="quantity">
+                                                    <input type="number" name="item_quantity[]"
+                                                           value="<?php echo e($cartItem->quantity); ?>"
+                                                           class="itemQuantityInput"
+                                                           data-cartitem="<?php echo e($cartItem->cost_per_unit); ?>" min="1">
+                                                </div>
+                                                <div class="prize">
+                                                    <h6 class="cart-item-cost"><?php echo e($cartItem->cost); ?> <?php echo e($basic->currency_symbol); ?></h6>
+                                                    <input type="hidden" name="item_price[]"
+                                                           value="<?php echo e($cartItem->cost); ?>" class="item_price_input">
+                                                </div>
+                                                <div class="remove">
+                                                    <a href="javascript:void(0)" class="clearSingleCartItem"
+                                                       data-id="<?php echo e($cartItem->id); ?>">
+                                                        <i class="fa fa-times"></i></a>
+                                                </div>
+                                            </div>
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                    </div>
+                                </div>
+
+                                <div class="total-box">
+                                    <div class="amount">
+                                        <div class="input-group mb-3">
+                                            <input type="text" class="form-control itemsDiscountInput"
+                                                   aria-label="" placeholder="discount">
+                                            <span class="input-group-text">%</span>
+
+                                        </div>
+                                    </div>
+                                    <div class="total">
+                                        <ul>
+                                            <li>
+                                                <h5>subtotal</h5>
+                                                <h6><span
+                                                        class="sub-total-area"><?php echo e(getAmount($subTotal, config('basic.fraction_number'))); ?></span>
+                                                    <span
+                                                        class="sub-total-area-span"><?php echo e($basic->currency_symbol); ?></span>
+                                                </h6>
+                                                <input type="hidden" name="sub_total"
+                                                       value="<?php echo e(getAmount($subTotal, config('basic.fraction_number'))); ?>"
+                                                       class="sub-total-input">
+                                            </li>
+                                            <li>
+                                                <h5>Discount</h5>
+                                                <h6 class="discount-area">0 <?php echo e($basic->currency_symbol); ?></h6>
+                                                <input type="hidden" name="discount_amount" value="0"
+                                                       class="discount-amount-input">
+                                            </li>
+
+                                        </ul>
+                                        <div class="total-amount d-flex align-items-center justify-content-between">
+                                            <h5>total</h5>
+                                            <h6 class="total-area"><?php echo e(getAmount($subTotal, config('basic.fraction_number'))); ?> <?php echo e($basic->currency_symbol); ?></h6>
+                                            <input type="hidden" name="total_amount" class="total-amount-input"
+                                                   value="<?php echo e(getAmount($subTotal, config('basic.fraction_number'))); ?>">
+                                        </div>
+                                        <div class="order-btn d-flex flex-wrap">
+                                            <button class="cancel cancelOrder">cacel order</button>
+                                            <button type="button" class="porcced proccedOrderBtn">procced order
+                                            </button>
+
+                                            <div class="procced-modal">
+                                                <div class="modal fade" id="proccedOrderModal" tabindex="-1"
+                                                     aria-labelledby="proccedOrderModal" aria-hidden="true">
+                                                    <div class="modal-dialog ">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h1 class="modal-title fs-5"
+                                                                    id="exampleModalLabel"><?php echo app('translator')->get('Make Payment'); ?></h1>
+                                                                <button type="button" class="btn-close"
+                                                                        data-bs-dismiss="modal"
+                                                                        aria-label="Close"></button>
                                                             </div>
-                                                            <div class="mb-3">
-                                                                <label for="formFile" class="form-label">Pay
-                                                                    Date</label>
-                                                                <input class="form-control" type="date" id="formFile">
+                                                            <div class="modal-body">
+                                                                <div
+                                                                    class="total-amount d-flex align-items-center justify-content-between">
+                                                                    <h5><?php echo app('translator')->get('Total Order Amount'); ?></h5>
+                                                                    <h6 class="make-payment-total-amount"></h6>
+                                                                </div>
+                                                                <div
+                                                                    class="enter-amount d-flex justify-content-between align-items-center">
+                                                                    <h6>Customer Paid Amount</h6>
+                                                                    <input type="text"
+                                                                           class="form-control customer-paid-amount"
+                                                                           value="0" min="0"
+                                                                           onkeyup="this.value = this.value.replace (/^\.|[^\d\.]/g, '')"
+                                                                           id="exampleFormControlInput1"
+                                                                           name="customer_paid_amount">
+                                                                </div>
+                                                                <div
+                                                                    class="change-amount d-flex align-items-center justify-content-between">
+                                                                    <h4 class="m-2 due-or-change-text"></h4>  <span
+                                                                        class="due-or-change-amount"></span>
+                                                                    <input type="hidden" name="due_or_change_amount"
+                                                                           class="due_or_change_amount_input">
+                                                                </div>
+                                                                <div
+                                                                    class="total-amount d-flex align-items-center justify-content-between">
+                                                                    <h5><?php echo app('translator')->get('Total Payable Amount'); ?></h5>
+                                                                    <h6 class="total-payable-amount"></h6>
+                                                                    <input type="hidden" name="total_payable_amount"
+                                                                           class="total_payable_amount_input">
+                                                                </div>
+                                                                <div class="file">
+                                                                    <div class="mb-3">
+                                                                        <label for="formFile" class="form-label">Payment
+                                                                            Date</label>
+                                                                        <input type="date" name="payment_date"
+                                                                               placeholder="<?php echo app('translator')->get('payment date'); ?>"
+                                                                               class="form-control payment_date"
+                                                                               value="<?php echo e(old('payment_date',request()->payment_date)); ?>">
+                                                                        <div class="invalid-feedback d-block">
+                                                                            <?php $__errorArgs = ['payment_date'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> <?php echo app('translator')->get($message); ?> <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                                                                        </div>
+                                                                    </div>
+
+
+                                                                    <div class="mb-3">
+                                                                        <label for="formFile"
+                                                                               class="form-label"><?php echo app('translator')->get('Payment Note'); ?>
+                                                                            <span><sup>(<?php echo app('translator')->get('optional'); ?>)</sup></span></label>
+                                                                        <textarea class="form-control"
+                                                                                  id="exampleFormControlTextarea1"
+                                                                                  placeholder="Write payment note"
+                                                                                  rows="4"
+                                                                                  name="payment_note"></textarea>
+                                                                    </div>
+                                                                </div>
                                                             </div>
-                                                            <div class="mb-3">
-                                                                <label for="formFile" class="form-label">Payment
-                                                                    Note</label>
-                                                                <textarea class="form-control"
-                                                                          id="exampleFormControlTextarea1"
-                                                                          placeholder="Message" rows="5"></textarea>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-danger"
+                                                                        data-bs-dismiss="modal">cancel
+                                                                </button>
+                                                                <button type="submit"
+                                                                        class="btn btn-primary"><?php echo app('translator')->get('Confirm Order'); ?>
+                                                                </button>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-danger"
-                                                                data-bs-dismiss="modal">cancel
-                                                        </button>
-                                                        <button type="button" class="btn btn-primary">Comfirm Paid
-                                                        </button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -325,7 +401,8 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </form>
+
                 </div>
             </div>
         </div>
@@ -349,7 +426,7 @@
                             <div class="input-box col-md-12">
                                 <label for="selling_price"><?php echo app('translator')->get('Cost Per Unit'); ?></label>
                                 <div class="input-group">
-                                    <input type="hidden"  name="filter_item_id" class="filter_item_id" value="">
+                                    <input type="hidden" name="filter_item_id" class="filter_item_id" value="">
                                     <input type="text" name="selling_price"
                                            class="form-control selling_cost_per_unit <?php $__errorArgs = ['selling_price'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
@@ -400,7 +477,7 @@ unset($__errorArgs, $__bag); ?>"
                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                                 aria-label="Close"></button>
                     </div>
-                    <form action="<?php echo e(route('user.clearCartItems')); ?>" class="m-0 p-0 updateItemUnitPriceRoute"
+                    <form action="<?php echo e(route('user.clearCartItems')); ?>" class="m-0 p-0"
                           method="post">
                         <?php echo csrf_field(); ?>
                         <?php echo method_field('delete'); ?>
@@ -420,6 +497,35 @@ unset($__errorArgs, $__bag); ?>"
         </div>
     </div>
 
+    <div class="clear-cart profile-setting">
+        <div class="modal fade" id="cancelOrderModal" tabindex="-1" aria-labelledby="cancelOrderModal"
+             aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="cartModal">Confirmation</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                    </div>
+                    <form action="<?php echo e(route('user.clearCartItems')); ?>" class="m-0 p-0"
+                          method="post">
+                        <?php echo csrf_field(); ?>
+                        <?php echo method_field('delete'); ?>
+                        <div class="modal-body">
+                            <p>Are you sure cancel this order?</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
+                                No
+                            </button>
+                            <button type="submit" class="btn btn-primary">Yes</button>
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="clear-cart profile-setting">
         <div class="modal fade" id="clearSingleCartModal" tabindex="-1" aria-labelledby="clearSingleCartModal"
@@ -451,13 +557,25 @@ unset($__errorArgs, $__bag); ?>"
         </div>
     </div>
 
+    <div class="clear-cart profile-setting">
+
+    </div>
+
 <?php $__env->stopSection(); ?>
 
 <?php $__env->startPush('script'); ?>
+    <script src="<?php echo e(asset('assets/global/js/flatpickr.js')); ?>"></script>
     <script>
         'use strict'
 
-        if (!isNaN(parseFloat($('.selectedItems').data('oldselecteditems')))){
+        $(".flatpickr").flatpickr({
+            wrap: true,
+            maxDate: "today",
+            altInput: true,
+            dateFormat: "Y-m-d H:i",
+        });
+
+        if (!isNaN(parseFloat($('.selectedItems').data('oldselecteditems')))) {
             getSelectedItems(parseFloat($('.selectedItems').data('oldselecteditems')));
         }
 
@@ -606,7 +724,7 @@ unset($__errorArgs, $__bag); ?>"
             });
         }
 
-        $(document).on('click','.addToCartButton', function () {
+        $(document).on('click', '.addToCartButton', function () {
             let dataProperty = $(this).data('property');
             getAddToCartItems(dataProperty);
         });
@@ -626,9 +744,9 @@ unset($__errorArgs, $__bag); ?>"
                     }
 
                     let cartItems = response.cartItems;
-                    if (cartItems.length > 0){
+                    if (cartItems.length > 0) {
                         $('.cart-items-area').removeClass('d-none')
-                    }else {
+                    } else {
                         $('.cart-items-area').addClass('d-none')
                     }
 
@@ -636,14 +754,16 @@ unset($__errorArgs, $__bag); ?>"
                     let itemsData = '';
 
                     cartItems.forEach(function (cartItem) {
-                            itemsData += `<div class="cat-item d-flex">
+                        itemsData += `<div class="cat-item d-flex">
                         <div class="tittle">${cartItem.item.name}</div>
+                        <input type="hidden" name="item_name[]" value="${cartItem.item.name}">
                         <div class="quantity">
-                            <input type="number" value="${cartItem.quantity}"
+                            <input type="number" name="item_quantity[]" value="${cartItem.quantity}"
                                    class="itemQuantityInput" data-cartitem="${cartItem.cost_per_unit}" min="1">
                         </div>
                         <div class="prize">
                             <h6 class="cart-item-cost">${cartItem.cost} <?php echo e($basic->currency_symbol); ?></h6>
+                            <input type="hidden" name="item_price[]" value="${cartItem.cost}">
                         </div>
                         <div class="remove">
                             <a href="javascript:void(0)" class="clearSingleCartItem" data-id="${cartItem.id}"
@@ -651,7 +771,7 @@ unset($__errorArgs, $__bag); ?>"
                                <i class="fa fa-times"></i></a>
                         </div>
                     </div>`;
-                        });
+                    });
 
                     $('.addCartItems').html(itemsData);
 
@@ -665,6 +785,46 @@ unset($__errorArgs, $__bag); ?>"
                 }
             });
         }
+
+
+        $(document).on('click', '.proccedOrderBtn', function () {
+            var proccedOrderModal = new bootstrap.Modal(document.getElementById('proccedOrderModal'))
+            proccedOrderModal.show();
+
+            var totalAmount = parseFloat($('.total-area').text().match(/[\d.]+/)[0]);
+            $('.make-payment-total-amount').text(`${totalAmount.toFixed(2)} <?php echo e($basic->currency_symbol); ?>`)
+            $('.due-or-change-text').text('Due Amount');
+            $('.due-or-change-amount').text(`${totalAmount.toFixed(2)} <?php echo e($basic->currency_symbol); ?>`)
+            $('.total-payable-amount').text(`${totalAmount.toFixed(2)} <?php echo e($basic->currency_symbol); ?>`)
+
+            $('.due_or_change_amount_input').val(`${totalAmount.toFixed(2)}`)
+            $('.total_payable_amount_input').val(`${totalAmount.toFixed(2)}`)
+
+        });
+
+        $(document).on('keyup', '.customer-paid-amount', function () {
+            var totalAmount = parseFloat($('.total-area').text().match(/[\d.]+/)[0]);
+            let customerPaidAmount = isNaN(parseFloat($(this).val())) ? 0 : parseFloat($(this).val());
+            let dueOrChangeAmount = totalAmount - customerPaidAmount;
+
+            if (dueOrChangeAmount >= 0) {
+                console.log('due amount');
+                $('.due-or-change-text').text('Due Amount')
+                $('.due-or-change-amount').text(`${dueOrChangeAmount.toFixed(2)} <?php echo e($basic->currency_symbol); ?>`)
+                $('.total-payable-amount').text(`${customerPaidAmount.toFixed(2)} <?php echo e($basic->currency_symbol); ?>`)
+
+                $('.due_or_change_amount_input').val(`${dueOrChangeAmount.toFixed(2)}`)
+                $('.total_payable_amount_input').val(`${customerPaidAmount.toFixed(2)}`)
+
+            } else {
+                $('.due-or-change-text').text('Change Amount')
+                $('.due-or-change-amount').text(`${dueOrChangeAmount.toFixed(2)} <?php echo e($basic->currency_symbol); ?>`)
+                $('.total-payable-amount').text(`${totalAmount.toFixed(2)} <?php echo e($basic->currency_symbol); ?>`)
+
+                $('.due_or_change_amount_input').val(`${dueOrChangeAmount.toFixed(2)}`)
+                $('.total_payable_amount_input').val(`${totalAmount.toFixed(2)}`)
+            }
+        });
 
 
         $(document).on('click', '.updateUnitPrice', function () {
@@ -686,6 +846,12 @@ unset($__errorArgs, $__bag); ?>"
             clearCartModal.show();
         });
 
+        $(document).on('click', '.cancelOrder', function () {
+            var cancelOrderModal = new bootstrap.Modal(document.getElementById('cancelOrderModal'))
+            cancelOrderModal.show();
+        });
+
+
         $(document).on('click', '.clearSingleCartItem', function () {
             let cartId = $(this).data('id');
             $.ajax({
@@ -696,9 +862,9 @@ unset($__errorArgs, $__bag); ?>"
                 },
                 success: function (response) {
                     let cartItems = response.cartItems;
-                    if (cartItems.length > 0){
+                    if (cartItems.length > 0) {
                         $('.cart-items-area').removeClass('d-none')
-                    }else {
+                    } else {
                         $('.cart-items-area').addClass('d-none')
                     }
 
@@ -708,16 +874,17 @@ unset($__errorArgs, $__bag); ?>"
                     cartItems.forEach(function (cartItem) {
                         itemsData += `<div class="cat-item d-flex">
                         <div class="tittle">${cartItem.item.name}</div>
+                        <input type="hidden" name="item_name[]" value="${cartItem.item.name}">
                         <div class="quantity">
-                            <input type="number" value="${cartItem.quantity}"
+                            <input type="number" name="item_quantity[]" value="${cartItem.quantity}"
                                    class="itemQuantityInput" data-cartitem="${cartItem.cost_per_unit}" min="1">
                         </div>
                         <div class="prize">
                             <h6 class="cart-item-cost">${cartItem.cost} <?php echo e($basic->currency_symbol); ?></h6>
+                            <input type="hidden" name="item_price[]" value="${cartItem.cost}">
                         </div>
                         <div class="remove">
                             <a href="javascript:void(0)" class="clearSingleCartItem" data-id="${cartItem.id}"
-                               
                         data-name="${cartItem.item.name}">
                                <i class="fa fa-times"></i></a>
                         </div>
@@ -738,13 +905,13 @@ unset($__errorArgs, $__bag); ?>"
         });
 
 
-
         $('.itemQuantityInput').each(function (index, element) {
             $(document).on('input', `.${element.className}`, function () {
                 let cartQuantity = isNaN(parseFloat($(this).val())) ? 0 : parseFloat($(this).val());
                 let costPerUnit = parseFloat($(this).data('cartitem')).toFixed(2);
                 let singleCartItemCost = cartQuantity * costPerUnit;
                 $(this).parent().siblings('.prize').find('.cart-item-cost').text(`${singleCartItemCost.toFixed(2)} <?php echo e($basic->currency_symbol); ?>`);
+                $(this).parent().siblings('.prize').find('.item_price_input').val(`${singleCartItemCost.toFixed(2)}`);
 
                 // Recalculate subtotal and total
                 updateSubtotal();
@@ -761,6 +928,7 @@ unset($__errorArgs, $__bag); ?>"
             });
 
             $('.sub-total-area').text(`${subtotal.toFixed(2)} <?php echo e($basic->currency_symbol); ?>`);
+            $('.sub-total-input').val(`${subtotal.toFixed(2)}`);
             $('.sub-total-area-span').addClass('d-none');
         }
 
@@ -775,7 +943,9 @@ unset($__errorArgs, $__bag); ?>"
 
             // Update the discount and total amounts
             $('.discount-area').text(`${discountAmount.toFixed(2)} <?php echo e($basic->currency_symbol); ?>`);
+            $('.discount-amount-input').val(`${discountAmount.toFixed(2)}`);
             $('.total-area').text(`${totalAmount.toFixed(2)} <?php echo e($basic->currency_symbol); ?>`);
+            $('.total-amount-input').val(`${totalAmount.toFixed(2)}`);
         }
 
         $(document).on('input', '.itemsDiscountInput', function () {
@@ -790,6 +960,7 @@ unset($__errorArgs, $__bag); ?>"
                     let costPerUnit = parseFloat($(this).data('cartitem')).toFixed(2);
                     let singleCartItemCost = cartQuantity * costPerUnit;
                     $(this).parent().siblings('.prize').find('.cart-item-cost').text(`${singleCartItemCost.toFixed(2)} <?php echo e($basic->currency_symbol); ?>`);
+                    $(this).parent().siblings('.prize').find('.item_price_input').val(`${singleCartItemCost.toFixed(2)}`);
 
                     // Recalculate subtotal and total
                     updateSubtotal();

@@ -53,16 +53,44 @@
             <a class="{{menuActive(['user.stockList'])}}" href="{{ route('user.stockList') }}"><i class="fal fa-layer-group"></i>@lang('Stock In')</a>
         </li>
 
-        <li>
-            <a class="{{menuActive(['user.manageSales'])}}" href="{{ route('user.manageSales') }}"><i class="fal fa-shopping-bag"></i> @lang('Manage Sales')</a>
-        </li>
-
+{{--        <li>--}}
+{{--            <a class="{{menuActive(['user.manageSales'])}}" href="{{ route('user.manageSales') }}"><i class="fal fa-shopping-bag"></i> @lang('Manage Sales')</a>--}}
+{{--        </li>--}}
 
         @php
             $segments = request()->segments();
             $last  = end($segments);
-            $propertyMarketSegments = ['investment-properties', 'property-share-market', 'my-investment-properties', 'my-shared-properties', 'my-offered-properties', 'receive-offered-properties', 'offer-conversation'];
+            $manageSalesSegments = ['sales-items'];
         @endphp
+
+        <li>
+            <a
+                class="dropdown-toggle {{ in_array($last, $manageSalesSegments) || in_array($segments[1], $manageSalesSegments) ? 'manageSalesActive' : '' }}"
+                data-bs-toggle="collapse"
+                href="#dropdownCollapsible"
+                role="button"
+                aria-expanded="false"
+                aria-controls="collapseExample">
+                <i class="fal fa-car-building"></i>@lang('Manage Sales')
+            </a>
+            <div class="collapse {{menuActive(['user.salesItem', 'user.salesList'],4)}} dropdownCollapsible" id="dropdownCollapsible">
+                <ul class="">
+                    <li>
+                        <a class="" href="{{ route('user.salesList') }}"><i class="fal fa-sack-dollar"></i>@lang('Sales List')</a>
+                    </li>
+                    <li>
+                        <a class="{{($last == 'sales-items') ? 'active' : '' }}"  href="{{ route('user.salesItem') }}"><i class="fal fa-house-return"></i>@lang('Sales Item')</a>
+                    </li>
+                </ul>
+            </div>
+        </li>
+
+
+{{--        @php--}}
+{{--            $segments = request()->segments();--}}
+{{--            $last  = end($segments);--}}
+{{--            $propertyMarketSegments = ['investment-properties', 'property-share-market', 'my-investment-properties', 'my-shared-properties', 'my-offered-properties', 'receive-offered-properties', 'offer-conversation'];--}}
+{{--        @endphp--}}
 
 {{--        <li>--}}
 {{--            <a--}}

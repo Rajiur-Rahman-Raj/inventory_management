@@ -7789,7 +7789,7 @@ button.gold-btn.copyReferalLink {
   border: 1px solid var(--border-color);
   text-transform: capitalize;
   border-bottom: none;
-  padding: 10px 65px;
+  padding: 10px 60px;
   background-color: #f2f4f7;
 }
 .pos-section .cart-side .tab-box .description-tab .nav-link.active {
@@ -7961,7 +7961,7 @@ button.gold-btn.copyReferalLink {
 .pos-section .cart-side .total-box .total .order-btn .cancel {
   margin-top: 10px;
   margin-right: 10px;
-  border: 1px solid var(--primary);
+  border: 1px solid #a03035;
   padding: 10px 50px;
   border-radius: 5px;
   background: transparent;
@@ -7970,14 +7970,14 @@ button.gold-btn.copyReferalLink {
   flex: 1;
 }
 .pos-section .cart-side .total-box .total .order-btn .cancel:hover {
-  background-color: var(--primary);
+  background-color: #a03035;
   color: #fff;
 }
 .pos-section .cart-side .total-box .total .order-btn .porcced {
   margin-top: 10px;
-  border: 1px solid #009efa;
+  border: 1px solid var(--primary);
   padding: 10px 50px;
-  background-color: #009efa;
+  background-color: var(--primary);
   color: #fff;
   border-radius: 5px;
   flex: 1;
@@ -7985,67 +7985,67 @@ button.gold-btn.copyReferalLink {
   transition: 0.5s;
 }
 .pos-section .cart-side .total-box .total .order-btn .porcced:hover {
-  border: 1px solid #009efa;
+  border: 1px solid var(--primary);
   background-color: transparent;
   color: #000;
 }
-.pos-section .cart-side .total-box .total .procced-modal .modal .modal-content .modal-header h1 {
+.procced-modal .modal .modal-content .modal-header h1 {
   text-transform: capitalize;
 }
-.pos-section .cart-side .total-box .total .procced-modal .modal .modal-content .modal-header button:focus {
+.procced-modal .modal .modal-content .modal-header button:focus {
   outline: 0;
   box-shadow: 0 0 0.25rem rgba(13, 110, 253, 0);
 }
-.pos-section .cart-side .total-box .total .procced-modal .modal .modal-content .modal-body .total-amount {
+.procced-modal .modal .modal-content .modal-body .total-amount {
   border-bottom: 1px solid #a6a9ad;
   padding: 15px 5px;
 }
-.pos-section .cart-side .total-box .total .procced-modal .modal .modal-content .modal-body .total-amount h5 {
+.procced-modal .modal .modal-content .modal-body .total-amount h5 {
   color: #777a7e;
 }
-.pos-section .cart-side .total-box .total .procced-modal .modal .modal-content .modal-body .total-amount h6 {
+.procced-modal .modal .modal-content .modal-body .total-amount h6 {
   font-size: 20px;
   font-weight: 400;
 }
-.pos-section .cart-side .total-box .total .procced-modal .modal .modal-content .modal-body .enter-amount {
+.procced-modal .modal .modal-content .modal-body .enter-amount {
   padding: 20px 5px;
 }
-.pos-section .cart-side .total-box .total .procced-modal .modal .modal-content .modal-body .enter-amount h6 {
+.procced-modal .modal .modal-content .modal-body .enter-amount h6 {
   font-size: 17px;
   color: #767878;
 }
-.pos-section .cart-side .total-box .total .procced-modal .modal .modal-content .modal-body .enter-amount input {
+.procced-modal .modal .modal-content .modal-body .enter-amount input {
   width: 100px;
 }
-.pos-section .cart-side .total-box .total .procced-modal .modal .modal-content .modal-body .enter-amount input:focus {
+.procced-modal .modal .modal-content .modal-body .enter-amount input:focus {
   outline: 0;
   box-shadow: 0 0 0.25rem rgba(13, 110, 253, 0);
 }
-.pos-section .cart-side .total-box .total .procced-modal .modal .modal-content .modal-body .change-amount {
+.procced-modal .modal .modal-content .modal-body .change-amount {
   padding: 10px 10px;
   background-color: #f2f4f7;
 }
-.pos-section .cart-side .total-box .total .procced-modal .modal .modal-content .modal-body .change-amount h4 {
+.procced-modal .modal .modal-content .modal-body .change-amount h4 {
   font-size: 17px;
   color: #767878;
   text-transform: capitalize;
 }
-.pos-section .cart-side .total-box .total .procced-modal .modal .modal-content .modal-body .change-amount span {
+.procced-modal .modal .modal-content .modal-body .change-amount span {
   font-size: 20px;
   font-weight: 500;
 }
-.pos-section .cart-side .total-box .total .procced-modal .modal .modal-content .modal-body .file {
+.procced-modal .modal .modal-content .modal-body .file {
   margin-top: 10px;
 }
-.pos-section .cart-side .total-box .total .procced-modal .modal .modal-content .modal-body .file input {
+.procced-modal .modal .modal-content .modal-body .file input {
   padding: 10px;
   background-color: transparent;
 }
-.pos-section .cart-side .total-box .total .procced-modal .modal .modal-content .modal-body .file input:focus {
+.procced-modal .modal .modal-content .modal-body .file input:focus {
   outline: 0;
   box-shadow: 0 0 0.25rem rgba(13, 110, 253, 0);
 }
-.pos-section .cart-side .total-box .total .procced-modal .modal .modal-content .modal-body .file textarea:focus {
+.procced-modal .modal .modal-content .modal-body .file textarea:focus {
   outline: 0;
   box-shadow: 0 0 0.25rem rgba(13, 110, 253, 0);
 }
@@ -8057,5 +8057,16 @@ button.gold-btn.copyReferalLink {
     font-weight: 500 !important;
     border: 1px solid #d7d7d7 !important;
     padding: 5px 10px !important;
+}
+.pay-date-clear{
+    padding: 10px;
+    cursor: pointer;
+}
+
+.pay-date-clear a i{
+    color: var(--primary);
+}
+.manageSalesActive{
+    color: var(--primary) !important;
 }
 /*Manage Sales css end*/
