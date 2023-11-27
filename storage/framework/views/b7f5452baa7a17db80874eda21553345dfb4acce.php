@@ -224,7 +224,8 @@ unset($__errorArgs, $__bag); ?>
 
                                                 <div class="mb-3">
                                     <textarea class="form-control sales-center-address" id="exampleFormControlTextarea1"
-                                              placeholder="Sales Center Address" rows="5" name="sales_center_address"><?php echo e(old('sales_center_address', @request()->sales_center_address)); ?></textarea>
+                                              placeholder="Sales Center Address" rows="5"
+                                              name="sales_center_address"><?php echo e(old('sales_center_address', @request()->sales_center_address)); ?></textarea>
                                                 </div>
                                             </div>
                                         </div>
@@ -245,14 +246,19 @@ unset($__errorArgs, $__bag); ?>
                                         <?php $__currentLoopData = $cartItems; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $cartItem): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                             <div class="cat-item d-flex">
                                                 <div class="tittle"><?php echo e(optional($cartItem->item)->name); ?></div>
+                                                <input type="hidden" name="item_id[]" value="<?php echo e(optional($cartItem->item)->id); ?>">
                                                 <input type="hidden" name="item_name[]"
                                                        value="<?php echo e(optional($cartItem->item)->name); ?>">
                                                 <div class="quantity">
                                                     <input type="number" name="item_quantity[]"
                                                            value="<?php echo e($cartItem->quantity); ?>"
                                                            class="itemQuantityInput"
-                                                           data-cartitem="<?php echo e($cartItem->cost_per_unit); ?>" min="1">
+                                                           data-stockid="<?php echo e($cartItem->stock_id); ?>"
+                                                           data-itemid="<?php echo e($cartItem->item_id); ?>"
+                                                           data-cartitem="<?php echo e($cartItem->cost_per_unit); ?>"
+                                                           min="1">
                                                 </div>
+
                                                 <div class="prize">
                                                     <h6 class="cart-item-cost"><?php echo e($cartItem->cost); ?> <?php echo e($basic->currency_symbol); ?></h6>
                                                     <input type="hidden" name="item_price[]"
@@ -305,7 +311,7 @@ unset($__errorArgs, $__bag); ?>
                                                    value="<?php echo e(getAmount($subTotal, config('basic.fraction_number'))); ?>">
                                         </div>
                                         <div class="order-btn d-flex flex-wrap">
-                                            <button class="cancel cancelOrder">cacel order</button>
+                                            <button class="cancel cancelOrder" type="button">cacel order</button>
                                             <button type="button" class="porcced proccedOrderBtn">procced order
                                             </button>
 
@@ -756,14 +762,16 @@ unset($__errorArgs, $__bag); ?>"
                     cartItems.forEach(function (cartItem) {
                         itemsData += `<div class="cat-item d-flex">
                         <div class="tittle">${cartItem.item.name}</div>
+                        <input type="hidden" name="item_id[]" value="${cartItem.item.id}">
                         <input type="hidden" name="item_name[]" value="${cartItem.item.name}">
                         <div class="quantity">
                             <input type="number" name="item_quantity[]" value="${cartItem.quantity}"
-                                   class="itemQuantityInput" data-cartitem="${cartItem.cost_per_unit}" min="1">
+                                   class="itemQuantityInput" data-cartitem="${cartItem.cost_per_unit}" data-stockid="${cartItem.stock_id}"
+                                                           data-itemid="${cartItem.item_id}" min="1">
                         </div>
                         <div class="prize">
                             <h6 class="cart-item-cost">${cartItem.cost} <?php echo e($basic->currency_symbol); ?></h6>
-                            <input type="hidden" name="item_price[]" value="${cartItem.cost}">
+                            <input type="hidden" name="item_price[]" value="${cartItem.cost}" class="item_price_input">
                         </div>
                         <div class="remove">
                             <a href="javascript:void(0)" class="clearSingleCartItem" data-id="${cartItem.id}"
@@ -808,7 +816,6 @@ unset($__errorArgs, $__bag); ?>"
             let dueOrChangeAmount = totalAmount - customerPaidAmount;
 
             if (dueOrChangeAmount >= 0) {
-                console.log('due amount');
                 $('.due-or-change-text').text('Due Amount')
                 $('.due-or-change-amount').text(`${dueOrChangeAmount.toFixed(2)} <?php echo e($basic->currency_symbol); ?>`)
                 $('.total-payable-amount').text(`${customerPaidAmount.toFixed(2)} <?php echo e($basic->currency_symbol); ?>`)
@@ -874,6 +881,7 @@ unset($__errorArgs, $__bag); ?>"
                     cartItems.forEach(function (cartItem) {
                         itemsData += `<div class="cat-item d-flex">
                         <div class="tittle">${cartItem.item.name}</div>
+                         <input type="hidden" name="item_id[]" value="${cartItem.item.id}">
                         <input type="hidden" name="item_name[]" value="${cartItem.item.name}">
                         <div class="quantity">
                             <input type="number" name="item_quantity[]" value="${cartItem.quantity}"
@@ -881,7 +889,7 @@ unset($__errorArgs, $__bag); ?>"
                         </div>
                         <div class="prize">
                             <h6 class="cart-item-cost">${cartItem.cost} <?php echo e($basic->currency_symbol); ?></h6>
-                            <input type="hidden" name="item_price[]" value="${cartItem.cost}">
+                            <input type="hidden" name="item_price[]" value="${cartItem.cost}" class="item_price_input">
                         </div>
                         <div class="remove">
                             <a href="javascript:void(0)" class="clearSingleCartItem" data-id="${cartItem.id}"
@@ -904,20 +912,6 @@ unset($__errorArgs, $__bag); ?>"
 
         });
 
-
-        $('.itemQuantityInput').each(function (index, element) {
-            $(document).on('input', `.${element.className}`, function () {
-                let cartQuantity = isNaN(parseFloat($(this).val())) ? 0 : parseFloat($(this).val());
-                let costPerUnit = parseFloat($(this).data('cartitem')).toFixed(2);
-                let singleCartItemCost = cartQuantity * costPerUnit;
-                $(this).parent().siblings('.prize').find('.cart-item-cost').text(`${singleCartItemCost.toFixed(2)} <?php echo e($basic->currency_symbol); ?>`);
-                $(this).parent().siblings('.prize').find('.item_price_input').val(`${singleCartItemCost.toFixed(2)}`);
-
-                // Recalculate subtotal and total
-                updateSubtotal();
-                updateTotal();
-            })
-        });
 
         function updateSubtotal() {
             let subtotal = 0;
@@ -953,21 +947,74 @@ unset($__errorArgs, $__bag); ?>"
             updateTotal();
         });
 
+
+        $('.itemQuantityInput').each(function (index, element) {
+            $(document).on('input', `.${element.className}`, function () {
+                let thisClass = $(this);
+                let cartQuantity = isNaN(parseFloat($(this).val())) ? 0 : parseFloat($(this).val());
+                let costPerUnit = parseFloat($(this).data('cartitem')).toFixed(2);
+                let singleCartItemCost = cartQuantity * costPerUnit;
+                $(this).parent().siblings('.prize').find('.cart-item-cost').text(`${singleCartItemCost.toFixed(2)} <?php echo e($basic->currency_symbol); ?>`);
+                $(this).parent().siblings('.prize').find('.item_price_input').val(`${singleCartItemCost.toFixed(2)}`);
+
+                // Recalculate subtotal and total
+                updateSubtotal();
+                updateTotal();
+
+                let stockId = $(this).data('stockid');
+                let itemId = $(this).data('itemid');
+                // update quantity and cost also cartItems table
+                updateCartItem(stockId,itemId,cartQuantity,costPerUnit,singleCartItemCost, thisClass);
+
+            })
+        });
+
         $(document).on('input', '.itemQuantityInput', function () {
             $('.itemQuantityInput').each(function (index, element) {
                 $(document).on('input', `.${element.className}`, function () {
+                    let thisClass = $(this);
                     let cartQuantity = isNaN(parseFloat($(this).val())) ? 0 : parseFloat($(this).val());
                     let costPerUnit = parseFloat($(this).data('cartitem')).toFixed(2);
                     let singleCartItemCost = cartQuantity * costPerUnit;
                     $(this).parent().siblings('.prize').find('.cart-item-cost').text(`${singleCartItemCost.toFixed(2)} <?php echo e($basic->currency_symbol); ?>`);
                     $(this).parent().siblings('.prize').find('.item_price_input').val(`${singleCartItemCost.toFixed(2)}`);
-
                     // Recalculate subtotal and total
                     updateSubtotal();
                     updateTotal();
+
+                    let stockId = $(this).data('stockid');
+                    let itemId = $(this).data('itemid');
+                    // update quantity and cost also cartItems table
+                    updateCartItem(stockId,itemId,cartQuantity,costPerUnit,singleCartItemCost, thisClass);
                 })
             });
         });
+
+        function updateCartItem(stockId,itemId,cartQuantity,costPerUnit,singleCartItemCost,thisClass){
+            // update quantity and cost also cartItems table
+            $.ajax({
+                url: "<?php echo e(route('user.updateCartItems')); ?>",
+                method: 'POST',
+                data: {
+                    stockId: stockId,
+                    itemId: itemId,
+                    cartQuantity: cartQuantity,
+                    costPerUnit: costPerUnit,
+                    singleCartItemCost: singleCartItemCost,
+                },
+                success: function (response) {
+                    if (!response.status) {
+                        Notiflix.Notify.Warning(response.message);
+                        thisClass.attr('max', response.stockQuantity)
+                        thisClass.val(response.stockQuantity)
+
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log(error);
+                }
+            });
+        }
 
 
     </script>

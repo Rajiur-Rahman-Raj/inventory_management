@@ -69,9 +69,10 @@
                         <th scope="col"><?php echo app('translator')->get('SL'); ?></th>
                         <th scope="col"><?php echo app('translator')->get('Sales Center'); ?></th>
                         <th scope="col"><?php echo app('translator')->get('Total Amount'); ?></th>
+                        <th scope="col"><?php echo app('translator')->get('Sales Date'); ?></th>
                         <th scope="col"><?php echo app('translator')->get('Last Payment Date'); ?></th>
                         <th scope="col"><?php echo app('translator')->get('Payment Status'); ?></th>
-
+                        <th scope="col"><?php echo app('translator')->get('Action'); ?></th>
                     </tr>
                     </thead>
 
@@ -81,34 +82,35 @@
                             <td data-label="<?php echo app('translator')->get('SL'); ?>"><?php echo e(loopIndex($salesLists) + $key); ?></td>
                             <td data-label="<?php echo app('translator')->get('Sales Center'); ?>"> <?php echo e(optional($salesList->salesCenter)->name); ?> </td>
                             <td data-label="<?php echo app('translator')->get('Total Amount'); ?>"
-                                class="font-weight-bold">  <?php echo e($salesList->total_amount); ?> </td>
+                                class="font-weight-bold">  <?php echo e($salesList->total_amount); ?> <?php echo e($basic->currency_symbol); ?></td>
+                            <td data-label="<?php echo app('translator')->get('Sales Date'); ?>"> <?php echo e(customDate($salesList->created_at)); ?> </td>
                             <td data-label="<?php echo app('translator')->get('Last Payment Date'); ?>"> <?php echo e(customDate($salesList->payment_date)); ?> </td>
                             <td data-label="<?php echo app('translator')->get('Payment Status'); ?>">
                                 <?php if($salesList->payment_status == 1): ?>
-                                    <span class="badge bg-success"><?php echo app('translator')->get('Completed'); ?></span>
+                                    <span class="badge bg-success"><?php echo app('translator')->get('Paid'); ?></span>
                                 <?php else: ?>
                                     <span class="badge bg-warning"><?php echo app('translator')->get('Due'); ?></span>
                                 <?php endif; ?>
                             </td>
 
+                            <td data-label="Action">
+                                <div class="sidebar-dropdown-items">
+                                    <button
+                                        type="button"
+                                        class="dropdown-toggle"
+                                        data-bs-toggle="dropdown"
+                                        aria-expanded="false">
+                                        <i class="fal fa-cog"></i>
+                                    </button>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        <li>
+                                            <a href="<?php echo e(route('user.salesDetails', $salesList->id)); ?>"
+                                               class="dropdown-item"> <i class="fal fa-eye"></i> <?php echo app('translator')->get('Details'); ?> </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </td>
                         </tr>
                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                         <tr class="text-center">

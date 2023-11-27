@@ -76,7 +76,7 @@
             <div class="collapse <?php echo e(menuActive(['user.salesItem', 'user.salesList'],4)); ?> dropdownCollapsible" id="dropdownCollapsible">
                 <ul class="">
                     <li>
-                        <a class="" href="<?php echo e(route('user.salesList')); ?>"><i class="fal fa-sack-dollar"></i><?php echo app('translator')->get('Sales List'); ?></a>
+                        <a class="<?php echo e(($last == 'sales-list') ? 'active' : ''); ?>" href="<?php echo e(route('user.salesList')); ?>"><i class="fal fa-sack-dollar"></i><?php echo app('translator')->get('Sales List'); ?></a>
                     </li>
                     <li>
                         <a class="<?php echo e(($last == 'sales-items') ? 'active' : ''); ?>"  href="<?php echo e(route('user.salesItem')); ?>"><i class="fal fa-house-return"></i><?php echo app('translator')->get('Sales Item'); ?></a>

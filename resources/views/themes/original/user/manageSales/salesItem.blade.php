@@ -210,7 +210,8 @@
 
                                                 <div class="mb-3">
                                     <textarea class="form-control sales-center-address" id="exampleFormControlTextarea1"
-                                              placeholder="Sales Center Address" rows="5" name="sales_center_address">{{ old('sales_center_address', @request()->sales_center_address) }}</textarea>
+                                              placeholder="Sales Center Address" rows="5"
+                                              name="sales_center_address">{{ old('sales_center_address', @request()->sales_center_address) }}</textarea>
                                                 </div>
                                             </div>
                                         </div>
@@ -231,14 +232,19 @@
                                         @foreach($cartItems as $cartItem)
                                             <div class="cat-item d-flex">
                                                 <div class="tittle">{{ optional($cartItem->item)->name }}</div>
+                                                <input type="hidden" name="item_id[]" value="{{ optional($cartItem->item)->id }}">
                                                 <input type="hidden" name="item_name[]"
                                                        value="{{ optional($cartItem->item)->name }}">
                                                 <div class="quantity">
                                                     <input type="number" name="item_quantity[]"
                                                            value="{{ $cartItem->quantity }}"
                                                            class="itemQuantityInput"
-                                                           data-cartitem="{{ $cartItem->cost_per_unit }}" min="1">
+                                                           data-stockid="{{ $cartItem->stock_id }}"
+                                                           data-itemid="{{ $cartItem->item_id }}"
+                                                           data-cartitem="{{ $cartItem->cost_per_unit }}"
+                                                           min="1">
                                                 </div>
+
                                                 <div class="prize">
                                                     <h6 class="cart-item-cost">{{ $cartItem->cost }} {{ $basic->currency_symbol }}</h6>
                                                     <input type="hidden" name="item_price[]"
@@ -291,7 +297,7 @@
                                                    value="{{getAmount($subTotal, config('basic.fraction_number'))}}">
                                         </div>
                                         <div class="order-btn d-flex flex-wrap">
-                                            <button class="cancel cancelOrder">cacel order</button>
+                                            <button class="cancel cancelOrder" type="button">cacel order</button>
                                             <button type="button" class="porcced proccedOrderBtn">procced order
                                             </button>
 
@@ -726,14 +732,16 @@
                     cartItems.forEach(function (cartItem) {
                         itemsData += `<div class="cat-item d-flex">
                         <div class="tittle">${cartItem.item.name}</div>
+                        <input type="hidden" name="item_id[]" value="${cartItem.item.id}">
                         <input type="hidden" name="item_name[]" value="${cartItem.item.name}">
                         <div class="quantity">
                             <input type="number" name="item_quantity[]" value="${cartItem.quantity}"
-                                   class="itemQuantityInput" data-cartitem="${cartItem.cost_per_unit}" min="1">
+                                   class="itemQuantityInput" data-cartitem="${cartItem.cost_per_unit}" data-stockid="${cartItem.stock_id}"
+                                                           data-itemid="${cartItem.item_id}" min="1">
                         </div>
                         <div class="prize">
                             <h6 class="cart-item-cost">${cartItem.cost} {{ $basic->currency_symbol }}</h6>
-                            <input type="hidden" name="item_price[]" value="${cartItem.cost}">
+                            <input type="hidden" name="item_price[]" value="${cartItem.cost}" class="item_price_input">
                         </div>
                         <div class="remove">
                             <a href="javascript:void(0)" class="clearSingleCartItem" data-id="${cartItem.id}"
@@ -778,7 +786,6 @@
             let dueOrChangeAmount = totalAmount - customerPaidAmount;
 
             if (dueOrChangeAmount >= 0) {
-                console.log('due amount');
                 $('.due-or-change-text').text('Due Amount')
                 $('.due-or-change-amount').text(`${dueOrChangeAmount.toFixed(2)} {{ $basic->currency_symbol }}`)
                 $('.total-payable-amount').text(`${customerPaidAmount.toFixed(2)} {{ $basic->currency_symbol }}`)
@@ -844,6 +851,7 @@
                     cartItems.forEach(function (cartItem) {
                         itemsData += `<div class="cat-item d-flex">
                         <div class="tittle">${cartItem.item.name}</div>
+                         <input type="hidden" name="item_id[]" value="${cartItem.item.id}">
                         <input type="hidden" name="item_name[]" value="${cartItem.item.name}">
                         <div class="quantity">
                             <input type="number" name="item_quantity[]" value="${cartItem.quantity}"
@@ -851,7 +859,7 @@
                         </div>
                         <div class="prize">
                             <h6 class="cart-item-cost">${cartItem.cost} {{ $basic->currency_symbol }}</h6>
-                            <input type="hidden" name="item_price[]" value="${cartItem.cost}">
+                            <input type="hidden" name="item_price[]" value="${cartItem.cost}" class="item_price_input">
                         </div>
                         <div class="remove">
                             <a href="javascript:void(0)" class="clearSingleCartItem" data-id="${cartItem.id}"
@@ -874,20 +882,6 @@
 
         });
 
-
-        $('.itemQuantityInput').each(function (index, element) {
-            $(document).on('input', `.${element.className}`, function () {
-                let cartQuantity = isNaN(parseFloat($(this).val())) ? 0 : parseFloat($(this).val());
-                let costPerUnit = parseFloat($(this).data('cartitem')).toFixed(2);
-                let singleCartItemCost = cartQuantity * costPerUnit;
-                $(this).parent().siblings('.prize').find('.cart-item-cost').text(`${singleCartItemCost.toFixed(2)} {{ $basic->currency_symbol }}`);
-                $(this).parent().siblings('.prize').find('.item_price_input').val(`${singleCartItemCost.toFixed(2)}`);
-
-                // Recalculate subtotal and total
-                updateSubtotal();
-                updateTotal();
-            })
-        });
 
         function updateSubtotal() {
             let subtotal = 0;
@@ -923,21 +917,74 @@
             updateTotal();
         });
 
+
+        $('.itemQuantityInput').each(function (index, element) {
+            $(document).on('input', `.${element.className}`, function () {
+                let thisClass = $(this);
+                let cartQuantity = isNaN(parseFloat($(this).val())) ? 0 : parseFloat($(this).val());
+                let costPerUnit = parseFloat($(this).data('cartitem')).toFixed(2);
+                let singleCartItemCost = cartQuantity * costPerUnit;
+                $(this).parent().siblings('.prize').find('.cart-item-cost').text(`${singleCartItemCost.toFixed(2)} {{ $basic->currency_symbol }}`);
+                $(this).parent().siblings('.prize').find('.item_price_input').val(`${singleCartItemCost.toFixed(2)}`);
+
+                // Recalculate subtotal and total
+                updateSubtotal();
+                updateTotal();
+
+                let stockId = $(this).data('stockid');
+                let itemId = $(this).data('itemid');
+                // update quantity and cost also cartItems table
+                updateCartItem(stockId,itemId,cartQuantity,costPerUnit,singleCartItemCost, thisClass);
+
+            })
+        });
+
         $(document).on('input', '.itemQuantityInput', function () {
             $('.itemQuantityInput').each(function (index, element) {
                 $(document).on('input', `.${element.className}`, function () {
+                    let thisClass = $(this);
                     let cartQuantity = isNaN(parseFloat($(this).val())) ? 0 : parseFloat($(this).val());
                     let costPerUnit = parseFloat($(this).data('cartitem')).toFixed(2);
                     let singleCartItemCost = cartQuantity * costPerUnit;
                     $(this).parent().siblings('.prize').find('.cart-item-cost').text(`${singleCartItemCost.toFixed(2)} {{ $basic->currency_symbol }}`);
                     $(this).parent().siblings('.prize').find('.item_price_input').val(`${singleCartItemCost.toFixed(2)}`);
-
                     // Recalculate subtotal and total
                     updateSubtotal();
                     updateTotal();
+
+                    let stockId = $(this).data('stockid');
+                    let itemId = $(this).data('itemid');
+                    // update quantity and cost also cartItems table
+                    updateCartItem(stockId,itemId,cartQuantity,costPerUnit,singleCartItemCost, thisClass);
                 })
             });
         });
+
+        function updateCartItem(stockId,itemId,cartQuantity,costPerUnit,singleCartItemCost,thisClass){
+            // update quantity and cost also cartItems table
+            $.ajax({
+                url: "{{ route('user.updateCartItems') }}",
+                method: 'POST',
+                data: {
+                    stockId: stockId,
+                    itemId: itemId,
+                    cartQuantity: cartQuantity,
+                    costPerUnit: costPerUnit,
+                    singleCartItemCost: singleCartItemCost,
+                },
+                success: function (response) {
+                    if (!response.status) {
+                        Notiflix.Notify.Warning(response.message);
+                        thisClass.attr('max', response.stockQuantity)
+                        thisClass.val(response.stockQuantity)
+
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log(error);
+                }
+            });
+        }
 
 
     </script>

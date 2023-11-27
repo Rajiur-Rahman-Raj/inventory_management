@@ -76,7 +76,7 @@
             <div class="collapse {{menuActive(['user.salesItem', 'user.salesList'],4)}} dropdownCollapsible" id="dropdownCollapsible">
                 <ul class="">
                     <li>
-                        <a class="" href="{{ route('user.salesList') }}"><i class="fal fa-sack-dollar"></i>@lang('Sales List')</a>
+                        <a class="{{($last == 'sales-list') ? 'active' : '' }}" href="{{ route('user.salesList') }}"><i class="fal fa-sack-dollar"></i>@lang('Sales List')</a>
                     </li>
                     <li>
                         <a class="{{($last == 'sales-items') ? 'active' : '' }}"  href="{{ route('user.salesItem') }}"><i class="fal fa-house-return"></i>@lang('Sales Item')</a>

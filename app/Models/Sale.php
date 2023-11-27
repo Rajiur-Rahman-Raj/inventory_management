@@ -19,5 +19,9 @@ class Sale extends Model
         return $this->belongsTo(SalesCenter::class, 'sales_center_id');
     }
 
+    public function customer(){
+        return $this->belongsTo(Customer::class, 'customer_id');
+    }
+
 
 }

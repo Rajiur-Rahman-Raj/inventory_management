@@ -70,9 +70,10 @@
                         <th scope="col">@lang('SL')</th>
                         <th scope="col">@lang('Sales Center')</th>
                         <th scope="col">@lang('Total Amount')</th>
+                        <th scope="col">@lang('Sales Date')</th>
                         <th scope="col">@lang('Last Payment Date')</th>
                         <th scope="col">@lang('Payment Status')</th>
-{{--                        <th scope="col">@lang('Action')</th>--}}
+                        <th scope="col">@lang('Action')</th>
                     </tr>
                     </thead>
 
@@ -82,34 +83,35 @@
                             <td data-label="@lang('SL')">{{loopIndex($salesLists) + $key}}</td>
                             <td data-label="@lang('Sales Center')"> {{ optional($salesList->salesCenter)->name }} </td>
                             <td data-label="@lang('Total Amount')"
-                                class="font-weight-bold">  {{ $salesList->total_amount }} </td>
+                                class="font-weight-bold">  {{ $salesList->total_amount }} {{ $basic->currency_symbol }}</td>
+                            <td data-label="@lang('Sales Date')"> {{ customDate($salesList->created_at) }} </td>
                             <td data-label="@lang('Last Payment Date')"> {{ customDate($salesList->payment_date) }} </td>
                             <td data-label="@lang('Payment Status')">
                                 @if($salesList->payment_status == 1)
-                                    <span class="badge bg-success">@lang('Completed')</span>
+                                    <span class="badge bg-success">@lang('Paid')</span>
                                 @else
                                     <span class="badge bg-warning">@lang('Due')</span>
                                 @endif
                             </td>
 
-{{--                            <td data-label="Action">--}}
-{{--                                <div class="sidebar-dropdown-items">--}}
-{{--                                    <button--}}
-{{--                                        type="button"--}}
-{{--                                        class="dropdown-toggle"--}}
-{{--                                        data-bs-toggle="dropdown"--}}
-{{--                                        aria-expanded="false">--}}
-{{--                                        <i class="fal fa-cog"></i>--}}
-{{--                                    </button>--}}
+                            <td data-label="Action">
+                                <div class="sidebar-dropdown-items">
+                                    <button
+                                        type="button"
+                                        class="dropdown-toggle"
+                                        data-bs-toggle="dropdown"
+                                        aria-expanded="false">
+                                        <i class="fal fa-cog"></i>
+                                    </button>
 
-{{--                                    <ul class="dropdown-menu dropdown-menu-end">--}}
-{{--                                        <li>--}}
-{{--                                            <a href="{{ route('user.stockDetails', [slug(optional($stockList->item)->name), $stockList->id]) }}"--}}
-{{--                                               class="dropdown-item"> <i class="fal fa-eye"></i> @lang('Details') </a>--}}
-{{--                                        </li>--}}
-{{--                                    </ul>--}}
-{{--                                </div>--}}
-{{--                            </td>--}}
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        <li>
+                                            <a href="{{ route('user.salesDetails', $salesList->id) }}"
+                                               class="dropdown-item"> <i class="fal fa-eye"></i> @lang('Details') </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </td>
                         </tr>
                     @empty
                         <tr class="text-center">

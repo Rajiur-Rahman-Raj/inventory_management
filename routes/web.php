@@ -217,17 +217,24 @@ Route::group(['middleware' => ['auth', 'Maintenance'], 'prefix' => 'user', 'as' 
         // Manage Sales
         Route::get('sales-items', 'User\CompanyController@salesItem')->name('salesItem');
         Route::get('sales-list', 'User\CompanyController@salesList')->name('salesList');
+        Route::get('sales-details/{id}', 'User\CompanyController@salesDetails')->name('salesDetails');
+
+
         Route::put('update-item-unit-price/{id}', 'User\CompanyController@updateItemUnitPrice')->name('updateItemUnitPrice');
         Route::post('get-selected-items', 'User\CompanyController@getSelectedItems')->name('getSelectedItems');
         Route::post('get-selected-customer', 'User\CompanyController@getSelectedCustomer')->name('getSelectedCustomer');
         Route::post('get-selected-sales-center', 'User\CompanyController@getSelectedSalesCenter')->name('getSelectedSalesCenter');
 
         Route::post('store-cart-items', 'User\CompanyController@storeCartItems')->name('storeCartItems');
+        Route::post('update-cart-items', 'User\CompanyController@updateCartItems')->name('updateCartItems');
+
+
         Route::delete('clear-cart-items', 'User\CompanyController@clearCartItems')->name('clearCartItems');
         Route::post('clear-single-cart-item', 'User\CompanyController@clearSingleCartItem')->name('clearSingleCartItem');
 
 
         Route::post('sales-order-store', 'User\CompanyController@salesOrderStore')->name('salesOrderStore');
+        Route::put('sales-order-update/{id}', 'User\CompanyController@salesOrderUpdate')->name('salesOrderUpdate');
 
 
 

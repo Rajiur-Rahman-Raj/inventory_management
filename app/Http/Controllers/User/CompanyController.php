@@ -711,6 +711,13 @@ class CompanyController extends Controller
         return view($this->theme.'user.manageSales.salesList', $data);
     }
 
+    public function salesDetails($id){
+        $admin = $this->user;
+        $data['singleSalesDetails'] = Sale::with('salesCenter', 'customer')->where('company_id', $admin->active_company_id)->findOrFail($id);
+        return view($this->theme.'user.manageSales.salesDetails', $data);
+    }
+
+
     public function salesItem()
     {
         $admin = $this->user;
@@ -790,6 +797,7 @@ class CompanyController extends Controller
         $stock = $request->data;
 
         $cartItem = CartItems::where('company_id', $admin->active_company_id)
+            ->whereNull('sales_center_id')
             ->where('stock_id', $stock['id'])
             ->where('item_id', $stock['item_id'])
             ->first();
@@ -829,6 +837,53 @@ class CompanyController extends Controller
     }
 
 
+    public function updateCartItems(Request $request)
+    {
+
+        $admin = $this->user;
+
+        $cartItem = CartItems::where('company_id', $admin->active_company_id)
+            ->whereNull('sales_center_id')
+            ->where('stock_id', $request->stockId)
+            ->where('item_id', $request->itemId)
+            ->first();
+
+        $stock = Stock::where('company_id', $admin->active_company_id)
+            ->whereNull('sales_center_id')
+            ->select('id', 'quantity')
+            ->findOrFail($request->stockId);
+
+        if ($cartItem && $request->cartQuantity > $stock->quantity) {
+            $status = false;
+            $message = "This item is out of stock";
+            $stockQuantity = $stock->quantity;
+        } else {
+            CartItems::updateOrInsert(
+                [
+                    'company_id' => $admin->active_company_id,
+                    'stock_id' => $request->stockId,
+                    'item_id' => $request->itemId,
+                ],
+                [
+                    'quantity' => $request->cartQuantity,
+                    'cost' => DB::raw('quantity * cost_per_unit'),
+                    'updated_at' => Carbon::now()
+                ]
+            );
+
+            $status = true;
+            $message = "Cart item added successfully";
+            $stockQuantity = null;
+        }
+
+        return response()->json([
+            'status' => $status,
+            'message' => $message,
+            'stockQuantity' => $stockQuantity,
+        ]);
+    }
+
+
 
     public function clearCartItems(){
         $admin = $this->user;
@@ -861,21 +916,14 @@ class CompanyController extends Controller
         $admin = $this->user;
         $purifiedData = Purify::clean($request->except('_token', '_method'));
 
-
         try {
             $rules = [
-//                'sales_center_id' => 'required|exists:sales_centers,id',
-//                'customer_id' => 'required|exists:customers,id',
                 'items' => 'nullable',
                 'payment_date' => 'required',
                 'payment_note' => 'nullable',
             ];
 
             $message = [
-//                'sales_center_id.required' => 'The sales center field is required.',
-//                'sales_center_id.exists' => 'The selected sales center is invalid.',
-//                'customer_id.required' => 'The customer field is required.',
-//                'customer_id.exists' => 'The selected customer is invalid.',
                 'payment_date.required' => 'The payment date field is required.',
             ];
 
@@ -899,9 +947,15 @@ class CompanyController extends Controller
             $sale->payment_status = ($request->due_or_change_amount >= 0 ? 0 : 1);
             $sale->payment_note = $request->payment_note;
 
-            $this->storeSalesItems($request, $sale);
+            $items = $this->storeSalesItems($request, $sale);
 
             $sale->save();
+
+            foreach ($items as $key => $item){
+               $stock = Stock::where('company_id', $admin->active_company_id)->whereNull('sales_center_id')->select('id', 'quantity')->where('item_id', $item['item_id'])->first();
+                $stock->quantity = (int)$stock->quantity - (int)$item['item_quantity'];
+                $stock->save();
+            }
 
             CartItems::where('company_id', $admin->active_company_id)
                 ->whereNull('sales_center_id')
@@ -915,6 +969,21 @@ class CompanyController extends Controller
             return back()->with('error', 'Something went wrong');
         }
 
+    }
+
+    public function salesOrderUpdate(Request $request, $id){
+        $admin = $this->user;
+        $sale = Sale::where('company_id', $admin->active_company_id)->findOrFail($id);
+
+        $sale->customer_paid_amount = $request->customer_paid_amount + $sale->customer_paid_amount;
+        $sale->due_amount = ($request->due_or_change_amount >= 0 ? $request->due_or_change_amount : 0);
+        $sale->payment_date = $request->payment_date;
+        $sale->payment_status = ($request->due_or_change_amount >= 0 ? 0 : 1);
+        $sale->payment_note = $request->payment_note;
+
+        $sale->save();
+
+        return back()->with('success', 'Due payment complete successfully');
     }
 
 }
