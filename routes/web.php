@@ -237,6 +237,7 @@ Route::group(['middleware' => ['auth', 'Maintenance'], 'prefix' => 'user', 'as' 
         Route::put('sales-order-update/{id}', 'User\CompanyController@salesOrderUpdate')->name('salesOrderUpdate');
 
 
+        Route::get('sales-invoice/{id}', 'User\CompanyController@salesInvoice')->name('salesInvoice');
 
 
         //Inventory Route End

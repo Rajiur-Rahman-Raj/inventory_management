@@ -36,9 +36,12 @@
                                 <?php $__currentLoopData = $stocks; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $stock): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                     <div class="col-xl-4 col-lg-6">
                                         <div class="product-box shadow-sm p-3 mb-5 bg-body rounded">
-                                            <div class="product-title">
+                                            <div class="product-title d-flex justify-content-between">
                                                 <?php if($stock->quantity > 0): ?>
-                                                    <a href="javascript:void(0)"><?php echo app('translator')->get('in stock'); ?></a>
+                                                    <a type="button" class="btn">
+                                                        <?php echo app('translator')->get('in stock'); ?> <span
+                                                            class="badge bg-success"><?php echo e($stock->quantity); ?></span>
+                                                    </a>
                                                 <?php else: ?>
                                                     <a href="javascript:void(0)"
                                                        class="text-danger border-danger"><?php echo app('translator')->get('out of stock'); ?></a>
@@ -128,9 +131,10 @@
                                             <div class="cutomer-select mt-2">
                                                 <label for="sales_center_id"
                                                        class="mb-2"><?php echo app('translator')->get('Which Sales Center?'); ?></label>
-                                                <select class="form-select js-example-basic-single select-sales-center"
-                                                        name="sales_center_id"
-                                                        aria-label="Default select example">
+                                                <select
+                                                    class="form-select js-example-basic-single select-sales-center salesCenterId"
+                                                    name="sales_center_id"
+                                                    aria-label="Default select example">
                                                     <option value="" selected
                                                             disabled><?php echo app('translator')->get('Select Sales Center'); ?></option>
                                                     <?php $__currentLoopData = $salesCenters; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $saleCenter): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
@@ -151,9 +155,10 @@ unset($__errorArgs, $__bag); ?>
                                             </div>
 
                                             <div class="cutomer-select mt-3">
-                                                <select class="form-select js-example-basic-single select-customer"
-                                                        name="customer_id"
-                                                        aria-label="Default select example">
+                                                <select
+                                                    class="form-select js-example-basic-single select-customer customerId"
+                                                    name="customer_id"
+                                                    aria-label="Default select example">
                                                     <option value="" selected disabled><?php echo app('translator')->get('Select Customer'); ?></option>
 
                                                     <?php $__currentLoopData = $customers; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $customer): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
@@ -175,11 +180,7 @@ unset($__errorArgs, $__bag); ?>
 
                                             <div class="cautomer-details">
                                                 <div class="mb-2">
-                                                    <input type="text" class="form-control customerPhone"
-                                                           id="exampleFormControlInput1"
-                                                           name="customer_phone"
-                                                           value="<?php echo e(old('customer_name', @request()->customer_name)); ?>"
-                                                           placeholder="Customer Phone">
+                                                    <input type="text" class="form-control customerPhone" id="exampleFormControlInput1" name="customer_phone" value="<?php echo e(old('customer_name', @request()->customer_name)); ?>" placeholder="Customer Phone">
                                                 </div>
                                                 <div class="mb-3">
                                     <textarea class="form-control customerAddress" id="exampleFormControlTextarea1"
@@ -193,7 +194,7 @@ unset($__errorArgs, $__bag); ?>
                                              aria-labelledby="contact-tab" tabindex="0">
                                             <div class="cutomer-select">
                                                 <select
-                                                    class="form-select js-example-basic-single select-sales-center selectSalesCenter"
+                                                    class="form-select js-example-basic-single select-sales-center selectSalesCenter salesCenterId"
                                                     name="sales_center_id"
                                                     aria-label="Default select example">
                                                     <option value="" selected
@@ -246,7 +247,8 @@ unset($__errorArgs, $__bag); ?>
                                         <?php $__currentLoopData = $cartItems; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $cartItem): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                             <div class="cat-item d-flex">
                                                 <div class="tittle"><?php echo e(optional($cartItem->item)->name); ?></div>
-                                                <input type="hidden" name="item_id[]" value="<?php echo e(optional($cartItem->item)->id); ?>">
+                                                <input type="hidden" name="item_id[]"
+                                                       value="<?php echo e(optional($cartItem->item)->id); ?>">
                                                 <input type="hidden" name="item_name[]"
                                                        value="<?php echo e(optional($cartItem->item)->name); ?>">
                                                 <div class="quantity">
@@ -277,8 +279,8 @@ unset($__errorArgs, $__bag); ?>
                                 <div class="total-box">
                                     <div class="amount">
                                         <div class="input-group mb-3">
-                                            <input type="text" class="form-control itemsDiscountInput"
-                                                   aria-label="" placeholder="discount">
+                                            <input type="number" class="form-control itemsDiscountInput"
+                                                   aria-label="" name="discount_parcent" placeholder="discount" max="100" value="<?php echo e(old('discount_parcent')); ?>">
                                             <span class="input-group-text">%</span>
 
                                         </div>
@@ -361,12 +363,28 @@ unset($__errorArgs, $__bag); ?>
                                                                     <div class="mb-3">
                                                                         <label for="formFile" class="form-label">Payment
                                                                             Date</label>
-                                                                        <input type="date" name="payment_date"
-                                                                               placeholder="<?php echo app('translator')->get('payment date'); ?>"
-                                                                               class="form-control payment_date"
-                                                                               value="<?php echo e(old('payment_date',request()->payment_date)); ?>">
-                                                                        <div class="invalid-feedback d-block">
-                                                                            <?php $__errorArgs = ['payment_date'];
+
+
+
+
+
+
+
+
+                                                                        <div class="flatpickr">
+                                                                            <div class="input-group">
+                                                                                <input type="date" placeholder="<?php echo app('translator')->get('Select Payment Date'); ?>" class="form-control payment_date"
+                                                                                       name="payment_date"
+                                                                                       value="<?php echo e(old('payment_date',request()->shipment_date)); ?>" data-input>
+                                                                                <div class="input-group-append" readonly="">
+                                                                                    <div class="form-control payment-date-times">
+                                                                                        <a class="input-button cursor-pointer" title="clear" data-clear>
+                                                                                            <i class="fas fa-times"></i>
+                                                                                        </a>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="invalid-feedback d-block">
+                                                                                    <?php $__errorArgs = ['payment_date'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
@@ -374,6 +392,8 @@ $message = $__bag->first($__errorArgs[0]); ?> <?php echo app('translator')->get(
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>
+                                                                                </div>
+                                                                            </div>
                                                                         </div>
                                                                     </div>
 
@@ -571,6 +591,20 @@ unset($__errorArgs, $__bag); ?>"
 
 <?php $__env->startPush('script'); ?>
     <script src="<?php echo e(asset('assets/global/js/flatpickr.js')); ?>"></script>
+
+        <?php if($errors->has('payment_date')): ?>
+            <script>
+                var myModal = new bootstrap.Modal(document.getElementById("proccedOrderModal"), {});
+                document.onreadystatechange = function () {
+                    myModal.show();
+                    showProccedOrderModal();
+                    updateTotal();
+                };
+
+            </script>
+        <?php endif; ?>
+
+
     <script>
         'use strict'
 
@@ -630,8 +664,10 @@ unset($__errorArgs, $__bag); ?>"
                                 <div class="col-xl-4 col-lg-6">
                         <div class="product-box shadow-sm p-3 mb-5 bg-body rounded">
                             <div class="product-title">
-                                ${stock.quantity > 0 ? '<a href="javascript:void(0)">in stock</a>' : '<a href="javascript:void(0)" class="text-danger border-danger">out of stock</a>'}
+                                ${stock.quantity > 0 ? '<a type="button" class="btn">in stock <span class="badge bg-success">' + stock.quantity + '</span></a>' : '<a href="javascript:void(0)" class="text-danger border-danger">out of stock</a>'}
+
                             </div>
+
                             <div class="product-img">
                                 <a href="javascript:void(0)">
                                     <img class="img-fluid"
@@ -795,9 +831,47 @@ unset($__errorArgs, $__bag); ?>"
         }
 
 
+        function checkSalesBy() {
+            var activeTab = $('#myTab li button.nav-link.active').attr('id');
+            var activeDataBsTarget = $('#myTab li button.nav-link.active').attr('data-bs-target');
+
+            let saleCenterId = $(activeDataBsTarget).children().find('.salesCenterId').val();
+
+            if (activeTab == 'home-tab') {
+                let customerId = $(activeDataBsTarget).children().find('.customerId').val();
+                if (!saleCenterId) {
+                    Notiflix.Notify.Failure('please select sales center');
+                    return false;
+                } else if (!customerId) {
+                    Notiflix.Notify.Failure('please select customer');
+                    return false;
+                } else {
+                    return true;
+                }
+            } else {
+
+                if (!saleCenterId) {
+                    Notiflix.Notify.Failure('please select sales center');
+                    return false;
+                } else {
+                    return true;
+                }
+
+            }
+        }
+
+
         $(document).on('click', '.proccedOrderBtn', function () {
-            var proccedOrderModal = new bootstrap.Modal(document.getElementById('proccedOrderModal'))
-            proccedOrderModal.show();
+            showProccedOrderModal();
+        });
+
+        function showProccedOrderModal(){
+            let result = checkSalesBy();
+            console.log(result);
+            if (result) {
+                var proccedOrderModal = new bootstrap.Modal(document.getElementById('proccedOrderModal'))
+                proccedOrderModal.show();
+            }
 
             var totalAmount = parseFloat($('.total-area').text().match(/[\d.]+/)[0]);
             $('.make-payment-total-amount').text(`${totalAmount.toFixed(2)} <?php echo e($basic->currency_symbol); ?>`)
@@ -807,8 +881,7 @@ unset($__errorArgs, $__bag); ?>"
 
             $('.due_or_change_amount_input').val(`${totalAmount.toFixed(2)}`)
             $('.total_payable_amount_input').val(`${totalAmount.toFixed(2)}`)
-
-        });
+        }
 
         $(document).on('keyup', '.customer-paid-amount', function () {
             var totalAmount = parseFloat($('.total-area').text().match(/[\d.]+/)[0]);
@@ -825,7 +898,7 @@ unset($__errorArgs, $__bag); ?>"
 
             } else {
                 $('.due-or-change-text').text('Change Amount')
-                $('.due-or-change-amount').text(`${dueOrChangeAmount.toFixed(2)} <?php echo e($basic->currency_symbol); ?>`)
+                $('.due-or-change-amount').text(`${Math.abs(dueOrChangeAmount).toFixed(2)} <?php echo e($basic->currency_symbol); ?>`)
                 $('.total-payable-amount').text(`${totalAmount.toFixed(2)} <?php echo e($basic->currency_symbol); ?>`)
 
                 $('.due_or_change_amount_input').val(`${dueOrChangeAmount.toFixed(2)}`)
@@ -944,6 +1017,12 @@ unset($__errorArgs, $__bag); ?>"
 
         $(document).on('input', '.itemsDiscountInput', function () {
             // Recalculate total after updating the discount
+            let discount = $(this).val();
+            if (discount > 100){
+                Notiflix.Notify.Warning('Discount cannot exceed 100%');
+                thisClass.attr('max', 100)
+                return;
+            }
             updateTotal();
         });
 
@@ -964,7 +1043,7 @@ unset($__errorArgs, $__bag); ?>"
                 let stockId = $(this).data('stockid');
                 let itemId = $(this).data('itemid');
                 // update quantity and cost also cartItems table
-                updateCartItem(stockId,itemId,cartQuantity,costPerUnit,singleCartItemCost, thisClass);
+                updateCartItem(stockId, itemId, cartQuantity, costPerUnit, singleCartItemCost, thisClass);
 
             })
         });
@@ -985,12 +1064,12 @@ unset($__errorArgs, $__bag); ?>"
                     let stockId = $(this).data('stockid');
                     let itemId = $(this).data('itemid');
                     // update quantity and cost also cartItems table
-                    updateCartItem(stockId,itemId,cartQuantity,costPerUnit,singleCartItemCost, thisClass);
+                    updateCartItem(stockId, itemId, cartQuantity, costPerUnit, singleCartItemCost, thisClass);
                 })
             });
         });
 
-        function updateCartItem(stockId,itemId,cartQuantity,costPerUnit,singleCartItemCost,thisClass){
+        function updateCartItem(stockId, itemId, cartQuantity, costPerUnit, singleCartItemCost, thisClass) {
             // update quantity and cost also cartItems table
             $.ajax({
                 url: "<?php echo e(route('user.updateCartItems')); ?>",

@@ -27,30 +27,46 @@
                 <form action="" method="get" enctype="multipart/form-data">
                     <div class="row g-3 align-items-end">
                         <div class="input-box col-lg-3">
-                            <label for="">@lang('Item Name')</label>
-                            <input
-                                type="text"
-                                name="name"
-                                value="{{ old('name', @request()->name) }}"
-                                class="form-control"
-                                placeholder="@lang('item Name')"/>
+                            <label for="">@lang('Sales Center')</label>
+                            <select
+                                class="form-select js-example-basic-single select-sales-center salesCenterId"
+                                name="sales_center_id"
+                                aria-label="Default select example">
+                                <option value="all">@lang('All')</option>
+                                @foreach($salesCenters as $saleCenter)
+                                    <option
+                                        value="{{ $saleCenter->id }}" {{ old('sales_center_id', @request()->sales_center_id) == $saleCenter->id ? 'selected' : ''}}> @lang($saleCenter->name)</option>
+                                @endforeach
+                            </select>
                         </div>
 
-                        <div class="input-box col-lg-3">
-                            <label for="from_date">@lang('Last Stock From Date')</label>
+                        <div class="input-box col-lg-2">
+                            <label for="from_date">@lang('Sales From Date')</label>
                             <input
                                 type="text" class="form-control datepicker from_date" name="from_date"
                                 value="{{ old('from_date',request()->from_date) }}" placeholder="@lang('From date')"
                                 autocomplete="off" readonly/>
                         </div>
-                        <div class="input-box col-lg-3">
-                            <label for="to_date">@lang('Last Stock To Date')</label>
+
+                        <div class="input-box col-lg-2">
+                            <label for="to_date">@lang('Sales To Date')</label>
                             <input
                                 type="text" class="form-control datepicker to_date" name="to_date"
                                 value="{{ old('to_date',request()->to_date) }}" placeholder="@lang('To date')"
                                 autocomplete="off" readonly disabled="true"/>
                         </div>
                         <div class="input-box col-lg-3">
+                            <label for="">@lang('Payment Status')</label>
+                            <select
+                                class="form-select js-example-basic-single select-sales-center salesCenterId"
+                                name="status"
+                                aria-label="Default select example">
+                                <option value="all">@lang('All')</option>
+                                <option value="1" {{ old('status', @request()->status) == '1' ? 'selected' : ''}}> Paid </option>
+                                <option value="0" {{ old('status', @request()->status) == '0' ? 'selected' : ''}}> Due </option>
+                            </select>
+                        </div>
+                        <div class="input-box col-lg-2">
                             <button class="btn-custom w-100" type="submit"><i class="fal fa-search"></i>@lang('Search')
                             </button>
                         </div>
@@ -105,6 +121,12 @@
                                     </button>
 
                                     <ul class="dropdown-menu dropdown-menu-end">
+                                        <li>
+                                            <a href="{{ route('user.salesInvoice', $salesList->id) }}"
+                                               class="dropdown-item"> <i
+                                                    class="fal fa-file-invoice"></i> @lang('Invoice') </a>
+                                        </li>
+
                                         <li>
                                             <a href="{{ route('user.salesDetails', $salesList->id) }}"
                                                class="dropdown-item"> <i class="fal fa-eye"></i> @lang('Details') </a>

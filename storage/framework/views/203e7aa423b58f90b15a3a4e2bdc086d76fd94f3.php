@@ -86,6 +86,29 @@
         </li>
 
 
+        <li>
+            <a
+                class="dropdown-toggle <?php echo e(in_array($last, $manageSalesSegments) || in_array($segments[1], $manageSalesSegments) ? 'manageSalesActive' : ''); ?>"
+                data-bs-toggle="collapse"
+                href="#dropdownCollapsible"
+                role="button"
+                aria-expanded="false"
+                aria-controls="collapseExample">
+                <i class="fal fa-car-building"></i><?php echo app('translator')->get('Manage Return'); ?>
+            </a>
+            <div class="collapse <?php echo e(menuActive(['user.salesItem', 'user.salesList'],4)); ?> dropdownCollapsible" id="dropdownCollapsible">
+                <ul class="">
+                    <li>
+                        <a class="<?php echo e(($last == 'sales-list') ? 'active' : ''); ?>" href="<?php echo e(route('user.salesList')); ?>"><i class="fal fa-sack-dollar"></i><?php echo app('translator')->get('Return List'); ?></a>
+                    </li>
+                    <li>
+                        <a class="<?php echo e(($last == 'sales-items') ? 'active' : ''); ?>"  href="<?php echo e(route('user.salesItem')); ?>"><i class="fal fa-house-return"></i><?php echo app('translator')->get('Sales Return'); ?></a>
+                    </li>
+                </ul>
+            </div>
+        </li>
+
+
 
 
 

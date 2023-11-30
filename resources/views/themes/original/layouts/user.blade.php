@@ -38,7 +38,7 @@
     <script type="application/javascript" src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
 </head>
-<body @if(session()->get('rtl') == 1) class="rtl" @endif>
+<body @if(session()->get('rtl') == 1) class="rtl" @endif id="body">
 
 <!------- Nav + Content ---------->
 <div class="bottom-nav fixed-bottom d-lg-none">

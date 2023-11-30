@@ -1,4 +1,9 @@
 <?php $__env->startSection('title',trans('Sales Details')); ?>
+
+<?php $__env->startPush('style'); ?>
+    <link href="<?php echo e(asset('assets/global/css/flatpickr.min.css')); ?>" rel="stylesheet">
+<?php $__env->stopPush(); ?>
+
 <?php $__env->startSection('content'); ?>
     <!-- main -->
     <div class="container-fluid">
@@ -27,8 +32,10 @@
                                     <div class="d-flex justify-content-end investment__block">
                                         <?php if($singleSalesDetails->payment_status != 1): ?>
                                             <a href="javascript:void(0)"
-                                               class="btn btn-sm btn-primary text-white me-2 invest-details-back paidDueAmountBtn" data-route="<?php echo e(route('user.salesOrderUpdate', $singleSalesDetails->id)); ?>" data-property="<?php echo e($singleSalesDetails); ?>">
-                                                <span> <?php echo app('translator')->get('Paid Due Amount'); ?> </span>
+                                               class="btn btn-sm btn-primary text-white me-2 invest-details-back paidDueAmountBtn"
+                                               data-route="<?php echo e(route('user.salesOrderUpdate', $singleSalesDetails->id)); ?>"
+                                               data-property="<?php echo e($singleSalesDetails); ?>">
+                                                <span> <?php echo app('translator')->get('Pay Due Amount'); ?> </span>
                                             </a>
                                         <?php endif; ?>
                                         <a href="<?php echo e(route('user.salesList')); ?>"
@@ -51,17 +58,24 @@
                                                     <?php endif; ?>
 
                                                     <div class="investmentDate d-flex justify-content-between">
+                                                        <h6 class="font-weight-bold text-dark"> <i class="fas fa-file-invoice me-2 text-purple"></i> <?php echo app('translator')->get('Invoice Id'); ?>
+                                                            : </h6>
+                                                        <p>#<?php echo e($singleSalesDetails->invoice_id); ?></p>
+                                                    </div>
+
+                                                    <div class="investmentDate d-flex justify-content-between">
                                                         <h6 class="font-weight-bold text-dark"><i
                                                                 class="far fa-calendar-check me-2 text-success"></i> <?php echo app('translator')->get('Sales Date'); ?>
                                                             : </h6>
-                                                        <p><?php echo e(dateTime(customDate($singleSalesDetails->created_at))); ?></p>
+                                                        <p><?php echo e(customDate($singleSalesDetails->created_at)); ?></p>
                                                     </div>
+
                                                     <div class="investmentDate d-flex justify-content-between">
                                                         <h6 class="font-weight-bold text-dark"><i
                                                                 class="fa fa-bangladeshi-taka-sign me-2 text-warning">
                                                                 ৳ </i> <?php echo app('translator')->get('Last Payment Date'); ?>
                                                             : </h6>
-                                                        <p><?php echo e(dateTime(customDate($singleSalesDetails->payment_date))); ?></p>
+                                                        <p><?php echo e(customDate($singleSalesDetails->payment_date)); ?></p>
                                                     </div>
                                                     <div class="investmentDate d-flex justify-content-between">
                                                         <h6 class="font-weight-bold text-dark"> <?php if($singleSalesDetails->payment_status == 1): ?>
@@ -167,7 +181,7 @@
                     <div class="modal-content">
                         <div class="modal-header">
                             <h1 class="modal-title fs-5"
-                                id="exampleModalLabel"><?php echo app('translator')->get('Make Payment Due Amount'); ?></h1>
+                                id="exampleModalLabel"><?php echo app('translator')->get('Make Payment'); ?></h1>
                             <button type="button" class="btn-close"
                                     data-bs-dismiss="modal"
                                     aria-label="Close"></button>
@@ -206,12 +220,22 @@
                                 <div class="mb-3">
                                     <label for="formFile" class="form-label">Payment
                                         Date</label>
-                                    <input type="date" name="payment_date"
-                                           placeholder="<?php echo app('translator')->get('payment date'); ?>"
-                                           class="form-control payment_date"
-                                           value="<?php echo e(old('payment_date',request()->payment_date)); ?>" required>
-                                    <div class="invalid-feedback d-block">
-                                        <?php $__errorArgs = ['payment_date'];
+                                    <div class="flatpickr">
+                                        <div class="input-group">
+                                            <input type="date" placeholder="<?php echo app('translator')->get('Select Payment Date'); ?>"
+                                                   class="form-control payment_date"
+                                                   name="payment_date"
+                                                   value="<?php echo e(old('payment_date',request()->shipment_date)); ?>"
+                                                   data-input>
+                                            <div class="input-group-append" readonly="">
+                                                <div class="form-control payment-date-times">
+                                                    <a class="input-button cursor-pointer" title="clear" data-clear>
+                                                        <i class="fas fa-times"></i>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <div class="invalid-feedback d-block">
+                                                <?php $__errorArgs = ['payment_date'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
@@ -219,9 +243,10 @@ $message = $__bag->first($__errorArgs[0]); ?> <?php echo app('translator')->get(
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-
 
                                 <div class="mb-3">
                                     <label for="formFile"
@@ -253,17 +278,43 @@ unset($__errorArgs, $__bag); ?>
 <?php $__env->stopSection(); ?>
 
 <?php $__env->startPush('script'); ?>
+    <script src="<?php echo e(asset('assets/global/js/flatpickr.js')); ?>"></script>
+
+    <?php if($errors->has('payment_date')): ?>
+        <script>
+            var myModal = new bootstrap.Modal(document.getElementById("paidDueAmountModal"), {});
+            document.onreadystatechange = function () {
+                myModal.show();
+                payDueAmountPaymentModal();
+            };
+
+        </script>
+    <?php endif; ?>
+
 
     <script>
         'use strict'
+
+
+        $(".flatpickr").flatpickr({
+            wrap: true,
+            maxDate: "today",
+            altInput: true,
+            dateFormat: "Y-m-d H:i",
+        });
+
         $(document).on('click', '.paidDueAmountBtn', function () {
+            payDueAmountPaymentModal();
+        });
+
+        function payDueAmountPaymentModal(_this) {
             var paidDueAmountModal = new bootstrap.Modal(document.getElementById('paidDueAmountModal'))
             paidDueAmountModal.show();
 
-            let dataRoute = $(this).data('route');
+            let dataRoute = $('.paidDueAmountBtn').data('route');
             $('.paidDueAmountRoute').attr('action', dataRoute)
 
-            let dataProperty = $(this).data('property');
+            let dataProperty = $('.paidDueAmountBtn').data('property');
             $('.total-due-amount').text(`${dataProperty.due_amount} <?php echo e($basic->currency_symbol); ?>`);
 
             $('.due-or-change-text').text('Due Amount');
@@ -272,8 +323,7 @@ unset($__errorArgs, $__bag); ?>
 
             $('.due_or_change_amount_input').val(`${dataProperty.due_amount}`)
             $('.total_payable_amount_input').val(`${dataProperty.due_amount}`)
-
-        });
+        }
 
 
         $(document).on('keyup', '.customer-paid-amount', function () {
@@ -292,7 +342,7 @@ unset($__errorArgs, $__bag); ?>
 
             } else {
                 $('.due-or-change-text').text('Change Amount')
-                $('.due-or-change-amount').text(`${dueOrChangeAmount.toFixed(2)} <?php echo e($basic->currency_symbol); ?>`)
+                $('.due-or-change-amount').text(`${Math.abs(dueOrChangeAmount).toFixed(2)} <?php echo e($basic->currency_symbol); ?>`)
                 $('.total-payable-amount').text(`${totalAmount.toFixed(2)} <?php echo e($basic->currency_symbol); ?>`)
 
                 $('.due_or_change_amount_input').val(`${dueOrChangeAmount.toFixed(2)}`)

@@ -15,6 +15,10 @@ class Sale extends Model
         'items' => 'array',
     ];
 
+    public function company(){
+        return $this->belongsTo(Company::class, 'company_id');
+    }
+
     public function salesCenter(){
         return $this->belongsTo(SalesCenter::class, 'sales_center_id');
     }

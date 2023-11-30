@@ -86,6 +86,29 @@
         </li>
 
 
+        <li>
+            <a
+                class="dropdown-toggle {{ in_array($last, $manageSalesSegments) || in_array($segments[1], $manageSalesSegments) ? 'manageSalesActive' : '' }}"
+                data-bs-toggle="collapse"
+                href="#dropdownCollapsible"
+                role="button"
+                aria-expanded="false"
+                aria-controls="collapseExample">
+                <i class="fal fa-car-building"></i>@lang('Manage Return')
+            </a>
+            <div class="collapse {{menuActive(['user.salesItem', 'user.salesList'],4)}} dropdownCollapsible" id="dropdownCollapsible">
+                <ul class="">
+                    <li>
+                        <a class="{{($last == 'sales-list') ? 'active' : '' }}" href="{{ route('user.salesList') }}"><i class="fal fa-sack-dollar"></i>@lang('Return List')</a>
+                    </li>
+                    <li>
+                        <a class="{{($last == 'sales-items') ? 'active' : '' }}"  href="{{ route('user.salesItem') }}"><i class="fal fa-house-return"></i>@lang('Sales Return')</a>
+                    </li>
+                </ul>
+            </div>
+        </li>
+
+
 {{--        @php--}}
 {{--            $segments = request()->segments();--}}
 {{--            $last  = end($segments);--}}

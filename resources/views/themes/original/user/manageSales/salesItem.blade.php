@@ -37,9 +37,12 @@
                                 @foreach($stocks as $stock)
                                     <div class="col-xl-4 col-lg-6">
                                         <div class="product-box shadow-sm p-3 mb-5 bg-body rounded">
-                                            <div class="product-title">
+                                            <div class="product-title d-flex justify-content-between">
                                                 @if($stock->quantity > 0)
-                                                    <a href="javascript:void(0)">@lang('in stock')</a>
+                                                    <a type="button" class="btn">
+                                                        @lang('in stock') <span
+                                                            class="badge bg-success">{{ $stock->quantity }}</span>
+                                                    </a>
                                                 @else
                                                     <a href="javascript:void(0)"
                                                        class="text-danger border-danger">@lang('out of stock')</a>
@@ -128,9 +131,10 @@
                                             <div class="cutomer-select mt-2">
                                                 <label for="sales_center_id"
                                                        class="mb-2">@lang('Which Sales Center?')</label>
-                                                <select class="form-select js-example-basic-single select-sales-center"
-                                                        name="sales_center_id"
-                                                        aria-label="Default select example">
+                                                <select
+                                                    class="form-select js-example-basic-single select-sales-center salesCenterId"
+                                                    name="sales_center_id"
+                                                    aria-label="Default select example">
                                                     <option value="" selected
                                                             disabled>@lang('Select Sales Center')</option>
                                                     @foreach($salesCenters as $saleCenter)
@@ -144,9 +148,10 @@
                                             </div>
 
                                             <div class="cutomer-select mt-3">
-                                                <select class="form-select js-example-basic-single select-customer"
-                                                        name="customer_id"
-                                                        aria-label="Default select example">
+                                                <select
+                                                    class="form-select js-example-basic-single select-customer customerId"
+                                                    name="customer_id"
+                                                    aria-label="Default select example">
                                                     <option value="" selected disabled>@lang('Select Customer')</option>
 
                                                     @foreach($customers as $customer)
@@ -161,11 +166,7 @@
 
                                             <div class="cautomer-details">
                                                 <div class="mb-2">
-                                                    <input type="text" class="form-control customerPhone"
-                                                           id="exampleFormControlInput1"
-                                                           name="customer_phone"
-                                                           value="{{ old('customer_name', @request()->customer_name) }}"
-                                                           placeholder="Customer Phone">
+                                                    <input type="text" class="form-control customerPhone" id="exampleFormControlInput1" name="customer_phone" value="{{ old('customer_name', @request()->customer_name) }}" placeholder="Customer Phone">
                                                 </div>
                                                 <div class="mb-3">
                                     <textarea class="form-control customerAddress" id="exampleFormControlTextarea1"
@@ -179,7 +180,7 @@
                                              aria-labelledby="contact-tab" tabindex="0">
                                             <div class="cutomer-select">
                                                 <select
-                                                    class="form-select js-example-basic-single select-sales-center selectSalesCenter"
+                                                    class="form-select js-example-basic-single select-sales-center selectSalesCenter salesCenterId"
                                                     name="sales_center_id"
                                                     aria-label="Default select example">
                                                     <option value="" selected
@@ -232,7 +233,8 @@
                                         @foreach($cartItems as $cartItem)
                                             <div class="cat-item d-flex">
                                                 <div class="tittle">{{ optional($cartItem->item)->name }}</div>
-                                                <input type="hidden" name="item_id[]" value="{{ optional($cartItem->item)->id }}">
+                                                <input type="hidden" name="item_id[]"
+                                                       value="{{ optional($cartItem->item)->id }}">
                                                 <input type="hidden" name="item_name[]"
                                                        value="{{ optional($cartItem->item)->name }}">
                                                 <div class="quantity">
@@ -263,8 +265,8 @@
                                 <div class="total-box">
                                     <div class="amount">
                                         <div class="input-group mb-3">
-                                            <input type="text" class="form-control itemsDiscountInput"
-                                                   aria-label="" placeholder="discount">
+                                            <input type="number" class="form-control itemsDiscountInput"
+                                                   aria-label="" name="discount_parcent" placeholder="discount" max="100" value="{{ old('discount_parcent') }}">
                                             <span class="input-group-text">%</span>
 
                                         </div>
@@ -347,12 +349,30 @@
                                                                     <div class="mb-3">
                                                                         <label for="formFile" class="form-label">Payment
                                                                             Date</label>
-                                                                        <input type="date" name="payment_date"
-                                                                               placeholder="@lang('payment date')"
-                                                                               class="form-control payment_date"
-                                                                               value="{{ old('payment_date',request()->payment_date) }}">
-                                                                        <div class="invalid-feedback d-block">
-                                                                            @error('payment_date') @lang($message) @enderror
+{{--                                                                        <input type="date" name="payment_date"--}}
+{{--                                                                               placeholder="@lang('payment date')"--}}
+{{--                                                                               class="form-control payment_date"--}}
+{{--                                                                               value="{{ old('payment_date',request()->payment_date) }}">--}}
+{{--                                                                        <div class="invalid-feedback d-block">--}}
+{{--                                                                            @error('payment_date') @lang($message) @enderror--}}
+{{--                                                                        </div>--}}
+
+                                                                        <div class="flatpickr">
+                                                                            <div class="input-group">
+                                                                                <input type="date" placeholder="@lang('Select Payment Date')" class="form-control payment_date"
+                                                                                       name="payment_date"
+                                                                                       value="{{ old('payment_date',request()->shipment_date) }}" data-input>
+                                                                                <div class="input-group-append" readonly="">
+                                                                                    <div class="form-control payment-date-times">
+                                                                                        <a class="input-button cursor-pointer" title="clear" data-clear>
+                                                                                            <i class="fas fa-times"></i>
+                                                                                        </a>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="invalid-feedback d-block">
+                                                                                    @error('payment_date') @lang($message) @enderror
+                                                                                </div>
+                                                                            </div>
                                                                         </div>
                                                                     </div>
 
@@ -542,6 +562,20 @@
 
 @push('script')
     <script src="{{ asset('assets/global/js/flatpickr.js') }}"></script>
+
+        @if($errors->has('payment_date'))
+            <script>
+                var myModal = new bootstrap.Modal(document.getElementById("proccedOrderModal"), {});
+                document.onreadystatechange = function () {
+                    myModal.show();
+                    showProccedOrderModal();
+                    updateTotal();
+                };
+
+            </script>
+        @endif
+
+
     <script>
         'use strict'
 
@@ -601,8 +635,10 @@
                                 <div class="col-xl-4 col-lg-6">
                         <div class="product-box shadow-sm p-3 mb-5 bg-body rounded">
                             <div class="product-title">
-                                ${stock.quantity > 0 ? '<a href="javascript:void(0)">in stock</a>' : '<a href="javascript:void(0)" class="text-danger border-danger">out of stock</a>'}
+                                ${stock.quantity > 0 ? '<a type="button" class="btn">in stock <span class="badge bg-success">' + stock.quantity + '</span></a>' : '<a href="javascript:void(0)" class="text-danger border-danger">out of stock</a>'}
+
                             </div>
+
                             <div class="product-img">
                                 <a href="javascript:void(0)">
                                     <img class="img-fluid"
@@ -765,9 +801,47 @@
         }
 
 
+        function checkSalesBy() {
+            var activeTab = $('#myTab li button.nav-link.active').attr('id');
+            var activeDataBsTarget = $('#myTab li button.nav-link.active').attr('data-bs-target');
+
+            let saleCenterId = $(activeDataBsTarget).children().find('.salesCenterId').val();
+
+            if (activeTab == 'home-tab') {
+                let customerId = $(activeDataBsTarget).children().find('.customerId').val();
+                if (!saleCenterId) {
+                    Notiflix.Notify.Failure('please select sales center');
+                    return false;
+                } else if (!customerId) {
+                    Notiflix.Notify.Failure('please select customer');
+                    return false;
+                } else {
+                    return true;
+                }
+            } else {
+
+                if (!saleCenterId) {
+                    Notiflix.Notify.Failure('please select sales center');
+                    return false;
+                } else {
+                    return true;
+                }
+
+            }
+        }
+
+
         $(document).on('click', '.proccedOrderBtn', function () {
-            var proccedOrderModal = new bootstrap.Modal(document.getElementById('proccedOrderModal'))
-            proccedOrderModal.show();
+            showProccedOrderModal();
+        });
+
+        function showProccedOrderModal(){
+            let result = checkSalesBy();
+            console.log(result);
+            if (result) {
+                var proccedOrderModal = new bootstrap.Modal(document.getElementById('proccedOrderModal'))
+                proccedOrderModal.show();
+            }
 
             var totalAmount = parseFloat($('.total-area').text().match(/[\d.]+/)[0]);
             $('.make-payment-total-amount').text(`${totalAmount.toFixed(2)} {{ $basic->currency_symbol }}`)
@@ -777,8 +851,7 @@
 
             $('.due_or_change_amount_input').val(`${totalAmount.toFixed(2)}`)
             $('.total_payable_amount_input').val(`${totalAmount.toFixed(2)}`)
-
-        });
+        }
 
         $(document).on('keyup', '.customer-paid-amount', function () {
             var totalAmount = parseFloat($('.total-area').text().match(/[\d.]+/)[0]);
@@ -795,7 +868,7 @@
 
             } else {
                 $('.due-or-change-text').text('Change Amount')
-                $('.due-or-change-amount').text(`${dueOrChangeAmount.toFixed(2)} {{ $basic->currency_symbol }}`)
+                $('.due-or-change-amount').text(`${Math.abs(dueOrChangeAmount).toFixed(2)} {{ $basic->currency_symbol }}`)
                 $('.total-payable-amount').text(`${totalAmount.toFixed(2)} {{ $basic->currency_symbol }}`)
 
                 $('.due_or_change_amount_input').val(`${dueOrChangeAmount.toFixed(2)}`)
@@ -914,6 +987,12 @@
 
         $(document).on('input', '.itemsDiscountInput', function () {
             // Recalculate total after updating the discount
+            let discount = $(this).val();
+            if (discount > 100){
+                Notiflix.Notify.Warning('Discount cannot exceed 100%');
+                thisClass.attr('max', 100)
+                return;
+            }
             updateTotal();
         });
 
@@ -934,7 +1013,7 @@
                 let stockId = $(this).data('stockid');
                 let itemId = $(this).data('itemid');
                 // update quantity and cost also cartItems table
-                updateCartItem(stockId,itemId,cartQuantity,costPerUnit,singleCartItemCost, thisClass);
+                updateCartItem(stockId, itemId, cartQuantity, costPerUnit, singleCartItemCost, thisClass);
 
             })
         });
@@ -955,12 +1034,12 @@
                     let stockId = $(this).data('stockid');
                     let itemId = $(this).data('itemid');
                     // update quantity and cost also cartItems table
-                    updateCartItem(stockId,itemId,cartQuantity,costPerUnit,singleCartItemCost, thisClass);
+                    updateCartItem(stockId, itemId, cartQuantity, costPerUnit, singleCartItemCost, thisClass);
                 })
             });
         });
 
-        function updateCartItem(stockId,itemId,cartQuantity,costPerUnit,singleCartItemCost,thisClass){
+        function updateCartItem(stockId, itemId, cartQuantity, costPerUnit, singleCartItemCost, thisClass) {
             // update quantity and cost also cartItems table
             $.ajax({
                 url: "{{ route('user.updateCartItems') }}",

@@ -28,6 +28,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Stevebauman\Purify\Facades\Purify;
 use App\Http\Traits\StockInTrait;
@@ -705,9 +706,30 @@ class CompanyController extends Controller
         return back()->with('success', "Customer Deleted Successfully!");
     }
 
-    public function salesList(){
+    public function salesList(Request $request){
         $admin = $this->user;
-        $data['salesLists'] = Sale::with('salesCenter')->where('company_id', $admin->active_company_id)->latest()->paginate(config('basic.paginate'));
+        $search = $request->all();
+        $fromDate = Carbon::parse($request->from_date);
+        $toDate = Carbon::parse($request->to_date)->addDay();
+        $data['salesCenters'] = SalesCenter::where('company_id', $admin->active_company_id)->latest()->get();
+
+        $data['salesLists'] = Sale::with('salesCenter')
+            ->when(isset($search['sales_center_id']) && $search['sales_center_id'] != 'all', function ($q) use ($search) {
+                $q->whereRaw("sales_center_id REGEXP '[[:<:]]{$search['sales_center_id']}[[:>:]]'");
+            })
+            ->when(isset($search['from_date']), function ($q2) use ($fromDate) {
+                return $q2->whereDate('created_at', '>=', $fromDate);
+            })
+            ->when(isset($search['to_date']), function ($q2) use ($fromDate, $toDate) {
+                return $q2->whereBetween('created_at', [$fromDate, $toDate]);
+            })
+            ->when(isset($search['status']) && $search['status'] != 'all', function ($q) use ($search) {
+                $q->whereRaw("payment_status REGEXP '[[:<:]]{$search['status']}[[:>:]]'");
+            })
+            ->where('company_id', $admin->active_company_id)
+            ->latest()
+            ->paginate(config('basic.paginate'));
+
         return view($this->theme.'user.manageSales.salesList', $data);
     }
 
@@ -913,6 +935,7 @@ class CompanyController extends Controller
     }
 
     public function salesOrderStore(Request $request){
+
         $admin = $this->user;
         $purifiedData = Purify::clean($request->except('_token', '_method'));
 
@@ -932,26 +955,31 @@ class CompanyController extends Controller
             if ($validate->fails()) {
                 return back()->withInput()->withErrors($validate);
             }
+
+
             DB::beginTransaction();
             $sale = new Sale();
+            $invoiceId = mt_rand(1000000, 9999999);
 
+            $due_or_change_amount = (float)floor($request->due_or_change_amount);
             $sale->company_id = $admin->active_company_id;
             $sale->sales_center_id = $request->sales_center_id;
             $sale->customer_id = $request->customer_id;
             $sale->sub_total = $request->sub_total;
             $sale->discount = $request->discount_amount;
             $sale->total_amount = $request->total_amount;
-            $sale->customer_paid_amount = $request->customer_paid_amount;
-            $sale->due_amount = ($request->due_or_change_amount >= 0 ? $request->due_or_change_amount : 0);
+            $sale->customer_paid_amount = $due_or_change_amount <= 0 ? $request->total_amount : $request->customer_paid_amount;
+            $sale->due_amount = $due_or_change_amount <= 0 ? 0 : $request->due_or_change_amount;
             $sale->payment_date = $request->payment_date;
-            $sale->payment_status = ($request->due_or_change_amount >= 0 ? 0 : 1);
+            $sale->payment_status = $due_or_change_amount <= 0 ? 1 : 0;
             $sale->payment_note = $request->payment_note;
-
+            $sale->invoice_id = $invoiceId;
             $items = $this->storeSalesItems($request, $sale);
-
             $sale->save();
 
-            foreach ($items as $key => $item){
+            $this->storeSalesItemsInSalesItemModel($request, $sale);
+
+            foreach ($items as $item){
                $stock = Stock::where('company_id', $admin->active_company_id)->whereNull('sales_center_id')->select('id', 'quantity')->where('item_id', $item['item_id'])->first();
                 $stock->quantity = (int)$stock->quantity - (int)$item['item_quantity'];
                 $stock->save();
@@ -962,28 +990,52 @@ class CompanyController extends Controller
                 ->delete();
 
             DB::commit();
-            return back()->with('success', 'Order confirm successfully!');
+            return redirect()->route('user.salesInvoice', $sale->id)->with('success', 'Order confirmed successfully!');
+
 
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Something went wrong');
         }
-
     }
 
     public function salesOrderUpdate(Request $request, $id){
+        $purifiedData = Purify::clean($request->except('_token', '_method'));
+        $rules = [
+            'payment_date' => 'required',
+            'payment_note' => 'nullable',
+        ];
+
+        $message = [
+            'payment_date.required' => 'The payment date field is required.',
+        ];
+
+        $validate = Validator::make($purifiedData, $rules, $message);
+
+        if ($validate->fails()) {
+            return back()->withInput()->withErrors($validate);
+        }
+
+        $due_or_change_amount = (float)floor($request->due_or_change_amount);
         $admin = $this->user;
         $sale = Sale::where('company_id', $admin->active_company_id)->findOrFail($id);
 
-        $sale->customer_paid_amount = $request->customer_paid_amount + $sale->customer_paid_amount;
-        $sale->due_amount = ($request->due_or_change_amount >= 0 ? $request->due_or_change_amount : 0);
+        $sale->customer_paid_amount = $due_or_change_amount <= 0 ? $sale->total_amount : (float)$request->customer_paid_amount + (float)$sale->customer_paid_amount;
+        $sale->due_amount = $due_or_change_amount <= 0 ? 0 : $request->due_or_change_amount;
         $sale->payment_date = $request->payment_date;
-        $sale->payment_status = ($request->due_or_change_amount >= 0 ? 0 : 1);
+        $sale->payment_status = $due_or_change_amount <= 0 ? 1 : 0;
         $sale->payment_note = $request->payment_note;
 
         $sale->save();
 
         return back()->with('success', 'Due payment complete successfully');
+    }
+
+    public function salesInvoice($id){
+        $admin = $this->user;
+        $data['singleSalesDetails'] = Sale::with('company', 'salesCenter.user', 'salesCenter.division', 'salesCenter.district', 'salesCenter.upazila', 'customer', 'customer.division', 'customer.district', 'customer.upazila')->where('company_id', $admin->active_company_id)->findOrFail($id);
+
+        return view($this->theme.'user.manageSales.salesInvoice', $data);
     }
 
 }

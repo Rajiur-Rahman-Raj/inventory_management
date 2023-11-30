@@ -1,5 +1,10 @@
 @extends($theme.'layouts.user')
 @section('title',trans('Sales Details'))
+
+@push('style')
+    <link href="{{ asset('assets/global/css/flatpickr.min.css') }}" rel="stylesheet">
+@endpush
+
 @section('content')
     <!-- main -->
     <div class="container-fluid">
@@ -28,8 +33,10 @@
                                     <div class="d-flex justify-content-end investment__block">
                                         @if($singleSalesDetails->payment_status != 1)
                                             <a href="javascript:void(0)"
-                                               class="btn btn-sm btn-primary text-white me-2 invest-details-back paidDueAmountBtn" data-route="{{ route('user.salesOrderUpdate', $singleSalesDetails->id) }}" data-property="{{ $singleSalesDetails }}">
-                                                <span> @lang('Paid Due Amount') </span>
+                                               class="btn btn-sm btn-primary text-white me-2 invest-details-back paidDueAmountBtn"
+                                               data-route="{{ route('user.salesOrderUpdate', $singleSalesDetails->id) }}"
+                                               data-property="{{ $singleSalesDetails }}">
+                                                <span> @lang('Pay Due Amount') </span>
                                             </a>
                                         @endif
                                         <a href="{{ route('user.salesList') }}"
@@ -52,17 +59,24 @@
                                                     @endif
 
                                                     <div class="investmentDate d-flex justify-content-between">
+                                                        <h6 class="font-weight-bold text-dark"> <i class="fas fa-file-invoice me-2 text-purple"></i> @lang('Invoice Id')
+                                                            : </h6>
+                                                        <p>#{{ $singleSalesDetails->invoice_id }}</p>
+                                                    </div>
+
+                                                    <div class="investmentDate d-flex justify-content-between">
                                                         <h6 class="font-weight-bold text-dark"><i
                                                                 class="far fa-calendar-check me-2 text-success"></i> @lang('Sales Date')
                                                             : </h6>
-                                                        <p>{{ dateTime(customDate($singleSalesDetails->created_at)) }}</p>
+                                                        <p>{{ customDate($singleSalesDetails->created_at) }}</p>
                                                     </div>
+
                                                     <div class="investmentDate d-flex justify-content-between">
                                                         <h6 class="font-weight-bold text-dark"><i
                                                                 class="fa fa-bangladeshi-taka-sign me-2 text-warning">
                                                                 ৳ </i> @lang('Last Payment Date')
                                                             : </h6>
-                                                        <p>{{ dateTime(customDate($singleSalesDetails->payment_date)) }}</p>
+                                                        <p>{{ customDate($singleSalesDetails->payment_date) }}</p>
                                                     </div>
                                                     <div class="investmentDate d-flex justify-content-between">
                                                         <h6 class="font-weight-bold text-dark"> @if($singleSalesDetails->payment_status == 1)
@@ -167,7 +181,7 @@
                     <div class="modal-content">
                         <div class="modal-header">
                             <h1 class="modal-title fs-5"
-                                id="exampleModalLabel">@lang('Make Payment Due Amount')</h1>
+                                id="exampleModalLabel">@lang('Make Payment')</h1>
                             <button type="button" class="btn-close"
                                     data-bs-dismiss="modal"
                                     aria-label="Close"></button>
@@ -206,15 +220,26 @@
                                 <div class="mb-3">
                                     <label for="formFile" class="form-label">Payment
                                         Date</label>
-                                    <input type="date" name="payment_date"
-                                           placeholder="@lang('payment date')"
-                                           class="form-control payment_date"
-                                           value="{{ old('payment_date',request()->payment_date) }}" required>
-                                    <div class="invalid-feedback d-block">
-                                        @error('payment_date') @lang($message) @enderror
+                                    <div class="flatpickr">
+                                        <div class="input-group">
+                                            <input type="date" placeholder="@lang('Select Payment Date')"
+                                                   class="form-control payment_date"
+                                                   name="payment_date"
+                                                   value="{{ old('payment_date',request()->shipment_date) }}"
+                                                   data-input>
+                                            <div class="input-group-append" readonly="">
+                                                <div class="form-control payment-date-times">
+                                                    <a class="input-button cursor-pointer" title="clear" data-clear>
+                                                        <i class="fas fa-times"></i>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <div class="invalid-feedback d-block">
+                                                @error('payment_date') @lang($message) @enderror
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-
 
                                 <div class="mb-3">
                                     <label for="formFile"
@@ -246,17 +271,43 @@
 @endsection
 
 @push('script')
+    <script src="{{ asset('assets/global/js/flatpickr.js') }}"></script>
+
+    @if($errors->has('payment_date'))
+        <script>
+            var myModal = new bootstrap.Modal(document.getElementById("paidDueAmountModal"), {});
+            document.onreadystatechange = function () {
+                myModal.show();
+                payDueAmountPaymentModal();
+            };
+
+        </script>
+    @endif
+
 
     <script>
         'use strict'
+
+
+        $(".flatpickr").flatpickr({
+            wrap: true,
+            maxDate: "today",
+            altInput: true,
+            dateFormat: "Y-m-d H:i",
+        });
+
         $(document).on('click', '.paidDueAmountBtn', function () {
+            payDueAmountPaymentModal();
+        });
+
+        function payDueAmountPaymentModal(_this) {
             var paidDueAmountModal = new bootstrap.Modal(document.getElementById('paidDueAmountModal'))
             paidDueAmountModal.show();
 
-            let dataRoute = $(this).data('route');
+            let dataRoute = $('.paidDueAmountBtn').data('route');
             $('.paidDueAmountRoute').attr('action', dataRoute)
 
-            let dataProperty = $(this).data('property');
+            let dataProperty = $('.paidDueAmountBtn').data('property');
             $('.total-due-amount').text(`${dataProperty.due_amount} {{ $basic->currency_symbol }}`);
 
             $('.due-or-change-text').text('Due Amount');
@@ -265,8 +316,7 @@
 
             $('.due_or_change_amount_input').val(`${dataProperty.due_amount}`)
             $('.total_payable_amount_input').val(`${dataProperty.due_amount}`)
-
-        });
+        }
 
 
         $(document).on('keyup', '.customer-paid-amount', function () {
@@ -285,7 +335,7 @@
 
             } else {
                 $('.due-or-change-text').text('Change Amount')
-                $('.due-or-change-amount').text(`${dueOrChangeAmount.toFixed(2)} {{ $basic->currency_symbol }}`)
+                $('.due-or-change-amount').text(`${Math.abs(dueOrChangeAmount).toFixed(2)} {{ $basic->currency_symbol }}`)
                 $('.total-payable-amount').text(`${totalAmount.toFixed(2)} {{ $basic->currency_symbol }}`)
 
                 $('.due_or_change_amount_input').val(`${dueOrChangeAmount.toFixed(2)}`)

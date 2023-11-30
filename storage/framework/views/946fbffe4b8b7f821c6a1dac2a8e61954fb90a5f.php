@@ -26,30 +26,46 @@
                 <form action="" method="get" enctype="multipart/form-data">
                     <div class="row g-3 align-items-end">
                         <div class="input-box col-lg-3">
-                            <label for=""><?php echo app('translator')->get('Item Name'); ?></label>
-                            <input
-                                type="text"
-                                name="name"
-                                value="<?php echo e(old('name', @request()->name)); ?>"
-                                class="form-control"
-                                placeholder="<?php echo app('translator')->get('item Name'); ?>"/>
+                            <label for=""><?php echo app('translator')->get('Sales Center'); ?></label>
+                            <select
+                                class="form-select js-example-basic-single select-sales-center salesCenterId"
+                                name="sales_center_id"
+                                aria-label="Default select example">
+                                <option value="all"><?php echo app('translator')->get('All'); ?></option>
+                                <?php $__currentLoopData = $salesCenters; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $saleCenter): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <option
+                                        value="<?php echo e($saleCenter->id); ?>" <?php echo e(old('sales_center_id', @request()->sales_center_id) == $saleCenter->id ? 'selected' : ''); ?>> <?php echo app('translator')->get($saleCenter->name); ?></option>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                            </select>
                         </div>
 
-                        <div class="input-box col-lg-3">
-                            <label for="from_date"><?php echo app('translator')->get('Last Stock From Date'); ?></label>
+                        <div class="input-box col-lg-2">
+                            <label for="from_date"><?php echo app('translator')->get('Sales From Date'); ?></label>
                             <input
                                 type="text" class="form-control datepicker from_date" name="from_date"
                                 value="<?php echo e(old('from_date',request()->from_date)); ?>" placeholder="<?php echo app('translator')->get('From date'); ?>"
                                 autocomplete="off" readonly/>
                         </div>
-                        <div class="input-box col-lg-3">
-                            <label for="to_date"><?php echo app('translator')->get('Last Stock To Date'); ?></label>
+
+                        <div class="input-box col-lg-2">
+                            <label for="to_date"><?php echo app('translator')->get('Sales To Date'); ?></label>
                             <input
                                 type="text" class="form-control datepicker to_date" name="to_date"
                                 value="<?php echo e(old('to_date',request()->to_date)); ?>" placeholder="<?php echo app('translator')->get('To date'); ?>"
                                 autocomplete="off" readonly disabled="true"/>
                         </div>
                         <div class="input-box col-lg-3">
+                            <label for=""><?php echo app('translator')->get('Payment Status'); ?></label>
+                            <select
+                                class="form-select js-example-basic-single select-sales-center salesCenterId"
+                                name="status"
+                                aria-label="Default select example">
+                                <option value="all"><?php echo app('translator')->get('All'); ?></option>
+                                <option value="1" <?php echo e(old('status', @request()->status) == '1' ? 'selected' : ''); ?>> Paid </option>
+                                <option value="0" <?php echo e(old('status', @request()->status) == '0' ? 'selected' : ''); ?>> Due </option>
+                            </select>
+                        </div>
+                        <div class="input-box col-lg-2">
                             <button class="btn-custom w-100" type="submit"><i class="fal fa-search"></i><?php echo app('translator')->get('Search'); ?>
                             </button>
                         </div>
@@ -104,6 +120,12 @@
                                     </button>
 
                                     <ul class="dropdown-menu dropdown-menu-end">
+                                        <li>
+                                            <a href="<?php echo e(route('user.salesInvoice', $salesList->id)); ?>"
+                                               class="dropdown-item"> <i
+                                                    class="fal fa-file-invoice"></i> <?php echo app('translator')->get('Invoice'); ?> </a>
+                                        </li>
+
                                         <li>
                                             <a href="<?php echo e(route('user.salesDetails', $salesList->id)); ?>"
                                                class="dropdown-item"> <i class="fal fa-eye"></i> <?php echo app('translator')->get('Details'); ?> </a>
