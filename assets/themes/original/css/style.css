@@ -9531,5 +9531,7 @@ button.gold-btn.copyReferalLink {
     padding: 10px;
     cursor: pointer;
 }
-
+.badge.bg-primary::before {
+    background: #cc54f4;
+}
 /*new-css*/

@@ -60,7 +60,7 @@
                                                     <div class="investmentDate d-flex justify-content-between">
                                                         <h6 class="font-weight-bold text-dark"> <i class="fas fa-file-invoice me-2 text-purple"></i> <?php echo app('translator')->get('Invoice Id'); ?>
                                                             : </h6>
-                                                        <p>#<?php echo e($singleSalesDetails->invoice_id); ?></p>
+                                                        <p><?php echo e($singleSalesDetails->invoice_id); ?></p>
                                                     </div>
 
                                                     <div class="investmentDate d-flex justify-content-between">

@@ -61,7 +61,7 @@
                                                     <div class="investmentDate d-flex justify-content-between">
                                                         <h6 class="font-weight-bold text-dark"> <i class="fas fa-file-invoice me-2 text-purple"></i> @lang('Invoice Id')
                                                             : </h6>
-                                                        <p>#{{ $singleSalesDetails->invoice_id }}</p>
+                                                        <p>{{ $singleSalesDetails->invoice_id }}</p>
                                                     </div>
 
                                                     <div class="investmentDate d-flex justify-content-between">
