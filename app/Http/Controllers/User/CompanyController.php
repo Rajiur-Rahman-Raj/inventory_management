@@ -424,7 +424,6 @@ class CompanyController extends Controller
 
     public function stockList(Request $request)
     {
-
         $admin = $this->user;
         $search = $request->all();
         $fromDate = Carbon::parse($request->from_date);
@@ -505,7 +504,6 @@ class CompanyController extends Controller
 
     public function stockDetails($item = null, $id = null)
     {
-
         $data['stock'] = Stock::select('id', 'item_id', 'last_stock_date')->findOrFail($id);
 
         $data['singleStockDetails'] = StockInDetails::with('item')->where('item_id', $data['stock']->item_id)->latest()->get();
@@ -741,7 +739,6 @@ class CompanyController extends Controller
         return view($this->theme . 'user.manageSales.salesDetails', $data);
     }
 
-
     public function salesItem()
     {
         $admin = $this->user;
@@ -765,7 +762,6 @@ class CompanyController extends Controller
 
         return view($this->theme . 'user.manageSales.salesItem', $data);
     }
-
 
     public function updateItemUnitPrice(Request $request, $id)
     {
@@ -816,7 +812,6 @@ class CompanyController extends Controller
         return response()->json(['salesCenter' => $salesCenter]);
     }
 
-
     public function storeCartItems(Request $request)
     {
         $admin = $this->user;
@@ -827,6 +822,7 @@ class CompanyController extends Controller
             ->where('stock_id', $stock['id'])
             ->where('item_id', $stock['item_id'])
             ->first();
+
 
         if ($cartItem && $cartItem['quantity'] >= $stock['quantity']) {
             $status = false;
@@ -862,6 +858,41 @@ class CompanyController extends Controller
         ]);
     }
 
+    public function storeSalesCartItems(Request $request)
+    {
+        $admin = $this->user;
+        $salesItem = $request->data;
+
+        $cartItem = CartItems::where('company_id', $admin->active_company_id)
+            ->whereNull('sales_center_id')
+            ->where('stock_id', $salesItem['stock_id'])
+            ->where('item_id', $salesItem['item_id'])
+            ->first();
+
+
+        CartItems::updateOrInsert(
+            [
+                'company_id' => $admin->active_company_id,
+                'stock_id' => $salesItem['stock_id'],
+                'item_id' => $salesItem['item_id'],
+            ],
+            [
+                'cost_per_unit' => $salesItem['cost_per_unit'],
+                'quantity' => $salesItem['item_quantity'],
+                'cost' => $salesItem['item_price'],
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now()
+            ]
+        );
+
+        $cartItems = CartItems::with('item')->where('company_id', $admin->active_company_id)
+            ->whereNull('sales_center_id')
+            ->get();
+
+        return response()->json([
+            'cartItems' => $cartItems,
+        ]);
+    }
 
     public function updateCartItems(Request $request)
     {
@@ -909,7 +940,6 @@ class CompanyController extends Controller
         ]);
     }
 
-
     public function clearCartItems()
     {
         $admin = $this->user;
@@ -918,6 +948,17 @@ class CompanyController extends Controller
             ->delete();
 
         return back()->with('success', 'Cart items deleted successfully!');
+    }
+
+    public function clearSaleCartItems()
+    {
+        $admin = $this->user;
+        CartItems::where('company_id', $admin->active_company_id)
+            ->whereNull('sales_center_id')
+            ->delete();
+
+        // Return a response (you can customize this based on your needs)
+        return response()->json(['message' => 'Sale cart items cleared successfully']);
     }
 
     public function clearSingleCartItem(Request $request)
@@ -941,7 +982,6 @@ class CompanyController extends Controller
 
     public function salesOrderStore(Request $request)
     {
-
         $admin = $this->user;
         $purifiedData = Purify::clean($request->except('_token', '_method'));
 
@@ -973,6 +1013,7 @@ class CompanyController extends Controller
             $sale->sales_center_id = $request->sales_center_id;
             $sale->customer_id = $request->customer_id;
             $sale->sub_total = $request->sub_total;
+            $sale->discount_parcent = $request->discount_parcent;
             $sale->discount = $request->discount_amount;
             $sale->total_amount = $request->total_amount;
             $sale->customer_paid_amount = $due_or_change_amount <= 0 ? $request->total_amount : $request->customer_paid_amount;
@@ -1050,7 +1091,7 @@ class CompanyController extends Controller
     public function salesReturn()
     {
         $admin = $this->user;
-        $data['sales'] = Sale::with('salesCenter', 'customer', 'salesItems')->where('company_id', $admin->active_company_id)->latest()->paginate(config('basic.paginate'));
+        $data['sales'] = Sale::with('salesCenter.user', 'customer', 'salesItems.sale')->where('company_id', $admin->active_company_id)->latest()->paginate(config('basic.paginate'));
 
 
         $data['items'] = Item::where('company_id', $admin->active_company_id)
@@ -1088,13 +1129,13 @@ class CompanyController extends Controller
 
             return response()->json(['stocks' => $data['stocks'], 'status' => 'stocks']);
         } else {
-            $data['sales'] = Sale::with('salesCenter', 'customer', 'salesItems')->where('company_id', $admin->active_company_id)->latest()->get()
+            $data['sales'] = Sale::with('salesCenter.user', 'customer', 'salesItems')->where('company_id', $admin->active_company_id)->latest()->get()
                 ->map(function ($sale) {
-                $calesCenter = $sale->salesCenter;
-                $calesCenter->image = getFile(config('location.salesCenter.path') . optional($sale->salesCenter)->image);
-                $sale->order_date = customDate($sale->created_at);
-                return $sale;
-            });
+                    $calesCenter = $sale->salesCenter;
+                    $calesCenter->image = getFile(config('location.salesCenter.path') . optional($sale->salesCenter)->image);
+                    $sale->order_date = customDate($sale->created_at);
+                    return $sale;
+                });
 
             return response()->json(['sales' => $data['sales'], 'status' => 'sales']);
         }
@@ -1102,12 +1143,13 @@ class CompanyController extends Controller
     }
 
 
-    public function singleSalesOrder(Request $request){
+    public function singleSalesOrder(Request $request)
+    {
 //        return $request->invoiceId;
         $admin = $this->user;
 //        $query = Sale::with('salesCenter', 'customer', 'salesItems')->where('company_id', $admin->active_company_id);
 
-        if ($request->invoiceId){
+        if ($request->invoiceId) {
             $sales = Sale::with('salesCenter', 'customer', 'salesItems')->where('company_id', $admin->active_company_id)->where('invoice_id', $request->invoiceId)->latest()->get()
                 ->map(function ($sale) {
                     $calesCenter = $sale->salesCenter;
@@ -1115,8 +1157,8 @@ class CompanyController extends Controller
                     $sale->order_date = customDate($sale->created_at);
                     return $sale;
                 });
-        }else{
-            $sales = Sale::with('salesCenter', 'customer', 'salesItems')->where('company_id', $admin->active_company_id)->latest()->get()
+        } else {
+            $sales = Sale::with('salesCenter.user', 'customer', 'salesItems')->where('company_id', $admin->active_company_id)->latest()->get()
                 ->map(function ($sale) {
                     $calesCenter = $sale->salesCenter;
                     $calesCenter->image = getFile(config('location.salesCenter.path') . optional($sale->salesCenter)->image);
@@ -1138,7 +1180,6 @@ class CompanyController extends Controller
 //                $sale->order_date = customDate($sale->created_at);
 //                return $sale;
 //            });
-
 
 
 //        $admin = $this->user;

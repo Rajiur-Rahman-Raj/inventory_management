@@ -13,9 +13,11 @@ trait StoreSalesTrait
 
         foreach ($request->item_name as $key => $value) {
             $items[] = [
+                'stock_id' => $request->stock_id[$key],
                 'item_id' => $request->item_id[$key],
                 'item_name' => $value,
                 'item_quantity' => $request->item_quantity[$key],
+                'cost_per_unit' => $request->cost_per_unit[$key],
                 'item_price' => $request->item_price[$key],
             ];
         }
@@ -30,9 +32,11 @@ trait StoreSalesTrait
         foreach ($request->item_name as $key => $value) {
             $salesItem = new SalesItem();
             $salesItem->sales_id = $sale->id;
+            $salesItem->stock_id = $request->stock_id[$key];
             $salesItem->item_id = $request->item_id[$key];
             $salesItem->item_name = $value;
             $salesItem->item_quantity = $request->item_quantity[$key];
+            $salesItem->cost_per_unit = $request->cost_per_unit[$key];
             $salesItem->item_price = $request->item_price[$key];
             $salesItem->save();
         }

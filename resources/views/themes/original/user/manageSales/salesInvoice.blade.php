@@ -30,12 +30,12 @@
                                         class="invoice-top d-flex flex-wrap align-items-center justify-content-between">
                                         <div class="invoice-img">
                                             <img src="{{ asset('assets/global/img/invoice.png') }}" alt="">
-                                            <h3>@lang('Invoice') - <span># {{ $singleSalesDetails->invoice_id }}</span>
+                                            <h3>@lang('Invoice') - <span>{{ $singleSalesDetails->invoice_id }}</span>
                                             </h3>
                                             <h4>Date - <span> {{ customDate($singleSalesDetails->created_at) }}</span>
                                             </h4>
-
                                         </div>
+
                                         <div class="invoice-top-content">
                                             <h3>{{ optional($singleSalesDetails->company)->name }}</h3>
                                             <h5>{{ optional($singleSalesDetails->company)->address }}</h5>

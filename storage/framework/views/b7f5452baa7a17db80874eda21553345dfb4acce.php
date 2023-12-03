@@ -180,7 +180,10 @@ unset($__errorArgs, $__bag); ?>
 
                                             <div class="cautomer-details">
                                                 <div class="mb-2">
-                                                    <input type="text" class="form-control customerPhone" id="exampleFormControlInput1" name="customer_phone" value="<?php echo e(old('customer_name', @request()->customer_name)); ?>" placeholder="Customer Phone">
+                                                    <input type="text" class="form-control customerPhone"
+                                                           id="exampleFormControlInput1" name="customer_phone"
+                                                           value="<?php echo e(old('customer_name', @request()->customer_name)); ?>"
+                                                           placeholder="Customer Phone">
                                                 </div>
                                                 <div class="mb-3">
                                     <textarea class="form-control customerAddress" id="exampleFormControlTextarea1"
@@ -249,8 +252,13 @@ unset($__errorArgs, $__bag); ?>
                                                 <div class="tittle"><?php echo e(optional($cartItem->item)->name); ?></div>
                                                 <input type="hidden" name="item_id[]"
                                                        value="<?php echo e(optional($cartItem->item)->id); ?>">
+
+                                                <input type="hidden" name="stock_id[]"
+                                                       value="<?php echo e($cartItem->stock_id); ?>">
+
                                                 <input type="hidden" name="item_name[]"
                                                        value="<?php echo e(optional($cartItem->item)->name); ?>">
+
                                                 <div class="quantity">
                                                     <input type="number" name="item_quantity[]"
                                                            value="<?php echo e($cartItem->quantity); ?>"
@@ -260,7 +268,8 @@ unset($__errorArgs, $__bag); ?>
                                                            data-cartitem="<?php echo e($cartItem->cost_per_unit); ?>"
                                                            min="1">
                                                 </div>
-
+                                                <input type="hidden" name="cost_per_unit[]"
+                                                       value="<?php echo e($cartItem->cost_per_unit); ?>">
                                                 <div class="prize">
                                                     <h6 class="cart-item-cost"><?php echo e($cartItem->cost); ?> <?php echo e($basic->currency_symbol); ?></h6>
                                                     <input type="hidden" name="item_price[]"
@@ -280,7 +289,8 @@ unset($__errorArgs, $__bag); ?>
                                     <div class="amount">
                                         <div class="input-group mb-3">
                                             <input type="number" class="form-control itemsDiscountInput"
-                                                   aria-label="" name="discount_parcent" placeholder="discount" max="100" value="<?php echo e(old('discount_parcent')); ?>">
+                                                   aria-label="" name="discount_parcent" placeholder="discount"
+                                                   max="100" value="<?php echo e(old('discount_parcent')); ?>">
                                             <span class="input-group-text">%</span>
 
                                         </div>
@@ -363,22 +373,28 @@ unset($__errorArgs, $__bag); ?>
                                                                     <div class="mb-3">
                                                                         <label for="formFile" class="form-label">Payment
                                                                             Date</label>
-
-
-
-
-
-
-
+                                                                        
+                                                                        
+                                                                        
+                                                                        
+                                                                        
+                                                                        
+                                                                        
 
                                                                         <div class="flatpickr">
                                                                             <div class="input-group">
-                                                                                <input type="date" placeholder="<?php echo app('translator')->get('Select Payment Date'); ?>" class="form-control payment_date"
+                                                                                <input type="date"
+                                                                                       placeholder="<?php echo app('translator')->get('Select Payment Date'); ?>"
+                                                                                       class="form-control payment_date"
                                                                                        name="payment_date"
-                                                                                       value="<?php echo e(old('payment_date',request()->shipment_date)); ?>" data-input>
-                                                                                <div class="input-group-append" readonly="">
-                                                                                    <div class="form-control payment-date-times">
-                                                                                        <a class="input-button cursor-pointer" title="clear" data-clear>
+                                                                                       value="<?php echo e(old('payment_date',request()->shipment_date)); ?>"
+                                                                                       data-input>
+                                                                                <div class="input-group-append"
+                                                                                     readonly="">
+                                                                                    <div
+                                                                                        class="form-control payment-date-times">
+                                                                                        <a class="input-button cursor-pointer"
+                                                                                           title="clear" data-clear>
                                                                                             <i class="fas fa-times"></i>
                                                                                         </a>
                                                                                     </div>
@@ -592,17 +608,17 @@ unset($__errorArgs, $__bag); ?>"
 <?php $__env->startPush('script'); ?>
     <script src="<?php echo e(asset('assets/global/js/flatpickr.js')); ?>"></script>
 
-        <?php if($errors->has('payment_date')): ?>
-            <script>
-                var myModal = new bootstrap.Modal(document.getElementById("proccedOrderModal"), {});
-                document.onreadystatechange = function () {
-                    myModal.show();
-                    showProccedOrderModal();
-                    updateTotal();
-                };
+    <?php if($errors->has('payment_date')): ?>
+        <script>
+            var myModal = new bootstrap.Modal(document.getElementById("proccedOrderModal"), {});
+            document.onreadystatechange = function () {
+                myModal.show();
+                showProccedOrderModal();
+                updateTotal();
+            };
 
-            </script>
-        <?php endif; ?>
+        </script>
+    <?php endif; ?>
 
 
     <script>
@@ -799,16 +815,20 @@ unset($__errorArgs, $__bag); ?>"
                         itemsData += `<div class="cat-item d-flex">
                         <div class="tittle">${cartItem.item.name}</div>
                         <input type="hidden" name="item_id[]" value="${cartItem.item.id}">
+                        <input type="hidden" name="stock_id[]" value="${cartItem.stock_id}">
                         <input type="hidden" name="item_name[]" value="${cartItem.item.name}">
                         <div class="quantity">
                             <input type="number" name="item_quantity[]" value="${cartItem.quantity}"
                                    class="itemQuantityInput" data-cartitem="${cartItem.cost_per_unit}" data-stockid="${cartItem.stock_id}"
                                                            data-itemid="${cartItem.item_id}" min="1">
                         </div>
+                        <input type="hidden" name="cost_per_unit[]"
+                                                       value="${cartItem.cost_per_unit}">
                         <div class="prize">
                             <h6 class="cart-item-cost">${cartItem.cost} <?php echo e($basic->currency_symbol); ?></h6>
                             <input type="hidden" name="item_price[]" value="${cartItem.cost}" class="item_price_input">
                         </div>
+
                         <div class="remove">
                             <a href="javascript:void(0)" class="clearSingleCartItem" data-id="${cartItem.id}"
                                data-name="${cartItem.item.name}">
@@ -865,7 +885,7 @@ unset($__errorArgs, $__bag); ?>"
             showProccedOrderModal();
         });
 
-        function showProccedOrderModal(){
+        function showProccedOrderModal() {
             let result = checkSalesBy();
             console.log(result);
             if (result) {
@@ -955,11 +975,14 @@ unset($__errorArgs, $__bag); ?>"
                         itemsData += `<div class="cat-item d-flex">
                         <div class="tittle">${cartItem.item.name}</div>
                          <input type="hidden" name="item_id[]" value="${cartItem.item.id}">
+                         <input type="hidden" name="stock_id[]" value="${cartItem.stock_id}">
                         <input type="hidden" name="item_name[]" value="${cartItem.item.name}">
                         <div class="quantity">
                             <input type="number" name="item_quantity[]" value="${cartItem.quantity}"
                                    class="itemQuantityInput" data-cartitem="${cartItem.cost_per_unit}" min="1">
                         </div>
+                        <input type="hidden" name="cost_per_unit[]"
+                                                       value="${cartItem.cost_per_unit}">
                         <div class="prize">
                             <h6 class="cart-item-cost">${cartItem.cost} <?php echo e($basic->currency_symbol); ?></h6>
                             <input type="hidden" name="item_price[]" value="${cartItem.cost}" class="item_price_input">
@@ -1018,7 +1041,7 @@ unset($__errorArgs, $__bag); ?>"
         $(document).on('input', '.itemsDiscountInput', function () {
             // Recalculate total after updating the discount
             let discount = $(this).val();
-            if (discount > 100){
+            if (discount > 100) {
                 Notiflix.Notify.Warning('Discount cannot exceed 100%');
                 thisClass.attr('max', 100)
                 return;

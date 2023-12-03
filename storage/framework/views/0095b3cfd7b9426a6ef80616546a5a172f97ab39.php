@@ -29,7 +29,8 @@
                                         class="invoice-top d-flex flex-wrap align-items-center justify-content-between">
                                         <div class="invoice-img">
                                             <img src="<?php echo e(asset('assets/global/img/invoice.png')); ?>" alt="">
-                                            <h3><?php echo app('translator')->get('Invoice'); ?> - <span># <?php echo e($singleSalesDetails->invoice_id); ?></span></h3>
+                                            <h3><?php echo app('translator')->get('Invoice'); ?> - <span><?php echo e($singleSalesDetails->invoice_id); ?></span>
+                                            </h3>
                                             <h4>Date - <span> <?php echo e(customDate($singleSalesDetails->created_at)); ?></span>
                                             </h4>
 

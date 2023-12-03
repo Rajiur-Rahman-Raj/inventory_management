@@ -10,4 +10,8 @@ class SalesItem extends Model
     use HasFactory;
 
     protected $guarded = ['id'];
+
+    public function sale(){
+        return $this->belongsTo(Sale::class, 'sales_id');
+    }
 }

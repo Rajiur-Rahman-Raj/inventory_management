@@ -8920,7 +8920,7 @@ button.gold-btn.copyReferalLink {
     background-color: #fff;
 }
 
-.pos-section .cart-side .tab-box .tab-tille {
+.pos-section .tab-tille {
     border-radius: 5px;
     text-align: center;
     background-color: #f2f5fa;
@@ -8929,7 +8929,7 @@ button.gold-btn.copyReferalLink {
 
 }
 
-.pos-section .cart-side .tab-box .tab-tille h4 {
+.pos-section .tab-tille h4 {
     font-size: 18px;
     color: #000;
     text-transform: capitalize;

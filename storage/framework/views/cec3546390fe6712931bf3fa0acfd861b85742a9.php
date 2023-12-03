@@ -12,49 +12,50 @@
                 <div class="col-xl-8 col-lg-8">
                     <div class="product-bg">.
                         <form>
-                        <div class="row g-2 align-items-center">
+                            <div class="row g-2 align-items-center">
 
-                            <div class="col-md-6 filter_by_sales_order">
-                                <div class="product-top d-flex align-items-center flex-wrap ">
-                                    <div class="input-group">
-                                        <label for="" class="mb-2"><?php echo app('translator')->get('Filter By Sales/Order'); ?></label>
-                                        <select class="form-select js-example-basic-single selected_sales_or_order"
-                                                name="sales_or_order"
-                                                aria-label="Default select example">
-                                            <option value="order"><?php echo app('translator')->get('Order Items'); ?></option>
-                                            <option value="sales"><?php echo app('translator')->get('Sales Items'); ?></option>
-                                        </select>
+                                <div class="col-md-6 filter_by_sales_order">
+                                    <div class="product-top d-flex align-items-center flex-wrap ">
+                                        <div class="input-group">
+                                            <label for="" class="mb-2"><?php echo app('translator')->get('Filter By Sales/Order'); ?></label>
+                                            <select class="form-select js-example-basic-single selected_sales_or_order"
+                                                    name="sales_or_order"
+                                                    aria-label="Default select example">
+                                                <option value="order"><?php echo app('translator')->get('Order Items'); ?></option>
+                                                <option value="sales"><?php echo app('translator')->get('Sales Items'); ?></option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 search_by_invoice_id">
+                                    <div class="product-top">
+                                        <div class="input-box">
+                                            <label for="" class="mb-2"><?php echo app('translator')->get('Search By Invoice Id'); ?></label>
+                                            <input type="text" class="form-control invoice_id" name="invoice_id"
+                                                   placeholder="Invoice Id">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 d-none filter_by_items">
+                                    <div class="product-top d-flex align-items-center flex-wrap ">
+                                        <div class="input-group">
+                                            <label for="" class="mb-2"><?php echo app('translator')->get('Filter By Items'); ?></label>
+                                            <select class="form-select js-example-basic-single selectedItems"
+                                                    data-oldselecteditems="<?php echo e(session('filterItemId')); ?>"
+                                                    name="item_id"
+                                                    aria-label="Default select example">
+                                                <option value="all"><?php echo app('translator')->get('All Items'); ?></option>
+                                                <?php $__currentLoopData = $items; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                    <option
+                                                        value="<?php echo e($item->id); ?>" <?php echo e(old('item_id', session('filterItemId')) == $item->id ? 'selected' : ''); ?>> <?php echo app('translator')->get($item->name); ?></option>
+                                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                            </select>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-
-                            <div class="col-md-6 search_by_invoice_id">
-                                <div class="product-top">
-                                    <div class="input-box">
-                                        <label for="" class="mb-2"><?php echo app('translator')->get('Search By Invoice Id'); ?></label>
-                                        <input type="text" class="form-control invoice_id" name="invoice_id" placeholder="Invoice Id">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-md-6 d-none filter_by_items">
-                                <div class="product-top d-flex align-items-center flex-wrap ">
-                                    <div class="input-group">
-                                        <label for="" class="mb-2"><?php echo app('translator')->get('Filter By Items'); ?></label>
-                                        <select class="form-select js-example-basic-single selectedItems"
-                                                data-oldselecteditems="<?php echo e(session('filterItemId')); ?>"
-                                                name="item_id"
-                                                aria-label="Default select example">
-                                            <option value="all"><?php echo app('translator')->get('All Items'); ?></option>
-                                            <?php $__currentLoopData = $items; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                <option
-                                                    value="<?php echo e($item->id); ?>" <?php echo e(old('item_id', session('filterItemId')) == $item->id ? 'selected' : ''); ?>> <?php echo app('translator')->get($item->name); ?></option>
-                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                         </form>
 
                         <div class="row pushSales">
@@ -72,9 +73,9 @@
                                                         <span class="badge bg-warning"><?php echo app('translator')->get('Due'); ?></span>
                                                     </a>
                                                 <?php endif; ?>
-                                                    <a type="button" class="btn">
-                                                        <span class="badge bg-primary"> <?php echo e($sale->invoice_id); ?></span>
-                                                    </a>
+                                                <a type="button" class="btn">
+                                                    <span class="badge bg-primary"> <?php echo e($sale->invoice_id); ?></span>
+                                                </a>
                                             </div>
                                             <div class="product-img">
                                                 <a href="javascript:void(0)">
@@ -97,8 +98,8 @@
                                                                 data-sellingprice=""
                                                                 data-route=""><?php echo e($sale->total_amount); ?> <?php echo e($basic->currency_symbol); ?></button>
                                                     </h4>
-                                                    <button class="btn btn-sm addToCartButton"
-                                                            data-property=""><i class="far fa-eye"></i></button>
+                                                    <button class="btn btn-sm returnOrderDetails"
+                                                            data-property="<?php echo e($sale); ?>"><i class="far fa-eye"></i></button>
                                                 </div>
                                                 <p class="mt-2">
                                                     <span><?php echo app('translator')->get('Order Date'); ?>:</span> <?php echo e(customDate($sale->created_at)); ?>
@@ -124,95 +125,48 @@
                 <div class="col-xl-4 col-lg-4">
                     <form action="<?php echo e(route('user.salesOrderStore')); ?>" method="post" enctype="multipart/form-data">
                         <?php echo csrf_field(); ?>
-                        <div class="cart-side">
+                        <div class="tab-tille">
+                            <h4><?php echo app('translator')->get('Return by'); ?></h4>
+                        </div>
+
+                        <div class="cart-side d-none">
                             <div class="tab-box">
-                                <div class="tab-tille">
-                                    <h4><?php echo app('translator')->get('sales by'); ?></h4>
-                                </div>
-                                <div class="description-tab">
-                                    <ul class="nav nav-tabs" id="myTab" role="tablist">
-                                        <li class="nav-item" role="presentation">
-                                            <button class="nav-link active" id="home-tab" data-bs-toggle="tab"
-                                                    data-bs-target="#home-tab-pane" type="button" role="tab"
-                                                    aria-controls="home-tab-pane"
-                                                    aria-selected="true"><?php echo app('translator')->get('Customer'); ?>
-                                            </button>
-                                        </li>
-                                        <li class="nav-item" role="presentation">
-                                            <button class="nav-link" id="contact-tab" data-bs-toggle="tab"
-                                                    data-bs-target="#contact-tab-pane" type="button" role="tab"
-                                                    aria-controls="contact-tab-pane" aria-selected="false">
-                                                <?php echo app('translator')->get('Sales Center'); ?>
-                                            </button>
-                                        </li>
-                                    </ul>
-                                </div>
                                 <div class="description-content mt-2">
                                     <div class="tab-content" id="myTabContent">
                                         <div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel"
                                              aria-labelledby="home-tab" tabindex="0">
 
-                                            <div class="cutomer-select mt-2">
-                                                <label for="sales_center_id"
-                                                       class="mb-2"><?php echo app('translator')->get('Which Sales Center?'); ?></label>
-                                                <select
-                                                    class="form-select js-example-basic-single select-sales-center salesCenterId"
-                                                    name="sales_center_id"
-                                                    aria-label="Default select example">
-                                                    <option value="" selected
-                                                            disabled><?php echo app('translator')->get('Select Sales Center'); ?></option>
-                                                    <?php $__currentLoopData = $salesCenters; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $saleCenter): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                        <option
-                                                            value="<?php echo e($saleCenter->id); ?>" <?php echo e(old('sales_center_id', @request()->sales_center_id) == $saleCenter->id ? 'selected' : ''); ?>> <?php echo app('translator')->get($saleCenter->name); ?></option>
-                                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                                </select>
-                                                <div class="invalid-feedback d-block">
-                                                    <?php $__errorArgs = ['sales_center_id'];
-$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
-if ($__bag->has($__errorArgs[0])) :
-if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?> <?php echo app('translator')->get($message); ?> <?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>
+                                            <div class="input-box mt-3">
+                                                <label for="sales_center_id" class="mb-2"><?php echo app('translator')->get('Sales Center?'); ?></label>
+                                                <input type="text" class="form-control salesCenterName" name="sales_center_name" value="<?php echo e(old('sales_center_name', @request()->sales_center_name)); ?>" readonly>
+                                            </div>
+
+                                            <div class="customerField d-none">
+                                                <div class="input-box mt-3">
+                                                    <label for="customer_name" class="mb-2"><?php echo app('translator')->get('Customer'); ?></label>
+                                                    <input type="text" class="form-control customerName" name="customer_name" value="<?php echo e(old('customer_name', @request()->customer_name)); ?>" readonly>
+                                                </div>
+
+                                                <div class="input-box mt-3">
+                                                    <input type="text" class="form-control customerPhone" name="customer_phone" placeholder="Customer Phone" value="<?php echo e(old('customer_phone', @request()->customer_phone)); ?>" readonly>
+                                                </div>
+
+                                                <div class="input-box col-12 mt-3">
+                                                    <textarea readonly class="form-control customerAddress" cols="10" rows="2" placeholder="Customer Address" name="customer_address" spellcheck="false"><?php echo e(old('customer_address', @request()->customer_address)); ?></textarea>
                                                 </div>
                                             </div>
 
-                                            <div class="cutomer-select mt-3">
-                                                <select
-                                                    class="form-select js-example-basic-single select-customer customerId"
-                                                    name="customer_id"
-                                                    aria-label="Default select example">
-                                                    <option value="" selected disabled><?php echo app('translator')->get('Select Customer'); ?></option>
-
-                                                    <?php $__currentLoopData = $customers; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $customer): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                        <option
-                                                            value="<?php echo e($customer->id); ?>" <?php echo e(old('customer_id', @request()->customer_id) == $customer->id ? 'selected' : ''); ?>> <?php echo app('translator')->get($customer->name); ?></option>
-                                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                                </select>
-                                                <div class="invalid-feedback d-block">
-                                                    <?php $__errorArgs = ['customer_id'];
-$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
-if ($__bag->has($__errorArgs[0])) :
-if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?> <?php echo app('translator')->get($message); ?> <?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>
+                                            <div class="ownerField d-none">
+                                                <div class="input-box mt-3">
+                                                    <input type="text" class="form-control ownerName" name="owner_name" value="<?php echo e(old('owner_name', @request()->owner_name)); ?>" readonly>
                                                 </div>
-                                            </div>
 
-                                            <div class="cautomer-details">
-                                                <div class="mb-2">
-                                                    <input type="text" class="form-control customerPhone"
-                                                           id="exampleFormControlInput1" name="customer_phone"
-                                                           value="<?php echo e(old('customer_name', @request()->customer_name)); ?>"
-                                                           placeholder="Customer Phone">
+                                                <div class="input-box mt-3">
+                                                    <input type="text" class="form-control ownerPhone" name="owner_phone" value="<?php echo e(old('owner_phone', @request()->owner_phone)); ?>" readonly>
                                                 </div>
-                                                <div class="mb-3">
-                                    <textarea class="form-control customerAddress" id="exampleFormControlTextarea1"
-                                              placeholder="Customer Address" name="customer_address"
-                                              rows="3"><?php echo e(old('customer_address', @request()->customer_address)); ?></textarea>
+
+                                                <div class="input-box col-12 mt-3">
+                                                    <textarea readonly class="form-control ownerAddress" cols="10" rows="2" name="owner_address" spellcheck="false"><?php echo e(old('owner_address', @request()->owner_address)); ?></textarea>
                                                 </div>
                                             </div>
                                         </div>
@@ -260,8 +214,8 @@ unset($__errorArgs, $__bag); ?>
                                     </div>
                                 </div>
                             </div>
-
-                            <div class="cart-items-area <?php echo e(count($cartItems) > 0 ? '' : 'd-none'); ?>">
+                            <div class="cart-items-area">
+                                
                                 <div class="cart-box">
                                     <div class="cart-top d-flex align-items-center justify-content-between">
                                         <h6>items in cart</h6>
@@ -271,35 +225,35 @@ unset($__errorArgs, $__bag); ?>
                                     </div>
 
                                     <div class="addCartItems">
-                                        <?php $__currentLoopData = $cartItems; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $cartItem): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                            <div class="cat-item d-flex">
-                                                <div class="tittle"><?php echo e(optional($cartItem->item)->name); ?></div>
-                                                <input type="hidden" name="item_id[]"
-                                                       value="<?php echo e(optional($cartItem->item)->id); ?>">
-                                                <input type="hidden" name="item_name[]"
-                                                       value="<?php echo e(optional($cartItem->item)->name); ?>">
-                                                <div class="quantity">
-                                                    <input type="number" name="item_quantity[]"
-                                                           value="<?php echo e($cartItem->quantity); ?>"
-                                                           class="itemQuantityInput"
-                                                           data-stockid="<?php echo e($cartItem->stock_id); ?>"
-                                                           data-itemid="<?php echo e($cartItem->item_id); ?>"
-                                                           data-cartitem="<?php echo e($cartItem->cost_per_unit); ?>"
-                                                           min="1">
-                                                </div>
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
 
-                                                <div class="prize">
-                                                    <h6 class="cart-item-cost"><?php echo e($cartItem->cost); ?> <?php echo e($basic->currency_symbol); ?></h6>
-                                                    <input type="hidden" name="item_price[]"
-                                                           value="<?php echo e($cartItem->cost); ?>" class="item_price_input">
-                                                </div>
-                                                <div class="remove">
-                                                    <a href="javascript:void(0)" class="clearSingleCartItem"
-                                                       data-id="<?php echo e($cartItem->id); ?>">
-                                                        <i class="fa fa-times"></i></a>
-                                                </div>
-                                            </div>
-                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
                                     </div>
                                 </div>
 
@@ -340,8 +294,18 @@ unset($__errorArgs, $__bag); ?>
                                             <input type="hidden" name="total_amount" class="total-amount-input"
                                                    value="<?php echo e(getAmount($subTotal, config('basic.fraction_number'))); ?>">
                                         </div>
+
+                                        <div class="dueInvoiceField">
+                                            <div class="total-amount d-flex align-items-center justify-content-between">
+                                                <h5>Previous Paid</h5>
+                                                <h6 class="previous-paid-area"></h6>
+                                                <input type="hidden" name="previous_paid" class="previous-amount-input"
+                                                       value="">
+                                            </div>
+                                        </div>
+
                                         <div class="order-btn d-flex flex-wrap">
-                                            <button class="cancel cancelOrder" type="button">cacel order</button>
+                                            <button class="cancel cancelOrder" type="button">cancel order</button>
                                             <button type="button" class="porcced proccedOrderBtn">procced order
                                             </button>
 
@@ -910,6 +874,7 @@ unset($__errorArgs, $__bag); ?>"
 
 
         $(document).on('click', '.clearSingleCartItem', function () {
+
             let cartId = $(this).data('id');
             $.ajax({
                 url: "<?php echo e(route('user.clearSingleCartItem')); ?>",
@@ -1077,12 +1042,12 @@ unset($__errorArgs, $__bag); ?>"
         $(document).on('change', '.selected_sales_or_order', function () {
             let selectedValue = $(this).val();
 
-            if (selectedValue == 'sales'){
+            if (selectedValue == 'sales') {
                 $('.filter_by_items').removeClass('d-none');
                 $('.search_by_invoice_id').addClass('d-none');
                 $('.filter_by_sales_order').removeClass('col-md-12');
                 $('.filter_by_sales_order').addClass('col-md-6');
-            }else{
+            } else {
                 $('.filter_by_items').addClass('d-none');
                 $('.search_by_invoice_id').removeClass('d-none');
                 $('.filter_by_sales_order').removeClass('col-md-6');
@@ -1097,9 +1062,9 @@ unset($__errorArgs, $__bag); ?>"
                 },
                 success: function (response) {
 
-                    if (response.status == 'stocks'){
+                    if (response.status == 'stocks') {
                         pushStockItems(response);
-                    }else{
+                    } else {
                         pushSalesReturn(response);
                     }
 
@@ -1112,7 +1077,7 @@ unset($__errorArgs, $__bag); ?>"
         })
 
 
-        function pushStockItems(response){
+        function pushStockItems(response) {
 
             let stocks = response.stocks;
             let itemsData = '';
@@ -1175,7 +1140,7 @@ unset($__errorArgs, $__bag); ?>"
         }
 
 
-        function pushSalesReturn(response){
+        function pushSalesReturn(response) {
 
             let sales = response.sales;
 
@@ -1188,7 +1153,7 @@ unset($__errorArgs, $__bag); ?>"
             } else {
 
 
-                sales.forEach(function (sale){
+                sales.forEach(function (sale) {
                     salesData += `<div class="col-xl-4 col-lg-6">
                                         <div class="product-box shadow-sm p-3 mb-5 bg-body rounded">
                                             <div class="product-title d-flex justify-content-between">
@@ -1214,18 +1179,17 @@ unset($__errorArgs, $__bag); ?>"
                                                     <h4>
                                                         <button class="sellingPriceButton updateUnitPrice"
                                                                 data-sellingprice=""
-                                                                data-route="">${ sale.total_amount } <?php echo e($basic->currency_symbol); ?>
+                                                                data-route="">${sale.total_amount} <?php echo e($basic->currency_symbol); ?>
 
-                                                        </button>
-                                                    </h4>
-                                                    <button class="btn btn-sm addToCartButton" data-property=""><i class="far fa-eye"></i></button>
-                                                </div>
-                                                <p class="mt-2"> <span><?php echo app('translator')->get('Order Date'); ?>:</span> ${sale.order_date} </p>
+                    </button>
+                </h4>
+                <button class="btn btn-sm addToCartButton" data-property=""><i class="far fa-eye"></i></button>
+            </div>
+            <p class="mt-2"> <span><?php echo app('translator')->get('Order Date'); ?>:</span> ${sale.order_date} </p>
                                                 </div>
                                             </div>
                                         </div>`
                 })
-
 
 
             }
@@ -1234,12 +1198,12 @@ unset($__errorArgs, $__bag); ?>"
         }
 
 
-        $(document).on('input', '.invoice_id', function (){
+        $(document).on('input', '.invoice_id', function () {
             let invoiceId = $(this).val();
             getSingleSalesOrder(invoiceId);
         });
 
-        function getSingleSalesOrder(invoiceId){
+        function getSingleSalesOrder(invoiceId) {
             $.ajax({
                 url: "<?php echo e(route('user.getSingleSalesOrder')); ?>",
                 method: 'POST',
@@ -1256,6 +1220,111 @@ unset($__errorArgs, $__bag); ?>"
             });
         }
 
+
+        $(document).on('click', '.returnOrderDetails', function (){
+            let _this = $(this);
+            $.ajax({
+                url: "<?php echo e(route('user.clearSaleCartItems')); ?>",
+                method: 'POST',
+                success: function (response) {
+                    showReturnOrderDetails(_this);
+                },
+                error: function (xhr, status, error) {
+                    console.log(error);
+                }
+            });
+        });
+
+        function showReturnOrderDetails(_this){
+            let dataProperty = _this.data('property');
+            let cartItems = dataProperty.sales_items;
+            $('.cart-side').removeClass('d-none');
+            $('.salesCenterName').val(dataProperty.sales_center.name);
+
+
+
+            if (dataProperty.customer){
+                $('.customerField').removeClass('d-none');
+                $('.ownerField').addClass('d-none');
+                $('.customerName').val(dataProperty.customer.name);
+                $('.customerPhone').val(dataProperty.customer.phone);
+                $('.customerAddress').val(dataProperty.customer.address);
+            }else {
+                $('.ownerField').removeClass('d-none');
+                $('.customerField').addClass('d-none');
+                $('.ownerName').val(dataProperty.sales_center.owner_name);
+                $('.ownerPhone').val(dataProperty.sales_center.user.phone);
+                $('.ownerAddress').val(dataProperty.sales_center.address);
+            }
+
+            if (dataProperty.payment_status == 1){
+                $('.dueInvoiceField').addClass('d-none');
+            }else{
+                $('.dueInvoiceField').removeClass('d-none');
+                $('.previous-paid-area').text(`${dataProperty.customer_paid_amount} <?php echo e($basic->currency_symbol); ?>`)
+                $('.previous-amount-input').val(`${dataProperty.customer_paid_amount}`);
+            }
+
+            $('.itemsDiscountInput').val(dataProperty.discount_parcent);
+
+            storeSalesItemToCart(cartItems);
+        }
+
+
+        function storeSalesItemToCart(cartItems){
+
+            cartItems.forEach(function (salesItem) {
+                $.ajax({
+                    url: "<?php echo e(route('user.storeSalesCartItems')); ?>",
+                    method: 'POST',
+                    data: {
+                        data: salesItem,
+                    },
+                    success: function (response) {
+                        let cartItems = response.cartItems;
+
+                        let itemsData = '';
+
+                        cartItems.forEach(function (cartItem) {
+                            itemsData += `<div class="cat-item d-flex">
+                        <div class="tittle">${cartItem.item.name}</div>
+                        <input type="hidden" name="item_id[]" value="${cartItem.item.id}">
+                        <input type="hidden" name="item_name[]" value="${cartItem.item.name}">
+                        <div class="quantity">
+                            <input type="number" name="item_quantity[]" value="${cartItem.quantity}"
+                                   class="itemQuantityInput" data-cartitem="${cartItem.cost_per_unit}" data-stockid="${cartItem.stock_id}"
+                                                           data-itemid="${cartItem.item_id}" min="1">
+                        </div>
+                        <input type="hidden" name="cost_per_unit[]"
+                                                       value="${cartItem.cost_per_unit}">
+                        <div class="prize">
+                            <h6 class="cart-item-cost">${cartItem.cost} <?php echo e($basic->currency_symbol); ?></h6>
+                            <input type="hidden" name="item_price[]" value="${cartItem.cost}" class="item_price_input">
+                        </div>
+
+                        <div class="remove">
+                            <a href="javascript:void(0)" class="clearSingleCartItem" data-id="${cartItem.id}"
+                               data-name="${cartItem.item.name}">
+                               <i class="fa fa-times"></i></a>
+                        </div>
+                    </div>`;
+                        });
+
+                        $('.addCartItems').html(itemsData);
+
+                        // Recalculate subtotal and total
+                        updateSubtotal();
+                        updateTotal();
+
+
+
+                    },
+                    error: function (xhr, status, error) {
+                        console.log(error);
+                    }
+                });
+            });
+        }
     </script>
 <?php $__env->stopPush(); ?>
 

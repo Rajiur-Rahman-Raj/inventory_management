@@ -235,8 +235,10 @@ Route::group(['middleware' => ['auth', 'Maintenance'], 'prefix' => 'user', 'as' 
         Route::post('store-cart-items', 'User\CompanyController@storeCartItems')->name('storeCartItems');
         Route::post('update-cart-items', 'User\CompanyController@updateCartItems')->name('updateCartItems');
 
+        Route::post('store-sales-cart-items', 'User\CompanyController@storeSalesCartItems')->name('storeSalesCartItems');
 
         Route::delete('clear-cart-items', 'User\CompanyController@clearCartItems')->name('clearCartItems');
+        Route::post('clear-sale-cart-items', 'User\CompanyController@clearSaleCartItems')->name('clearSaleCartItems');
         Route::post('clear-single-cart-item', 'User\CompanyController@clearSingleCartItem')->name('clearSingleCartItem');
 
 

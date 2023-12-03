@@ -1,7 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="d8945624-1993-4561-b309-4e35a97f1509" name="Changes" comment="" />
+    <list default="true" id="d8945624-1993-4561-b309-4e35a97f1509" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/User/CompanyController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/User/CompanyController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Traits/storeSalesTrait.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Traits/storeSalesTrait.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Models/SalesItem.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/SalesItem.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/themes/original/css/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/themes/original/css/style.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/themes/original/user/manageReturn/salesReturnItem.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/themes/original/user/manageReturn/salesReturnItem.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/themes/original/user/manageSales/salesInvoice.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/themes/original/user/manageSales/salesInvoice.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/themes/original/user/manageSales/salesItem.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/themes/original/user/manageSales/salesItem.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routes/web.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/web.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/framework/sessions/0k8HDUOfAm9NEuR8ONkSU8c6MdKWiKDuEeLHl6zP" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/framework/sessions/9BPusdDkS7mtVa0F8pn91D6vSaXYzaZgUWvWMB7d" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/framework/sessions/n1XmMFbpCp4dANygtreuBtpdWqKfS64pAlKAm6Nx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/framework/views/0095b3cfd7b9426a6ef80616546a5a172f97ab39.php" beforeDir="false" afterPath="$PROJECT_DIR$/storage/framework/views/0095b3cfd7b9426a6ef80616546a5a172f97ab39.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/framework/views/b7f5452baa7a17db80874eda21553345dfb4acce.php" beforeDir="false" afterPath="$PROJECT_DIR$/storage/framework/views/b7f5452baa7a17db80874eda21553345dfb4acce.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/framework/views/cec3546390fe6712931bf3fa0acfd861b85742a9.php" beforeDir="false" afterPath="$PROJECT_DIR$/storage/framework/views/cec3546390fe6712931bf3fa0acfd861b85742a9.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/logs/laravel.log" beforeDir="false" afterPath="$PROJECT_DIR$/storage/logs/laravel.log" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -195,7 +212,8 @@
       <workItem from="1701059375171" duration="26582000" />
       <workItem from="1701231677924" duration="24609000" />
       <workItem from="1701318452178" duration="24671000" />
-      <workItem from="1701491693818" duration="26606000" />
+      <workItem from="1701491693818" duration="26672000" />
+      <workItem from="1701576563943" duration="26659000" />
     </task>
     <servers />
   </component>

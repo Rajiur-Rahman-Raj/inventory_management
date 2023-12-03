@@ -13,49 +13,50 @@
                 <div class="col-xl-8 col-lg-8">
                     <div class="product-bg">.
                         <form>
-                        <div class="row g-2 align-items-center">
+                            <div class="row g-2 align-items-center">
 
-                            <div class="col-md-6 filter_by_sales_order">
-                                <div class="product-top d-flex align-items-center flex-wrap ">
-                                    <div class="input-group">
-                                        <label for="" class="mb-2">@lang('Filter By Sales/Order')</label>
-                                        <select class="form-select js-example-basic-single selected_sales_or_order"
-                                                name="sales_or_order"
-                                                aria-label="Default select example">
-                                            <option value="order">@lang('Order Items')</option>
-                                            <option value="sales">@lang('Sales Items')</option>
-                                        </select>
+                                <div class="col-md-6 filter_by_sales_order">
+                                    <div class="product-top d-flex align-items-center flex-wrap ">
+                                        <div class="input-group">
+                                            <label for="" class="mb-2">@lang('Filter By Sales/Order')</label>
+                                            <select class="form-select js-example-basic-single selected_sales_or_order"
+                                                    name="sales_or_order"
+                                                    aria-label="Default select example">
+                                                <option value="order">@lang('Order Items')</option>
+                                                <option value="sales">@lang('Sales Items')</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 search_by_invoice_id">
+                                    <div class="product-top">
+                                        <div class="input-box">
+                                            <label for="" class="mb-2">@lang('Search By Invoice Id')</label>
+                                            <input type="text" class="form-control invoice_id" name="invoice_id"
+                                                   placeholder="Invoice Id">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 d-none filter_by_items">
+                                    <div class="product-top d-flex align-items-center flex-wrap ">
+                                        <div class="input-group">
+                                            <label for="" class="mb-2">@lang('Filter By Items')</label>
+                                            <select class="form-select js-example-basic-single selectedItems"
+                                                    data-oldselecteditems="{{ session('filterItemId') }}"
+                                                    name="item_id"
+                                                    aria-label="Default select example">
+                                                <option value="all">@lang('All Items')</option>
+                                                @foreach($items as $item)
+                                                    <option
+                                                        value="{{ $item->id }}" {{ old('item_id', session('filterItemId')) == $item->id ? 'selected' : ''}}> @lang($item->name)</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-
-                            <div class="col-md-6 search_by_invoice_id">
-                                <div class="product-top">
-                                    <div class="input-box">
-                                        <label for="" class="mb-2">@lang('Search By Invoice Id')</label>
-                                        <input type="text" class="form-control invoice_id" name="invoice_id" placeholder="Invoice Id">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-md-6 d-none filter_by_items">
-                                <div class="product-top d-flex align-items-center flex-wrap ">
-                                    <div class="input-group">
-                                        <label for="" class="mb-2">@lang('Filter By Items')</label>
-                                        <select class="form-select js-example-basic-single selectedItems"
-                                                data-oldselecteditems="{{ session('filterItemId') }}"
-                                                name="item_id"
-                                                aria-label="Default select example">
-                                            <option value="all">@lang('All Items')</option>
-                                            @foreach($items as $item)
-                                                <option
-                                                    value="{{ $item->id }}" {{ old('item_id', session('filterItemId')) == $item->id ? 'selected' : ''}}> @lang($item->name)</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                         </form>
 
                         <div class="row pushSales">
@@ -73,9 +74,9 @@
                                                         <span class="badge bg-warning">@lang('Due')</span>
                                                     </a>
                                                 @endif
-                                                    <a type="button" class="btn">
-                                                        <span class="badge bg-primary"> {{ $sale->invoice_id }}</span>
-                                                    </a>
+                                                <a type="button" class="btn">
+                                                    <span class="badge bg-primary"> {{ $sale->invoice_id }}</span>
+                                                </a>
                                             </div>
                                             <div class="product-img">
                                                 <a href="javascript:void(0)">
@@ -98,8 +99,8 @@
                                                                 data-sellingprice=""
                                                                 data-route="">{{ $sale->total_amount }} {{ $basic->currency_symbol }}</button>
                                                     </h4>
-                                                    <button class="btn btn-sm addToCartButton"
-                                                            data-property=""><i class="far fa-eye"></i></button>
+                                                    <button class="btn btn-sm returnOrderDetails"
+                                                            data-property="{{ $sale }}"><i class="far fa-eye"></i></button>
                                                 </div>
                                                 <p class="mt-2">
                                                     <span>@lang('Order Date'):</span> {{ customDate($sale->created_at) }}
@@ -124,81 +125,48 @@
                 <div class="col-xl-4 col-lg-4">
                     <form action="{{ route('user.salesOrderStore') }}" method="post" enctype="multipart/form-data">
                         @csrf
-                        <div class="cart-side">
+                        <div class="tab-tille">
+                            <h4>@lang('Return by')</h4>
+                        </div>
+
+                        <div class="cart-side d-none">
                             <div class="tab-box">
-                                <div class="tab-tille">
-                                    <h4>@lang('sales by')</h4>
-                                </div>
-                                <div class="description-tab">
-                                    <ul class="nav nav-tabs" id="myTab" role="tablist">
-                                        <li class="nav-item" role="presentation">
-                                            <button class="nav-link active" id="home-tab" data-bs-toggle="tab"
-                                                    data-bs-target="#home-tab-pane" type="button" role="tab"
-                                                    aria-controls="home-tab-pane"
-                                                    aria-selected="true">@lang('Customer')
-                                            </button>
-                                        </li>
-                                        <li class="nav-item" role="presentation">
-                                            <button class="nav-link" id="contact-tab" data-bs-toggle="tab"
-                                                    data-bs-target="#contact-tab-pane" type="button" role="tab"
-                                                    aria-controls="contact-tab-pane" aria-selected="false">
-                                                @lang('Sales Center')
-                                            </button>
-                                        </li>
-                                    </ul>
-                                </div>
                                 <div class="description-content mt-2">
                                     <div class="tab-content" id="myTabContent">
                                         <div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel"
                                              aria-labelledby="home-tab" tabindex="0">
 
-                                            <div class="cutomer-select mt-2">
-                                                <label for="sales_center_id"
-                                                       class="mb-2">@lang('Which Sales Center?')</label>
-                                                <select
-                                                    class="form-select js-example-basic-single select-sales-center salesCenterId"
-                                                    name="sales_center_id"
-                                                    aria-label="Default select example">
-                                                    <option value="" selected
-                                                            disabled>@lang('Select Sales Center')</option>
-                                                    @foreach($salesCenters as $saleCenter)
-                                                        <option
-                                                            value="{{ $saleCenter->id }}" {{ old('sales_center_id', @request()->sales_center_id) == $saleCenter->id ? 'selected' : ''}}> @lang($saleCenter->name)</option>
-                                                    @endforeach
-                                                </select>
-                                                <div class="invalid-feedback d-block">
-                                                    @error('sales_center_id') @lang($message) @enderror
+                                            <div class="input-box mt-3">
+                                                <label for="sales_center_id" class="mb-2">@lang('Sales Center?')</label>
+                                                <input type="text" class="form-control salesCenterName" name="sales_center_name" value="{{ old('sales_center_name', @request()->sales_center_name) }}" readonly>
+                                            </div>
+
+                                            <div class="customerField d-none">
+                                                <div class="input-box mt-3">
+                                                    <label for="customer_name" class="mb-2">@lang('Customer')</label>
+                                                    <input type="text" class="form-control customerName" name="customer_name" value="{{ old('customer_name', @request()->customer_name) }}" readonly>
+                                                </div>
+
+                                                <div class="input-box mt-3">
+                                                    <input type="text" class="form-control customerPhone" name="customer_phone" placeholder="Customer Phone" value="{{ old('customer_phone', @request()->customer_phone) }}" readonly>
+                                                </div>
+
+                                                <div class="input-box col-12 mt-3">
+                                                    <textarea readonly class="form-control customerAddress" cols="10" rows="2" placeholder="Customer Address" name="customer_address" spellcheck="false">{{ old('customer_address', @request()->customer_address) }}</textarea>
                                                 </div>
                                             </div>
 
-                                            <div class="cutomer-select mt-3">
-                                                <select
-                                                    class="form-select js-example-basic-single select-customer customerId"
-                                                    name="customer_id"
-                                                    aria-label="Default select example">
-                                                    <option value="" selected disabled>@lang('Select Customer')</option>
-
-                                                    @foreach($customers as $customer)
-                                                        <option
-                                                            value="{{ $customer->id }}" {{ old('customer_id', @request()->customer_id) == $customer->id ? 'selected' : ''}}> @lang($customer->name)</option>
-                                                    @endforeach
-                                                </select>
-                                                <div class="invalid-feedback d-block">
-                                                    @error('customer_id') @lang($message) @enderror
+                                            <div class="ownerField d-none">
+                                                <div class="input-box mt-3">
+                                                    <input type="text" class="form-control ownerName" name="owner_name" value="{{ old('owner_name', @request()->owner_name) }}" readonly>
                                                 </div>
-                                            </div>
 
-                                            <div class="cautomer-details">
-                                                <div class="mb-2">
-                                                    <input type="text" class="form-control customerPhone"
-                                                           id="exampleFormControlInput1" name="customer_phone"
-                                                           value="{{ old('customer_name', @request()->customer_name) }}"
-                                                           placeholder="Customer Phone">
+                                                <div class="input-box mt-3">
+                                                    <input type="text" class="form-control ownerPhone" name="owner_phone" value="{{ old('owner_phone', @request()->owner_phone) }}" readonly>
                                                 </div>
-                                                <div class="mb-3">
-                                    <textarea class="form-control customerAddress" id="exampleFormControlTextarea1"
-                                              placeholder="Customer Address" name="customer_address"
-                                              rows="3">{{ old('customer_address', @request()->customer_address) }}</textarea>
+
+                                                <div class="input-box col-12 mt-3">
+                                                    <textarea readonly class="form-control ownerAddress" cols="10" rows="2" name="owner_address" spellcheck="false">{{ old('owner_address', @request()->owner_address) }}</textarea>
                                                 </div>
                                             </div>
                                         </div>
@@ -246,8 +214,8 @@
                                     </div>
                                 </div>
                             </div>
-
-                            <div class="cart-items-area {{ count($cartItems) > 0 ? '' : 'd-none' }}">
+                            <div class="cart-items-area">
+                                {{--                                {{ count($cartItems) > 0 ? '' : 'd-none' }}--}}
                                 <div class="cart-box">
                                     <div class="cart-top d-flex align-items-center justify-content-between">
                                         <h6>items in cart</h6>
@@ -257,35 +225,35 @@
                                     </div>
 
                                     <div class="addCartItems">
-                                        @foreach($cartItems as $cartItem)
-                                            <div class="cat-item d-flex">
-                                                <div class="tittle">{{ optional($cartItem->item)->name }}</div>
-                                                <input type="hidden" name="item_id[]"
-                                                       value="{{ optional($cartItem->item)->id }}">
-                                                <input type="hidden" name="item_name[]"
-                                                       value="{{ optional($cartItem->item)->name }}">
-                                                <div class="quantity">
-                                                    <input type="number" name="item_quantity[]"
-                                                           value="{{ $cartItem->quantity }}"
-                                                           class="itemQuantityInput"
-                                                           data-stockid="{{ $cartItem->stock_id }}"
-                                                           data-itemid="{{ $cartItem->item_id }}"
-                                                           data-cartitem="{{ $cartItem->cost_per_unit }}"
-                                                           min="1">
-                                                </div>
+                                        {{--                                        @foreach($cartItems as $cartItem)--}}
+                                        {{--                                            <div class="cat-item d-flex">--}}
+                                        {{--                                                <div class="tittle">{{ optional($cartItem->item)->name }}</div>--}}
+                                        {{--                                                <input type="hidden" name="item_id[]"--}}
+                                        {{--                                                       value="{{ optional($cartItem->item)->id }}">--}}
+                                        {{--                                                <input type="hidden" name="item_name[]"--}}
+                                        {{--                                                       value="{{ optional($cartItem->item)->name }}">--}}
+                                        {{--                                                <div class="quantity">--}}
+                                        {{--                                                    <input type="number" name="item_quantity[]"--}}
+                                        {{--                                                           value="{{ $cartItem->quantity }}"--}}
+                                        {{--                                                           class="itemQuantityInput"--}}
+                                        {{--                                                           data-stockid="{{ $cartItem->stock_id }}"--}}
+                                        {{--                                                           data-itemid="{{ $cartItem->item_id }}"--}}
+                                        {{--                                                           data-cartitem="{{ $cartItem->cost_per_unit }}"--}}
+                                        {{--                                                           min="1">--}}
+                                        {{--                                                </div>--}}
 
-                                                <div class="prize">
-                                                    <h6 class="cart-item-cost">{{ $cartItem->cost }} {{ $basic->currency_symbol }}</h6>
-                                                    <input type="hidden" name="item_price[]"
-                                                           value="{{ $cartItem->cost }}" class="item_price_input">
-                                                </div>
-                                                <div class="remove">
-                                                    <a href="javascript:void(0)" class="clearSingleCartItem"
-                                                       data-id="{{ $cartItem->id }}">
-                                                        <i class="fa fa-times"></i></a>
-                                                </div>
-                                            </div>
-                                        @endforeach
+                                        {{--                                                <div class="prize">--}}
+                                        {{--                                                    <h6 class="cart-item-cost">{{ $cartItem->cost }} {{ $basic->currency_symbol }}</h6>--}}
+                                        {{--                                                    <input type="hidden" name="item_price[]"--}}
+                                        {{--                                                           value="{{ $cartItem->cost }}" class="item_price_input">--}}
+                                        {{--                                                </div>--}}
+                                        {{--                                                <div class="remove">--}}
+                                        {{--                                                    <a href="javascript:void(0)" class="clearSingleCartItem"--}}
+                                        {{--                                                       data-id="{{ $cartItem->id }}">--}}
+                                        {{--                                                        <i class="fa fa-times"></i></a>--}}
+                                        {{--                                                </div>--}}
+                                        {{--                                            </div>--}}
+                                        {{--                                        @endforeach--}}
                                     </div>
                                 </div>
 
@@ -326,8 +294,18 @@
                                             <input type="hidden" name="total_amount" class="total-amount-input"
                                                    value="{{getAmount($subTotal, config('basic.fraction_number'))}}">
                                         </div>
+
+                                        <div class="dueInvoiceField">
+                                            <div class="total-amount d-flex align-items-center justify-content-between">
+                                                <h5>Previous Paid</h5>
+                                                <h6 class="previous-paid-area"></h6>
+                                                <input type="hidden" name="previous_paid" class="previous-amount-input"
+                                                       value="">
+                                            </div>
+                                        </div>
+
                                         <div class="order-btn d-flex flex-wrap">
-                                            <button class="cancel cancelOrder" type="button">cacel order</button>
+                                            <button class="cancel cancelOrder" type="button">cancel order</button>
                                             <button type="button" class="porcced proccedOrderBtn">procced order
                                             </button>
 
@@ -881,6 +859,7 @@
 
 
         $(document).on('click', '.clearSingleCartItem', function () {
+
             let cartId = $(this).data('id');
             $.ajax({
                 url: "{{ route('user.clearSingleCartItem') }}",
@@ -1048,12 +1027,12 @@
         $(document).on('change', '.selected_sales_or_order', function () {
             let selectedValue = $(this).val();
 
-            if (selectedValue == 'sales'){
+            if (selectedValue == 'sales') {
                 $('.filter_by_items').removeClass('d-none');
                 $('.search_by_invoice_id').addClass('d-none');
                 $('.filter_by_sales_order').removeClass('col-md-12');
                 $('.filter_by_sales_order').addClass('col-md-6');
-            }else{
+            } else {
                 $('.filter_by_items').addClass('d-none');
                 $('.search_by_invoice_id').removeClass('d-none');
                 $('.filter_by_sales_order').removeClass('col-md-6');
@@ -1068,9 +1047,9 @@
                 },
                 success: function (response) {
 
-                    if (response.status == 'stocks'){
+                    if (response.status == 'stocks') {
                         pushStockItems(response);
-                    }else{
+                    } else {
                         pushSalesReturn(response);
                     }
 
@@ -1083,7 +1062,7 @@
         })
 
 
-        function pushStockItems(response){
+        function pushStockItems(response) {
 
             let stocks = response.stocks;
             let itemsData = '';
@@ -1145,7 +1124,7 @@
         }
 
 
-        function pushSalesReturn(response){
+        function pushSalesReturn(response) {
 
             let sales = response.sales;
 
@@ -1158,7 +1137,7 @@
             } else {
 
 
-                sales.forEach(function (sale){
+                sales.forEach(function (sale) {
                     salesData += `<div class="col-xl-4 col-lg-6">
                                         <div class="product-box shadow-sm p-3 mb-5 bg-body rounded">
                                             <div class="product-title d-flex justify-content-between">
@@ -1184,17 +1163,16 @@
                                                     <h4>
                                                         <button class="sellingPriceButton updateUnitPrice"
                                                                 data-sellingprice=""
-                                                                data-route="">${ sale.total_amount } {{ $basic->currency_symbol }}
-                                                        </button>
-                                                    </h4>
-                                                    <button class="btn btn-sm addToCartButton" data-property=""><i class="far fa-eye"></i></button>
-                                                </div>
-                                                <p class="mt-2"> <span>@lang('Order Date'):</span> ${sale.order_date} </p>
+                                                                data-route="">${sale.total_amount} {{ $basic->currency_symbol }}
+                    </button>
+                </h4>
+                <button class="btn btn-sm addToCartButton" data-property=""><i class="far fa-eye"></i></button>
+            </div>
+            <p class="mt-2"> <span>@lang('Order Date'):</span> ${sale.order_date} </p>
                                                 </div>
                                             </div>
                                         </div>`
                 })
-
 
 
             }
@@ -1203,12 +1181,12 @@
         }
 
 
-        $(document).on('input', '.invoice_id', function (){
+        $(document).on('input', '.invoice_id', function () {
             let invoiceId = $(this).val();
             getSingleSalesOrder(invoiceId);
         });
 
-        function getSingleSalesOrder(invoiceId){
+        function getSingleSalesOrder(invoiceId) {
             $.ajax({
                 url: "{{ route('user.getSingleSalesOrder') }}",
                 method: 'POST',
@@ -1225,6 +1203,111 @@
             });
         }
 
+
+        $(document).on('click', '.returnOrderDetails', function (){
+            let _this = $(this);
+            $.ajax({
+                url: "{{ route('user.clearSaleCartItems') }}",
+                method: 'POST',
+                success: function (response) {
+                    showReturnOrderDetails(_this);
+                },
+                error: function (xhr, status, error) {
+                    console.log(error);
+                }
+            });
+        });
+
+        function showReturnOrderDetails(_this){
+            let dataProperty = _this.data('property');
+            let cartItems = dataProperty.sales_items;
+            $('.cart-side').removeClass('d-none');
+            $('.salesCenterName').val(dataProperty.sales_center.name);
+
+
+
+            if (dataProperty.customer){
+                $('.customerField').removeClass('d-none');
+                $('.ownerField').addClass('d-none');
+                $('.customerName').val(dataProperty.customer.name);
+                $('.customerPhone').val(dataProperty.customer.phone);
+                $('.customerAddress').val(dataProperty.customer.address);
+            }else {
+                $('.ownerField').removeClass('d-none');
+                $('.customerField').addClass('d-none');
+                $('.ownerName').val(dataProperty.sales_center.owner_name);
+                $('.ownerPhone').val(dataProperty.sales_center.user.phone);
+                $('.ownerAddress').val(dataProperty.sales_center.address);
+            }
+
+            if (dataProperty.payment_status == 1){
+                $('.dueInvoiceField').addClass('d-none');
+            }else{
+                $('.dueInvoiceField').removeClass('d-none');
+                $('.previous-paid-area').text(`${dataProperty.customer_paid_amount} {{ $basic->currency_symbol }}`)
+                $('.previous-amount-input').val(`${dataProperty.customer_paid_amount}`);
+            }
+
+            $('.itemsDiscountInput').val(dataProperty.discount_parcent);
+
+            storeSalesItemToCart(cartItems);
+        }
+
+
+        function storeSalesItemToCart(cartItems){
+
+            cartItems.forEach(function (salesItem) {
+                $.ajax({
+                    url: "{{ route('user.storeSalesCartItems') }}",
+                    method: 'POST',
+                    data: {
+                        data: salesItem,
+                    },
+                    success: function (response) {
+                        let cartItems = response.cartItems;
+
+                        let itemsData = '';
+
+                        cartItems.forEach(function (cartItem) {
+                            itemsData += `<div class="cat-item d-flex">
+                        <div class="tittle">${cartItem.item.name}</div>
+                        <input type="hidden" name="item_id[]" value="${cartItem.item.id}">
+                        <input type="hidden" name="item_name[]" value="${cartItem.item.name}">
+                        <div class="quantity">
+                            <input type="number" name="item_quantity[]" value="${cartItem.quantity}"
+                                   class="itemQuantityInput" data-cartitem="${cartItem.cost_per_unit}" data-stockid="${cartItem.stock_id}"
+                                                           data-itemid="${cartItem.item_id}" min="1">
+                        </div>
+                        <input type="hidden" name="cost_per_unit[]"
+                                                       value="${cartItem.cost_per_unit}">
+                        <div class="prize">
+                            <h6 class="cart-item-cost">${cartItem.cost} {{ $basic->currency_symbol }}</h6>
+                            <input type="hidden" name="item_price[]" value="${cartItem.cost}" class="item_price_input">
+                        </div>
+
+                        <div class="remove">
+                            <a href="javascript:void(0)" class="clearSingleCartItem" data-id="${cartItem.id}"
+                               data-name="${cartItem.item.name}">
+                               <i class="fa fa-times"></i></a>
+                        </div>
+                    </div>`;
+                        });
+
+                        $('.addCartItems').html(itemsData);
+
+                        // Recalculate subtotal and total
+                        updateSubtotal();
+                        updateTotal();
+
+
+
+                    },
+                    error: function (xhr, status, error) {
+                        console.log(error);
+                    }
+                });
+            });
+        }
     </script>
 @endpush
 
