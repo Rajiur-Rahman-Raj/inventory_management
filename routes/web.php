@@ -240,6 +240,7 @@ Route::group(['middleware' => ['auth', 'Maintenance'], 'prefix' => 'user', 'as' 
         Route::delete('clear-cart-items', 'User\CompanyController@clearCartItems')->name('clearCartItems');
         Route::post('clear-sale-cart-items', 'User\CompanyController@clearSaleCartItems')->name('clearSaleCartItems');
         Route::post('clear-single-cart-item', 'User\CompanyController@clearSingleCartItem')->name('clearSingleCartItem');
+        Route::post('clear-single-return-cart-item', 'User\CompanyController@clearSingleReturnCartItem')->name('clearSingleReturnCartItem');
 
 
         Route::post('sales-order-store', 'User\CompanyController@salesOrderStore')->name('salesOrderStore');
@@ -247,6 +248,7 @@ Route::group(['middleware' => ['auth', 'Maintenance'], 'prefix' => 'user', 'as' 
 
 
         Route::get('sales-invoice/{id}', 'User\CompanyController@salesInvoice')->name('salesInvoice');
+        Route::put('sales-invoice-update/{id}', 'User\CompanyController@salesInvoiceUpdate')->name('salesInvoiceUpdate');
 
         //Inventory Route End
 

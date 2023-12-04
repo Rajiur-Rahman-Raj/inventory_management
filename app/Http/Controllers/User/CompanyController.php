@@ -17,6 +17,7 @@ use App\Models\Division;
 use App\Models\Item;
 use App\Models\Sale;
 use App\Models\SalesCenter;
+use App\Models\SalesItem;
 use App\Models\Stock;
 use App\Models\StockIn;
 use App\Models\StockInDetails;
@@ -25,6 +26,7 @@ use App\Models\Upazila;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -735,7 +737,7 @@ class CompanyController extends Controller
     public function salesDetails($id)
     {
         $admin = $this->user;
-        $data['singleSalesDetails'] = Sale::with('salesCenter', 'customer')->where('company_id', $admin->active_company_id)->findOrFail($id);
+        $data['singleSalesDetails'] = Sale::with('salesCenter', 'customer', 'salesItems')->where('company_id', $admin->active_company_id)->findOrFail($id);
         return view($this->theme . 'user.manageSales.salesDetails', $data);
     }
 
@@ -877,6 +879,7 @@ class CompanyController extends Controller
                 'item_id' => $salesItem['item_id'],
             ],
             [
+                'sales_id' => $request->salesId,
                 'cost_per_unit' => $salesItem['cost_per_unit'],
                 'quantity' => $salesItem['item_quantity'],
                 'cost' => $salesItem['item_price'],
@@ -972,6 +975,35 @@ class CompanyController extends Controller
         $cartItems = CartItems::with('item')->where('company_id', $admin->active_company_id)
             ->whereNull('sales_center_id')
             ->get();
+
+        return response()->json([
+            'cartItems' => $cartItems,
+            'status' => true,
+            'message' => "Cart item deleted successfully",
+        ]);
+    }
+
+    public function clearSingleReturnCartItem(Request $request)
+    {
+        $admin = $this->user;
+        $cart = CartItems::where('company_id', $admin->active_company_id)
+            ->whereNull('sales_center_id')
+            ->findOrFail($request->cartId);
+
+        SalesItem::where('sales_id', $cart->sales_id)->where('stock_id', $cart->stock_id)->where('item_id', $cart->item_id)->delete();
+
+        $stock = Stock::where('company_id', $admin->active_company_id)->where('item_id', $cart->item_id)->first();
+
+        $stock->quantity = $cart->quantity + $stock->quantity;
+        $stock->save();
+
+        $cart->delete();
+
+
+        $cartItems = CartItems::with('item')->where('company_id', $admin->active_company_id)
+            ->whereNull('sales_center_id')
+            ->get();
+
 
         return response()->json([
             'cartItems' => $cartItems,
@@ -1078,6 +1110,61 @@ class CompanyController extends Controller
         $sale->save();
 
         return back()->with('success', 'Due payment complete successfully');
+    }
+
+    public function salesInvoiceUpdate(Request $request, $id)
+    {
+
+        $admin = $this->user;
+        $purifiedData = Purify::clean($request->except('_token', '_method'));
+
+        try {
+            $rules = [
+                'items' => 'nullable',
+                'payment_date' => 'required',
+                'payment_note' => 'nullable',
+            ];
+
+            $message = [
+                'payment_date.required' => 'The payment date field is required.',
+            ];
+
+            $validate = Validator::make($purifiedData, $rules, $message);
+
+            if ($validate->fails()) {
+                return back()->withInput()->withErrors($validate);
+            }
+
+            DB::beginTransaction();
+            $sale = Sale::where('company_id', $admin->active_company_id)->findOrFail($id);
+
+            $due_or_change_amount = (float)floor($request->due_or_change_amount);
+            $sale->sub_total = $request->sub_total;
+            $sale->discount_parcent = $request->discount_parcent;
+            $sale->discount = $request->discount_amount;
+            $sale->total_amount = $request->total_amount;
+            $sale->customer_paid_amount = $due_or_change_amount <= 0 ? $request->total_amount : $request->customer_paid_amount;
+            $sale->due_amount = $due_or_change_amount <= 0 ? 0 : $request->due_or_change_amount;
+            $sale->payment_date = $request->payment_date;
+            $sale->payment_status = $due_or_change_amount <= 0 ? 1 : 0;
+            $sale->payment_note = $request->payment_note;
+            $this->storeSalesItems($request, $sale);
+            $sale->save();
+
+            $this->updateSalesItemsInSalesItemModel($request, $sale);
+
+            CartItems::where('company_id', $admin->active_company_id)
+                ->where('sales_id', $sale->id)
+                ->whereNull('sales_center_id')
+                ->delete();
+
+            DB::commit();
+            return redirect()->route('user.salesInvoice', $sale->id)->with('success', 'Return Order confirmed successfully!');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Something went wrong');
+        }
     }
 
     public function salesInvoice($id)

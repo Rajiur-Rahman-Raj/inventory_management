@@ -103,7 +103,7 @@
                                                         </tr>
                                                         </thead>
                                                         <tbody>
-                                                        <?php $__currentLoopData = $singleSalesDetails->items; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                        <?php $__currentLoopData = $singleSalesDetails->salesItems; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                             <tr>
                                                                 <td data-label="Item"><?php echo e(ucwords($item['item_name'])); ?></td>
                                                                 <td data-label="Quantity"><?php echo e($item['item_quantity']); ?></td>

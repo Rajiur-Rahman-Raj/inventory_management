@@ -104,7 +104,7 @@
                                                         </tr>
                                                         </thead>
                                                         <tbody>
-                                                        @foreach($singleSalesDetails->items as $key => $item)
+                                                        @foreach($singleSalesDetails->salesItems as $key => $item)
                                                             <tr>
                                                                 <td data-label="Item">{{ ucwords($item['item_name']) }}</td>
                                                                 <td data-label="Quantity">{{ $item['item_quantity'] }}</td>

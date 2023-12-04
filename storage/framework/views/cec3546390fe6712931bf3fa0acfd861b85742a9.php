@@ -99,7 +99,9 @@
                                                                 data-route=""><?php echo e($sale->total_amount); ?> <?php echo e($basic->currency_symbol); ?></button>
                                                     </h4>
                                                     <button class="btn btn-sm returnOrderDetails"
-                                                            data-property="<?php echo e($sale); ?>"><i class="far fa-eye"></i></button>
+                                                            data-property="<?php echo e($sale); ?>"
+                                                            data-route="<?php echo e(route('user.salesInvoiceUpdate', $sale->id)); ?>">
+                                                        <i class="far fa-eye"></i></button>
                                                 </div>
                                                 <p class="mt-2">
                                                     <span><?php echo app('translator')->get('Order Date'); ?>:</span> <?php echo e(customDate($sale->created_at)); ?>
@@ -123,8 +125,9 @@
 
 
                 <div class="col-xl-4 col-lg-4">
-                    <form action="<?php echo e(route('user.salesOrderStore')); ?>" method="post" enctype="multipart/form-data">
+                    <form action="" method="post" enctype="multipart/form-data" class="salesOrderUpdateForm">
                         <?php echo csrf_field(); ?>
+                        <?php echo method_field('put'); ?>
                         <div class="tab-tille">
                             <h4><?php echo app('translator')->get('Return by'); ?></h4>
                         </div>
@@ -138,84 +141,62 @@
 
                                             <div class="input-box mt-3">
                                                 <label for="sales_center_id" class="mb-2"><?php echo app('translator')->get('Sales Center?'); ?></label>
-                                                <input type="text" class="form-control salesCenterName" name="sales_center_name" value="<?php echo e(old('sales_center_name', @request()->sales_center_name)); ?>" readonly>
+                                                <input type="text" class="form-control salesCenterName"
+                                                       name="sales_center_name"
+                                                       value="<?php echo e(old('sales_center_name', @request()->sales_center_name)); ?>"
+                                                       readonly>
                                             </div>
 
                                             <div class="customerField d-none">
                                                 <div class="input-box mt-3">
                                                     <label for="customer_name" class="mb-2"><?php echo app('translator')->get('Customer'); ?></label>
-                                                    <input type="text" class="form-control customerName" name="customer_name" value="<?php echo e(old('customer_name', @request()->customer_name)); ?>" readonly>
+                                                    <input type="text" class="form-control customerName"
+                                                           name="customer_name"
+                                                           value="<?php echo e(old('customer_name', @request()->customer_name)); ?>"
+                                                           readonly>
                                                 </div>
 
                                                 <div class="input-box mt-3">
-                                                    <input type="text" class="form-control customerPhone" name="customer_phone" placeholder="Customer Phone" value="<?php echo e(old('customer_phone', @request()->customer_phone)); ?>" readonly>
+                                                    <input type="text" class="form-control customerPhone"
+                                                           name="customer_phone" placeholder="Customer Phone"
+                                                           value="<?php echo e(old('customer_phone', @request()->customer_phone)); ?>"
+                                                           readonly>
                                                 </div>
 
                                                 <div class="input-box col-12 mt-3">
-                                                    <textarea readonly class="form-control customerAddress" cols="10" rows="2" placeholder="Customer Address" name="customer_address" spellcheck="false"><?php echo e(old('customer_address', @request()->customer_address)); ?></textarea>
+                                                    <textarea readonly class="form-control customerAddress" cols="10"
+                                                              rows="2" placeholder="Customer Address"
+                                                              name="customer_address"
+                                                              spellcheck="false"><?php echo e(old('customer_address', @request()->customer_address)); ?></textarea>
                                                 </div>
                                             </div>
 
                                             <div class="ownerField d-none">
                                                 <div class="input-box mt-3">
-                                                    <input type="text" class="form-control ownerName" name="owner_name" value="<?php echo e(old('owner_name', @request()->owner_name)); ?>" readonly>
+                                                    <input type="text" class="form-control ownerName" name="owner_name"
+                                                           value="<?php echo e(old('owner_name', @request()->owner_name)); ?>"
+                                                           readonly>
                                                 </div>
 
                                                 <div class="input-box mt-3">
-                                                    <input type="text" class="form-control ownerPhone" name="owner_phone" value="<?php echo e(old('owner_phone', @request()->owner_phone)); ?>" readonly>
+                                                    <input type="text" class="form-control ownerPhone"
+                                                           name="owner_phone"
+                                                           value="<?php echo e(old('owner_phone', @request()->owner_phone)); ?>"
+                                                           readonly>
                                                 </div>
 
                                                 <div class="input-box col-12 mt-3">
-                                                    <textarea readonly class="form-control ownerAddress" cols="10" rows="2" name="owner_address" spellcheck="false"><?php echo e(old('owner_address', @request()->owner_address)); ?></textarea>
+                                                    <textarea readonly class="form-control ownerAddress" cols="10"
+                                                              rows="2" name="owner_address"
+                                                              spellcheck="false"><?php echo e(old('owner_address', @request()->owner_address)); ?></textarea>
                                                 </div>
                                             </div>
                                         </div>
 
-                                        <div class="tab-pane fade" id="contact-tab-pane" role="tabpanel"
-                                             aria-labelledby="contact-tab" tabindex="0">
-                                            <div class="cutomer-select">
-                                                <select
-                                                    class="form-select js-example-basic-single select-sales-center selectSalesCenter salesCenterId"
-                                                    name="sales_center_id"
-                                                    aria-label="Default select example">
-                                                    <option value="" selected
-                                                            disabled><?php echo app('translator')->get('Select Sales Center'); ?></option>
-
-                                                    <?php $__currentLoopData = $salesCenters; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $saleCenter): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                        <option
-                                                            value="<?php echo e($saleCenter->id); ?>" <?php echo e(old('sales_center_id', @request()->sales_center_id) == $saleCenter->id ? 'selected' : ''); ?>> <?php echo app('translator')->get($saleCenter->name); ?></option>
-                                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                                </select>
-                                            </div>
-                                            <div class="cautomer-details">
-                                                <div class="mb-2">
-                                                    <input type="text" class="form-control owner-name"
-                                                           id="exampleFormControlInput1"
-                                                           name="owner_name"
-                                                           value="<?php echo e(old('owner_name', @request()->owner_name)); ?>"
-                                                           placeholder="Owner Name">
-                                                </div>
-
-                                                <div class="mb-2">
-                                                    <input type="text" class="form-control owner-phone"
-                                                           id="exampleFormControlInput1"
-                                                           name="owner_phone"
-                                                           value="<?php echo e(old('owner_phone', @request()->owner_phone)); ?>"
-                                                           placeholder="Owner Phone">
-                                                </div>
-
-                                                <div class="mb-3">
-                                    <textarea class="form-control sales-center-address" id="exampleFormControlTextarea1"
-                                              placeholder="Sales Center Address" rows="5"
-                                              name="sales_center_address"><?php echo e(old('sales_center_address', @request()->sales_center_address)); ?></textarea>
-                                                </div>
-                                            </div>
-                                        </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="cart-items-area">
-                                
                                 <div class="cart-box">
                                     <div class="cart-top d-flex align-items-center justify-content-between">
                                         <h6>items in cart</h6>
@@ -225,35 +206,7 @@
                                     </div>
 
                                     <div class="addCartItems">
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        
 
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        
                                     </div>
                                 </div>
 
@@ -413,7 +366,7 @@ unset($__errorArgs, $__bag); ?>
                                                                         data-bs-dismiss="modal">cancel
                                                                 </button>
                                                                 <button type="submit"
-                                                                        class="btn btn-primary"><?php echo app('translator')->get('Confirm Order'); ?>
+                                                                        class="btn btn-primary"><?php echo app('translator')->get('Confirm Return'); ?>
                                                                 </button>
                                                             </div>
                                                         </div>
@@ -741,12 +694,15 @@ unset($__errorArgs, $__bag); ?>"
                         itemsData += `<div class="cat-item d-flex">
                         <div class="tittle">${cartItem.item.name}</div>
                         <input type="hidden" name="item_id[]" value="${cartItem.item.id}">
+                        <input type="hidden" name="stock_id[]" value="${cartItem.stock_id}">
                         <input type="hidden" name="item_name[]" value="${cartItem.item.name}">
                         <div class="quantity">
                             <input type="number" name="item_quantity[]" value="${cartItem.quantity}"
                                    class="itemQuantityInput" data-cartitem="${cartItem.cost_per_unit}" data-stockid="${cartItem.stock_id}"
                                                            data-itemid="${cartItem.item_id}" min="1">
                         </div>
+                        <input type="hidden" name="cost_per_unit[]"
+                                                       value="${cartItem.cost_per_unit}">
                         <div class="prize">
                             <h6 class="cart-item-cost">${cartItem.cost} <?php echo e($basic->currency_symbol); ?></h6>
                             <input type="hidden" name="item_price[]" value="${cartItem.cost}" class="item_price_input">
@@ -808,11 +764,11 @@ unset($__errorArgs, $__bag); ?>"
         });
 
         function showProccedOrderModal() {
-            let result = checkSalesBy();
-            if (result) {
-                var proccedOrderModal = new bootstrap.Modal(document.getElementById('proccedOrderModal'))
-                proccedOrderModal.show();
-            }
+            // let result = checkSalesBy();
+            // if (result) {
+            var proccedOrderModal = new bootstrap.Modal(document.getElementById('proccedOrderModal'))
+            proccedOrderModal.show();
+            // }
 
             var totalAmount = parseFloat($('.total-area').text().match(/[\d.]+/)[0]);
             $('.make-payment-total-amount').text(`${totalAmount.toFixed(2)} <?php echo e($basic->currency_symbol); ?>`)
@@ -877,12 +833,14 @@ unset($__errorArgs, $__bag); ?>"
 
             let cartId = $(this).data('id');
             $.ajax({
-                url: "<?php echo e(route('user.clearSingleCartItem')); ?>",
+                url: "<?php echo e(route('user.clearSingleReturnCartItem')); ?>",
                 method: 'POST',
                 data: {
                     cartId: cartId,
                 },
                 success: function (response) {
+                    console.log(response);
+                    return;
                     let cartItems = response.cartItems;
                     if (cartItems.length > 0) {
                         $('.cart-items-area').removeClass('d-none')
@@ -897,6 +855,7 @@ unset($__errorArgs, $__bag); ?>"
                         itemsData += `<div class="cat-item d-flex">
                         <div class="tittle">${cartItem.item.name}</div>
                          <input type="hidden" name="item_id[]" value="${cartItem.item.id}">
+                         <input type="hidden" name="stock_id[]" value="${cartItem.stock_id}">
                         <input type="hidden" name="item_name[]" value="${cartItem.item.name}">
                         <div class="quantity">
                             <input type="number" name="item_quantity[]" value="${cartItem.quantity}"
@@ -1221,8 +1180,10 @@ unset($__errorArgs, $__bag); ?>"
         }
 
 
-        $(document).on('click', '.returnOrderDetails', function (){
+        $(document).on('click', '.returnOrderDetails', function () {
             let _this = $(this);
+            let route = $(this).data('route');
+            $('.salesOrderUpdateForm').attr('action', route);
             $.ajax({
                 url: "<?php echo e(route('user.clearSaleCartItems')); ?>",
                 method: 'POST',
@@ -1235,21 +1196,20 @@ unset($__errorArgs, $__bag); ?>"
             });
         });
 
-        function showReturnOrderDetails(_this){
+        function showReturnOrderDetails(_this) {
             let dataProperty = _this.data('property');
             let cartItems = dataProperty.sales_items;
             $('.cart-side').removeClass('d-none');
             $('.salesCenterName').val(dataProperty.sales_center.name);
 
 
-
-            if (dataProperty.customer){
+            if (dataProperty.customer) {
                 $('.customerField').removeClass('d-none');
                 $('.ownerField').addClass('d-none');
                 $('.customerName').val(dataProperty.customer.name);
                 $('.customerPhone').val(dataProperty.customer.phone);
                 $('.customerAddress').val(dataProperty.customer.address);
-            }else {
+            } else {
                 $('.ownerField').removeClass('d-none');
                 $('.customerField').addClass('d-none');
                 $('.ownerName').val(dataProperty.sales_center.owner_name);
@@ -1257,9 +1217,9 @@ unset($__errorArgs, $__bag); ?>"
                 $('.ownerAddress').val(dataProperty.sales_center.address);
             }
 
-            if (dataProperty.payment_status == 1){
+            if (dataProperty.payment_status == 1) {
                 $('.dueInvoiceField').addClass('d-none');
-            }else{
+            } else {
                 $('.dueInvoiceField').removeClass('d-none');
                 $('.previous-paid-area').text(`${dataProperty.customer_paid_amount} <?php echo e($basic->currency_symbol); ?>`)
                 $('.previous-amount-input').val(`${dataProperty.customer_paid_amount}`);
@@ -1267,11 +1227,11 @@ unset($__errorArgs, $__bag); ?>"
 
             $('.itemsDiscountInput').val(dataProperty.discount_parcent);
 
-            storeSalesItemToCart(cartItems);
+            storeSalesItemToCart(cartItems, dataProperty.id);
         }
 
 
-        function storeSalesItemToCart(cartItems){
+        function storeSalesItemToCart(cartItems, salesId = null) {
 
             cartItems.forEach(function (salesItem) {
                 $.ajax({
@@ -1279,6 +1239,7 @@ unset($__errorArgs, $__bag); ?>"
                     method: 'POST',
                     data: {
                         data: salesItem,
+                        salesId: salesId,
                     },
                     success: function (response) {
                         let cartItems = response.cartItems;
@@ -1289,6 +1250,7 @@ unset($__errorArgs, $__bag); ?>"
                             itemsData += `<div class="cat-item d-flex">
                         <div class="tittle">${cartItem.item.name}</div>
                         <input type="hidden" name="item_id[]" value="${cartItem.item.id}">
+                        <input type="hidden" name="stock_id[]" value="${cartItem.stock_id}">
                         <input type="hidden" name="item_name[]" value="${cartItem.item.name}">
                         <div class="quantity">
                             <input type="number" name="item_quantity[]" value="${cartItem.quantity}"
@@ -1315,7 +1277,6 @@ unset($__errorArgs, $__bag); ?>"
                         // Recalculate subtotal and total
                         updateSubtotal();
                         updateTotal();
-
 
 
                     },

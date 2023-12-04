@@ -23,8 +23,7 @@
                                                 aria-label="Default select example">
                                             <option value="all">@lang('All Items')</option>
                                             @foreach($items as $item)
-                                                <option
-                                                    value="{{ $item->id }}" {{ old('item_id', session('filterItemId')) == $item->id ? 'selected' : ''}}> @lang($item->name)</option>
+                                                <option value="{{ $item->id }}" {{ old('item_id', session('filterItemId')) == $item->id ? 'selected' : ''}}> @lang($item->name)</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -594,7 +593,6 @@
 
     <script>
         'use strict'
-
         $(".flatpickr").flatpickr({
             wrap: true,
             maxDate: "today",
