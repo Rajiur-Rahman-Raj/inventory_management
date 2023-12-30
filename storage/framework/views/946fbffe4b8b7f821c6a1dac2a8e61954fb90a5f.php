@@ -25,6 +25,15 @@
             <div class="search-bar mt-3 me-2 ms-2 p-0">
                 <form action="" method="get" enctype="multipart/form-data">
                     <div class="row g-3 align-items-end">
+
+                        <div class="input-box col-lg-2">
+                            <label for="invoice_id"><?php echo app('translator')->get('Invoice Id'); ?></label>
+                            <input
+                                type="text" class="form-control" name="invoice_id"
+                                value="<?php echo e(old('invoice_id',request()->invoice_id)); ?>" placeholder="<?php echo app('translator')->get('Invoice Id'); ?>"
+                                autocomplete="off"/>
+                        </div>
+
                         <div class="input-box col-lg-3">
                             <label for=""><?php echo app('translator')->get('Sales Center'); ?></label>
                             <select
@@ -40,20 +49,13 @@
                         </div>
 
                         <div class="input-box col-lg-2">
-                            <label for="from_date"><?php echo app('translator')->get('Sales From Date'); ?></label>
+                            <label for="sales_date"><?php echo app('translator')->get('Sales Date'); ?></label>
                             <input
-                                type="text" class="form-control datepicker from_date" name="from_date"
-                                value="<?php echo e(old('from_date',request()->from_date)); ?>" placeholder="<?php echo app('translator')->get('From date'); ?>"
+                                type="text" class="form-control datepicker" name="sales_date"
+                                value="<?php echo e(old('sales_date',request()->sales_date)); ?>" placeholder="<?php echo app('translator')->get('sales date'); ?>"
                                 autocomplete="off" readonly/>
                         </div>
 
-                        <div class="input-box col-lg-2">
-                            <label for="to_date"><?php echo app('translator')->get('Sales To Date'); ?></label>
-                            <input
-                                type="text" class="form-control datepicker to_date" name="to_date"
-                                value="<?php echo e(old('to_date',request()->to_date)); ?>" placeholder="<?php echo app('translator')->get('To date'); ?>"
-                                autocomplete="off" readonly disabled="true"/>
-                        </div>
                         <div class="input-box col-lg-3">
                             <label for=""><?php echo app('translator')->get('Payment Status'); ?></label>
                             <select
@@ -71,11 +73,6 @@
                         </div>
                     </div>
                 </form>
-            </div>
-
-            <div class="d-flex justify-content-end mb-4">
-                <a href="<?php echo e(route('user.addStock')); ?>" class="btn btn-custom text-white "> <i
-                        class="fa fa-plus-circle"></i> <?php echo app('translator')->get('Add Stock'); ?></a>
             </div>
 
             <div class="table-parent table-responsive me-2 ms-2 mt-4">
@@ -96,9 +93,13 @@
                     <?php $__empty_1 = true; $__currentLoopData = $salesLists; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $salesList): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                         <tr>
                             <td data-label="<?php echo app('translator')->get('SL'); ?>"><?php echo e(loopIndex($salesLists) + $key); ?></td>
-                            <td data-label="<?php echo app('translator')->get('Sales Center'); ?>"> <?php echo e(optional($salesList->salesCenter)->name); ?> </td>
+                            <td data-label="<?php echo app('translator')->get('Sales Center'); ?>">
+                                <?php echo e(optional($salesList->salesCenter)->name); ?> <br>
+                                <sapn class="font-weight-bold">Invoice: </sapn> <span class="font-weight-bold color-primary"><?php echo e($salesList->invoice_id); ?></span> </span>
+                            </td>
+
                             <td data-label="<?php echo app('translator')->get('Total Amount'); ?>"
-                                class="font-weight-bold">  <?php echo e($salesList->total_amount); ?> <?php echo e($basic->currency_symbol); ?></td>
+                                class="">  <?php echo e($salesList->total_amount); ?> <?php echo e($basic->currency_symbol); ?></td>
                             <td data-label="<?php echo app('translator')->get('Sales Date'); ?>"> <?php echo e(customDate($salesList->created_at)); ?> </td>
                             <td data-label="<?php echo app('translator')->get('Last Payment Date'); ?>"> <?php echo e(customDate($salesList->payment_date)); ?> </td>
                             <td data-label="<?php echo app('translator')->get('Payment Status'); ?>">
@@ -129,6 +130,11 @@
                                         <li>
                                             <a href="<?php echo e(route('user.salesDetails', $salesList->id)); ?>"
                                                class="dropdown-item"> <i class="fal fa-eye"></i> <?php echo app('translator')->get('Details'); ?> </a>
+                                        </li>
+
+                                        <li>
+                                            <a href="<?php echo e(route('user.returnSales', $salesList->id)); ?>"
+                                               class="dropdown-item"> <i class="fal fa-backward"></i> <?php echo app('translator')->get('Return Sales'); ?> </a>
                                         </li>
                                     </ul>
                                 </div>

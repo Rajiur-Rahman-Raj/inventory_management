@@ -38,7 +38,7 @@
                                     @csrf
                                     <div class="row g-4">
                                         <div class="input-box col-md-6">
-                                            <label for="name">@lang('Name') <span class="text-danger">*</span></label>
+                                            <label for="name">@lang('Name') </label>
                                             <input type="text"
                                                    class="form-control"
                                                    name="name"
@@ -50,7 +50,7 @@
                                         </div>
 
                                         <div class="input-box col-md-6">
-                                            <label for="email">@lang('Email') <span class="text-danger">*</span></label>
+                                            <label for="email">@lang('Email')</label>
                                             <input type="email"
                                                    name="email"
                                                    placeholder="@lang('Company Email')"
@@ -62,7 +62,7 @@
                                         </div>
 
                                         <div class="input-box col-md-6">
-                                            <label for="phone">@lang('Phone Number') <span class="text-danger">*</span></label>
+                                            <label for="phone">@lang('Phone Number') </label>
                                             <input type="text"
                                                    name="phone"
                                                    placeholder="@lang('Company Number')"
@@ -76,7 +76,7 @@
                                         </div>
 
                                         <div class="input-box col-md-6">
-                                            <label for="trade_id">@lang('Trade Id') <span class="text-muted"><sup>(optional)</sup></span></label>
+                                            <label for="trade_id">@lang('Trade Id') <span class="text-muted"><sub>(optional)</sub></span></label>
                                             <input type="text" name="trade_id" placeholder="@lang('Trade Id')"
                                                    class="form-control" value="{{ old('trade_id') }}"/>
                                             @if($errors->has('trade_id'))
@@ -86,8 +86,7 @@
                                         </div>
 
                                         <div class="input-box col-12">
-                                            <label for="address">@lang('Company Address') <span
-                                                    class="text-danger">*</span></label>
+                                            <label for="address">@lang('Company Address') </label>
                                             <textarea class="form-control @error('address') is-invalid @enderror"
                                                       cols="30" rows="3" placeholder="@lang('Company Address')"
                                                       name="address">{{ old('address') }}</textarea>

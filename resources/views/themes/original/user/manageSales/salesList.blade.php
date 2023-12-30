@@ -26,6 +26,15 @@
             <div class="search-bar mt-3 me-2 ms-2 p-0">
                 <form action="" method="get" enctype="multipart/form-data">
                     <div class="row g-3 align-items-end">
+
+                        <div class="input-box col-lg-2">
+                            <label for="invoice_id">@lang('Invoice Id')</label>
+                            <input
+                                type="text" class="form-control" name="invoice_id"
+                                value="{{ old('invoice_id',request()->invoice_id) }}" placeholder="@lang('Invoice Id')"
+                                autocomplete="off"/>
+                        </div>
+
                         <div class="input-box col-lg-3">
                             <label for="">@lang('Sales Center')</label>
                             <select
@@ -41,20 +50,13 @@
                         </div>
 
                         <div class="input-box col-lg-2">
-                            <label for="from_date">@lang('Sales From Date')</label>
+                            <label for="sales_date">@lang('Sales Date')</label>
                             <input
-                                type="text" class="form-control datepicker from_date" name="from_date"
-                                value="{{ old('from_date',request()->from_date) }}" placeholder="@lang('From date')"
+                                type="text" class="form-control datepicker" name="sales_date"
+                                value="{{ old('sales_date',request()->sales_date) }}" placeholder="@lang('sales date')"
                                 autocomplete="off" readonly/>
                         </div>
 
-                        <div class="input-box col-lg-2">
-                            <label for="to_date">@lang('Sales To Date')</label>
-                            <input
-                                type="text" class="form-control datepicker to_date" name="to_date"
-                                value="{{ old('to_date',request()->to_date) }}" placeholder="@lang('To date')"
-                                autocomplete="off" readonly disabled="true"/>
-                        </div>
                         <div class="input-box col-lg-3">
                             <label for="">@lang('Payment Status')</label>
                             <select
@@ -72,11 +74,6 @@
                         </div>
                     </div>
                 </form>
-            </div>
-
-            <div class="d-flex justify-content-end mb-4">
-                <a href="{{route('user.addStock')}}" class="btn btn-custom text-white "> <i
-                        class="fa fa-plus-circle"></i> @lang('Add Stock')</a>
             </div>
 
             <div class="table-parent table-responsive me-2 ms-2 mt-4">
@@ -97,9 +94,13 @@
                     @forelse($salesLists as $key => $salesList)
                         <tr>
                             <td data-label="@lang('SL')">{{loopIndex($salesLists) + $key}}</td>
-                            <td data-label="@lang('Sales Center')"> {{ optional($salesList->salesCenter)->name }} </td>
+                            <td data-label="@lang('Sales Center')">
+                                {{ optional($salesList->salesCenter)->name }} <br>
+                                <sapn class="font-weight-bold">Invoice: </sapn> <span class="font-weight-bold color-primary">{{ $salesList->invoice_id }}</span> </span>
+                            </td>
+
                             <td data-label="@lang('Total Amount')"
-                                class="font-weight-bold">  {{ $salesList->total_amount }} {{ $basic->currency_symbol }}</td>
+                                class="">  {{ $salesList->total_amount }} {{ $basic->currency_symbol }}</td>
                             <td data-label="@lang('Sales Date')"> {{ customDate($salesList->created_at) }} </td>
                             <td data-label="@lang('Last Payment Date')"> {{ customDate($salesList->payment_date) }} </td>
                             <td data-label="@lang('Payment Status')">
@@ -130,6 +131,11 @@
                                         <li>
                                             <a href="{{ route('user.salesDetails', $salesList->id) }}"
                                                class="dropdown-item"> <i class="fal fa-eye"></i> @lang('Details') </a>
+                                        </li>
+
+                                        <li>
+                                            <a href="{{ route('user.returnSales', $salesList->id) }}"
+                                               class="dropdown-item"> <i class="fal fa-backward"></i> @lang('Return Sales') </a>
                                         </li>
                                     </ul>
                                 </div>

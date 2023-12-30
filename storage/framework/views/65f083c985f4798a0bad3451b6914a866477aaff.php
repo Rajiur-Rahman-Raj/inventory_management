@@ -113,8 +113,7 @@
                                         </div>
 
                                         <div class="input-box col-md-6">
-                                            <label for="national_id"><?php echo app('translator')->get('National Id'); ?> <span
-                                                    class="text-dark"> <sup>(optional)</sup></span></label>
+                                            <label for="national_id"><?php echo app('translator')->get('National Id'); ?> <span class="text-muted"> <sub>(optional)</sub></span></label>
                                             <input type="text" name="national_id" placeholder="<?php echo app('translator')->get('National Id'); ?>"
                                                    class="form-control" value="<?php echo e(old('national_id')); ?>"/>
                                             <?php if($errors->has('national_id')): ?>
@@ -124,8 +123,7 @@
                                         </div>
 
                                         <div class="input-box col-md-6">
-                                            <label for="trade_id"><?php echo app('translator')->get('Trade Id'); ?> <span
-                                                    class="text-dark"><sup>(optional)</sup></span></label>
+                                            <label for="trade_id"><?php echo app('translator')->get('Trade Id'); ?> <span class="text-muted"> <sub>(optional)</sub></span></label>
                                             <input type="text" name="trade_id" placeholder="<?php echo app('translator')->get('Trade Id'); ?>"
                                                    class="form-control" value="<?php echo e(old('trade_id')); ?>"/>
                                             <?php if($errors->has('trade_id')): ?>
@@ -169,8 +167,7 @@
                                         </div>
 
                                         <div class="input-box col-md-6">
-                                            <label for="district_id"><?php echo app('translator')->get('Upazila'); ?> <span
-                                                    class="text-dark"><sup>(optional)</sup></span></label>
+                                            <label for="district_id"><?php echo app('translator')->get('Upazila'); ?> <span class="text-muted"> <sub>(optional)</sub></span></label>
                                             <select class="form-select js-example-basic-single selectedUpazila"
                                                     name="upazila_id"
                                                     aria-label="Default select example"
@@ -185,8 +182,7 @@
                                         </div>
 
                                         <div class="input-box col-md-6">
-                                            <label for="union_id"><?php echo app('translator')->get('Union'); ?> <span
-                                                    class="text-dark"><sup>(optional)</sup></span></label>
+                                            <label for="union_id"><?php echo app('translator')->get('Union'); ?> <span class="text-muted"> <sub>(optional)</sub></span></label>
                                             <select class="form-select js-example-basic-single selectedUnion"
                                                     name="union_id"
                                                     aria-label="Default select example"
@@ -219,7 +215,7 @@ unset($__errorArgs, $__bag); ?>"
                                         </div>
 
                                         <div class="col-md-12 mb-4 input-box">
-                                            <label for="" class="golden-text"><?php echo app('translator')->get('Owner Photo'); ?> <span><sup>(optional)</sup></span> </label>
+                                            <label for="" class="golden-text"><?php echo app('translator')->get('Owner Photo'); ?> <span class="text-muted"> <sub>(optional)</sub></span> </label>
                                             <div class="attach-file">
                                                <span class="prev">
                                                   <?php echo app('translator')->get('Upload Logo'); ?>

@@ -49,7 +49,7 @@
 
                         <div class="input-box col-lg-2">
                             <label for=""><?php echo app('translator')->get('Owner'); ?></label>
-                            <select class="form-select" name="owner" aria-label="Default select example">
+                            <select class="form-control js-example-basic-single" name="owner" aria-label="Default select example">
                                 <option value=""><?php echo app('translator')->get('All'); ?></option>
                                 <?php $__currentLoopData = $centerLists; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $centerList): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                     <option
@@ -91,8 +91,8 @@
                     <tr>
                         <th scope="col"><?php echo app('translator')->get('SL'); ?></th>
                         <th scope="col"><?php echo app('translator')->get('Owner'); ?></th>
-                        <th scope="col"><?php echo app('translator')->get('Center Name'); ?></th>
                         <th scope="col"><?php echo app('translator')->get('Center Code'); ?></th>
+                        <th scope="col"><?php echo app('translator')->get('Center Name'); ?></th>
                         <th scope="col"><?php echo app('translator')->get('Division'); ?></th>
                         <th scope="col"><?php echo app('translator')->get('District'); ?></th>
                         <th scope="col"><?php echo app('translator')->get('Action'); ?></th>
@@ -120,8 +120,8 @@
                                 </div>
                             </td>
 
-                            <td data-label="<?php echo app('translator')->get('Center Name'); ?>"><?php echo e($centerList->name); ?></td>
                             <td data-label="<?php echo app('translator')->get('Center Code'); ?>"><?php echo e($centerList->code); ?></td>
+                            <td data-label="<?php echo app('translator')->get('Center Name'); ?>"><?php echo e($centerList->name); ?></td>
                             <td data-label="<?php echo app('translator')->get('Division'); ?>"><?php echo e(optional($centerList->division)->name); ?></td>
                             <td data-label="<?php echo app('translator')->get('District'); ?>"><?php echo e(optional($centerList->district)->name); ?></td>
 

@@ -37,7 +37,7 @@
                                     <?php echo csrf_field(); ?>
                                     <div class="row g-4">
                                         <div class="input-box col-md-6">
-                                            <label for="name"><?php echo app('translator')->get('Name'); ?> <span class="text-danger">*</span></label>
+                                            <label for="name"><?php echo app('translator')->get('Name'); ?> </label>
                                             <input type="text"
                                                    class="form-control"
                                                    name="name"
@@ -49,7 +49,7 @@
                                         </div>
 
                                         <div class="input-box col-md-6">
-                                            <label for="email"><?php echo app('translator')->get('Email'); ?> <span class="text-danger">*</span></label>
+                                            <label for="email"><?php echo app('translator')->get('Email'); ?> </label>
                                             <input type="email"
                                                    name="email"
                                                    placeholder="<?php echo app('translator')->get('Company Email'); ?>"
@@ -61,7 +61,7 @@
                                         </div>
 
                                         <div class="input-box col-md-6">
-                                            <label for="phone"><?php echo app('translator')->get('Phone Number'); ?> <span class="text-danger">*</span></label>
+                                            <label for="phone"><?php echo app('translator')->get('Phone Number'); ?> </label>
                                             <input type="text"
                                                    name="phone"
                                                    placeholder="<?php echo app('translator')->get('Company Number'); ?>"
@@ -75,7 +75,7 @@
                                         </div>
 
                                         <div class="input-box col-md-6">
-                                            <label for="trade_id"><?php echo app('translator')->get('Trade Id'); ?> <span class="text-muted"> <sup>(optional)</sup> </span></label>
+                                            <label for="trade_id"><?php echo app('translator')->get('Trade Id'); ?> <span class="text-muted"> <sub>(optional)</sub> </span></label>
                                             <input type="text" name="trade_id" placeholder="<?php echo app('translator')->get('Trade Id'); ?>"
                                                    class="form-control" value="<?php echo e(old('trade_id', $singleCompany->trade_id)); ?>"/>
                                             <?php if($errors->has('trade_id')): ?>
@@ -85,7 +85,7 @@
                                         </div>
 
                                         <div class="input-box col-12">
-                                            <label for="address"><?php echo app('translator')->get('Company Address'); ?> <span class="text-danger">*</span></label>
+                                            <label for="address"><?php echo app('translator')->get('Company Address'); ?> </label>
                                             <textarea class="form-control <?php $__errorArgs = ['address'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :

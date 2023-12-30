@@ -219,7 +219,11 @@ Route::group(['middleware' => ['auth', 'Maintenance'], 'prefix' => 'user', 'as' 
         Route::get('sales-list', 'User\CompanyController@salesList')->name('salesList');
         Route::get('sales-details/{id}', 'User\CompanyController@salesDetails')->name('salesDetails');
 
-        // Manage Sales Return
+        // Manage Sales Return new
+        Route::get('return-sales/{id}', 'User\CompanyController@returnSales')->name('returnSales');
+
+
+        // Manage Sales Return old
         Route::get('sales-return', 'User\CompanyController@salesReturn')->name('salesReturn');
         Route::post('selected-sales-order', 'User\CompanyController@selectedSalesOrOrder')->name('getSelectedSalesOrOrder');
         Route::post('single-sales-order', 'User\CompanyController@singleSalesOrder')->name('getSingleSalesOrder');

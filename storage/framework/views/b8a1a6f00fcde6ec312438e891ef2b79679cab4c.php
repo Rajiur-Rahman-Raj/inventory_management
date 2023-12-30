@@ -200,8 +200,7 @@ unset($__errorArgs, $__bag); ?>
                                         </div>
 
                                         <div class="input-box col-12 m-0 mt-3">
-                                            <label for="" class="golden-text"><?php echo app('translator')->get('Item Image'); ?> <span
-                                                    class="text-danger">*</span></label>
+                                            <label for="" class="golden-text"><?php echo app('translator')->get('Item Image'); ?> </label>
                                             <div class="attach-file">
                                                <span class="prev">
                                                   <?php echo app('translator')->get('Image'); ?>
@@ -384,6 +383,8 @@ unset($__errorArgs, $__bag); ?>
 
 <?php $__env->startPush('script'); ?>
     <script src="<?php echo e(asset('assets/global/js/bootstrap-datepicker.js')); ?>"></script>
+
+
     <script>
         'use strict'
         $(document).ready(function () {

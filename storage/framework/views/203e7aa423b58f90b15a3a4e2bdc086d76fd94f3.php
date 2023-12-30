@@ -34,53 +34,65 @@
         </li>
 
         <li>
-            <a class="<?php echo e(menuActive(['user.companyList'])); ?>" href="<?php echo e(route('user.companyList')); ?>"><i class="fal fa-building"></i><?php echo app('translator')->get('Company List'); ?></a>
+            <a class="<?php echo e(menuActive(['user.companyList', 'user.createCompany', 'user.companyEdit'])); ?>" href="<?php echo e(route('user.companyList')); ?>"><i class="fal fa-building"></i><?php echo app('translator')->get('Companies'); ?></a>
         </li>
 
         <li>
-            <a class="<?php echo e(menuActive(['user.customerList'])); ?>" href="<?php echo e(route('user.customerList')); ?>"><i class="fal fa-users"></i> <?php echo app('translator')->get('Customer List'); ?></a>
+            <a class="<?php echo e(menuActive(['user.customerList', 'user.createCustomer', 'user.customerDetails', 'user.customerEdit'])); ?>" href="<?php echo e(route('user.customerList')); ?>"><i class="fal fa-users"></i> <?php echo app('translator')->get('Customers'); ?></a>
         </li>
 
         <li>
-            <a class="<?php echo e(menuActive(['user.salesCenterList'])); ?>" href="<?php echo e(route('user.salesCenterList')); ?>"><i class="fab fa-adversal"></i><?php echo app('translator')->get('Sales Center'); ?></a>
+            <a class="<?php echo e(menuActive(['user.salesCenterList', 'user.createSalesCenter', 'user.salesCenterDetails'])); ?>" href="<?php echo e(route('user.salesCenterList')); ?>"><i class="fab fa-adversal"></i><?php echo app('translator')->get('Sales Center'); ?></a>
         </li>
 
         <li>
-            <a class="<?php echo e(menuActive(['user.itemList'])); ?>" href="<?php echo e(route('user.itemList')); ?>"><i class="fal fa-sitemap"></i><?php echo app('translator')->get('Item List'); ?></a>
+            <a class="<?php echo e(menuActive(['user.itemList'])); ?>" href="<?php echo e(route('user.itemList')); ?>"><i class="fal fa-sitemap"></i><?php echo app('translator')->get('Items'); ?></a>
         </li>
-
-        <li>
-            <a class="<?php echo e(menuActive(['user.stockList'])); ?>" href="<?php echo e(route('user.stockList')); ?>"><i class="fal fa-layer-group"></i><?php echo app('translator')->get('Stock In'); ?></a>
-        </li>
-
-
-
-
 
         <?php
-            $segments = request()->segments();
-            $last  = end($segments);
-            $manageSalesSegments = ['sales-items'];
-            $manageSalesReturnSegments = ['sales-return'];
+            $currentRouteName = request()->route()->getName();
         ?>
 
         <li>
             <a
-                class="dropdown-toggle <?php echo e(in_array($last, $manageSalesSegments) || in_array($segments[1], $manageSalesSegments) ? 'manageSalesActive' : ''); ?>"
+                class="dropdown-toggle"
                 data-bs-toggle="collapse"
-                href="#dropdownCollapsible"
+                href="#dropdownManageStocks"
                 role="button"
                 aria-expanded="false"
                 aria-controls="collapseExample">
-                <i class="fal fa-car-building"></i><?php echo app('translator')->get('Manage Sales'); ?>
+                <i class="fal fa-car-building"></i><?php echo app('translator')->get('Stocks'); ?>
             </a>
-            <div class="collapse <?php echo e(menuActive(['user.salesItem', 'user.salesList'],4)); ?> dropdownCollapsible" id="dropdownCollapsible">
+            <div class="collapse <?php echo e(menuActive(['user.stockList', 'user.addStock', 'user.stockDetails'],4)); ?> dropdownManageStocks" id="dropdownManageStocks">
                 <ul class="">
                     <li>
-                        <a class="<?php echo e(($last == 'sales-list') ? 'active' : ''); ?>" href="<?php echo e(route('user.salesList')); ?>"><i class="fal fa-sack-dollar"></i><?php echo app('translator')->get('Sales List'); ?></a>
+                        <a class="<?php echo e(in_array($currentRouteName, ['user.stockList', 'user.stockDetails']) ? 'active' : ''); ?>" href="<?php echo e(route('user.stockList')); ?>"><i class="fal fa-sack-dollar"></i><?php echo app('translator')->get('Stock List'); ?></a>
                     </li>
                     <li>
-                        <a class="<?php echo e(($last == 'sales-items') ? 'active' : ''); ?>"  href="<?php echo e(route('user.salesItem')); ?>"><i class="fal fa-house-return"></i><?php echo app('translator')->get('Sales Item'); ?></a>
+                        <a class="<?php echo e(in_array($currentRouteName, ['user.addStock']) ? 'active' : ''); ?>"  href="<?php echo e(route('user.addStock')); ?>"><i class="fal fa-house-return"></i><?php echo app('translator')->get('Stock In'); ?></a>
+                    </li>
+                </ul>
+            </div>
+        </li>
+
+
+        <li>
+            <a
+                class="dropdown-toggle"
+                data-bs-toggle="collapse"
+                href="#dropdownManageSales"
+                role="button"
+                aria-expanded="false"
+                aria-controls="collapseExample">
+                <i class="fal fa-car-building"></i><?php echo app('translator')->get('Sales'); ?>
+            </a>
+            <div class="collapse <?php echo e(menuActive(['user.salesItem', 'user.salesList', 'user.salesDetails', 'user.salesInvoice'],4)); ?> dropdownManageSales" id="dropdownManageSales">
+                <ul class="">
+                    <li>
+                        <a class="<?php echo e(in_array($currentRouteName, ['user.salesList', 'user.salesDetails', 'user.salesInvoice']) ? 'active' : ''); ?>" href="<?php echo e(route('user.salesList')); ?>"><i class="fal fa-sack-dollar"></i><?php echo app('translator')->get('Sales List'); ?></a>
+                    </li>
+                    <li>
+                        <a class="<?php echo e(in_array($currentRouteName, ['user.salesItem']) ? 'active' : ''); ?>"  href="<?php echo e(route('user.salesItem')); ?>"><i class="fal fa-house-return"></i><?php echo app('translator')->get('Sales Item'); ?></a>
                     </li>
                 </ul>
             </div>
@@ -88,7 +100,7 @@
 
         <li>
             <a
-                class="dropdown-toggle <?php echo e(in_array($last, $manageSalesReturnSegments) || in_array($segments[1], $manageSalesReturnSegments) ? 'manageSalesActive' : ''); ?>"
+                class="dropdown-toggle"
                 data-bs-toggle="collapse"
                 href="#dropdownCollapsible"
                 role="button"
@@ -98,11 +110,8 @@
             </a>
             <div class="collapse <?php echo e(menuActive(['user.salesReturn'],4)); ?> dropdownCollapsible" id="dropdownCollapsible">
                 <ul class="">
-
-
-
                     <li>
-                        <a class="<?php echo e(($last == 'sales-return') ? 'active' : ''); ?>"  href="<?php echo e(route('user.salesReturn')); ?>"><i class="fal fa-house-return"></i><?php echo app('translator')->get('Sales Return'); ?></a>
+                        <a class="<?php echo e(in_array($currentRouteName, ['user.salesReturn']) ? 'active' : ''); ?>"  href="<?php echo e(route('user.salesReturn')); ?>"><i class="fal fa-house-return"></i><?php echo app('translator')->get('Sales Return'); ?></a>
                     </li>
                 </ul>
             </div>

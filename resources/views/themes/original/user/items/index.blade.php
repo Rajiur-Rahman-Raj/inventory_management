@@ -173,8 +173,7 @@
                                         </div>
 
                                         <div class="input-box col-12 m-0 mt-3">
-                                            <label for="" class="golden-text">@lang('Item Image') <span
-                                                    class="text-danger">*</span></label>
+                                            <label for="" class="golden-text">@lang('Item Image') </label>
                                             <div class="attach-file">
                                                <span class="prev">
                                                   @lang('Image')
@@ -315,6 +314,8 @@
 
 @push('script')
     <script src="{{ asset('assets/global/js/bootstrap-datepicker.js') }}"></script>
+
+
     <script>
         'use strict'
         $(document).ready(function () {

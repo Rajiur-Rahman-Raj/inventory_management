@@ -22,8 +22,7 @@
                                                 aria-label="Default select example">
                                             <option value="all"><?php echo app('translator')->get('All Items'); ?></option>
                                             <?php $__currentLoopData = $items; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                <option
-                                                    value="<?php echo e($item->id); ?>" <?php echo e(old('item_id', session('filterItemId')) == $item->id ? 'selected' : ''); ?>> <?php echo app('translator')->get($item->name); ?></option>
+                                                <option value="<?php echo e($item->id); ?>" <?php echo e(old('item_id', session('filterItemId')) == $item->id ? 'selected' : ''); ?>> <?php echo app('translator')->get($item->name); ?></option>
                                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                         </select>
                                     </div>
@@ -623,7 +622,6 @@ unset($__errorArgs, $__bag); ?>"
 
     <script>
         'use strict'
-
         $(".flatpickr").flatpickr({
             wrap: true,
             maxDate: "today",

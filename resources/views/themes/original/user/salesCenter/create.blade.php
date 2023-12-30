@@ -114,8 +114,7 @@
                                         </div>
 
                                         <div class="input-box col-md-6">
-                                            <label for="national_id">@lang('National Id') <span
-                                                    class="text-dark"> <sup>(optional)</sup></span></label>
+                                            <label for="national_id">@lang('National Id') <span class="text-muted"> <sub>(optional)</sub></span></label>
                                             <input type="text" name="national_id" placeholder="@lang('National Id')"
                                                    class="form-control" value="{{ old('national_id') }}"/>
                                             @if($errors->has('national_id'))
@@ -125,8 +124,7 @@
                                         </div>
 
                                         <div class="input-box col-md-6">
-                                            <label for="trade_id">@lang('Trade Id') <span
-                                                    class="text-dark"><sup>(optional)</sup></span></label>
+                                            <label for="trade_id">@lang('Trade Id') <span class="text-muted"> <sub>(optional)</sub></span></label>
                                             <input type="text" name="trade_id" placeholder="@lang('Trade Id')"
                                                    class="form-control" value="{{ old('trade_id') }}"/>
                                             @if($errors->has('trade_id'))
@@ -170,8 +168,7 @@
                                         </div>
 
                                         <div class="input-box col-md-6">
-                                            <label for="district_id">@lang('Upazila') <span
-                                                    class="text-dark"><sup>(optional)</sup></span></label>
+                                            <label for="district_id">@lang('Upazila') <span class="text-muted"> <sub>(optional)</sub></span></label>
                                             <select class="form-select js-example-basic-single selectedUpazila"
                                                     name="upazila_id"
                                                     aria-label="Default select example"
@@ -186,8 +183,7 @@
                                         </div>
 
                                         <div class="input-box col-md-6">
-                                            <label for="union_id">@lang('Union') <span
-                                                    class="text-dark"><sup>(optional)</sup></span></label>
+                                            <label for="union_id">@lang('Union') <span class="text-muted"> <sub>(optional)</sub></span></label>
                                             <select class="form-select js-example-basic-single selectedUnion"
                                                     name="union_id"
                                                     aria-label="Default select example"
@@ -213,7 +209,7 @@
                                         </div>
 
                                         <div class="col-md-12 mb-4 input-box">
-                                            <label for="" class="golden-text">@lang('Owner Photo') <span><sup>(optional)</sup></span> </label>
+                                            <label for="" class="golden-text">@lang('Owner Photo') <span class="text-muted"> <sub>(optional)</sub></span> </label>
                                             <div class="attach-file">
                                                <span class="prev">
                                                   @lang('Upload Logo')

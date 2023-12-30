@@ -50,7 +50,7 @@
 
                         <div class="input-box col-lg-2">
                             <label for="">@lang('Owner')</label>
-                            <select class="form-select" name="owner" aria-label="Default select example">
+                            <select class="form-control js-example-basic-single" name="owner" aria-label="Default select example">
                                 <option value="">@lang('All')</option>
                                 @foreach($centerLists as $centerList)
                                     <option
@@ -92,8 +92,8 @@
                     <tr>
                         <th scope="col">@lang('SL')</th>
                         <th scope="col">@lang('Owner')</th>
-                        <th scope="col">@lang('Center Name')</th>
                         <th scope="col">@lang('Center Code')</th>
+                        <th scope="col">@lang('Center Name')</th>
                         <th scope="col">@lang('Division')</th>
                         <th scope="col">@lang('District')</th>
                         <th scope="col">@lang('Action')</th>
@@ -121,8 +121,8 @@
                                 </div>
                             </td>
 
-                            <td data-label="@lang('Center Name')">{{ $centerList->name }}</td>
                             <td data-label="@lang('Center Code')">{{ $centerList->code }}</td>
+                            <td data-label="@lang('Center Name')">{{ $centerList->name }}</td>
                             <td data-label="@lang('Division')">{{ optional($centerList->division)->name }}</td>
                             <td data-label="@lang('District')">{{ optional($centerList->district)->name }}</td>
 

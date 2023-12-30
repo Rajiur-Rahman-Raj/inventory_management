@@ -174,7 +174,6 @@
 <?php $__env->stopSection(); ?>
 
 <?php $__env->startPush('script'); ?>
-
     <script>
         'use strict'
         $(document).on('click', '#salesInvoicePrint', function () {
@@ -186,7 +185,6 @@
         })
 
     </script>
-
 <?php $__env->stopPush(); ?>
 
 <?php echo $__env->make($theme.'layouts.user', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH D:\xammp\htdocs\inventory_management\project\resources\views/themes/original/user/manageSales/salesInvoice.blade.php ENDPATH**/ ?>

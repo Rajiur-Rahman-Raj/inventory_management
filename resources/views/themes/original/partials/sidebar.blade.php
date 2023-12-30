@@ -34,53 +34,65 @@
         </li>
 
         <li>
-            <a class="{{menuActive(['user.companyList'])}}" href="{{ route('user.companyList') }}"><i class="fal fa-building"></i>@lang('Company List')</a>
+            <a class="{{menuActive(['user.companyList', 'user.createCompany', 'user.companyEdit'])}}" href="{{ route('user.companyList') }}"><i class="fal fa-building"></i>@lang('Companies')</a>
         </li>
 
         <li>
-            <a class="{{menuActive(['user.customerList'])}}" href="{{ route('user.customerList') }}"><i class="fal fa-users"></i> @lang('Customer List')</a>
+            <a class="{{menuActive(['user.customerList', 'user.createCustomer', 'user.customerDetails', 'user.customerEdit'])}}" href="{{ route('user.customerList') }}"><i class="fal fa-users"></i> @lang('Customers')</a>
         </li>
 
         <li>
-            <a class="{{menuActive(['user.salesCenterList'])}}" href="{{ route('user.salesCenterList') }}"><i class="fab fa-adversal"></i>@lang('Sales Center')</a>
+            <a class="{{menuActive(['user.salesCenterList', 'user.createSalesCenter', 'user.salesCenterDetails'])}}" href="{{ route('user.salesCenterList') }}"><i class="fab fa-adversal"></i>@lang('Sales Center')</a>
         </li>
 
         <li>
-            <a class="{{menuActive(['user.itemList'])}}" href="{{ route('user.itemList') }}"><i class="fal fa-sitemap"></i>@lang('Item List')</a>
+            <a class="{{menuActive(['user.itemList'])}}" href="{{ route('user.itemList') }}"><i class="fal fa-sitemap"></i>@lang('Items')</a>
         </li>
-
-        <li>
-            <a class="{{menuActive(['user.stockList'])}}" href="{{ route('user.stockList') }}"><i class="fal fa-layer-group"></i>@lang('Stock In')</a>
-        </li>
-
-{{--        <li>--}}
-{{--            <a class="{{menuActive(['user.manageSales'])}}" href="{{ route('user.manageSales') }}"><i class="fal fa-shopping-bag"></i> @lang('Manage Sales')</a>--}}
-{{--        </li>--}}
 
         @php
-            $segments = request()->segments();
-            $last  = end($segments);
-            $manageSalesSegments = ['sales-items'];
-            $manageSalesReturnSegments = ['sales-return'];
+            $currentRouteName = request()->route()->getName();
         @endphp
 
         <li>
             <a
-                class="dropdown-toggle {{ in_array($last, $manageSalesSegments) || in_array($segments[1], $manageSalesSegments) ? 'manageSalesActive' : '' }}"
+                class="dropdown-toggle"
                 data-bs-toggle="collapse"
-                href="#dropdownCollapsible"
+                href="#dropdownManageStocks"
                 role="button"
                 aria-expanded="false"
                 aria-controls="collapseExample">
-                <i class="fal fa-car-building"></i>@lang('Manage Sales')
+                <i class="fal fa-car-building"></i>@lang('Stocks')
             </a>
-            <div class="collapse {{menuActive(['user.salesItem', 'user.salesList'],4)}} dropdownCollapsible" id="dropdownCollapsible">
+            <div class="collapse {{menuActive(['user.stockList', 'user.addStock', 'user.stockDetails'],4)}} dropdownManageStocks" id="dropdownManageStocks">
                 <ul class="">
                     <li>
-                        <a class="{{($last == 'sales-list') ? 'active' : '' }}" href="{{ route('user.salesList') }}"><i class="fal fa-sack-dollar"></i>@lang('Sales List')</a>
+                        <a class="{{ in_array($currentRouteName, ['user.stockList', 'user.stockDetails']) ? 'active' : '' }}" href="{{ route('user.stockList') }}"><i class="fal fa-sack-dollar"></i>@lang('Stock List')</a>
                     </li>
                     <li>
-                        <a class="{{($last == 'sales-items') ? 'active' : '' }}"  href="{{ route('user.salesItem') }}"><i class="fal fa-house-return"></i>@lang('Sales Item')</a>
+                        <a class="{{ in_array($currentRouteName, ['user.addStock']) ? 'active' : '' }}"  href="{{ route('user.addStock') }}"><i class="fal fa-house-return"></i>@lang('Stock In')</a>
+                    </li>
+                </ul>
+            </div>
+        </li>
+
+
+        <li>
+            <a
+                class="dropdown-toggle"
+                data-bs-toggle="collapse"
+                href="#dropdownManageSales"
+                role="button"
+                aria-expanded="false"
+                aria-controls="collapseExample">
+                <i class="fal fa-car-building"></i>@lang('Sales')
+            </a>
+            <div class="collapse {{menuActive(['user.salesItem', 'user.salesList', 'user.salesDetails', 'user.salesInvoice'],4)}} dropdownManageSales" id="dropdownManageSales">
+                <ul class="">
+                    <li>
+                        <a class="{{ in_array($currentRouteName, ['user.salesList', 'user.salesDetails', 'user.salesInvoice']) ? 'active' : '' }}" href="{{ route('user.salesList') }}"><i class="fal fa-sack-dollar"></i>@lang('Sales List')</a>
+                    </li>
+                    <li>
+                        <a class="{{ in_array($currentRouteName, ['user.salesItem']) ? 'active' : '' }}"  href="{{ route('user.salesItem') }}"><i class="fal fa-house-return"></i>@lang('Sales Item')</a>
                     </li>
                 </ul>
             </div>
@@ -88,7 +100,7 @@
 
         <li>
             <a
-                class="dropdown-toggle {{ in_array($last, $manageSalesReturnSegments) || in_array($segments[1], $manageSalesReturnSegments) ? 'manageSalesActive' : '' }}"
+                class="dropdown-toggle"
                 data-bs-toggle="collapse"
                 href="#dropdownCollapsible"
                 role="button"
@@ -98,11 +110,8 @@
             </a>
             <div class="collapse {{menuActive(['user.salesReturn'],4)}} dropdownCollapsible" id="dropdownCollapsible">
                 <ul class="">
-{{--                    <li>--}}
-{{--                        <a class="{{($last == 'sales-list') ? 'active' : '' }}" href="{{ route('user.salesList') }}"><i class="fal fa-sack-dollar"></i>@lang('Return List')</a>--}}
-{{--                    </li>--}}
                     <li>
-                        <a class="{{($last == 'sales-return') ? 'active' : '' }}"  href="{{ route('user.salesReturn') }}"><i class="fal fa-house-return"></i>@lang('Sales Return')</a>
+                        <a class="{{ in_array($currentRouteName, ['user.salesReturn']) ? 'active' : '' }}"  href="{{ route('user.salesReturn') }}"><i class="fal fa-house-return"></i>@lang('Sales Return')</a>
                     </li>
                 </ul>
             </div>

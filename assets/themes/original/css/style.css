@@ -9299,7 +9299,7 @@ button.gold-btn.copyReferalLink {
     color: var(--primary);
 }
 
-.manageSalesActive {
+.dropdown-toggle-active {
     color: var(--primary) !important;
 }
 

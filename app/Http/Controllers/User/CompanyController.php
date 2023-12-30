@@ -193,6 +193,7 @@ class CompanyController extends Controller
         $toDate = Carbon::parse($request->to_date)->addDay();
         $loggedInUser = $this->user;
 
+
         $data['centerLists'] = SalesCenter::with('user', 'division', 'district', 'upazila', 'union', 'activeCompanySalesCenter')
             ->when(isset($search['name']), function ($query) use ($search) {
                 $query->where('name', 'LIKE', '%' . $search['name'] . '%');
@@ -428,14 +429,23 @@ class CompanyController extends Controller
     {
         $admin = $this->user;
         $search = $request->all();
+
         $fromDate = Carbon::parse($request->from_date);
         $toDate = Carbon::parse($request->to_date)->addDay();
 
+        $data['allItems'] = Item::where('company_id', $admin->active_company_id)->where('status', 1)->get();
+
         $data['stockLists'] = Stock::with('item:id,name')
-            ->when(isset($search['name']), function ($query) use ($search) {
+            ->when(isset($search['item_id']), function ($query) use ($search) {
                 return $query->whereHas('item', function ($q) use ($search) {
-                    $q->whereRaw("name REGEXP '[[:<:]]{$search['name']}[[:>:]]'");
+                    $q->where('id', $search['item_id']);
                 });
+            })
+            ->when(isset($search['stock_check']) && $search['stock_check'] == 'available_in_stock', function ($q2) use ($search) {
+                return $q2->where('quantity', '>', 0);
+            })
+            ->when(isset($search['stock_check']) && $search['stock_check'] == 'out_of_stock', function ($q2) use ($search) {
+                return $q2->where('quantity', '<=', 0);
             })
             ->when(isset($search['from_date']), function ($q2) use ($fromDate) {
                 return $q2->whereDate('last_stock_date', '>=', $fromDate);
@@ -448,7 +458,6 @@ class CompanyController extends Controller
             ->latest()
             ->select('id', 'item_id', 'quantity', 'cost_per_unit', 'last_cost_per_unit', 'stock_date', 'last_stock_date')
             ->paginate(config('basic.paginate'));
-
         return view($this->theme . 'user.stock.index', $data);
     }
 
@@ -710,19 +719,19 @@ class CompanyController extends Controller
     {
         $admin = $this->user;
         $search = $request->all();
-        $fromDate = Carbon::parse($request->from_date);
-        $toDate = Carbon::parse($request->to_date)->addDay();
+
+        $sales_date = Carbon::parse($request->sales_date);
         $data['salesCenters'] = SalesCenter::where('company_id', $admin->active_company_id)->latest()->get();
 
         $data['salesLists'] = Sale::with('salesCenter')
+            ->when(isset($search['invoice_id']), function ($q2) use ($search) {
+                return $q2->where('invoice_id', $search['invoice_id']);
+            })
             ->when(isset($search['sales_center_id']) && $search['sales_center_id'] != 'all', function ($q) use ($search) {
                 $q->whereRaw("sales_center_id REGEXP '[[:<:]]{$search['sales_center_id']}[[:>:]]'");
             })
-            ->when(isset($search['from_date']), function ($q2) use ($fromDate) {
-                return $q2->whereDate('created_at', '>=', $fromDate);
-            })
-            ->when(isset($search['to_date']), function ($q2) use ($fromDate, $toDate) {
-                return $q2->whereBetween('created_at', [$fromDate, $toDate]);
+            ->when(isset($search['sales_date']), function ($q2) use ($sales_date) {
+                return $q2->whereDate('created_at', $sales_date);
             })
             ->when(isset($search['status']) && $search['status'] != 'all', function ($q) use ($search) {
                 $q->whereRaw("payment_status REGEXP '[[:<:]]{$search['status']}[[:>:]]'");
@@ -738,6 +747,7 @@ class CompanyController extends Controller
     {
         $admin = $this->user;
         $data['singleSalesDetails'] = Sale::with('salesCenter', 'customer', 'salesItems')->where('company_id', $admin->active_company_id)->findOrFail($id);
+
         return view($this->theme . 'user.manageSales.salesDetails', $data);
     }
 
@@ -1200,6 +1210,23 @@ class CompanyController extends Controller
         $data['subTotal'] = $data['cartItems']->sum('cost');
         return view($this->theme . 'user.manageReturn.salesReturnItem', $data);
     }
+
+
+    public function returnSales($id){
+        $admin = $this->user;
+        $data['items'] = Item::where('company_id', $admin->active_company_id)
+            ->select('id', 'name')
+            ->latest()
+            ->get();
+
+        $data['stocks'] = Stock::with('item:id,name,image')->where('company_id', $admin->active_company_id)->whereNull('sales_center_id')
+            ->select('id', 'item_id', 'quantity', 'cost_per_unit', 'last_cost_per_unit', 'selling_price')
+            ->latest()
+            ->get();
+
+        return view($this->theme . 'user.manageSales.returnsalesItem', $data);
+    }
+
 
     public function selectedSalesOrOrder(Request $request)
     {

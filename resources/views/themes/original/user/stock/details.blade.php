@@ -50,7 +50,6 @@
                                                         <table class="table table-bordered">
                                                             <thead>
                                                             <tr>
-                                                                <th scope="col">Item</th>
                                                                 <th scope="col">Quantity</th>
                                                                 <th scope="col">Cost Per Unit</th>
                                                                 <th scope="col">Total Unit Cost</th>
@@ -63,16 +62,15 @@
                                                             @foreach($singleStockDetails as $key => $stockInDetail)
 
                                                                 <tr>
-                                                                    <td data-label="Item">{{ ucwords(optional($stockInDetail->item)->name) }}</td>
                                                                     <td data-label="Quantity">{{ $stockInDetail->quantity }}</td>
-                                                                    <td data-label="Cost">{{ $stockInDetail->cost_per_unit }} {{ $basic->currency_symbol }}</td>
-                                                                    <td data-label="Cost">{{ $stockInDetail->total_unit_cost }} {{ $basic->currency_symbol }}</td>
-                                                                    <td data-label="Cost">{{ customDate($stockInDetail->stock_date) }}</td>
+                                                                    <td data-label="Cost Per Unit">{{ $stockInDetail->cost_per_unit }} {{ $basic->currency_symbol }}</td>
+                                                                    <td data-label="Total Unit Cost">{{ $stockInDetail->total_unit_cost }} {{ $basic->currency_symbol }}</td>
+                                                                    <td data-label="Stock Date">{{ customDate($stockInDetail->stock_date) }}</td>
                                                                 </tr>
                                                             @endforeach
 
                                                             <tr>
-                                                                <td colspan="4" class="text-right">@lang('Total Price')</td>
+                                                                <td colspan="3" class="text-right">@lang('Total Price')</td>
                                                                 <td> = {{ $totalItemCost }} {{ $basic->currency_symbol }}</td>
                                                             </tr>
                                                             </tbody>

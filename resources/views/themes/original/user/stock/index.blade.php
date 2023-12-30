@@ -27,13 +27,25 @@
                 <form action="" method="get" enctype="multipart/form-data">
                     <div class="row g-3 align-items-end">
                         <div class="input-box col-lg-3">
-                            <label for="">@lang('Item Name')</label>
-                            <input
-                                type="text"
-                                name="name"
-                                value="{{ old('name', @request()->name) }}"
-                                class="form-control"
-                                placeholder="@lang('item Name')"/>
+                            <label for="">@lang('Items')</label>
+
+                            <select class="form-control js-example-basic-single" name="item_id"
+                                    aria-label="Default select example">
+                                <option value="">@lang('All')</option>
+                                @foreach($allItems as $item)
+                                    <option value="{{ $item->id }}" {{ @request()->item_id == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="input-box col-lg-3">
+                            <label for="">@lang('Stocks')</label>
+                            <select class="form-control js-example-basic-single" name="stock_check"
+                                    aria-label="Default select example">
+                                <option value="">@lang('All')</option>
+                                <option value="available_in_stock" {{ @request()->stock_check == 'available_in_stock' ? 'selected' : '' }}>@lang('Available In Stock')</option>
+                                <option value="out_of_stock" {{ @request()->stock_check == 'out_of_stock' ? 'selected' : '' }}>@lang('Out Of Stock')</option>
+                            </select>
                         </div>
 
                         <div class="input-box col-lg-3">
@@ -50,7 +62,7 @@
                                 value="{{ old('to_date',request()->to_date) }}" placeholder="@lang('To date')"
                                 autocomplete="off" readonly disabled="true"/>
                         </div>
-                        <div class="input-box col-lg-3">
+                        <div class="input-box col-lg-12">
                             <button class="btn-custom w-100" type="submit"><i class="fal fa-search"></i>@lang('Search')
                             </button>
                         </div>
@@ -82,7 +94,10 @@
                             <td data-label="@lang('SL')">{{loopIndex($stockLists) + $key}}</td>
 
                             <td data-label="@lang('Item Name')"> {{ optional($stockList->item)->name }} </td>
-                            <td data-label="@lang('Quantity')" class="font-weight-bold">  {{ $stockList->quantity }} </td>
+                            <td data-label="@lang('Quantity')" class="font-weight-bold">
+                                <span
+                                    class="badge {{ $stockList->quantity > 0 ? 'bg-info' : 'bg-danger' }}">{{ $stockList->quantity }} </span>
+                            </td>
                             <td data-label="@lang('Last Cost Per Unit')"> {{ $stockList->last_cost_per_unit }} {{ $basic->currency_symbol }} </td>
                             <td data-label="@lang('Last Stock Date')"> {{ customDate($stockList->last_stock_date) }} </td>
 
@@ -98,7 +113,7 @@
 
                                     <ul class="dropdown-menu dropdown-menu-end">
                                         <li>
-{{--                                            <a href="{{ route('user.stockDetails', $stockList->id) }}"--}}
+                                            {{--                                            <a href="{{ route('user.stockDetails', $stockList->id) }}"--}}
                                             <a href="{{ route('user.stockDetails', [slug(optional($stockList->item)->name), $stockList->id]) }}"
                                                class="dropdown-item"> <i class="fal fa-eye"></i> @lang('Details') </a>
                                         </li>

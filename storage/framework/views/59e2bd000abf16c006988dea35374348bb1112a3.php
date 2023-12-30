@@ -41,8 +41,7 @@
                                     <?php echo csrf_field(); ?>
                                     <div class="row g-4">
                                         <div class="input-box col-md-12">
-                                            <label for="name"><?php echo app('translator')->get('Stock In Date'); ?> <span
-                                                    class="text-danger">*</span></label>
+                                            <label for="name"><?php echo app('translator')->get('Stock In Date'); ?> </label>
 
                                             <div class="flatpickr">
                                                 <div class="input-group input-box">
@@ -496,6 +495,7 @@ unset($__errorArgs, $__bag); ?>
 
         function deleteItemField(id) {
             $(`#removeItemField${id}`).remove();
+            calculateItemTotalPrice();
         }
 
         $(document).on('input', '.costPerUnit', function () {

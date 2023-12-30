@@ -56,7 +56,7 @@
                                         </div>
 
                                         <div class="input-box col-md-6">
-                                            <label for="email"><?php echo app('translator')->get('Email'); ?> <span><sup>(optional)</sup></span></label>
+                                            <label for="email"><?php echo app('translator')->get('Email'); ?> <span><sub>(optional)</sub></span></label>
                                             <input type="email"
                                                    class="form-control"
                                                    name="email"
@@ -81,7 +81,7 @@
 
                                         <div class="input-box col-md-6">
                                             <label for="national_id"><?php echo app('translator')->get('National Id'); ?> <span
-                                                    class="text-dark"> <sup><em>(optional)</em></sup></span></label>
+                                                    class="text-dark"> <sub>(optional)</sub></span></label>
                                             <input type="text" name="national_id" placeholder="<?php echo app('translator')->get('National Id'); ?>"
                                                    class="form-control" value="<?php echo e(old('national_id')); ?>"/>
                                             <?php if($errors->has('national_id')): ?>
@@ -125,7 +125,7 @@
 
                                         <div class="input-box col-md-6">
                                             <label for="district_id"><?php echo app('translator')->get('Upazila'); ?> <span
-                                                    class="text-dark"><sup><em>(optional)</em></sup></span></label>
+                                                    class="text-dark"><sub>(optional)</sub></span></label>
                                             <select class="form-select js-example-basic-single selectedUpazila"
                                                     name="upazila_id"
                                                     aria-label="Default select example"
@@ -141,7 +141,7 @@
 
                                         <div class="input-box col-md-6">
                                             <label for="union_id"><?php echo app('translator')->get('Union'); ?> <span
-                                                    class="text-dark"><sup><em>(optional)</em></sup></span></label>
+                                                    class="text-dark"><sub>(optional)</sub></span></label>
                                             <select class="form-select js-example-basic-single selectedUnion" name="union_id" aria-label="Default select example" data-oldunionid="<?php echo e(old('union_id')); ?>"></select>
 
                                             <?php if($errors->has('union_id')): ?>

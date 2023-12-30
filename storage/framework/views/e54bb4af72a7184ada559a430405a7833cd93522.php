@@ -26,13 +26,25 @@
                 <form action="" method="get" enctype="multipart/form-data">
                     <div class="row g-3 align-items-end">
                         <div class="input-box col-lg-3">
-                            <label for=""><?php echo app('translator')->get('Item Name'); ?></label>
-                            <input
-                                type="text"
-                                name="name"
-                                value="<?php echo e(old('name', @request()->name)); ?>"
-                                class="form-control"
-                                placeholder="<?php echo app('translator')->get('item Name'); ?>"/>
+                            <label for=""><?php echo app('translator')->get('Items'); ?></label>
+
+                            <select class="form-control js-example-basic-single" name="item_id"
+                                    aria-label="Default select example">
+                                <option value=""><?php echo app('translator')->get('All'); ?></option>
+                                <?php $__currentLoopData = $allItems; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <option value="<?php echo e($item->id); ?>" <?php echo e(@request()->item_id == $item->id ? 'selected' : ''); ?>><?php echo e($item->name); ?></option>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                            </select>
+                        </div>
+
+                        <div class="input-box col-lg-3">
+                            <label for=""><?php echo app('translator')->get('Stocks'); ?></label>
+                            <select class="form-control js-example-basic-single" name="stock_check"
+                                    aria-label="Default select example">
+                                <option value=""><?php echo app('translator')->get('All'); ?></option>
+                                <option value="available_in_stock" <?php echo e(@request()->stock_check == 'available_in_stock' ? 'selected' : ''); ?>><?php echo app('translator')->get('Available In Stock'); ?></option>
+                                <option value="out_of_stock" <?php echo e(@request()->stock_check == 'out_of_stock' ? 'selected' : ''); ?>><?php echo app('translator')->get('Out Of Stock'); ?></option>
+                            </select>
                         </div>
 
                         <div class="input-box col-lg-3">
@@ -49,7 +61,7 @@
                                 value="<?php echo e(old('to_date',request()->to_date)); ?>" placeholder="<?php echo app('translator')->get('To date'); ?>"
                                 autocomplete="off" readonly disabled="true"/>
                         </div>
-                        <div class="input-box col-lg-3">
+                        <div class="input-box col-lg-12">
                             <button class="btn-custom w-100" type="submit"><i class="fal fa-search"></i><?php echo app('translator')->get('Search'); ?>
                             </button>
                         </div>
@@ -81,7 +93,10 @@
                             <td data-label="<?php echo app('translator')->get('SL'); ?>"><?php echo e(loopIndex($stockLists) + $key); ?></td>
 
                             <td data-label="<?php echo app('translator')->get('Item Name'); ?>"> <?php echo e(optional($stockList->item)->name); ?> </td>
-                            <td data-label="<?php echo app('translator')->get('Quantity'); ?>" class="font-weight-bold">  <?php echo e($stockList->quantity); ?> </td>
+                            <td data-label="<?php echo app('translator')->get('Quantity'); ?>" class="font-weight-bold">
+                                <span
+                                    class="badge <?php echo e($stockList->quantity > 0 ? 'bg-info' : 'bg-danger'); ?>"><?php echo e($stockList->quantity); ?> </span>
+                            </td>
                             <td data-label="<?php echo app('translator')->get('Last Cost Per Unit'); ?>"> <?php echo e($stockList->last_cost_per_unit); ?> <?php echo e($basic->currency_symbol); ?> </td>
                             <td data-label="<?php echo app('translator')->get('Last Stock Date'); ?>"> <?php echo e(customDate($stockList->last_stock_date)); ?> </td>
 
@@ -97,7 +112,7 @@
 
                                     <ul class="dropdown-menu dropdown-menu-end">
                                         <li>
-
+                                            
                                             <a href="<?php echo e(route('user.stockDetails', [slug(optional($stockList->item)->name), $stockList->id])); ?>"
                                                class="dropdown-item"> <i class="fal fa-eye"></i> <?php echo app('translator')->get('Details'); ?> </a>
                                         </li>
