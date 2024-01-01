@@ -25,5 +25,6 @@ class VerifyCsrfToken extends Middleware
         '*wish-list',
         '*withdraw-bank-list',
         '*withdraw-bank-from',
+        '*update-cart-items*',
     ];
 }

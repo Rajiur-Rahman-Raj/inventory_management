@@ -86,10 +86,10 @@
                 aria-controls="collapseExample">
                 <i class="fal fa-car-building"></i>@lang('Sales')
             </a>
-            <div class="collapse {{menuActive(['user.salesItem', 'user.salesList', 'user.salesDetails', 'user.salesInvoice'],4)}} dropdownManageSales" id="dropdownManageSales">
+            <div class="collapse {{menuActive(['user.salesItem', 'user.salesList', 'user.salesDetails', 'user.salesInvoice', 'user.returnSales'],4)}} dropdownManageSales" id="dropdownManageSales">
                 <ul class="">
                     <li>
-                        <a class="{{ in_array($currentRouteName, ['user.salesList', 'user.salesDetails', 'user.salesInvoice']) ? 'active' : '' }}" href="{{ route('user.salesList') }}"><i class="fal fa-sack-dollar"></i>@lang('Sales List')</a>
+                        <a class="{{ in_array($currentRouteName, ['user.salesList', 'user.salesDetails', 'user.salesInvoice', 'user.returnSales']) ? 'active' : '' }}" href="{{ route('user.salesList') }}"><i class="fal fa-sack-dollar"></i>@lang('Sales List')</a>
                     </li>
                     <li>
                         <a class="{{ in_array($currentRouteName, ['user.salesItem']) ? 'active' : '' }}"  href="{{ route('user.salesItem') }}"><i class="fal fa-house-return"></i>@lang('Sales Item')</a>

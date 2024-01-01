@@ -6,7 +6,7 @@
 @endpush
 
 @section('content')
-    <section class="pos-section section-1 ">
+    <section class="pos-section section-1 profile-setting">
         <div class="container-fluid ">
             <div class="row main">
                 <div class="col-xl-8 col-lg-8">
@@ -22,8 +22,7 @@
                                                 aria-label="Default select example">
                                             <option value="all">@lang('All Items')</option>
                                             @foreach($items as $item)
-                                                <option
-                                                    value="{{ $item->id }}" {{ old('item_id', session('filterItemId')) == $item->id ? 'selected' : ''}}> @lang($item->name)</option>
+                                                <option value="{{ $item->id }}" {{ old('item_id', session('filterItemId')) == $item->id ? 'selected' : ''}}> @lang($item->name)</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -97,7 +96,7 @@
 
 
                 <div class="col-xl-4 col-lg-4">
-                    <form action="{{ route('user.salesOrderStore') }}" method="post" enctype="multipart/form-data">
+                    <form action="{{ route('user.returnSalesOrder', $sale->id) }}" method="post" enctype="multipart/form-data">
                         @csrf
                         <div class="cart-side">
                             <div class="tab-box">
@@ -109,61 +108,41 @@
                                     <div class="tab-box">
                                         <div class="description-content mt-2">
                                             <div class="tab-content" id="myTabContent">
-                                                <div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel"
+                                                <div class="tab-pane fade show active" id="home-tab-pane"
+                                                     role="tabpanel"
                                                      aria-labelledby="home-tab" tabindex="0">
-
                                                     <div class="input-box mt-3">
-                                                        <label for="sales_center_id" class="mb-2">@lang('Sales Center?')</label>
-                                                        <input type="text" class="form-control salesCenterName"
+                                                        <label class="mb-2">@lang('Sales Center')</label>
+                                                        <input type="text" class="form-control"
                                                                name="sales_center_name"
-                                                               value="{{ old('sales_center_name', @request()->sales_center_name) }}"
+                                                               value="{{ optional($sale->salesCenter)->name }}"
                                                                readonly>
                                                     </div>
 
-                                                    <div class="customerField">
+                                                    <div>
                                                         <div class="input-box mt-3">
-                                                            <label for="customer_name" class="mb-2">@lang('Customer')</label>
-                                                            <input type="text" class="form-control customerName"
-                                                                   name="customer_name"
-                                                                   value="{{ old('customer_name', @request()->customer_name) }}"
+                                                            <label for="name"
+                                                                   class="mb-2"> {{ $sale->customer ? 'Customer' : 'Owner' }} </label>
+                                                            <input type="text" class="form-control"
+                                                                   name="name"
+                                                                   value="{{ $sale->customer ? optional($sale->customer)->name : optional($sale->salesCenter)->owner_name }}"
                                                                    readonly>
                                                         </div>
 
                                                         <div class="input-box mt-3">
-                                                            <input type="text" class="form-control customerPhone"
-                                                                   name="customer_phone" placeholder="Customer Phone"
-                                                                   value="{{ old('customer_phone', @request()->customer_phone) }}"
-                                                                   readonly>
-                                                        </div>
-
-                                                        <div class="input-box col-12 mt-3">
-                                                    <textarea readonly class="form-control customerAddress" cols="10"
-                                                              rows="2" placeholder="Customer Address"
-                                                              name="customer_address"
-                                                              spellcheck="false">{{ old('customer_address', @request()->customer_address) }}</textarea>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="ownerField">
-                                                        <div class="input-box mt-3">
-                                                            <input type="text" class="form-control ownerName" name="owner_name"
-                                                                   value="{{ old('owner_name', @request()->owner_name) }}"
-                                                                   readonly>
-                                                        </div>
-
-                                                        <div class="input-box mt-3">
-                                                            <input type="text" class="form-control ownerPhone"
-                                                                   name="owner_phone"
-                                                                   value="{{ old('owner_phone', @request()->owner_phone) }}"
+                                                            <input type="text" class="form-control"
+                                                                   name="phone"
+                                                                   value="{{ $sale->customer ? optional($sale->customer)->phone : optional(optional($sale->salesCenter)->user)->phone   }}"
                                                                    readonly>
                                                         </div>
 
                                                         <div class="input-box col-12 mt-3">
-                                                    <textarea readonly class="form-control ownerAddress" cols="10"
-                                                              rows="2" name="owner_address"
-                                                              spellcheck="false">{{ old('owner_address', @request()->owner_address) }}</textarea>
+                                                    <textarea readonly class="form-control" cols="10"
+                                                              rows="2"
+                                                              name="address">{{ old('customer_address', @request()->customer_address) }} {{ $sale->customer ? optional($sale->customer)->address : optional($sale->salesCenter)->address   }}</textarea>
                                                         </div>
                                                     </div>
+
                                                 </div>
 
                                             </div>
@@ -172,13 +151,50 @@
                                     <div class="cart-items-area">
                                         <div class="cart-box">
                                             <div class="cart-top d-flex align-items-center justify-content-between">
-                                                <h6>items in cart</h6>
+                                                <h6>@lang('items in cart')</h6>
                                                 <button type="button" class="btn clearCart">
-                                                    <i class="fa fa-times"></i>clear cart
+                                                    <i class="fa fa-times"></i> @lang('clear cart')
                                                 </button>
                                             </div>
 
                                             <div class="addCartItems">
+                                                @foreach($cartItems as $cartItem)
+                                                    <div class="cat-item d-flex">
+                                                        <div
+                                                            class="tittle"> {{ optional($cartItem->item)->name }} </div>
+                                                        <input type="hidden" name="item_id[]"
+                                                               value="{{ optional($cartItem->item)->id }}">
+                                                        <input type="hidden" name="stock_id[]"
+                                                               value="{{ $cartItem->stock_id }}">
+                                                        <input type="hidden" name="item_name[]"
+                                                               value="{{ optional($cartItem->item)->name }}">
+                                                        <div class="quantity">
+                                                            <input type="number" name="item_quantity[]"
+                                                                   value="{{ $cartItem->quantity }}"
+                                                                   class="itemQuantityInput"
+                                                                   data-cartitem="{{ $cartItem->cost_per_unit }}"
+                                                                   data-stockid="{{ $cartItem->stock_id }}"
+                                                                   data-itemid="{{ $cartItem->item_id }}" min="1">
+                                                        </div>
+
+                                                        <input type="hidden" name="cost_per_unit[]"
+                                                               value="{{ $cartItem->cost_per_unit }}">
+
+                                                        <div class="prize">
+                                                            <h6 class="cart-item-cost">
+                                                                {{ $cartItem->cost }} {{ $basic->currency_symbol }}</h6>
+                                                            <input type="hidden" name="item_price[]"
+                                                                   value="{{ $cartItem->cost }}"
+                                                                   class="item_price_input">
+                                                        </div>
+                                                        <div class="remove">
+                                                            <a href="javascript:void(0)" class="clearSingleCartItem"
+                                                               data-id="{{ $cartItem->id }}"
+                                                               data-name="{{ optional($cartItem->item)->name }}">
+                                                                <i class="fa fa-times"></i></a>
+                                                        </div>
+                                                    </div>
+                                                @endforeach
 
                                             </div>
                                         </div>
@@ -188,56 +204,64 @@
                                                 <div class="input-group mb-3">
                                                     <input type="number" class="form-control itemsDiscountInput"
                                                            aria-label="" name="discount_parcent" placeholder="discount"
-                                                           max="100" value="{{ old('discount_parcent') }}">
+                                                           max="100" value="{{ $sale->discount_parcent }}">
                                                     <span class="input-group-text">%</span>
 
                                                 </div>
                                             </div>
                                             <div class="total">
-{{--                                                <ul>--}}
-{{--                                                    <li>--}}
-{{--                                                        <h5>subtotal</h5>--}}
-{{--                                                        <h6><span--}}
-{{--                                                                class="sub-total-area">{{getAmount($subTotal, config('basic.fraction_number'))}}</span>--}}
-{{--                                                            <span--}}
-{{--                                                                class="sub-total-area-span">{{ $basic->currency_symbol }}</span>--}}
-{{--                                                        </h6>--}}
-{{--                                                        <input type="hidden" name="sub_total"--}}
-{{--                                                               value="{{getAmount($subTotal, config('basic.fraction_number'))}}"--}}
-{{--                                                               class="sub-total-input">--}}
-{{--                                                    </li>--}}
-{{--                                                    <li>--}}
-{{--                                                        <h5>Discount</h5>--}}
-{{--                                                        <h6 class="discount-area">0 {{ $basic->currency_symbol }}</h6>--}}
-{{--                                                        <input type="hidden" name="discount_amount" value="0"--}}
-{{--                                                               class="discount-amount-input">--}}
-{{--                                                    </li>--}}
+                                                <ul>
+                                                    <li>
+                                                        <h5>@lang('Subtotal')</h5>
+                                                        <h6><span
+                                                                class="sub-total-area">{{getAmount($subTotal, config('basic.fraction_number'))}}</span>
+                                                            <span
+                                                                class="sub-total-area-span">{{ $basic->currency_symbol }}</span>
+                                                        </h6>
+                                                        <input type="hidden" name="sub_total"
+                                                               value="{{getAmount($subTotal, config('basic.fraction_number'))}}"
+                                                               class="sub-total-input">
+                                                    </li>
+                                                    <li>
+                                                        <h5>@lang('Discount')</h5>
+                                                        <h6 class="discount-area">{{ $sale->discount }} {{ $basic->currency_symbol }}</h6>
+                                                        <input type="hidden" name="discount_amount"
+                                                               value="{{ $sale->discount }}"
+                                                               class="discount-amount-input">
+                                                    </li>
 
-{{--                                                </ul>--}}
-{{--                                                <div class="total-amount d-flex align-items-center justify-content-between">--}}
-{{--                                                    <h5>total</h5>--}}
-{{--                                                    <h6 class="total-area">{{getAmount($subTotal, config('basic.fraction_number'))}} {{ $basic->currency_symbol }}</h6>--}}
-{{--                                                    <input type="hidden" name="total_amount" class="total-amount-input"--}}
-{{--                                                           value="{{getAmount($subTotal, config('basic.fraction_number'))}}">--}}
-{{--                                                </div>--}}
+                                                </ul>
+                                                <div
+                                                    class="total-amount d-flex align-items-center justify-content-between">
+                                                    <h5>@lang('Total')</h5>
+                                                    <h6 class="total-area">{{getAmount($sale->total_amount, config('basic.fraction_number'))}} {{ $basic->currency_symbol }}</h6>
+                                                    <input type="hidden" name="total_amount" class="total-amount-input"
+                                                           value="{{ $sale->total_amount }}">
+                                                </div>
 
-                                                <div class="dueInvoiceField">
-                                                    <div class="total-amount d-flex align-items-center justify-content-between">
-                                                        <h5>Previous Paid</h5>
-                                                        <h6 class="previous-paid-area"></h6>
-                                                        <input type="hidden" name="previous_paid" class="previous-amount-input"
-                                                               value="">
+                                                <div>
+                                                    <div
+                                                        class="total-amount d-flex align-items-center justify-content-between">
+                                                        <h5>@lang('Previous Paid')</h5>
+                                                        <h6 class="previous-paid-area">{{ getAmount($sale->customer_paid_amount, config('basic.fraction_number')) }} {{ $basic->currency_symbol }}</h6>
+                                                        <input type="hidden" name="previous_paid"
+                                                               class="previous-amount-input"
+                                                               value="{{ $sale->customer_paid_amount }}">
                                                     </div>
                                                 </div>
 
                                                 <div class="order-btn d-flex flex-wrap">
-                                                    <button class="cancel cancelOrder" type="button">cancel order</button>
-                                                    <button type="button" class="porcced proccedOrderBtn">procced order
+                                                    <button class="cancel cancelOrder"
+                                                            type="button">@lang('Cancel Order')
+                                                    </button>
+                                                    <button type="button"
+                                                            class="porcced returnOrderBtn"
+                                                            data-sale="{{ $sale }}">@lang('Return Order')
                                                     </button>
 
                                                     <div class="procced-modal">
-                                                        <div class="modal fade" id="proccedOrderModal" tabindex="-1"
-                                                             aria-labelledby="proccedOrderModal" aria-hidden="true">
+                                                        <div class="modal fade" id="returnOrderModal" tabindex="-1"
+                                                             aria-labelledby="returnOrderModal" aria-hidden="true">
                                                             <div class="modal-dialog ">
                                                                 <div class="modal-content">
                                                                     <div class="modal-header">
@@ -248,14 +272,25 @@
                                                                                 aria-label="Close"></button>
                                                                     </div>
                                                                     <div class="modal-body">
-                                                                        <div
-                                                                            class="total-amount d-flex align-items-center justify-content-between">
-                                                                            <h5>@lang('Total Order Amount')</h5>
-                                                                            <h6 class="make-payment-total-amount"></h6>
+                                                                        <div class="total-amount">
+                                                                            <div
+                                                                                class="d-flex align-items-center justify-content-between">
+                                                                                <h5>@lang('Total Order Amount')</h5>
+                                                                                <h6 class="make-payment-total-amount"></h6>
+                                                                            </div>
+                                                                            <div
+                                                                                class="d-flex align-items-center justify-content-between">
+                                                                                <h5>@lang('Previous Paid')</h5>
+                                                                                <h6 class="previous-paid-amount"></h6>
+                                                                                <input type="hidden"
+                                                                                       class="original-due-amount"
+                                                                                       value="0">
+                                                                            </div>
                                                                         </div>
+
                                                                         <div
                                                                             class="enter-amount d-flex justify-content-between align-items-center">
-                                                                            <h6>Customer Paid Amount</h6>
+                                                                            <h6>@lang('Customer Paid Amount')</h6>
                                                                             <input type="text"
                                                                                    class="form-control customer-paid-amount"
                                                                                    value="0" min="0"
@@ -265,49 +300,47 @@
                                                                         </div>
                                                                         <div
                                                                             class="change-amount d-flex align-items-center justify-content-between">
-                                                                            <h4 class="m-2 due-or-change-text"></h4>  <span
+                                                                            <h4 class="m-2 due-or-change-text"></h4>
+                                                                            <span
                                                                                 class="due-or-change-amount"></span>
-                                                                            <input type="hidden" name="due_or_change_amount"
+                                                                            <input type="hidden"
+                                                                                   name="due_or_change_amount"
                                                                                    class="due_or_change_amount_input">
                                                                         </div>
                                                                         <div
-                                                                            class="total-amount d-flex align-items-center justify-content-between">
+                                                                            class="total-amount total_payable_amount d-flex align-items-center justify-content-between">
                                                                             <h5>@lang('Total Payable Amount')</h5>
                                                                             <h6 class="total-payable-amount"></h6>
-                                                                            <input type="hidden" name="total_payable_amount"
+                                                                            <input type="hidden"
+                                                                                   name="total_payable_amount"
                                                                                    class="total_payable_amount_input">
                                                                         </div>
                                                                         <div class="file">
                                                                             <div class="mb-3">
-                                                                                <label for="formFile" class="form-label">Payment
-                                                                                    Date</label>
-                                                                                {{--                                                                        <input type="date" name="payment_date"--}}
-                                                                                {{--                                                                               placeholder="@lang('payment date')"--}}
-                                                                                {{--                                                                               class="form-control payment_date"--}}
-                                                                                {{--                                                                               value="{{ old('payment_date',request()->payment_date) }}">--}}
-                                                                                {{--                                                                        <div class="invalid-feedback d-block">--}}
-                                                                                {{--                                                                            @error('payment_date') @lang($message) @enderror--}}
-                                                                                {{--                                                                        </div>--}}
+                                                                                <label for="formFile"
+                                                                                       class="form-label">@lang('Return Date')</label>
 
                                                                                 <div class="flatpickr">
                                                                                     <div class="input-group">
                                                                                         <input type="date"
-                                                                                               placeholder="@lang('Select Payment Date')"
-                                                                                               class="form-control payment_date"
-                                                                                               name="payment_date"
-                                                                                               value="{{ old('payment_date',request()->shipment_date) }}"
+                                                                                               placeholder="@lang('Select Return Date')"
+                                                                                               class="form-control return_date"
+                                                                                               name="return_date"
+                                                                                               value="{{ old('return_date',request()->return_date) }}"
                                                                                                data-input>
                                                                                         <div class="input-group-append"
                                                                                              readonly="">
                                                                                             <div
                                                                                                 class="form-control payment-date-times">
                                                                                                 <a class="input-button cursor-pointer"
-                                                                                                   title="clear" data-clear>
+                                                                                                   title="clear"
+                                                                                                   data-clear>
                                                                                                     <i class="fas fa-times"></i>
                                                                                                 </a>
                                                                                             </div>
                                                                                         </div>
-                                                                                        <div class="invalid-feedback d-block">
+                                                                                        <div
+                                                                                            class="invalid-feedback d-block">
                                                                                             @error('payment_date') @lang($message) @enderror
                                                                                         </div>
                                                                                     </div>
@@ -317,19 +350,19 @@
 
                                                                             <div class="mb-3">
                                                                                 <label for="formFile"
-                                                                                       class="form-label">@lang('Payment Note')
-                                                                                    <span><sup>(@lang('optional'))</sup></span></label>
+                                                                                       class="form-label">@lang('Return Note')
+                                                                                    <span><sub>(@lang('optional'))</sub></span></label>
                                                                                 <textarea class="form-control"
                                                                                           id="exampleFormControlTextarea1"
-                                                                                          placeholder="Write payment note"
+                                                                                          placeholder="Write return note"
                                                                                           rows="4"
-                                                                                          name="payment_note"></textarea>
+                                                                                          name="return_note"></textarea>
                                                                             </div>
                                                                         </div>
                                                                     </div>
                                                                     <div class="modal-footer">
                                                                         <button type="button" class="btn btn-danger"
-                                                                                data-bs-dismiss="modal">cancel
+                                                                                data-bs-dismiss="modal">@lang('Cancel')
                                                                         </button>
                                                                         <button type="submit"
                                                                                 class="btn btn-primary">@lang('Confirm Return')
@@ -345,205 +378,6 @@
                                     </div>
                                 </div>
                             </div>
-
-{{--                            <div class="cart-items-area {{ count($cartItems) > 0 ? '' : 'd-none' }}">--}}
-{{--                                <div class="cart-box">--}}
-{{--                                    <div class="cart-top d-flex align-items-center justify-content-between">--}}
-{{--                                        <h6>items in cart</h6>--}}
-{{--                                        <button type="button" class="btn clearCart">--}}
-{{--                                            <i class="fa fa-times"></i>clear cart--}}
-{{--                                        </button>--}}
-{{--                                    </div>--}}
-
-{{--                                    <div class="addCartItems">--}}
-{{--                                        @foreach($cartItems as $cartItem)--}}
-{{--                                            <div class="cat-item d-flex">--}}
-{{--                                                <div class="tittle">{{ optional($cartItem->item)->name }}</div>--}}
-{{--                                                <input type="hidden" name="item_id[]"--}}
-{{--                                                       value="{{ optional($cartItem->item)->id }}">--}}
-
-{{--                                                <input type="hidden" name="stock_id[]"--}}
-{{--                                                       value="{{ $cartItem->stock_id }}">--}}
-
-{{--                                                <input type="hidden" name="item_name[]"--}}
-{{--                                                       value="{{ optional($cartItem->item)->name }}">--}}
-
-{{--                                                <div class="quantity">--}}
-{{--                                                    <input type="number" name="item_quantity[]"--}}
-{{--                                                           value="{{ $cartItem->quantity }}"--}}
-{{--                                                           class="itemQuantityInput"--}}
-{{--                                                           data-stockid="{{ $cartItem->stock_id }}"--}}
-{{--                                                           data-itemid="{{ $cartItem->item_id }}"--}}
-{{--                                                           data-cartitem="{{ $cartItem->cost_per_unit }}"--}}
-{{--                                                           min="1">--}}
-{{--                                                </div>--}}
-{{--                                                <input type="hidden" name="cost_per_unit[]"--}}
-{{--                                                       value="{{ $cartItem->cost_per_unit }}">--}}
-{{--                                                <div class="prize">--}}
-{{--                                                    <h6 class="cart-item-cost">{{ $cartItem->cost }} {{ $basic->currency_symbol }}</h6>--}}
-{{--                                                    <input type="hidden" name="item_price[]"--}}
-{{--                                                           value="{{ $cartItem->cost }}" class="item_price_input">--}}
-{{--                                                </div>--}}
-{{--                                                <div class="remove">--}}
-{{--                                                    <a href="javascript:void(0)" class="clearSingleCartItem"--}}
-{{--                                                       data-id="{{ $cartItem->id }}">--}}
-{{--                                                        <i class="fa fa-times"></i></a>--}}
-{{--                                                </div>--}}
-{{--                                            </div>--}}
-{{--                                        @endforeach--}}
-{{--                                    </div>--}}
-{{--                                </div>--}}
-
-{{--                                <div class="total-box">--}}
-{{--                                    <div class="amount">--}}
-{{--                                        <div class="input-group mb-3">--}}
-{{--                                            <input type="number" class="form-control itemsDiscountInput"--}}
-{{--                                                   aria-label="" name="discount_parcent" placeholder="discount"--}}
-{{--                                                   max="100" value="{{ old('discount_parcent') }}">--}}
-{{--                                            <span class="input-group-text">%</span>--}}
-
-{{--                                        </div>--}}
-{{--                                    </div>--}}
-{{--                                    <div class="total">--}}
-{{--                                        <ul>--}}
-{{--                                            <li>--}}
-{{--                                                <h5>subtotal</h5>--}}
-{{--                                                <h6><span--}}
-{{--                                                        class="sub-total-area">{{getAmount($subTotal, config('basic.fraction_number'))}}</span>--}}
-{{--                                                    <span--}}
-{{--                                                        class="sub-total-area-span">{{ $basic->currency_symbol }}</span>--}}
-{{--                                                </h6>--}}
-{{--                                                <input type="hidden" name="sub_total"--}}
-{{--                                                       value="{{getAmount($subTotal, config('basic.fraction_number'))}}"--}}
-{{--                                                       class="sub-total-input">--}}
-{{--                                            </li>--}}
-{{--                                            <li>--}}
-{{--                                                <h5>Discount</h5>--}}
-{{--                                                <h6 class="discount-area">0 {{ $basic->currency_symbol }}</h6>--}}
-{{--                                                <input type="hidden" name="discount_amount" value="0"--}}
-{{--                                                       class="discount-amount-input">--}}
-{{--                                            </li>--}}
-
-{{--                                        </ul>--}}
-{{--                                        <div class="total-amount d-flex align-items-center justify-content-between">--}}
-{{--                                            <h5>total</h5>--}}
-{{--                                            <h6 class="total-area">{{getAmount($subTotal, config('basic.fraction_number'))}} {{ $basic->currency_symbol }}</h6>--}}
-{{--                                            <input type="hidden" name="total_amount" class="total-amount-input"--}}
-{{--                                                   value="{{getAmount($subTotal, config('basic.fraction_number'))}}">--}}
-{{--                                        </div>--}}
-{{--                                        <div class="order-btn d-flex flex-wrap">--}}
-{{--                                            <button class="cancel cancelOrder" type="button">cacel order</button>--}}
-{{--                                            <button type="button" class="porcced proccedOrderBtn">procced order--}}
-{{--                                            </button>--}}
-
-{{--                                            <div class="procced-modal">--}}
-{{--                                                <div class="modal fade" id="proccedOrderModal" tabindex="-1"--}}
-{{--                                                     aria-labelledby="proccedOrderModal" aria-hidden="true">--}}
-{{--                                                    <div class="modal-dialog ">--}}
-{{--                                                        <div class="modal-content">--}}
-{{--                                                            <div class="modal-header">--}}
-{{--                                                                <h1 class="modal-title fs-5"--}}
-{{--                                                                    id="exampleModalLabel">@lang('Make Payment')</h1>--}}
-{{--                                                                <button type="button" class="btn-close"--}}
-{{--                                                                        data-bs-dismiss="modal"--}}
-{{--                                                                        aria-label="Close"></button>--}}
-{{--                                                            </div>--}}
-{{--                                                            <div class="modal-body">--}}
-{{--                                                                <div--}}
-{{--                                                                    class="total-amount d-flex align-items-center justify-content-between">--}}
-{{--                                                                    <h5>@lang('Total Order Amount')</h5>--}}
-{{--                                                                    <h6 class="make-payment-total-amount"></h6>--}}
-{{--                                                                </div>--}}
-{{--                                                                <div--}}
-{{--                                                                    class="enter-amount d-flex justify-content-between align-items-center">--}}
-{{--                                                                    <h6>Customer Paid Amount</h6>--}}
-{{--                                                                    <input type="text"--}}
-{{--                                                                           class="form-control customer-paid-amount"--}}
-{{--                                                                           value="0" min="0"--}}
-{{--                                                                           onkeyup="this.value = this.value.replace (/^\.|[^\d\.]/g, '')"--}}
-{{--                                                                           id="exampleFormControlInput1"--}}
-{{--                                                                           name="customer_paid_amount">--}}
-{{--                                                                </div>--}}
-{{--                                                                <div--}}
-{{--                                                                    class="change-amount d-flex align-items-center justify-content-between">--}}
-{{--                                                                    <h4 class="m-2 due-or-change-text"></h4>  <span--}}
-{{--                                                                        class="due-or-change-amount"></span>--}}
-{{--                                                                    <input type="hidden" name="due_or_change_amount"--}}
-{{--                                                                           class="due_or_change_amount_input">--}}
-{{--                                                                </div>--}}
-{{--                                                                <div--}}
-{{--                                                                    class="total-amount d-flex align-items-center justify-content-between">--}}
-{{--                                                                    <h5>@lang('Total Payable Amount')</h5>--}}
-{{--                                                                    <h6 class="total-payable-amount"></h6>--}}
-{{--                                                                    <input type="hidden" name="total_payable_amount"--}}
-{{--                                                                           class="total_payable_amount_input">--}}
-{{--                                                                </div>--}}
-{{--                                                                <div class="file">--}}
-{{--                                                                    <div class="mb-3">--}}
-{{--                                                                        <label for="formFile" class="form-label">Payment--}}
-{{--                                                                            Date</label>--}}
-{{--                                                                        --}}{{--                                                                        <input type="date" name="payment_date"--}}
-{{--                                                                        --}}{{--                                                                               placeholder="@lang('payment date')"--}}
-{{--                                                                        --}}{{--                                                                               class="form-control payment_date"--}}
-{{--                                                                        --}}{{--                                                                               value="{{ old('payment_date',request()->payment_date) }}">--}}
-{{--                                                                        --}}{{--                                                                        <div class="invalid-feedback d-block">--}}
-{{--                                                                        --}}{{--                                                                            @error('payment_date') @lang($message) @enderror--}}
-{{--                                                                        --}}{{--                                                                        </div>--}}
-
-{{--                                                                        <div class="flatpickr">--}}
-{{--                                                                            <div class="input-group">--}}
-{{--                                                                                <input type="date"--}}
-{{--                                                                                       placeholder="@lang('Select Payment Date')"--}}
-{{--                                                                                       class="form-control payment_date"--}}
-{{--                                                                                       name="payment_date"--}}
-{{--                                                                                       value="{{ old('payment_date',request()->shipment_date) }}"--}}
-{{--                                                                                       data-input>--}}
-{{--                                                                                <div class="input-group-append"--}}
-{{--                                                                                     readonly="">--}}
-{{--                                                                                    <div--}}
-{{--                                                                                        class="form-control payment-date-times">--}}
-{{--                                                                                        <a class="input-button cursor-pointer"--}}
-{{--                                                                                           title="clear" data-clear>--}}
-{{--                                                                                            <i class="fas fa-times"></i>--}}
-{{--                                                                                        </a>--}}
-{{--                                                                                    </div>--}}
-{{--                                                                                </div>--}}
-{{--                                                                                <div class="invalid-feedback d-block">--}}
-{{--                                                                                    @error('payment_date') @lang($message) @enderror--}}
-{{--                                                                                </div>--}}
-{{--                                                                            </div>--}}
-{{--                                                                        </div>--}}
-{{--                                                                    </div>--}}
-
-
-{{--                                                                    <div class="mb-3">--}}
-{{--                                                                        <label for="formFile"--}}
-{{--                                                                               class="form-label">@lang('Payment Note')--}}
-{{--                                                                            <span><sup>(@lang('optional'))</sup></span></label>--}}
-{{--                                                                        <textarea class="form-control"--}}
-{{--                                                                                  id="exampleFormControlTextarea1"--}}
-{{--                                                                                  placeholder="Write payment note"--}}
-{{--                                                                                  rows="4"--}}
-{{--                                                                                  name="payment_note"></textarea>--}}
-{{--                                                                    </div>--}}
-{{--                                                                </div>--}}
-{{--                                                            </div>--}}
-{{--                                                            <div class="modal-footer">--}}
-{{--                                                                <button type="button" class="btn btn-danger"--}}
-{{--                                                                        data-bs-dismiss="modal">cancel--}}
-{{--                                                                </button>--}}
-{{--                                                                <button type="submit"--}}
-{{--                                                                        class="btn btn-primary">@lang('Confirm Order')--}}
-{{--                                                                </button>--}}
-{{--                                                            </div>--}}
-{{--                                                        </div>--}}
-{{--                                                    </div>--}}
-{{--                                                </div>--}}
-{{--                                            </div>--}}
-{{--                                        </div>--}}
-{{--                                    </div>--}}
-{{--                                </div>--}}
-{{--                            </div>--}}
                         </div>
                     </form>
 
@@ -943,79 +777,76 @@
         }
 
 
-        function checkSalesBy() {
-            var activeTab = $('#myTab li button.nav-link.active').attr('id');
-            var activeDataBsTarget = $('#myTab li button.nav-link.active').attr('data-bs-target');
-
-            let saleCenterId = $(activeDataBsTarget).children().find('.salesCenterId').val();
-
-            if (activeTab == 'home-tab') {
-                let customerId = $(activeDataBsTarget).children().find('.customerId').val();
-                if (!saleCenterId) {
-                    Notiflix.Notify.Failure('please select sales center');
-                    return false;
-                } else if (!customerId) {
-                    Notiflix.Notify.Failure('please select customer');
-                    return false;
-                } else {
-                    return true;
-                }
-            } else {
-
-                if (!saleCenterId) {
-                    Notiflix.Notify.Failure('please select sales center');
-                    return false;
-                } else {
-                    return true;
-                }
-
-            }
-        }
-
-
-        $(document).on('click', '.proccedOrderBtn', function () {
-            showProccedOrderModal();
+        $(document).on('click', '.returnOrderBtn', function () {
+            let _this = $(this);
+            showReturnOrderModal(_this);
         });
 
-        function showProccedOrderModal() {
-            let result = checkSalesBy();
-            console.log(result);
-            if (result) {
-                var proccedOrderModal = new bootstrap.Modal(document.getElementById('proccedOrderModal'))
-                proccedOrderModal.show();
-            }
+        function showReturnOrderModal(_this) {
+            let sale = _this.data('sale');
+            var returnOrderModal = new bootstrap.Modal(document.getElementById('returnOrderModal'));
+            returnOrderModal.show();
 
             var totalAmount = parseFloat($('.total-area').text().match(/[\d.]+/)[0]);
             $('.make-payment-total-amount').text(`${totalAmount.toFixed(2)} {{ $basic->currency_symbol }}`)
-            $('.due-or-change-text').text('Due Amount');
-            $('.due-or-change-amount').text(`${totalAmount.toFixed(2)} {{ $basic->currency_symbol }}`)
-            $('.total-payable-amount').text(`${totalAmount.toFixed(2)} {{ $basic->currency_symbol }}`)
+            $('.previous-paid-amount').text(`${sale.customer_paid_amount} {{ $basic->currency_symbol }}`)
+            let originalDueAmount = totalAmount - sale.customer_paid_amount;
+            $('.original-due-amount').val(originalDueAmount);
 
-            $('.due_or_change_amount_input').val(`${totalAmount.toFixed(2)}`)
-            $('.total_payable_amount_input').val(`${totalAmount.toFixed(2)}`)
+            let restDueOrChangeAmount = totalAmount - sale.customer_paid_amount;
+            if (restDueOrChangeAmount >= 0) {
+                $('.due-or-change-text').text('Due Amount');
+                $('.due-or-change-amount').text(`${restDueOrChangeAmount.toFixed(2)} {{ $basic->currency_symbol }}`)
+                $('.total_payable_amount').removeClass('d-none');
+                $('.customer-paid-amount').attr('disabled', false);
+
+            } else {
+                $('.due-or-change-text').text('Change Amount');
+                $('.due-or-change-amount').text(`${Math.abs(restDueOrChangeAmount).toFixed(2)} {{ $basic->currency_symbol }}`)
+                $('.customer-paid-amount').attr('disabled', true);
+                $('.total_payable_amount').addClass('d-none');
+
+            }
+
+            $('.total-payable-amount').text(`${0} {{ $basic->currency_symbol }}`)
+
+            // $('.due_or_change_amount_input').val(`${totalAmount.toFixed(2)}`)
+            // $('.total_payable_amount_input').val(`${totalAmount.toFixed(2)}`)
         }
 
         $(document).on('keyup', '.customer-paid-amount', function () {
-            var totalAmount = parseFloat($('.total-area').text().match(/[\d.]+/)[0]);
+            // let totalAmount = parseFloat($('.total-area').text().match(/[\d.]+/)[0]);
+            var dueAmount = parseFloat($('.original-due-amount').val());
             let customerPaidAmount = isNaN(parseFloat($(this).val())) ? 0 : parseFloat($(this).val());
-            let dueOrChangeAmount = totalAmount - customerPaidAmount;
+            let dueOrChangeAmount = customerPaidAmount - dueAmount;
 
-            if (dueOrChangeAmount >= 0) {
-                $('.due-or-change-text').text('Due Amount')
-                $('.due-or-change-amount').text(`${dueOrChangeAmount.toFixed(2)} {{ $basic->currency_symbol }}`)
-                $('.total-payable-amount').text(`${customerPaidAmount.toFixed(2)} {{ $basic->currency_symbol }}`)
-
-                $('.due_or_change_amount_input').val(`${dueOrChangeAmount.toFixed(2)}`)
-                $('.total_payable_amount_input').val(`${customerPaidAmount.toFixed(2)}`)
-
-            } else {
+            // i am here not clear how to return data.. so today i will start
+            if (dueOrChangeAmount > 0) {
                 $('.due-or-change-text').text('Change Amount')
                 $('.due-or-change-amount').text(`${Math.abs(dueOrChangeAmount).toFixed(2)} {{ $basic->currency_symbol }}`)
-                $('.total-payable-amount').text(`${totalAmount.toFixed(2)} {{ $basic->currency_symbol }}`)
-
-                $('.due_or_change_amount_input').val(`${dueOrChangeAmount.toFixed(2)}`)
-                $('.total_payable_amount_input').val(`${totalAmount.toFixed(2)}`)
+                $('.total-payable-amount').text(`${dueAmount.toFixed(2)} {{ $basic->currency_symbol }}`)
+            } else if (dueOrChangeAmount <= 0) {
+                $('.due-or-change-text').text('Due Amount')
+                $('.due-or-change-amount').text(`${Math.abs(dueOrChangeAmount).toFixed(2)} {{ $basic->currency_symbol }}`)
+                $('.total-payable-amount').text(`${customerPaidAmount.toFixed(2)} {{ $basic->currency_symbol }}`)
             }
+
+            {{--if (dueOrChangeAmount >= 0) {--}}
+            {{--    $('.due-or-change-text').text('Due Amount')--}}
+            {{--    $('.due-or-change-amount').text(`${dueOrChangeAmount.toFixed(2)} {{ $basic->currency_symbol }}`)--}}
+            {{--    $('.total-payable-amount').text(`${customerPaidAmount.toFixed(2)} {{ $basic->currency_symbol }}`)--}}
+
+            {{--    $('.due_or_change_amount_input').val(`${dueOrChangeAmount.toFixed(2)}`)--}}
+            {{--    $('.total_payable_amount_input').val(`${customerPaidAmount.toFixed(2)}`)--}}
+
+            {{--} else {--}}
+            {{--    $('.due-or-change-text').text('Change Amount')--}}
+            {{--    $('.due-or-change-amount').text(`${Math.abs(dueOrChangeAmount).toFixed(2)} {{ $basic->currency_symbol }}`)--}}
+            {{--    $('.total-payable-amount').text(`${totalAmount.toFixed(2)} {{ $basic->currency_symbol }}`)--}}
+
+            {{--    $('.due_or_change_amount_input').val(`${dueOrChangeAmount.toFixed(2)}`)--}}
+            {{--    $('.total_payable_amount_input').val(`${totalAmount.toFixed(2)}`)--}}
+            {{--}--}}
         });
 
 

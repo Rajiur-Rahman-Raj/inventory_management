@@ -220,15 +220,16 @@ Route::group(['middleware' => ['auth', 'Maintenance'], 'prefix' => 'user', 'as' 
         Route::get('sales-details/{id}', 'User\CompanyController@salesDetails')->name('salesDetails');
 
         // Manage Sales Return new
-        Route::get('return-sales/{id}', 'User\CompanyController@returnSales')->name('returnSales');
+        Route::get('sales/return/{id}', 'User\CompanyController@returnSales')->name('returnSales');
+        Route::post('return/sales/order/{id}', 'User\CompanyController@returnSalesOrder')->name('returnSalesOrder');
 
 
         // Manage Sales Return old
         Route::get('sales-return', 'User\CompanyController@salesReturn')->name('salesReturn');
         Route::post('selected-sales-order', 'User\CompanyController@selectedSalesOrOrder')->name('getSelectedSalesOrOrder');
         Route::post('single-sales-order', 'User\CompanyController@singleSalesOrder')->name('getSingleSalesOrder');
-//        Route::get('sales-list', 'User\CompanyController@salesList')->name('salesList');
-//        Route::get('sales-details/{id}', 'User\CompanyController@salesDetails')->name('salesDetails');
+        Route::get('sales-list', 'User\CompanyController@salesList')->name('salesList');
+        Route::get('sales-details/{id}', 'User\CompanyController@salesDetails')->name('salesDetails');
 
 
         Route::put('update-item-unit-price/{id}', 'User\CompanyController@updateItemUnitPrice')->name('updateItemUnitPrice');

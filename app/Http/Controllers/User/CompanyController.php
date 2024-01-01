@@ -1055,7 +1055,7 @@ class CompanyController extends Controller
             $sale->sales_center_id = $request->sales_center_id;
             $sale->customer_id = $request->customer_id;
             $sale->sub_total = $request->sub_total;
-            $sale->discount_parcent = $request->discount_parcent;
+            $sale->discount_parcent = ($request->discount_parcent ? $request->discount_parcent : 0);
             $sale->discount = $request->discount_amount;
             $sale->total_amount = $request->total_amount;
             $sale->customer_paid_amount = $due_or_change_amount <= 0 ? $request->total_amount : $request->customer_paid_amount;
@@ -1081,7 +1081,6 @@ class CompanyController extends Controller
 
             DB::commit();
             return redirect()->route('user.salesInvoice', $sale->id)->with('success', 'Order confirmed successfully!');
-
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -1124,7 +1123,6 @@ class CompanyController extends Controller
 
     public function salesInvoiceUpdate(Request $request, $id)
     {
-
         $admin = $this->user;
         $purifiedData = Purify::clean($request->except('_token', '_method'));
 
@@ -1214,6 +1212,39 @@ class CompanyController extends Controller
 
     public function returnSales($id){
         $admin = $this->user;
+        // first delete previous cart items when return any product to customers.
+        CartItems::where('company_id', $admin->active_company_id)
+            ->whereNull('sales_center_id')
+            ->delete();
+
+        // now we need particular sales item for return to customer.
+        $data['sale'] = Sale::with('salesCenter.user', 'customer', 'salesItems.sale')->where('company_id', $admin->active_company_id)->findOrFail($id);
+
+        // store sales item into cart items table
+        foreach($data['sale']->salesItems as $salesItem){
+            CartItems::updateOrInsert(
+                [
+                    'company_id' => $admin->active_company_id,
+                    'stock_id' => $salesItem['stock_id'],
+                    'item_id' => $salesItem['item_id'],
+                ],
+                [
+                    'sales_id' => $id,
+                    'cost_per_unit' => $salesItem['cost_per_unit'],
+                    'quantity' => $salesItem['item_quantity'],
+                    'cost' => $salesItem['item_price'],
+                    'created_at' => Carbon::now(),
+                    'updated_at' => Carbon::now()
+                ]
+            );
+        }
+
+        $data['cartItems'] = CartItems::with('item')->where('company_id', $admin->active_company_id)
+            ->whereNull('sales_center_id')
+            ->get();
+
+        $data['subTotal'] = $data['cartItems']->sum('cost');
+
         $data['items'] = Item::where('company_id', $admin->active_company_id)
             ->select('id', 'name')
             ->latest()
@@ -1225,6 +1256,10 @@ class CompanyController extends Controller
             ->get();
 
         return view($this->theme . 'user.manageSales.returnsalesItem', $data);
+    }
+
+    public function returnSalesOrder(Request $request, $id){
+        dd($request->all());
     }
 
 

@@ -14,7 +14,7 @@
                     <div class="product-bg">
                         <div class="row g-2">
                             <div class="col-md-12">
-                                <div class="product-top d-flex align-items-center flex-wrap ">
+                                <div class="product-top d-flex align-items-center flex-wrap">
                                     <div class="input-group">
                                         <label for="" class="mb-2">@lang('Filter By Items')</label>
                                         <select class="form-select js-example-basic-single selectedItems"
@@ -358,13 +358,6 @@
                                                                     <div class="mb-3">
                                                                         <label for="formFile" class="form-label">Payment
                                                                             Date</label>
-                                                                        {{--                                                                        <input type="date" name="payment_date"--}}
-                                                                        {{--                                                                               placeholder="@lang('payment date')"--}}
-                                                                        {{--                                                                               class="form-control payment_date"--}}
-                                                                        {{--                                                                               value="{{ old('payment_date',request()->payment_date) }}">--}}
-                                                                        {{--                                                                        <div class="invalid-feedback d-block">--}}
-                                                                        {{--                                                                            @error('payment_date') @lang($message) @enderror--}}
-                                                                        {{--                                                                        </div>--}}
 
                                                                         <div class="flatpickr">
                                                                             <div class="input-group">
@@ -372,7 +365,7 @@
                                                                                        placeholder="@lang('Select Payment Date')"
                                                                                        class="form-control payment_date"
                                                                                        name="payment_date"
-                                                                                       value="{{ old('payment_date',request()->shipment_date) }}"
+                                                                                       value="{{ old('payment_date',request()->payment_date) }}"
                                                                                        data-input>
                                                                                 <div class="input-group-append"
                                                                                      readonly="">
@@ -395,7 +388,7 @@
                                                                     <div class="mb-3">
                                                                         <label for="formFile"
                                                                                class="form-label">@lang('Payment Note')
-                                                                            <span><sup>(@lang('optional'))</sup></span></label>
+                                                                            <span><sub>(@lang('optional'))</sub></span></label>
                                                                         <textarea class="form-control"
                                                                                   id="exampleFormControlTextarea1"
                                                                                   placeholder="Write payment note"

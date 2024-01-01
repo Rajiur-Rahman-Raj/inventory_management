@@ -13,7 +13,7 @@
                     <div class="product-bg">
                         <div class="row g-2">
                             <div class="col-md-12">
-                                <div class="product-top d-flex align-items-center flex-wrap ">
+                                <div class="product-top d-flex align-items-center flex-wrap">
                                     <div class="input-group">
                                         <label for="" class="mb-2"><?php echo app('translator')->get('Filter By Items'); ?></label>
                                         <select class="form-select js-example-basic-single selectedItems"

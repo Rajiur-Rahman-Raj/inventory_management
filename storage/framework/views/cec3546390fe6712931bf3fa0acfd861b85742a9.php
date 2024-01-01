@@ -259,7 +259,7 @@
 
                                         <div class="order-btn d-flex flex-wrap">
                                             <button class="cancel cancelOrder" type="button">cancel order</button>
-                                            <button type="button" class="porcced proccedOrderBtn">procced order
+                                            <button type="button" class="porcced proccedOrderBtn">Return Order
                                             </button>
 
                                             <div class="procced-modal">
@@ -764,11 +764,8 @@ unset($__errorArgs, $__bag); ?>"
         });
 
         function showProccedOrderModal() {
-            // let result = checkSalesBy();
-            // if (result) {
             var proccedOrderModal = new bootstrap.Modal(document.getElementById('proccedOrderModal'))
             proccedOrderModal.show();
-            // }
 
             var totalAmount = parseFloat($('.total-area').text().match(/[\d.]+/)[0]);
             $('.make-payment-total-amount').text(`${totalAmount.toFixed(2)} <?php echo e($basic->currency_symbol); ?>`)
@@ -1201,7 +1198,6 @@ unset($__errorArgs, $__bag); ?>"
             let cartItems = dataProperty.sales_items;
             $('.cart-side').removeClass('d-none');
             $('.salesCenterName').val(dataProperty.sales_center.name);
-
 
             if (dataProperty.customer) {
                 $('.customerField').removeClass('d-none');

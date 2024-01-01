@@ -86,10 +86,10 @@
                 aria-controls="collapseExample">
                 <i class="fal fa-car-building"></i><?php echo app('translator')->get('Sales'); ?>
             </a>
-            <div class="collapse <?php echo e(menuActive(['user.salesItem', 'user.salesList', 'user.salesDetails', 'user.salesInvoice'],4)); ?> dropdownManageSales" id="dropdownManageSales">
+            <div class="collapse <?php echo e(menuActive(['user.salesItem', 'user.salesList', 'user.salesDetails', 'user.salesInvoice', 'user.returnSales'],4)); ?> dropdownManageSales" id="dropdownManageSales">
                 <ul class="">
                     <li>
-                        <a class="<?php echo e(in_array($currentRouteName, ['user.salesList', 'user.salesDetails', 'user.salesInvoice']) ? 'active' : ''); ?>" href="<?php echo e(route('user.salesList')); ?>"><i class="fal fa-sack-dollar"></i><?php echo app('translator')->get('Sales List'); ?></a>
+                        <a class="<?php echo e(in_array($currentRouteName, ['user.salesList', 'user.salesDetails', 'user.salesInvoice', 'user.returnSales']) ? 'active' : ''); ?>" href="<?php echo e(route('user.salesList')); ?>"><i class="fal fa-sack-dollar"></i><?php echo app('translator')->get('Sales List'); ?></a>
                     </li>
                     <li>
                         <a class="<?php echo e(in_array($currentRouteName, ['user.salesItem']) ? 'active' : ''); ?>"  href="<?php echo e(route('user.salesItem')); ?>"><i class="fal fa-house-return"></i><?php echo app('translator')->get('Sales Item'); ?></a>
