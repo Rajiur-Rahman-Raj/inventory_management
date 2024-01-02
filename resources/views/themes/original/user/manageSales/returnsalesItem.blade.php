@@ -172,6 +172,7 @@
                                                             <input type="number" name="item_quantity[]"
                                                                    value="{{ $cartItem->quantity }}"
                                                                    class="itemQuantityInput"
+                                                                   data-cartquantity="{{ $cartItem->quantity }}"
                                                                    data-cartitem="{{ $cartItem->cost_per_unit }}"
                                                                    data-stockid="{{ $cartItem->stock_id }}"
                                                                    data-itemid="{{ $cartItem->item_id }}" min="1">
@@ -746,7 +747,7 @@
                         <div class="quantity">
                             <input type="number" name="item_quantity[]" value="${cartItem.quantity}"
                                    class="itemQuantityInput" data-cartitem="${cartItem.cost_per_unit}" data-stockid="${cartItem.stock_id}"
-                                                           data-itemid="${cartItem.item_id}" min="1">
+                                                           data-itemid="${cartItem.item_id}" data-cartquantity="${null}" min="1">
                         </div>
                         <input type="hidden" name="cost_per_unit[]"
                                                        value="${cartItem.cost_per_unit}">
@@ -809,18 +810,13 @@
             }
 
             $('.total-payable-amount').text(`${0} {{ $basic->currency_symbol }}`)
-
-            // $('.due_or_change_amount_input').val(`${totalAmount.toFixed(2)}`)
-            // $('.total_payable_amount_input').val(`${totalAmount.toFixed(2)}`)
         }
 
         $(document).on('keyup', '.customer-paid-amount', function () {
-            // let totalAmount = parseFloat($('.total-area').text().match(/[\d.]+/)[0]);
             var dueAmount = parseFloat($('.original-due-amount').val());
             let customerPaidAmount = isNaN(parseFloat($(this).val())) ? 0 : parseFloat($(this).val());
             let dueOrChangeAmount = customerPaidAmount - dueAmount;
 
-            // i am here not clear how to return data.. so today i will start
             if (dueOrChangeAmount > 0) {
                 $('.due-or-change-text').text('Change Amount')
                 $('.due-or-change-amount').text(`${Math.abs(dueOrChangeAmount).toFixed(2)} {{ $basic->currency_symbol }}`)
@@ -830,25 +826,7 @@
                 $('.due-or-change-amount').text(`${Math.abs(dueOrChangeAmount).toFixed(2)} {{ $basic->currency_symbol }}`)
                 $('.total-payable-amount').text(`${customerPaidAmount.toFixed(2)} {{ $basic->currency_symbol }}`)
             }
-
-            {{--if (dueOrChangeAmount >= 0) {--}}
-            {{--    $('.due-or-change-text').text('Due Amount')--}}
-            {{--    $('.due-or-change-amount').text(`${dueOrChangeAmount.toFixed(2)} {{ $basic->currency_symbol }}`)--}}
-            {{--    $('.total-payable-amount').text(`${customerPaidAmount.toFixed(2)} {{ $basic->currency_symbol }}`)--}}
-
-            {{--    $('.due_or_change_amount_input').val(`${dueOrChangeAmount.toFixed(2)}`)--}}
-            {{--    $('.total_payable_amount_input').val(`${customerPaidAmount.toFixed(2)}`)--}}
-
-            {{--} else {--}}
-            {{--    $('.due-or-change-text').text('Change Amount')--}}
-            {{--    $('.due-or-change-amount').text(`${Math.abs(dueOrChangeAmount).toFixed(2)} {{ $basic->currency_symbol }}`)--}}
-            {{--    $('.total-payable-amount').text(`${totalAmount.toFixed(2)} {{ $basic->currency_symbol }}`)--}}
-
-            {{--    $('.due_or_change_amount_input').val(`${dueOrChangeAmount.toFixed(2)}`)--}}
-            {{--    $('.total_payable_amount_input').val(`${totalAmount.toFixed(2)}`)--}}
-            {{--}--}}
         });
-
 
         $(document).on('click', '.updateUnitPrice', function () {
             var updateUnitPriceModal = new bootstrap.Modal(document.getElementById('updateUnitPriceModal'))
@@ -1000,6 +978,7 @@
                     let thisClass = $(this);
                     let cartQuantity = isNaN(parseFloat($(this).val())) ? 0 : parseFloat($(this).val());
                     let costPerUnit = parseFloat($(this).data('cartitem')).toFixed(2);
+                    let oldCartQ = $(this).data('cartquantity');
                     let singleCartItemCost = cartQuantity * costPerUnit;
                     $(this).parent().siblings('.prize').find('.cart-item-cost').text(`${singleCartItemCost.toFixed(2)} {{ $basic->currency_symbol }}`);
                     $(this).parent().siblings('.prize').find('.item_price_input').val(`${singleCartItemCost.toFixed(2)}`);
@@ -1010,12 +989,12 @@
                     let stockId = $(this).data('stockid');
                     let itemId = $(this).data('itemid');
                     // update quantity and cost also cartItems table
-                    updateCartItem(stockId, itemId, cartQuantity, costPerUnit, singleCartItemCost, thisClass);
+                    updateCartItem(stockId, itemId, cartQuantity, costPerUnit, singleCartItemCost, thisClass, oldCartQ);
                 })
             });
         });
 
-        function updateCartItem(stockId, itemId, cartQuantity, costPerUnit, singleCartItemCost, thisClass) {
+        function updateCartItem(stockId, itemId, cartQuantity, costPerUnit, singleCartItemCost, thisClass, oldCartQ) {
             // update quantity and cost also cartItems table
             $.ajax({
                 url: "{{ route('user.updateCartItems') }}",
@@ -1026,8 +1005,11 @@
                     cartQuantity: cartQuantity,
                     costPerUnit: costPerUnit,
                     singleCartItemCost: singleCartItemCost,
+                    oldCartQ: oldCartQ,
                 },
                 success: function (response) {
+                    console.log(response);
+                    return;
                     if (!response.status) {
                         Notiflix.Notify.Warning(response.message);
                         thisClass.attr('max', response.stockQuantity)

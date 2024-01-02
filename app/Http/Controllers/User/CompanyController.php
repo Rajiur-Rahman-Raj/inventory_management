@@ -909,7 +909,6 @@ class CompanyController extends Controller
 
     public function updateCartItems(Request $request)
     {
-
         $admin = $this->user;
 
         $cartItem = CartItems::where('company_id', $admin->active_company_id)
@@ -923,28 +922,37 @@ class CompanyController extends Controller
             ->select('id', 'quantity')
             ->findOrFail($request->stockId);
 
-        if ($cartItem && $request->cartQuantity > $stock->quantity) {
+//        return $request->oldCartQ;
+            // i am here working tomorrow
+        if (isset($request->oldCartQ)){
             $status = false;
             $message = "This item is out of stock";
-            $stockQuantity = $stock->quantity;
-        } else {
-            CartItems::updateOrInsert(
-                [
-                    'company_id' => $admin->active_company_id,
-                    'stock_id' => $request->stockId,
-                    'item_id' => $request->itemId,
-                ],
-                [
-                    'quantity' => $request->cartQuantity,
-                    'cost' => DB::raw('quantity * cost_per_unit'),
-                    'updated_at' => Carbon::now()
-                ]
-            );
+            $stockQuantity = $stock->quantity + $request->oldCartQ;
+        }else{
+            if ($cartItem && $request->cartQuantity > $stock->quantity) {
+                $status = false;
+                $message = "This item is out of stock";
+                $stockQuantity = $stock->quantity;
+            } else {
+                CartItems::updateOrInsert(
+                    [
+                        'company_id' => $admin->active_company_id,
+                        'stock_id' => $request->stockId,
+                        'item_id' => $request->itemId,
+                    ],
+                    [
+                        'quantity' => $request->cartQuantity,
+                        'cost' => DB::raw('quantity * cost_per_unit'),
+                        'updated_at' => Carbon::now()
+                    ]
+                );
 
-            $status = true;
-            $message = "Cart item added successfully";
-            $stockQuantity = null;
+                $status = true;
+                $message = "Cart item added successfully";
+                $stockQuantity = null;
+            }
         }
+
 
         return response()->json([
             'status' => $status,
@@ -1219,6 +1227,7 @@ class CompanyController extends Controller
 
         // now we need particular sales item for return to customer.
         $data['sale'] = Sale::with('salesCenter.user', 'customer', 'salesItems.sale')->where('company_id', $admin->active_company_id)->findOrFail($id);
+
 
         // store sales item into cart items table
         foreach($data['sale']->salesItems as $salesItem){

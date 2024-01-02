@@ -22,7 +22,8 @@
                                                 aria-label="Default select example">
                                             <option value="all"><?php echo app('translator')->get('All Items'); ?></option>
                                             <?php $__currentLoopData = $items; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                <option value="<?php echo e($item->id); ?>" <?php echo e(old('item_id', session('filterItemId')) == $item->id ? 'selected' : ''); ?>> <?php echo app('translator')->get($item->name); ?></option>
+                                                <option
+                                                    value="<?php echo e($item->id); ?>" <?php echo e(old('item_id', session('filterItemId')) == $item->id ? 'selected' : ''); ?>> <?php echo app('translator')->get($item->name); ?></option>
                                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                         </select>
                                     </div>
@@ -372,13 +373,6 @@ unset($__errorArgs, $__bag); ?>
                                                                     <div class="mb-3">
                                                                         <label for="formFile" class="form-label">Payment
                                                                             Date</label>
-                                                                        
-                                                                        
-                                                                        
-                                                                        
-                                                                        
-                                                                        
-                                                                        
 
                                                                         <div class="flatpickr">
                                                                             <div class="input-group">
@@ -386,7 +380,7 @@ unset($__errorArgs, $__bag); ?>
                                                                                        placeholder="<?php echo app('translator')->get('Select Payment Date'); ?>"
                                                                                        class="form-control payment_date"
                                                                                        name="payment_date"
-                                                                                       value="<?php echo e(old('payment_date',request()->shipment_date)); ?>"
+                                                                                       value="<?php echo e(old('payment_date',request()->payment_date)); ?>"
                                                                                        data-input>
                                                                                 <div class="input-group-append"
                                                                                      readonly="">
@@ -416,7 +410,7 @@ unset($__errorArgs, $__bag); ?>
                                                                     <div class="mb-3">
                                                                         <label for="formFile"
                                                                                class="form-label"><?php echo app('translator')->get('Payment Note'); ?>
-                                                                            <span><sup>(<?php echo app('translator')->get('optional'); ?>)</sup></span></label>
+                                                                            <span><sub>(<?php echo app('translator')->get('optional'); ?>)</sub></span></label>
                                                                         <textarea class="form-control"
                                                                                   id="exampleFormControlTextarea1"
                                                                                   placeholder="Write payment note"

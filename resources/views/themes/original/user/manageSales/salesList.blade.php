@@ -64,8 +64,11 @@
                                 name="status"
                                 aria-label="Default select example">
                                 <option value="all">@lang('All')</option>
-                                <option value="1" {{ old('status', @request()->status) == '1' ? 'selected' : ''}}> Paid </option>
-                                <option value="0" {{ old('status', @request()->status) == '0' ? 'selected' : ''}}> Due </option>
+                                <option value="1" {{ old('status', @request()->status) == '1' ? 'selected' : ''}}>
+                                    Paid
+                                </option>
+                                <option value="0" {{ old('status', @request()->status) == '0' ? 'selected' : ''}}> Due
+                                </option>
                             </select>
                         </div>
                         <div class="input-box col-lg-2">
@@ -96,7 +99,8 @@
                             <td data-label="@lang('SL')">{{loopIndex($salesLists) + $key}}</td>
                             <td data-label="@lang('Sales Center')">
                                 {{ optional($salesList->salesCenter)->name }} <br>
-                                <sapn class="font-weight-bold">Invoice: </sapn> <span class="font-weight-bold color-primary">{{ $salesList->invoice_id }}</span> </span>
+                                <sapn class="font-weight-bold">Invoice:</sapn>
+                                <span class="font-weight-bold color-primary">{{ $salesList->invoice_id }}</span> </span>
                             </td>
 
                             <td data-label="@lang('Total Amount')"
@@ -135,7 +139,8 @@
 
                                         <li>
                                             <a href="{{ route('user.returnSales', $salesList->id) }}"
-                                               class="dropdown-item"> <i class="fal fa-backward"></i> @lang('Return Sales') </a>
+                                               class="dropdown-item"> <i
+                                                    class="fal fa-backward"></i> @lang('Return Sales') </a>
                                         </li>
                                     </ul>
                                 </div>

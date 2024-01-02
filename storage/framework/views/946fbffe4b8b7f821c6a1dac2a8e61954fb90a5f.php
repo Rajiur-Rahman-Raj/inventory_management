@@ -63,8 +63,11 @@
                                 name="status"
                                 aria-label="Default select example">
                                 <option value="all"><?php echo app('translator')->get('All'); ?></option>
-                                <option value="1" <?php echo e(old('status', @request()->status) == '1' ? 'selected' : ''); ?>> Paid </option>
-                                <option value="0" <?php echo e(old('status', @request()->status) == '0' ? 'selected' : ''); ?>> Due </option>
+                                <option value="1" <?php echo e(old('status', @request()->status) == '1' ? 'selected' : ''); ?>>
+                                    Paid
+                                </option>
+                                <option value="0" <?php echo e(old('status', @request()->status) == '0' ? 'selected' : ''); ?>> Due
+                                </option>
                             </select>
                         </div>
                         <div class="input-box col-lg-2">
@@ -95,7 +98,8 @@
                             <td data-label="<?php echo app('translator')->get('SL'); ?>"><?php echo e(loopIndex($salesLists) + $key); ?></td>
                             <td data-label="<?php echo app('translator')->get('Sales Center'); ?>">
                                 <?php echo e(optional($salesList->salesCenter)->name); ?> <br>
-                                <sapn class="font-weight-bold">Invoice: </sapn> <span class="font-weight-bold color-primary"><?php echo e($salesList->invoice_id); ?></span> </span>
+                                <sapn class="font-weight-bold">Invoice:</sapn>
+                                <span class="font-weight-bold color-primary"><?php echo e($salesList->invoice_id); ?></span> </span>
                             </td>
 
                             <td data-label="<?php echo app('translator')->get('Total Amount'); ?>"
@@ -134,7 +138,8 @@
 
                                         <li>
                                             <a href="<?php echo e(route('user.returnSales', $salesList->id)); ?>"
-                                               class="dropdown-item"> <i class="fal fa-backward"></i> <?php echo app('translator')->get('Return Sales'); ?> </a>
+                                               class="dropdown-item"> <i
+                                                    class="fal fa-backward"></i> <?php echo app('translator')->get('Return Sales'); ?> </a>
                                         </li>
                                     </ul>
                                 </div>
