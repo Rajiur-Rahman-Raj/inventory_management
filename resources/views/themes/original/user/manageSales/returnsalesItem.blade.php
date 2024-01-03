@@ -172,7 +172,7 @@
                                                             <input type="number" name="item_quantity[]"
                                                                    value="{{ $cartItem->quantity }}"
                                                                    class="itemQuantityInput"
-                                                                   data-cartquantity="{{ $cartItem->quantity }}"
+                                                                   data-oldbuyitemquantity="{{ $cartItem->quantity }}"
                                                                    data-cartitem="{{ $cartItem->cost_per_unit }}"
                                                                    data-stockid="{{ $cartItem->stock_id }}"
                                                                    data-itemid="{{ $cartItem->item_id }}" min="1">
@@ -552,6 +552,7 @@
 
     <script>
         'use strict'
+        var canShowWarning = true;
         $(".flatpickr").flatpickr({
             wrap: true,
             maxDate: "today",
@@ -747,7 +748,7 @@
                         <div class="quantity">
                             <input type="number" name="item_quantity[]" value="${cartItem.quantity}"
                                    class="itemQuantityInput" data-cartitem="${cartItem.cost_per_unit}" data-stockid="${cartItem.stock_id}"
-                                                           data-itemid="${cartItem.item_id}" data-cartquantity="${null}" min="1">
+                                                           data-itemid="${cartItem.item_id}" data-oldbuyitemquantity="${cartItem.sale ? cartItem.quantity : null}" min="1">
                         </div>
                         <input type="hidden" name="cost_per_unit[]"
                                                        value="${cartItem.cost_per_unit}">
@@ -789,12 +790,14 @@
             returnOrderModal.show();
 
             var totalAmount = parseFloat($('.total-area').text().match(/[\d.]+/)[0]);
+
             $('.make-payment-total-amount').text(`${totalAmount.toFixed(2)} {{ $basic->currency_symbol }}`)
             $('.previous-paid-amount').text(`${sale.customer_paid_amount} {{ $basic->currency_symbol }}`)
             let originalDueAmount = totalAmount - sale.customer_paid_amount;
             $('.original-due-amount').val(originalDueAmount);
 
             let restDueOrChangeAmount = totalAmount - sale.customer_paid_amount;
+
             if (restDueOrChangeAmount >= 0) {
                 $('.due-or-change-text').text('Due Amount');
                 $('.due-or-change-amount').text(`${restDueOrChangeAmount.toFixed(2)} {{ $basic->currency_symbol }}`)
@@ -813,6 +816,7 @@
         }
 
         $(document).on('keyup', '.customer-paid-amount', function () {
+            var totalAmount = parseFloat($('.total-area').text().match(/[\d.]+/)[0]);
             var dueAmount = parseFloat($('.original-due-amount').val());
             let customerPaidAmount = isNaN(parseFloat($(this).val())) ? 0 : parseFloat($(this).val());
             let dueOrChangeAmount = customerPaidAmount - dueAmount;
@@ -821,10 +825,17 @@
                 $('.due-or-change-text').text('Change Amount')
                 $('.due-or-change-amount').text(`${Math.abs(dueOrChangeAmount).toFixed(2)} {{ $basic->currency_symbol }}`)
                 $('.total-payable-amount').text(`${dueAmount.toFixed(2)} {{ $basic->currency_symbol }}`)
+
+                $('.due_or_change_amount_input').val(`${dueOrChangeAmount.toFixed(2)}`)
+                $('.total_payable_amount_input').val(`${totalAmount.toFixed(2)}`)
+
             } else if (dueOrChangeAmount <= 0) {
                 $('.due-or-change-text').text('Due Amount')
                 $('.due-or-change-amount').text(`${Math.abs(dueOrChangeAmount).toFixed(2)} {{ $basic->currency_symbol }}`)
                 $('.total-payable-amount').text(`${customerPaidAmount.toFixed(2)} {{ $basic->currency_symbol }}`)
+
+                $('.due_or_change_amount_input').val(`${dueOrChangeAmount.toFixed(2)}`)
+                $('.total_payable_amount_input').val(`${customerPaidAmount.toFixed(2)}`)
             }
         });
 
@@ -956,6 +967,7 @@
                 let thisClass = $(this);
                 let cartQuantity = isNaN(parseFloat($(this).val())) ? 0 : parseFloat($(this).val());
                 let costPerUnit = parseFloat($(this).data('cartitem')).toFixed(2);
+                let oldBuyItemQuantity = $(this).data('oldbuyitemquantity');
                 let singleCartItemCost = cartQuantity * costPerUnit;
                 $(this).parent().siblings('.prize').find('.cart-item-cost').text(`${singleCartItemCost.toFixed(2)} {{ $basic->currency_symbol }}`);
                 $(this).parent().siblings('.prize').find('.item_price_input').val(`${singleCartItemCost.toFixed(2)}`);
@@ -967,8 +979,7 @@
                 let stockId = $(this).data('stockid');
                 let itemId = $(this).data('itemid');
                 // update quantity and cost also cartItems table
-                updateCartItem(stockId, itemId, cartQuantity, costPerUnit, singleCartItemCost, thisClass);
-
+                updateCartItem(stockId, itemId, cartQuantity, costPerUnit, singleCartItemCost, thisClass, oldBuyItemQuantity);
             })
         });
 
@@ -978,7 +989,7 @@
                     let thisClass = $(this);
                     let cartQuantity = isNaN(parseFloat($(this).val())) ? 0 : parseFloat($(this).val());
                     let costPerUnit = parseFloat($(this).data('cartitem')).toFixed(2);
-                    let oldCartQ = $(this).data('cartquantity');
+                    let oldBuyItemQuantity = $(this).data('oldbuyitemquantity');
                     let singleCartItemCost = cartQuantity * costPerUnit;
                     $(this).parent().siblings('.prize').find('.cart-item-cost').text(`${singleCartItemCost.toFixed(2)} {{ $basic->currency_symbol }}`);
                     $(this).parent().siblings('.prize').find('.item_price_input').val(`${singleCartItemCost.toFixed(2)}`);
@@ -989,12 +1000,12 @@
                     let stockId = $(this).data('stockid');
                     let itemId = $(this).data('itemid');
                     // update quantity and cost also cartItems table
-                    updateCartItem(stockId, itemId, cartQuantity, costPerUnit, singleCartItemCost, thisClass, oldCartQ);
+                    updateCartItem(stockId, itemId, cartQuantity, costPerUnit, singleCartItemCost, thisClass, oldBuyItemQuantity);
                 })
             });
         });
 
-        function updateCartItem(stockId, itemId, cartQuantity, costPerUnit, singleCartItemCost, thisClass, oldCartQ) {
+        function updateCartItem(stockId, itemId, cartQuantity, costPerUnit, singleCartItemCost, thisClass, oldBuyItemQuantity) {
             // update quantity and cost also cartItems table
             $.ajax({
                 url: "{{ route('user.updateCartItems') }}",
@@ -1005,16 +1016,22 @@
                     cartQuantity: cartQuantity,
                     costPerUnit: costPerUnit,
                     singleCartItemCost: singleCartItemCost,
-                    oldCartQ: oldCartQ,
+                    oldBuyItemQuantity: oldBuyItemQuantity,
                 },
                 success: function (response) {
-                    console.log(response);
-                    return;
+
                     if (!response.status) {
-                        Notiflix.Notify.Warning(response.message);
+
                         thisClass.attr('max', response.stockQuantity)
                         thisClass.val(response.stockQuantity)
 
+                        if (!response.status && canShowWarning) {
+                            Notiflix.Notify.Warning(response.message);
+                            canShowWarning = false;
+                            setTimeout(() => {
+                                canShowWarning = true;
+                            }, 1000); // 3 seconds interval
+                        }
                     }
                 },
                 error: function (xhr, status, error) {
@@ -1022,7 +1039,5 @@
                 }
             });
         }
-
-
     </script>
 @endpush

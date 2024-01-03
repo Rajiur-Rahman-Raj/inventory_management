@@ -616,6 +616,7 @@ unset($__errorArgs, $__bag); ?>"
 
     <script>
         'use strict'
+        var canShowWarning = true;
         $(".flatpickr").flatpickr({
             wrap: true,
             maxDate: "today",
@@ -879,7 +880,6 @@ unset($__errorArgs, $__bag); ?>"
 
         function showProccedOrderModal() {
             let result = checkSalesBy();
-            console.log(result);
             if (result) {
                 var proccedOrderModal = new bootstrap.Modal(document.getElementById('proccedOrderModal'))
                 proccedOrderModal.show();
@@ -898,6 +898,7 @@ unset($__errorArgs, $__bag); ?>"
         $(document).on('keyup', '.customer-paid-amount', function () {
             var totalAmount = parseFloat($('.total-area').text().match(/[\d.]+/)[0]);
             let customerPaidAmount = isNaN(parseFloat($(this).val())) ? 0 : parseFloat($(this).val());
+
             let dueOrChangeAmount = totalAmount - customerPaidAmount;
 
             if (dueOrChangeAmount >= 0) {
@@ -1098,10 +1099,16 @@ unset($__errorArgs, $__bag); ?>"
                 },
                 success: function (response) {
                     if (!response.status) {
-                        Notiflix.Notify.Warning(response.message);
                         thisClass.attr('max', response.stockQuantity)
                         thisClass.val(response.stockQuantity)
 
+                        if (!response.status && canShowWarning) {
+                            Notiflix.Notify.Warning(response.message);
+                            canShowWarning = false;
+                            setTimeout(() => {
+                                canShowWarning = true;
+                            }, 1000); // 1 seconds interval
+                        }
                     }
                 },
                 error: function (xhr, status, error) {

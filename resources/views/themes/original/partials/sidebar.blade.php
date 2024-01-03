@@ -26,8 +26,8 @@
                         (@lang((optional($user->userBadge->details)->rank_level)))</p>
                 @endif
             </div>
-
         </div>
+
         <button class="sidebar-toggler d-lg-none" onclick="toggleSideMenu()">
             <i class="fal fa-times"></i>
         </button>
@@ -119,26 +119,26 @@
             </div>
         </li>
 
-        <li>
-            <a
-                class="dropdown-toggle"
-                data-bs-toggle="collapse"
-                href="#dropdownCollapsible"
-                role="button"
-                aria-expanded="false"
-                aria-controls="collapseExample">
-                <i class="fal fa-car-building"></i>@lang('Manage Return')
-            </a>
-            <div class="collapse {{menuActive(['user.salesReturn'],4)}} dropdownCollapsible" id="dropdownCollapsible">
-                <ul class="">
-                    <li>
-                        <a class="{{ in_array($currentRouteName, ['user.salesReturn']) ? 'active' : '' }}"
-                           href="{{ route('user.salesReturn') }}"><i
-                                class="fal fa-house-return"></i>@lang('Sales Return')</a>
-                    </li>
-                </ul>
-            </div>
-        </li>
+{{--        <li>--}}
+{{--            <a--}}
+{{--                class="dropdown-toggle"--}}
+{{--                data-bs-toggle="collapse"--}}
+{{--                href="#dropdownCollapsible"--}}
+{{--                role="button"--}}
+{{--                aria-expanded="false"--}}
+{{--                aria-controls="collapseExample">--}}
+{{--                <i class="fal fa-car-building"></i>@lang('Manage Return')--}}
+{{--            </a>--}}
+{{--            <div class="collapse {{menuActive(['user.salesReturn'],4)}} dropdownCollapsible" id="dropdownCollapsible">--}}
+{{--                <ul class="">--}}
+{{--                    <li>--}}
+{{--                        <a class="{{ in_array($currentRouteName, ['user.salesReturn']) ? 'active' : '' }}"--}}
+{{--                           href="{{ route('user.salesReturn') }}"><i--}}
+{{--                                class="fal fa-house-return"></i>@lang('Sales Return')</a>--}}
+{{--                    </li>--}}
+{{--                </ul>--}}
+{{--            </div>--}}
+{{--        </li>--}}
 
 
         {{--        @php--}}

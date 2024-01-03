@@ -13,4 +13,8 @@ class CartItems extends Model
     public function item(){
         return $this->belongsTo(Item::class, 'item_id');
     }
+
+    public function sale(){
+        return $this->belongsTo(Sale::class, 'sales_id');
+    }
 }

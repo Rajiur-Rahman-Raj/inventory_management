@@ -859,7 +859,7 @@ class CompanyController extends Controller
             $message = "Cart item added successfully";
         }
 
-        $cartItems = CartItems::with('item')->where('company_id', $admin->active_company_id)
+        $cartItems = CartItems::with('item', 'sale')->where('company_id', $admin->active_company_id)
             ->whereNull('sales_center_id')
             ->get();
 
@@ -911,28 +911,28 @@ class CompanyController extends Controller
     {
         $admin = $this->user;
 
-        $cartItem = CartItems::where('company_id', $admin->active_company_id)
-            ->whereNull('sales_center_id')
-            ->where('stock_id', $request->stockId)
-            ->where('item_id', $request->itemId)
-            ->first();
-
         $stock = Stock::where('company_id', $admin->active_company_id)
             ->whereNull('sales_center_id')
             ->select('id', 'quantity')
             ->findOrFail($request->stockId);
 
-//        return $request->oldCartQ;
-            // i am here working tomorrow
-        if (isset($request->oldCartQ)){
+        $oldPlusNewQuantity = $request->oldBuyItemQuantity + $stock->quantity;
+
+        if ($request->oldBuyItemQuantity && ($request->cartQuantity > $oldPlusNewQuantity)) {
             $status = false;
             $message = "This item is out of stock";
-            $stockQuantity = $stock->quantity + $request->oldCartQ;
-        }else{
-            if ($cartItem && $request->cartQuantity > $stock->quantity) {
+            $stockQuantity = $oldPlusNewQuantity;
+        } else {
+            $cartItem = CartItems::where([
+                'company_id' => $admin->active_company_id,
+                'stock_id' => $request->stockId,
+                'item_id' => $request->itemId,
+            ])->first();
+
+            if ($cartItem && $request->cartQuantity > ($request->oldBuyItemQuantity ? $oldPlusNewQuantity : $stock->quantity)) {
                 $status = false;
                 $message = "This item is out of stock";
-                $stockQuantity = $stock->quantity;
+                $stockQuantity = $oldPlusNewQuantity;
             } else {
                 CartItems::updateOrInsert(
                     [
@@ -952,8 +952,6 @@ class CompanyController extends Controller
                 $stockQuantity = null;
             }
         }
-
-
         return response()->json([
             'status' => $status,
             'message' => $message,
@@ -1032,8 +1030,10 @@ class CompanyController extends Controller
 
     public function salesOrderStore(Request $request)
     {
+
         $admin = $this->user;
         $purifiedData = Purify::clean($request->except('_token', '_method'));
+
 
         try {
             $rules = [
@@ -1268,7 +1268,56 @@ class CompanyController extends Controller
     }
 
     public function returnSalesOrder(Request $request, $id){
-        dd($request->all());
+        $admin = $this->user;
+        $purifiedData = Purify::clean($request->except('_token', '_method'));
+//        dd($purifiedData);
+        try {
+            $rules = [
+                'items' => 'nullable',
+                'return_date' => 'required',
+                'return_note' => 'nullable',
+            ];
+
+            $message = [
+                'return_date.required' => 'return date field is required.',
+            ];
+
+            $validate = Validator::make($purifiedData, $rules, $message);
+
+            if ($validate->fails()) {
+                return back()->withInput()->withErrors($validate);
+            }
+
+            DB::beginTransaction();
+            $due_or_change_amount = (float)floor($request->due_or_change_amount);
+
+
+            $sale = Sale::with('salesItems')->where('company_id', $admin->active_company_id)->findOrFail($id);
+            $sale->sub_total = $request->sub_total;
+            $sale->discount_parcent = (isset($request->discount_parcent) ? $request->discount_parcent : 0);
+            $sale->discount = $request->discount_amount;
+            $sale->total_amount = $request->total_amount;
+            $sale->customer_paid_amount = $due_or_change_amount >= 0 ? $request->total_amount : ((float)floor($request->previous_paid) + (float)floor($request->customer_paid_amount));
+            $sale->due_amount = $due_or_change_amount >= 0 ? 0 : $due_or_change_amount;
+            $sale->payment_date = $request->return_date;
+            $sale->payment_note = $request->return_note;
+            $sale->payment_status = $due_or_change_amount >= 0 ? 1 : 0;
+            $items = $this->storeSalesItems($request, $sale);
+            $sale->save();
+
+            $this->updateSalesItems($request, $sale);
+
+            CartItems::where('company_id', $admin->active_company_id)
+                ->whereNull('sales_center_id')
+                ->delete();
+
+            DB::commit();
+            return redirect()->route('user.salesInvoice', $sale->id)->with('success', 'Return Order confirmed successfully!');
+
+        }catch (\Exception $exception){
+            DB::rollBack();
+            return back()->with('error', 'Something went wrong');
+        }
     }
 
 

@@ -26,8 +26,8 @@
                         (<?php echo app('translator')->get((optional($user->userBadge->details)->rank_level)); ?>)</p>
                 <?php endif; ?>
             </div>
-
         </div>
+
         <button class="sidebar-toggler d-lg-none" onclick="toggleSideMenu()">
             <i class="fal fa-times"></i>
         </button>
@@ -119,26 +119,26 @@
             </div>
         </li>
 
-        <li>
-            <a
-                class="dropdown-toggle"
-                data-bs-toggle="collapse"
-                href="#dropdownCollapsible"
-                role="button"
-                aria-expanded="false"
-                aria-controls="collapseExample">
-                <i class="fal fa-car-building"></i><?php echo app('translator')->get('Manage Return'); ?>
-            </a>
-            <div class="collapse <?php echo e(menuActive(['user.salesReturn'],4)); ?> dropdownCollapsible" id="dropdownCollapsible">
-                <ul class="">
-                    <li>
-                        <a class="<?php echo e(in_array($currentRouteName, ['user.salesReturn']) ? 'active' : ''); ?>"
-                           href="<?php echo e(route('user.salesReturn')); ?>"><i
-                                class="fal fa-house-return"></i><?php echo app('translator')->get('Sales Return'); ?></a>
-                    </li>
-                </ul>
-            </div>
-        </li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
         

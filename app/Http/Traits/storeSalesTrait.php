@@ -3,8 +3,10 @@
 namespace App\Http\Traits;
 
 
+use App\Models\CartItems;
 use App\Models\SalesItem;
 use App\Models\Stock;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 
 trait StoreSalesTrait
@@ -30,7 +32,8 @@ trait StoreSalesTrait
     }
 
 
-    public function storeSalesItemsInSalesItemModel($request, $sale){
+    public function storeSalesItemsInSalesItemModel($request, $sale)
+    {
         foreach ($request->item_name as $key => $value) {
             $salesItem = new SalesItem();
             $salesItem->sales_id = $sale->id;
@@ -43,6 +46,49 @@ trait StoreSalesTrait
             $salesItem->save();
         }
     }
+
+    public function updateSalesItems($request, $sale)
+    {
+        foreach ($request->item_name as $key => $value) {
+            $salesItem = SalesItem::where('sales_id', $sale->id)->where('stock_id', $request->stock_id[$key])->where('item_id', $request->item_id[$key])->first();
+
+            if ($salesItem) {
+                $stock = Stock::where('id', $request->stock_id[$key])->where('item_id', $request->item_id[$key])->first();
+                if ($salesItem->item_quantity > (int)$request->item_quantity[$key]) {
+                    $updateStockQuantity = $salesItem->item_quantity - $request->item_quantity[$key]; // stock +
+                    $stock->quantity = $stock->quantity + $updateStockQuantity;
+                    $stock->save();
+                } elseif ($salesItem->item_quantity < $request->item_quantity[$key]) {
+                    $updateStockQuantity = $request->item_quantity[$key] - $salesItem->item_quantity; // stock -
+                    $stock->quantity = $stock->quantity - $updateStockQuantity;
+                    $stock->save();
+                }
+
+                $salesItem->item_quantity = ($salesItem->item_quantity > $request->item_quantity[$key] ? ($salesItem->item_quantity - $request->item_quantity[$key]) : $request->item_quantity[$key]);
+                $salesItem->cost_per_unit = $request->cost_per_unit[$key];
+                $salesItem->item_price = $request->item_price[$key];
+                $salesItem->save();
+            } else {
+                $newSalesItem = new SalesItem();
+                $newSalesItem->sales_id = $sale->id;
+                $newSalesItem->stock_id = $request->stock_id[$key];
+                $newSalesItem->item_id = $request->item_id[$key];
+                $newSalesItem->item_name = $value;
+                $newSalesItem->item_quantity = $request->item_quantity[$key];
+                $newSalesItem->cost_per_unit = $request->cost_per_unit[$key];
+                $newSalesItem->item_price = $request->item_price[$key];
+                $newSalesItem->save();
+
+                $stock = Stock::where('id', $request->stock_id[$key])->where('item_id', $request->item_id[$key])->first();
+                $stock->quantity = (int)$stock->quantity - (int)$request->item_quantity[$key];
+                $stock->save();
+            }
+
+        }
+    }
+
+
+
 
     public function updateSalesItemsInSalesItemModel($request, $sale)
     {
