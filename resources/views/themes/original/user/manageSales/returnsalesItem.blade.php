@@ -175,7 +175,7 @@
                                                                    data-oldbuyitemquantity="{{ $cartItem->quantity }}"
                                                                    data-cartitem="{{ $cartItem->cost_per_unit }}"
                                                                    data-stockid="{{ $cartItem->stock_id }}"
-                                                                   data-itemid="{{ $cartItem->item_id }}" min="1">
+                                                                   data-itemid="{{ $cartItem->item_id }}" min="0">
                                                         </div>
 
                                                         <input type="hidden" name="cost_per_unit[]"
@@ -748,7 +748,7 @@
                         <div class="quantity">
                             <input type="number" name="item_quantity[]" value="${cartItem.quantity}"
                                    class="itemQuantityInput" data-cartitem="${cartItem.cost_per_unit}" data-stockid="${cartItem.stock_id}"
-                                                           data-itemid="${cartItem.item_id}" data-oldbuyitemquantity="${cartItem.sale ? cartItem.quantity : null}" min="1">
+                                                           data-itemid="${cartItem.item_id}" data-oldbuyitemquantity="${cartItem.sale ? cartItem.quantity : null}" min="0">
                         </div>
                         <input type="hidden" name="cost_per_unit[]"
                                                        value="${cartItem.cost_per_unit}">

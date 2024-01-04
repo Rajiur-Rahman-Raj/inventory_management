@@ -23,7 +23,6 @@ trait StockInTrait
     }
 
     public function storeStocks($request, $loggedInUser){
-
         foreach ($request->item_id as $key => $value){
             $stock = Stock::firstOrNew([
                 'company_id' => $loggedInUser->active_company_id,

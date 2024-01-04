@@ -175,7 +175,7 @@
                                                                    data-oldbuyitemquantity="<?php echo e($cartItem->quantity); ?>"
                                                                    data-cartitem="<?php echo e($cartItem->cost_per_unit); ?>"
                                                                    data-stockid="<?php echo e($cartItem->stock_id); ?>"
-                                                                   data-itemid="<?php echo e($cartItem->item_id); ?>" min="1">
+                                                                   data-itemid="<?php echo e($cartItem->item_id); ?>" min="0">
                                                         </div>
 
                                                         <input type="hidden" name="cost_per_unit[]"
@@ -764,7 +764,7 @@ unset($__errorArgs, $__bag); ?>"
                         <div class="quantity">
                             <input type="number" name="item_quantity[]" value="${cartItem.quantity}"
                                    class="itemQuantityInput" data-cartitem="${cartItem.cost_per_unit}" data-stockid="${cartItem.stock_id}"
-                                                           data-itemid="${cartItem.item_id}" data-oldbuyitemquantity="${cartItem.sale ? cartItem.quantity : null}" min="1">
+                                                           data-itemid="${cartItem.item_id}" data-oldbuyitemquantity="${cartItem.sale ? cartItem.quantity : null}" min="0">
                         </div>
                         <input type="hidden" name="cost_per_unit[]"
                                                        value="${cartItem.cost_per_unit}">
