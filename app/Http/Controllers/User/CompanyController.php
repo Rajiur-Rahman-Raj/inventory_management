@@ -21,6 +21,7 @@ use App\Models\SalesItem;
 use App\Models\Stock;
 use App\Models\StockIn;
 use App\Models\StockInDetails;
+use App\Models\Supplier;
 use App\Models\Union;
 use App\Models\Upazila;
 use App\Models\User;
@@ -1290,9 +1291,200 @@ class CompanyController extends Controller
 
 
     // Suppliers Module
-    public function suppliers(){
-        return view($this->theme . 'user.suppliers.index');
+    public function suppliers(Request $request){
+
+        $search = $request->all();
+        $fromDate = Carbon::parse($request->from_date);
+        $toDate = Carbon::parse($request->to_date)->addDay();
+
+        $data['suppliers'] = Supplier::with('division:id,name', 'district:id,name', 'upazila:id,name', 'union:id,name')
+            ->when(isset($search['name']), function ($query) use ($search) {
+                $query->where('name', 'LIKE', '%' . $search['name'] . '%');
+            })
+            ->when(isset($search['email']), function ($query) use ($search) {
+                $query->where('email', 'LIKE', '%' . $search['email'] . '%');
+            })
+            ->when(isset($search['phone']), function ($query) use ($search) {
+                $query->where('phone', 'LIKE', '%' . $search['phone'] . '%');
+            })
+            ->when(isset($search['from_date']), function ($q2) use ($fromDate) {
+                return $q2->whereDate('created_at', '>=', $fromDate);
+            })
+            ->when(isset($search['to_date']), function ($q2) use ($fromDate, $toDate) {
+                return $q2->whereBetween('created_at', [$fromDate, $toDate]);
+            })
+            ->latest()
+            ->paginate(config('basic.paginate'));
+
+
+
+//        $data['customers'] = Customer::with('division:id,name', 'district:id,name', 'upazila:id,name', 'union:id,name')
+//            ->when(isset($search['name']), function ($query) use ($search) {
+//                $query->where('name', 'LIKE', '%' . $search['name'] . '%');
+//            })
+//            ->when(isset($search['email']), function ($query) use ($search) {
+//                $query->where('email', 'LIKE', '%' . $search['email'] . '%');
+//            })
+//            ->when(isset($search['phone']), function ($query) use ($search) {
+//                $query->where('phone', 'LIKE', '%' . $search['phone'] . '%');
+//            })
+//            ->when(isset($search['from_date']), function ($q2) use ($fromDate) {
+//                return $q2->whereDate('created_at', '>=', $fromDate);
+//            })
+//            ->when(isset($search['to_date']), function ($q2) use ($fromDate, $toDate) {
+//                return $q2->whereBetween('created_at', [$fromDate, $toDate]);
+//            })
+//            ->select('id', 'division_id', 'district_id', 'upazila_id', 'union_id', 'name', 'email', 'phone', 'national_id', 'address', 'created_at')
+//            ->where('company_id', $admin->active_company_id)
+//            ->latest()->paginate(config('basic.paginate'));
+
+        return view($this->theme . 'user.suppliers.index', $data);
     }
 
+    public function createSupplier(){
+        $data['allDivisions'] = Division::where('status', 1)->get();
+        return view($this->theme . 'user.suppliers.create', $data);
+    }
+
+    public function supplierStore(Request $request){
+        $admin = $this->user;
+
+        $purifiedData = Purify::clean($request->except('_token', '_method'));
+
+        $rules = [
+            'name' => 'required|string|max:100',
+            'email' => 'nullable|email|unique:suppliers,email',
+            'phone' => 'required|unique:suppliers,phone',
+            'national_id' => 'nullable',
+            'division_id' => 'required|exists:divisions,id',
+            'district_id' => 'required|exists:districts,id',
+            'upazila_id' => 'nullable|exists:upazilas,id',
+            'union_id' => 'nullable|exists:unions,id',
+            'address' => 'required',
+        ];
+
+        $messages = [
+            'name.required' => __('Name is required'),
+            'email.email' => __('Invalid email format'),
+            'email.unique' => __('Email is already taken'),
+            'phone.required' => __('Phone number is required'),
+            'phone.unique' => __('Phone number is already taken'),
+            'division_id.exists' => __('Invalid division selected'),
+            'district_id.exists' => __('Invalid district selected'),
+            'upazila_id.exists' => __('Invalid upazila selected'),
+            'union_id.exists' => __('Invalid union selected'),
+            'address.required' => __('Address is required'),
+        ];
+
+        $validate = Validator::make($purifiedData, $rules, $messages);
+
+        if ($validate->fails()) {
+            return back()->withInput()->withErrors($validate);
+        }
+
+        try {
+            DB::beginTransaction();
+            $supplier = new Supplier();
+
+            $supplier->company_id = $admin->active_company_id;
+            $supplier->name = $request->name;
+            $supplier->email = $request->email;
+            $supplier->phone = $request->phone;
+            $supplier->national_id = $request->national_id;
+            $supplier->division_id = $request->division_id;
+            $supplier->district_id = $request->district_id;
+            $supplier->upazila_id = $request->upazila_id;
+            $supplier->union_id = $request->union_id;
+            $supplier->address = $request->address;
+            $supplier->save();
+
+            DB::commit();
+
+            return back()->with('success', 'Supplier Created Successfully');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Something went wrong');
+        }
+    }
+
+    public function supplierDetails($id)
+    {
+        $admin = $this->user;
+        $data['supplier'] = Supplier::with('division', 'district', 'upazila', 'union')->where('company_id', $admin->active_company_id)->findOrFail($id);
+        return view($this->theme . "user.suppliers.details", $data);
+    }
+
+    public function deleteSupplier($id)
+    {
+        $supplier = Supplier::findOrFail($id);
+        $supplier->delete();
+        return back()->with('success', "Supplier Deleted Successfully!");
+    }
+
+    public function supplierEdit($id)
+    {
+        $admin = $this->user;
+        $data['supplier'] = Supplier::with('division', 'district', 'upazila', 'union')->where('company_id', $admin->active_company_id)->findOrFail($id);
+        $data['divisions'] = Division::select('id', 'name')->get();
+        $data['districts'] = District::select('id', 'name')->get();
+        $data['upazilas'] = Upazila::select('id', 'name')->get();
+        $data['unions'] = Union::select('id', 'name')->get();
+        return view($this->theme . 'user.suppliers.edit', $data);
+    }
+
+    public function supplierUpdate(Request $request, $id){
+        $admin = $this->user;
+        $purifiedData = Purify::clean($request->except('_token', '_method'));
+
+        $rules = [
+            'name' => 'required|string|max:100',
+            'email' => 'nullable|email',
+            'phone' => 'required',
+            'national_id' => 'nullable',
+            'division_id' => 'required|exists:divisions,id',
+            'district_id' => 'required|exists:districts,id',
+            'upazila_id' => 'nullable|exists:upazilas,id',
+            'union_id' => 'nullable|exists:unions,id',
+            'address' => 'required',
+        ];
+
+        $messages = [
+            'name.required' => __('Name is required'),
+            'email.email' => __('Invalid email format'),
+            'phone.required' => __('Phone number is required'),
+            'division_id.exists' => __('Invalid division selected'),
+            'district_id.exists' => __('Invalid district selected'),
+            'upazila_id.exists' => __('Invalid upazila selected'),
+            'union_id.exists' => __('Invalid union selected'),
+            'address.required' => __('Address is required'),
+        ];
+
+        $validate = Validator::make($purifiedData, $rules, $messages);
+
+        if ($validate->fails()) {
+            return back()->withInput()->withErrors($validate);
+        }
+
+        try {
+            DB::beginTransaction();
+            $supplier = Supplier::findOrFail($id);
+
+            $supplier->name = $request->name;
+            $supplier->email = $request->email;
+            $supplier->phone = $request->phone;
+            $supplier->national_id = $request->national_id;
+            $supplier->division_id = $request->division_id;
+            $supplier->district_id = $request->district_id;
+            $supplier->upazila_id = $request->upazila_id;
+            $supplier->union_id = $request->union_id;
+            $supplier->address = $request->address;
+            $supplier->save();
+
+            DB::commit();
+
+            return back()->with('success', 'Supplier Updated Successfully');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Something went wrong');
+        }
+    }
 
 }

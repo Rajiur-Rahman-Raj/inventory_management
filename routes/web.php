@@ -226,6 +226,16 @@ Route::group(['middleware' => ['auth', 'Maintenance'], 'prefix' => 'user', 'as' 
 
         // suppliers
         Route::get('suppliers', 'User\CompanyController@suppliers')->name('suppliers');
+        Route::get('supplier/create', 'User\CompanyController@createSupplier')->name('createSupplier');
+        Route::post('store/supplier', 'User\CompanyController@supplierStore')->name('supplierStore');
+
+        Route::get('supplier-details/{id}', 'User\CompanyController@supplierDetails')->name('supplierDetails');
+        Route::get('supplier-edit/{id}', 'User\CompanyController@supplierEdit')->name('supplierEdit');
+        Route::post('supplier-update/{id}', 'User\CompanyController@supplierUpdate')->name('supplierUpdate');
+        Route::delete('delete/supplier/{id}', 'User\CompanyController@deleteSupplier')->name('deleteSupplier');
+
+
+
 
         Route::put('update-item-unit-price/{id}', 'User\CompanyController@updateItemUnitPrice')->name('updateItemUnitPrice');
         Route::post('get-selected-items', 'User\CompanyController@getSelectedItems')->name('getSelectedItems');

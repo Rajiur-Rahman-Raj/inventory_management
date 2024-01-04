@@ -119,10 +119,10 @@
             </div>
         </li>
 
-
-
-
-
+        <li>
+            <a class="<?php echo e(menuActive(['user.suppliers'])); ?>"
+               href="<?php echo e(route('user.suppliers')); ?>"><i class="fab fa-adversal"></i><?php echo app('translator')->get('Suppliers'); ?></a>
+        </li>
 
 
         <li class="d-lg-none">

@@ -2,19 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="11aa6f2a-2f8c-4347-ad8b-3d0debffe21e" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/resources/views/themes/original/user/suppliers/details.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/views/themes/original/user/suppliers/edit.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/views/themes/original/user/suppliers/index.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Http/Controllers/User/CompanyController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/User/CompanyController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Traits/StockInTrait.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Traits/StockInTrait.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Traits/storeSalesTrait.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Traits/storeSalesTrait.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/themes/original/partials/sidebar.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/themes/original/partials/sidebar.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/themes/original/user/manageReturn/salesReturnItem.blade.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/themes/original/user/manageSales/returnsalesItem.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/themes/original/user/manageSales/returnsalesItem.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/themes/original/suppliers/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/themes/original/user/suppliers/create.blade.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/routes/web.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/web.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/storage/framework/sessions/4iG4cnFkR29ntpEOuzUgJHq3EPJiVa8kbroZPAhS" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/storage/framework/sessions/YbMiyZhtq8XTBfFI1G6skWxG242yyvEkGS45jurE" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/storage/framework/sessions/ZDsq7cJjnVQVqOXCSaLM8UZNFu1JSLvpfrifccKU" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/storage/framework/sessions/h2M3mz7pDgVJn5fVZKMCeqFAAzsqcNjkimdwUeNh" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/storage/framework/sessions/kqq6enpllfXY8piKdWsbeZhJPhLGZIXAoT7Lqund" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/storage/framework/views/13b8b1e5819296f72a153ff1fba5092a4bcfb0b1.php" beforeDir="false" afterPath="$PROJECT_DIR$/storage/framework/views/13b8b1e5819296f72a153ff1fba5092a4bcfb0b1.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/storage/framework/views/203e7aa423b58f90b15a3a4e2bdc086d76fd94f3.php" beforeDir="false" afterPath="$PROJECT_DIR$/storage/framework/views/203e7aa423b58f90b15a3a4e2bdc086d76fd94f3.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/storage/logs/laravel.log" beforeDir="false" afterPath="$PROJECT_DIR$/storage/logs/laravel.log" afterDir="false" />
     </list>
@@ -184,10 +178,16 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
-    "last_opened_file_path": "D:/xammp/htdocs/inventory_management/project",
+    "last_opened_file_path": "D:/xammp/htdocs/inventory_management/project/resources/views/themes/original/user/suppliers",
+    "nodejs_package_manager_path": "npm",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\xammp\htdocs\inventory_management\project\resources\views\themes\original\user\suppliers" />
+    </key>
+  </component>
   <component name="RunManager">
     <configuration name="phpunit.xml" type="PHPUnitRunConfigurationType" factoryName="PHPUnit">
       <TestRunner scope="XML" />
@@ -202,7 +202,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1704344153342</updated>
-      <workItem from="1704344155120" duration="14565000" />
+      <workItem from="1704344155120" duration="21864000" />
     </task>
     <servers />
   </component>
