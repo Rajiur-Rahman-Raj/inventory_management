@@ -6,7 +6,7 @@
 <div id="sidebar" class="">
     <div class="sidebar-top">
         <a class="navbar-brand d-none d-lg-block" href="{{url('/')}}"> <img
-                src="{{getFile(config('location.logoIcon.path').'logo.png')}}"
+                src="{{getFile(config('location.companyLogo.path').@Auth::user()->activeCompany->logo)}}"
                 alt="{{config('basic.site_title')}}"/></a>
         <div class="mobile-user-area d-lg-none">
             <div class="thumb">

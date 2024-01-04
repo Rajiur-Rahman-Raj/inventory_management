@@ -6,7 +6,7 @@
 <div id="sidebar" class="">
     <div class="sidebar-top">
         <a class="navbar-brand d-none d-lg-block" href="<?php echo e(url('/')); ?>"> <img
-                src="<?php echo e(getFile(config('location.logoIcon.path').'logo.png')); ?>"
+                src="<?php echo e(getFile(config('location.companyLogo.path').@Auth::user()->activeCompany->logo)); ?>"
                 alt="<?php echo e(config('basic.site_title')); ?>"/></a>
         <div class="mobile-user-area d-lg-none">
             <div class="thumb">
