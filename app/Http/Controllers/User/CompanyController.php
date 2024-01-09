@@ -7,6 +7,7 @@ use App\Http\Requests\CompanyStoreRequest;
 use App\Http\Requests\CompanyUpdateRequest;
 use App\Http\Requests\SalesCenterStoreRequest;
 use App\Http\Traits\Notify;
+use App\Http\Traits\RawItemPurchaseTrait;
 use App\Models\Badge;
 use App\Models\CartItems;
 use App\Models\Company;
@@ -15,6 +16,8 @@ use App\Models\Customer;
 use App\Models\District;
 use App\Models\Division;
 use App\Models\Item;
+use App\Models\RawItem;
+use App\Models\RawItemPurchaseIn;
 use App\Models\Sale;
 use App\Models\SalesCenter;
 use App\Models\SalesItem;
@@ -39,7 +42,7 @@ use App\Http\Traits\storeSalesTrait;
 
 class CompanyController extends Controller
 {
-    use Upload, Notify, StockInTrait, storeSalesTrait;
+    use Upload, Notify, StockInTrait, storeSalesTrait, RawItemPurchaseTrait;
 
     public function __construct()
     {
@@ -54,9 +57,7 @@ class CompanyController extends Controller
     public function index()
     {
         $user = $this->user;
-
         $data['companies'] = Company::where('user_id', $user->id)->get();
-
         $data['allBadges'] = Badge::with('details')->where('status', 1)->orderBy('sort_by', 'ASC')->get();
         return view($this->theme . 'user.company.index', $data);
     }
@@ -347,6 +348,7 @@ class CompanyController extends Controller
                 return back()->withInput()->withErrors($validate);
             }
 
+            DB::beginTransaction();
             $item = new Item();
             $item->name = $request->name;
             $item->unit = $request->unit;
@@ -361,11 +363,11 @@ class CompanyController extends Controller
             }
 
             $item->save();
-
-            DB::beginTransaction();
+            DB::commit();
             return back()->with('success', 'Item Created Successfully');
 
         } catch (\Exception $e) {
+            DB::rollBack();
             return back()->with('error', 'Something went wrong');
         }
     }
@@ -413,7 +415,6 @@ class CompanyController extends Controller
             return back()->with('success', 'Item Update Successfully');
 
         } catch (\Exception $e) {
-
             return back()->with('error', 'Something went wrong');
         }
 
@@ -1188,7 +1189,8 @@ class CompanyController extends Controller
         return view($this->theme . 'user.manageSales.salesInvoice', $data);
     }
 
-    public function returnSales($id){
+    public function returnSales($id)
+    {
         $admin = $this->user;
         // first delete previous cart items when return any product to customers.
         CartItems::where('company_id', $admin->active_company_id)
@@ -1200,7 +1202,7 @@ class CompanyController extends Controller
 
 
         // store sales item into cart items table
-        foreach($data['sale']->salesItems as $salesItem){
+        foreach ($data['sale']->salesItems as $salesItem) {
             CartItems::updateOrInsert(
                 [
                     'company_id' => $admin->active_company_id,
@@ -1237,7 +1239,8 @@ class CompanyController extends Controller
         return view($this->theme . 'user.manageSales.returnsalesItem', $data);
     }
 
-    public function returnSalesOrder(Request $request, $id){
+    public function returnSalesOrder(Request $request, $id)
+    {
         $admin = $this->user;
         $purifiedData = Purify::clean($request->except('_token', '_method'));
         try {
@@ -1283,7 +1286,7 @@ class CompanyController extends Controller
             DB::commit();
             return redirect()->route('user.salesInvoice', $sale->id)->with('success', 'Return Order confirmed successfully!');
 
-        }catch (\Exception $exception){
+        } catch (\Exception $exception) {
             DB::rollBack();
             return back()->with('error', 'Something went wrong');
         }
@@ -1291,7 +1294,8 @@ class CompanyController extends Controller
 
 
     // Suppliers Module
-    public function suppliers(Request $request){
+    public function suppliers(Request $request)
+    {
 
         $search = $request->all();
         $fromDate = Carbon::parse($request->from_date);
@@ -1317,7 +1321,6 @@ class CompanyController extends Controller
             ->paginate(config('basic.paginate'));
 
 
-
 //        $data['customers'] = Customer::with('division:id,name', 'district:id,name', 'upazila:id,name', 'union:id,name')
 //            ->when(isset($search['name']), function ($query) use ($search) {
 //                $query->where('name', 'LIKE', '%' . $search['name'] . '%');
@@ -1341,12 +1344,14 @@ class CompanyController extends Controller
         return view($this->theme . 'user.suppliers.index', $data);
     }
 
-    public function createSupplier(){
+    public function createSupplier()
+    {
         $data['allDivisions'] = Division::where('status', 1)->get();
         return view($this->theme . 'user.suppliers.create', $data);
     }
 
-    public function supplierStore(Request $request){
+    public function supplierStore(Request $request)
+    {
         $admin = $this->user;
 
         $purifiedData = Purify::clean($request->except('_token', '_method'));
@@ -1431,7 +1436,8 @@ class CompanyController extends Controller
         return view($this->theme . 'user.suppliers.edit', $data);
     }
 
-    public function supplierUpdate(Request $request, $id){
+    public function supplierUpdate(Request $request, $id)
+    {
         $admin = $this->user;
         $purifiedData = Purify::clean($request->except('_token', '_method'));
 
@@ -1486,5 +1492,203 @@ class CompanyController extends Controller
             return back()->with('error', 'Something went wrong');
         }
     }
+
+    public function rawItemList(Request $request)
+    {
+        $search = $request->all();
+        $fromDate = Carbon::parse($request->from_date);
+        $toDate = Carbon::parse($request->to_date)->addDay();
+
+        $loggedInUser = $this->user;
+        $data['itemLists'] = RawItem::where('company_id', optional($loggedInUser->activeCompany)->id)
+            ->when(isset($search['name']), function ($query) use ($search) {
+                return $query->where('name', 'LIKE', '%' . $search['name'] . '%');
+            })
+            ->when(isset($search['coil']), function ($query) use ($search) {
+                return $query->where('coil', 'LIKE', '%' . $search['coil'] . '%');
+            })
+            ->when(isset($search['from_date']), function ($q2) use ($fromDate) {
+                return $q2->whereDate('created_at', '>=', $fromDate);
+            })
+            ->when(isset($search['to_date']), function ($q2) use ($fromDate, $toDate) {
+                return $q2->whereBetween('created_at', [$fromDate, $toDate]);
+            })
+            ->where('status', 1)->paginate(config('basic.paginate'));
+        return view($this->theme . 'user.rawItems.index', $data);
+    }
+
+
+    public function rawItemStore(Request $request)
+    {
+        $loggedInUser = $this->user;
+
+        if ($request->name == null) {
+            return back()->with('error', 'Item name is required');
+        }
+
+        $rules = [
+            'name' => 'required|string|max:255',
+            'unit' => 'nullable',
+            'image' => 'nullable|mimes:jpg,jpeg,png'
+        ];
+
+        $message = [
+            'name.required' => __('Item name field is required'),
+        ];
+
+        $validate = Validator::make($request->all(), $rules, $message);
+
+        if ($validate->fails()) {
+            return back()->withInput()->withErrors($validate);
+        }
+
+        try {
+
+            DB::beginTransaction();
+            $rawItem = new RawItem();
+            $rawItem->name = $request->name;
+            $rawItem->unit = $request->unit;
+            $rawItem->company_id = optional($loggedInUser->activeCompany)->id;
+
+            if ($request->hasFile('image')) {
+                try {
+                    $rawItem->image = $this->uploadImage($request->image, config('location.rawItemImage.path'), config('location.rawItemImage.size'));
+                } catch (\Exception $exp) {
+                    return back()->with('error', 'Logo could not be uploaded.');
+                }
+            }
+
+            $rawItem->save();
+            DB::commit();
+            return back()->with('success', 'Raw Item Created Successfully');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Something went wrong');
+        }
+    }
+
+    public function updateRawItem(Request $request, $id){
+        if ($request->name == null) {
+            return back()->with('error', 'Item name is required');
+        }
+
+        $rules = [
+            'name' => 'required|string|max:255',
+            'unit' => 'nullable',
+            'image' => 'nullable|mimes:jpg,jpeg,png'
+        ];
+
+        $message = [
+            'name.required' => __('Item name field is required'),
+        ];
+
+        $validate = Validator::make($request->all(), $rules, $message);
+
+        if ($validate->fails()) {
+            return back()->withInput()->withErrors($validate);
+        }
+
+        try {
+            DB::beginTransaction();
+            $item = RawItem::findOrFail($id);
+            $item->name = $request->name;
+            $item->unit = $request->unit;
+
+            if ($request->hasFile('image')) {
+                try {
+                    $item->image = $this->uploadImage($request->image, config('location.rawItemImage.path'), config('location.rawItemImage.size'));
+                } catch (\Exception $exp) {
+                    return back()->with('error', 'Logo could not be uploaded.');
+                }
+            }
+
+            $item->save();
+            DB::commit();
+            return back()->with('success', 'Item Update Successfully');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Something went wrong');
+        }
+    }
+
+    public function deleteRawItem($id){
+        $rawItem = RawItem::findOrFail($id);
+        $rawItem->delete();
+        return back()->with('success', 'Raw Item Deleted Successfully!');
+    }
+
+    public function purchaseRawItemList(Request $request){
+        dd('i am here');
+    }
+
+
+    public function purchaseRawItem(){
+        $admin = $this->user;
+        $data['suppliers'] = Supplier::where('company_id', $admin->active_company_id)->where('status', 1)->get();
+        $data['allItems'] = RawItem::where('company_id', $admin->active_company_id)->where('status', 1)->get();
+        return view($this->theme . 'user.rawItems.purchaseRawItem', $data);
+    }
+
+    public function storePurchaseItem(Request $request)
+    {
+        $loggedInUser = $this->user;
+
+        $purifiedData = Purify::clean($request->except('_token', '_method'));
+
+        $rules = [
+            'supplier_id' => 'required|exists:suppliers,id',
+            'purchase_date' => 'required',
+            'item_id' => 'required|exists:raw_items,id',
+        ];
+
+        $message = [
+            'supplier_id.required' => __('Please select a supplier'),
+            'purchase_date.required' => __('Purchase date is required'),
+            'item_id.required' => __('Please select a item'),
+        ];
+
+
+        $validate = Validator::make($purifiedData, $rules, $message);
+
+        if ($validate->fails()) {
+            return back()->withInput()->withErrors($validate);
+        }
+
+
+        try {
+            DB::beginTransaction();
+            $purchaseIn = new RawItemPurchaseIn();
+            $purchaseIn->company_id = $loggedInUser->active_company_id;
+            $purchaseIn->supplier_id = $request->supplier_id;
+            $purchaseIn->purchase_date = $request->purchase_date;
+            $purchaseIn->sub_total = $request->sub_total;
+            $purchaseIn->discount_percent = $request->discount_percentage ? $request->discount_percentage : 0;
+            $purchaseIn->discount_amount = $request->discount_percentage ? (float)$request->sub_total - (float)$request->total_price : 0;
+            $purchaseIn->total_price = $request->total_price;
+            $purchaseIn->save();
+
+            $this->storeRawItemPurchaseInDetails($request, $purchaseIn);
+
+            $this->storeRawItemPurchaseStock($request, $loggedInUser);
+            DB::commit();
+            return back()->with('success', 'Raw items purchased successfully!');
+
+        } catch (\Exception $e) {
+            return back()->with('error', 'Something went wrong');
+        }
+
+    }
+
+    public function getSelectedRawItemUnit(Request $request)
+    {
+        $unit = DB::table('raw_items')
+            ->where('id', $request->itemId)
+            ->value('unit');
+
+        return response()->json(['unit' => $unit]);
+    }
+
 
 }

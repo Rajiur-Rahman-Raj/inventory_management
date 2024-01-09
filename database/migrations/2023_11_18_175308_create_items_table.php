@@ -15,9 +15,10 @@ class CreateItemsTable extends Migration
     {
         Schema::create('items', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('company_id')->index()->nullable();
             $table->string('name')->nullable();
             $table->string('unit')->nullable();
-            $table->foreignId('company_id')->index()->nullable();
+            $table->string('image')->nullable();
             $table->boolean('status')->default(1);
             $table->timestamps();
         });

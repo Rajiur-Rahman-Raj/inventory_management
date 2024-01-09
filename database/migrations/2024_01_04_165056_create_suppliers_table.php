@@ -27,6 +27,7 @@ class CreateSuppliersTable extends Migration
             $table->text('address')->nullable();
             $table->integer('created_by')->nullable();
             $table->integer('updated_by')->nullable();
+            $table->boolean('status')->default(1);
             $table->timestamps();
         });
     }

@@ -144,30 +144,6 @@ Route::group(['middleware' => ['auth', 'Maintenance'], 'prefix' => 'user', 'as' 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         //Inventory Route Start
 
         // Company List
@@ -228,6 +204,20 @@ Route::group(['middleware' => ['auth', 'Maintenance'], 'prefix' => 'user', 'as' 
         Route::get('suppliers', 'User\CompanyController@suppliers')->name('suppliers');
         Route::get('supplier/create', 'User\CompanyController@createSupplier')->name('createSupplier');
         Route::post('store/supplier', 'User\CompanyController@supplierStore')->name('supplierStore');
+
+        // Raw Items
+        Route::get('raw-item-list', 'User\CompanyController@rawItemList')->name('rawItemList');
+        Route::post('raw-item-store', 'User\CompanyController@rawItemStore')->name('rawItemStore');
+        Route::put('update-raw-item/{id}', 'User\CompanyController@updateRawItem')->name('updateRawItem');
+        Route::delete('delete/raw/item/{id}', 'User\CompanyController@deleteRawItem')->name('deleteRawItem');
+
+        // Purchase Raw Items
+        Route::get('purchase-raw-item', 'User\CompanyController@purchaseRawItem')->name('purchaseRawItem');
+        Route::post('store-purchase-item', 'User\CompanyController@storePurchaseItem')->name('storePurchaseItem');
+        Route::get('purchase-raw-item-list', 'User\CompanyController@purchaseRawItemList')->name('purchaseRawItemList');
+        Route::post('selected-raw-item-unit', 'User\CompanyController@getSelectedRawItemUnit')->name('getSelectedRawItemUnit');
+
+
 
         Route::get('supplier-details/{id}', 'User\CompanyController@supplierDetails')->name('supplierDetails');
         Route::get('supplier-edit/{id}', 'User\CompanyController@supplierEdit')->name('supplierEdit');

@@ -79,6 +79,10 @@ return [
         'path' => 'assets/uploads/item/',
         'size' => '400x300'
     ],
+    'rawItemImage' => [
+        'path' => 'assets/uploads/rawItem/',
+        'size' => '400x300'
+    ],
     'salesCenter' => [
         'path' => 'assets/uploads/salesCenter/',
         'size' => '200x200'

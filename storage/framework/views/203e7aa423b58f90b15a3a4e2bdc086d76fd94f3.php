@@ -125,6 +125,49 @@
         </li>
 
 
+
+
+
+
+        <li>
+            <a
+                class="dropdown-toggle"
+                data-bs-toggle="collapse"
+                href="#dropdownRawItems"
+                role="button"
+                aria-expanded="false"
+                aria-controls="collapseExample">
+                <i class="fal fa-car-building"></i><?php echo app('translator')->get('Raw Items'); ?>
+            </a>
+            <div
+                class="collapse <?php echo e(menuActive(['user.rawItemList', 'user.purchaseRawItem', 'user.purchaseRawItemList'],4)); ?> dropdownRawItems"
+                id="dropdownRawItems">
+                <ul class="">
+                    <li>
+                        <a class="<?php echo e(in_array($currentRouteName, ['user.rawItemList']) ? 'active' : ''); ?>"
+                           href="<?php echo e(route('user.rawItemList')); ?>"><i class="fal fa-sack-dollar"></i><?php echo app('translator')->get('Item List'); ?>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="<?php echo e(in_array($currentRouteName, ['user.purchaseRawItem']) ? 'active' : ''); ?>"
+                           href="<?php echo e(route('user.purchaseRawItem')); ?>"><i class="fal fa-house-return"></i><?php echo app('translator')->get('Purchase In'); ?>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a class="<?php echo e(in_array($currentRouteName, ['user.purchaseRawItemList']) ? 'active' : ''); ?>"
+                           href="<?php echo e(route('user.purchaseRawItemList')); ?>"><i class="fal fa-house-return"></i><?php echo app('translator')->get('Purchased List'); ?>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </li>
+
+
+
+
+
+
         <li class="d-lg-none">
             <a href="<?php echo e(route('logout')); ?>"
                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
