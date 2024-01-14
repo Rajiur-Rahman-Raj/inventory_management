@@ -32,7 +32,8 @@
                                     aria-label="Default select example">
                                 <option value=""><?php echo app('translator')->get('All'); ?></option>
                                 <?php $__currentLoopData = $allItems; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                    <option value="<?php echo e($item->id); ?>" <?php echo e(@request()->item_id == $item->id ? 'selected' : ''); ?>><?php echo e($item->name); ?></option>
+                                    <option
+                                        value="<?php echo e($item->id); ?>" <?php echo e(@request()->item_id == $item->id ? 'selected' : ''); ?>><?php echo e($item->name); ?></option>
                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </select>
                         </div>
@@ -42,8 +43,10 @@
                             <select class="form-control js-example-basic-single" name="stock_check"
                                     aria-label="Default select example">
                                 <option value=""><?php echo app('translator')->get('All'); ?></option>
-                                <option value="available_in_stock" <?php echo e(@request()->stock_check == 'available_in_stock' ? 'selected' : ''); ?>><?php echo app('translator')->get('Available In Stock'); ?></option>
-                                <option value="out_of_stock" <?php echo e(@request()->stock_check == 'out_of_stock' ? 'selected' : ''); ?>><?php echo app('translator')->get('Out Of Stock'); ?></option>
+                                <option
+                                    value="available_in_stock" <?php echo e(@request()->stock_check == 'available_in_stock' ? 'selected' : ''); ?>><?php echo app('translator')->get('Available In Stock'); ?></option>
+                                <option
+                                    value="out_of_stock" <?php echo e(@request()->stock_check == 'out_of_stock' ? 'selected' : ''); ?>><?php echo app('translator')->get('Out Of Stock'); ?></option>
                             </select>
                         </div>
 

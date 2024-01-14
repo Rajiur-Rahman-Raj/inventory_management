@@ -15,9 +15,12 @@ use App\Http\Traits\Upload;
 use App\Models\Customer;
 use App\Models\District;
 use App\Models\Division;
+use App\Models\ExpenseCategory;
 use App\Models\Item;
 use App\Models\RawItem;
 use App\Models\RawItemPurchaseIn;
+use App\Models\RawItemPurchaseInDetails;
+use App\Models\RawItemPurchaseStock;
 use App\Models\Sale;
 use App\Models\SalesCenter;
 use App\Models\SalesItem;
@@ -425,6 +428,97 @@ class CompanyController extends Controller
         $item = Item::findOrFail($id);
         $item->delete();
         return back()->with('success', 'Item Deleted Successfully!');
+    }
+
+    public function expenseCategory(Request $request){
+        $search = $request->all();
+        $admin = $this->user;
+        $data['expenseCategories'] = ExpenseCategory::where('company_id', $admin->active_company_id)
+            ->when(isset($search['name']), function ($query) use ($search) {
+                return $query->where('name', 'LIKE', '%' . $search['name'] . '%');
+            })
+            ->where('status', 1)->paginate(config('basic.paginate'));
+        return view($this->theme . 'user.expense.category', $data);
+    }
+
+    public function expenseCategoryStore(Request $request)
+    {
+        $admin = $this->user;
+        $purifiedData = Purify::clean($request->except('_token', '_method'));
+
+        if ($request->name == null) {
+            return back()->with('error', 'category name is required');
+        }
+
+        try {
+            $rules = [
+                'name' => 'required|string|max:255',
+            ];
+
+            $message = [
+                'name.required' => __('Category name field is required'),
+            ];
+
+            $validate = Validator::make($purifiedData, $rules, $message);
+
+            if ($validate->fails()) {
+                return back()->withInput()->withErrors($validate);
+            }
+
+            DB::beginTransaction();
+            $category = new ExpenseCategory();
+            $category->company_id = $admin->active_company_id;
+            $category->name = $request->name;
+            $category->save();
+            DB::commit();
+            return back()->with('success', 'Category Created Successfully');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Something went wrong');
+        }
+    }
+
+    public function updateExpenseCategory(Request $request, $id)
+    {
+        $purifiedData = Purify::clean($request->except('_token', '_method'));
+
+        if ($request->name == null) {
+            return back()->with('error', 'Category name is required');
+        }
+
+        try {
+            $rules = [
+                'name' => 'required|string|max:255',
+                'unit' => 'nullable',
+            ];
+
+            $message = [
+                'name.required' => __('Category name field is required'),
+            ];
+
+            $validate = Validator::make($purifiedData, $rules, $message);
+
+            if ($validate->fails()) {
+                return back()->withInput()->withErrors($validate);
+            }
+
+            $category = ExpenseCategory::findOrFail($id);
+            $category->name = $request->name;
+            $category->save();
+
+            return back()->with('success', 'Category Update Successfully');
+
+        } catch (\Exception $e) {
+            return back()->with('error', 'Something went wrong');
+        }
+    }
+
+    public function deleteExpenseCategory($id)
+    {
+        $category = ExpenseCategory::findOrFail($id);
+        $category->delete();
+        return back()->with('success', 'Category Deleted Successfully!');
     }
 
     public function stockList(Request $request)
@@ -1620,7 +1714,55 @@ class CompanyController extends Controller
     }
 
     public function purchaseRawItemList(Request $request){
-        dd('i am here');
+        $admin = $this->user;
+        $search = $request->all();
+
+        $fromDate = Carbon::parse($request->from_date);
+        $toDate = Carbon::parse($request->to_date)->addDay();
+
+        $data['rawItems'] = RawItem::where('company_id', $admin->active_company_id)->where('status', 1)->get();
+        $data['suppliers'] = Supplier::where('company_id', $admin->active_company_id)->where('status', 1)->get();
+
+
+        $data['purchasedItems'] = RawItemPurchaseStock::with('suppliers:id,name', 'rawItem:id,name')
+            ->when(isset($search['supplier_id']), function ($query) use ($search) {
+                return $query->whereHas('suppliers', function ($q) use ($search) {
+                    $q->where('id', $search['supplier_id']);
+                });
+            })
+            ->when(isset($search['item_id']), function ($query) use ($search) {
+                return $query->whereHas('rawItem', function ($q) use ($search) {
+                    $q->where('id', $search['item_id']);
+                });
+            })
+            ->when(isset($search['from_date']), function ($q2) use ($fromDate) {
+                return $q2->whereDate('last_purchase_date', '>=', $fromDate);
+            })
+            ->when(isset($search['to_date']), function ($q2) use ($fromDate, $toDate) {
+                return $q2->whereBetween('last_purchase_date', [$fromDate, $toDate]);
+            })
+            ->where('company_id', $admin->active_company_id)
+            ->latest()
+            ->select('id', 'supplier_id', 'raw_item_id', 'quantity', 'last_cost_per_unit', 'last_purchase_date')
+            ->paginate(config('basic.paginate'));
+
+        return view($this->theme . 'user.rawItems.purchaseRawItemList', $data);
+    }
+
+    public function rawItemPurchaseDetails($rawItem = null, $id){
+        $admin = $this->user;
+        $data['singlePurchaseItem'] = RawItemPurchaseStock::where('company_id', $admin->active_company_id)->findOrFail($id);
+        $data['singlePurchaseItemDetails'] = RawItemPurchaseInDetails::with('rawItem')->where('raw_item_id', $data['singlePurchaseItem']->raw_item_id)->latest()->get();
+        $data['totalItemCost'] = $data['singlePurchaseItemDetails']->sum('total_unit_cost');
+        return view($this->theme . 'user.rawItems.purchaseRawItemDetails', $data, compact('rawItem'));
+    }
+
+    public function deletePurchaseRawItem($id)
+    {
+        $admin = $this->user;
+        $purchaseRawItem = RawItemPurchaseStock::where('company_id', $admin->active_company_id)->findOrFail($id);
+        $purchaseRawItem->delete();
+        return back()->with('success', 'Deleted Successfully!');
     }
 
 

@@ -33,7 +33,8 @@
                                     aria-label="Default select example">
                                 <option value="">@lang('All')</option>
                                 @foreach($allItems as $item)
-                                    <option value="{{ $item->id }}" {{ @request()->item_id == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
+                                    <option
+                                        value="{{ $item->id }}" {{ @request()->item_id == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -43,8 +44,10 @@
                             <select class="form-control js-example-basic-single" name="stock_check"
                                     aria-label="Default select example">
                                 <option value="">@lang('All')</option>
-                                <option value="available_in_stock" {{ @request()->stock_check == 'available_in_stock' ? 'selected' : '' }}>@lang('Available In Stock')</option>
-                                <option value="out_of_stock" {{ @request()->stock_check == 'out_of_stock' ? 'selected' : '' }}>@lang('Out Of Stock')</option>
+                                <option
+                                    value="available_in_stock" {{ @request()->stock_check == 'available_in_stock' ? 'selected' : '' }}>@lang('Available In Stock')</option>
+                                <option
+                                    value="out_of_stock" {{ @request()->stock_check == 'out_of_stock' ? 'selected' : '' }}>@lang('Out Of Stock')</option>
                             </select>
                         </div>
 

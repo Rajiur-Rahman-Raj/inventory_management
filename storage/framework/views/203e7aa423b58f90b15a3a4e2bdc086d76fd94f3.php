@@ -124,10 +124,10 @@
                href="<?php echo e(route('user.suppliers')); ?>"><i class="fab fa-adversal"></i><?php echo app('translator')->get('Suppliers'); ?></a>
         </li>
 
-
-
-
-
+        
+        
+        
+        
 
         <li>
             <a
@@ -140,7 +140,7 @@
                 <i class="fal fa-car-building"></i><?php echo app('translator')->get('Raw Items'); ?>
             </a>
             <div
-                class="collapse <?php echo e(menuActive(['user.rawItemList', 'user.purchaseRawItem', 'user.purchaseRawItemList'],4)); ?> dropdownRawItems"
+                class="collapse <?php echo e(menuActive(['user.rawItemList', 'user.purchaseRawItem', 'user.purchaseRawItemList', 'user.rawItemPurchaseDetails'],4)); ?> dropdownRawItems"
                 id="dropdownRawItems">
                 <ul class="">
                     <li>
@@ -150,23 +150,47 @@
                     </li>
                     <li>
                         <a class="<?php echo e(in_array($currentRouteName, ['user.purchaseRawItem']) ? 'active' : ''); ?>"
-                           href="<?php echo e(route('user.purchaseRawItem')); ?>"><i class="fal fa-house-return"></i><?php echo app('translator')->get('Purchase In'); ?>
+                           href="<?php echo e(route('user.purchaseRawItem')); ?>"><i
+                                class="fal fa-house-return"></i><?php echo app('translator')->get('Purchase In'); ?>
                         </a>
                     </li>
 
                     <li>
-                        <a class="<?php echo e(in_array($currentRouteName, ['user.purchaseRawItemList']) ? 'active' : ''); ?>"
-                           href="<?php echo e(route('user.purchaseRawItemList')); ?>"><i class="fal fa-house-return"></i><?php echo app('translator')->get('Purchased List'); ?>
+                        <a class="<?php echo e(in_array($currentRouteName, ['user.purchaseRawItemList', 'user.rawItemPurchaseDetails']) ? 'active' : ''); ?>"
+                           href="<?php echo e(route('user.purchaseRawItemList')); ?>"><i
+                                class="fal fa-house-return"></i><?php echo app('translator')->get('Purchased List'); ?>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+
+        </li>
+
+
+        <li>
+            <a
+                class="dropdown-toggle"
+                data-bs-toggle="collapse"
+                href="#dropDownExpense"
+                role="button"
+                aria-expanded="false"
+                aria-controls="collapseExample">
+                <i class="fal fa-car-building"></i><?php echo app('translator')->get('Expense'); ?>
+            </a>
+            <div
+                class="collapse <?php echo e(menuActive(['user.expenseCategory'],4)); ?> dropDownExpense"
+                id="dropDownExpense">
+                <ul class="">
+                    <li>
+                        <a class="<?php echo e(in_array($currentRouteName, ['user.expenseCategory']) ? 'active' : ''); ?>"
+                           href="<?php echo e(route('user.expenseCategory')); ?>"><i
+                                class="fal fa-sack-dollar"></i><?php echo app('translator')->get('Expense Category'); ?>
                         </a>
                     </li>
                 </ul>
             </div>
         </li>
-
-
-
-
-
 
         <li class="d-lg-none">
             <a href="<?php echo e(route('logout')); ?>"

@@ -124,10 +124,10 @@
                href="{{ route('user.suppliers') }}"><i class="fab fa-adversal"></i>@lang('Suppliers')</a>
         </li>
 
-{{--        <li>--}}
-{{--            <a class="{{menuActive(['user.raw-items'])}}"--}}
-{{--               href="{{ route('user.raw-items') }}"><i class="fab fa-adversal"></i>@lang('Raw Items')</a>--}}
-{{--        </li>--}}
+        {{--        <li>--}}
+        {{--            <a class="{{menuActive(['user.raw-items'])}}"--}}
+        {{--               href="{{ route('user.raw-items') }}"><i class="fab fa-adversal"></i>@lang('Raw Items')</a>--}}
+        {{--        </li>--}}
 
         <li>
             <a
@@ -140,7 +140,7 @@
                 <i class="fal fa-car-building"></i>@lang('Raw Items')
             </a>
             <div
-                class="collapse {{menuActive(['user.rawItemList', 'user.purchaseRawItem', 'user.purchaseRawItemList'],4)}} dropdownRawItems"
+                class="collapse {{menuActive(['user.rawItemList', 'user.purchaseRawItem', 'user.purchaseRawItemList', 'user.rawItemPurchaseDetails'],4)}} dropdownRawItems"
                 id="dropdownRawItems">
                 <ul class="">
                     <li>
@@ -150,23 +150,47 @@
                     </li>
                     <li>
                         <a class="{{ in_array($currentRouteName, ['user.purchaseRawItem']) ? 'active' : '' }}"
-                           href="{{ route('user.purchaseRawItem') }}"><i class="fal fa-house-return"></i>@lang('Purchase In')
+                           href="{{ route('user.purchaseRawItem') }}"><i
+                                class="fal fa-house-return"></i>@lang('Purchase In')
                         </a>
                     </li>
 
                     <li>
-                        <a class="{{ in_array($currentRouteName, ['user.purchaseRawItemList']) ? 'active' : '' }}"
-                           href="{{ route('user.purchaseRawItemList') }}"><i class="fal fa-house-return"></i>@lang('Purchased List')
+                        <a class="{{ in_array($currentRouteName, ['user.purchaseRawItemList', 'user.rawItemPurchaseDetails']) ? 'active' : '' }}"
+                           href="{{ route('user.purchaseRawItemList') }}"><i
+                                class="fal fa-house-return"></i>@lang('Purchased List')
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+
+        </li>
+
+
+        <li>
+            <a
+                class="dropdown-toggle"
+                data-bs-toggle="collapse"
+                href="#dropDownExpense"
+                role="button"
+                aria-expanded="false"
+                aria-controls="collapseExample">
+                <i class="fal fa-car-building"></i>@lang('Expense')
+            </a>
+            <div
+                class="collapse {{menuActive(['user.expenseCategory'],4)}} dropDownExpense"
+                id="dropDownExpense">
+                <ul class="">
+                    <li>
+                        <a class="{{ in_array($currentRouteName, ['user.expenseCategory']) ? 'active' : '' }}"
+                           href="{{ route('user.expenseCategory') }}"><i
+                                class="fal fa-sack-dollar"></i>@lang('Expense Category')
                         </a>
                     </li>
                 </ul>
             </div>
         </li>
-
-{{--        <li>--}}
-{{--            <a class="{{menuActive(['user.purchase-raw-items'])}}"--}}
-{{--               href="{{ route('user.purchase-raw-items') }}"><i class="fab fa-adversal"></i>@lang('Purchase Raw Items')</a>--}}
-{{--        </li>--}}
 
         <li class="d-lg-none">
             <a href="{{ route('logout') }}"

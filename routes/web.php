@@ -142,8 +142,6 @@ Route::group(['middleware' => ['auth', 'Maintenance'], 'prefix' => 'user', 'as' 
         Route::post('/verificationSubmit', 'User\HomeController@verificationSubmit')->name('verificationSubmit');
         Route::post('/addressVerification', 'User\HomeController@addressVerification')->name('addressVerification');
 
-
-
         //Inventory Route Start
 
         // Company List
@@ -180,6 +178,13 @@ Route::group(['middleware' => ['auth', 'Maintenance'], 'prefix' => 'user', 'as' 
         Route::put('update-item/{id}', 'User\CompanyController@updateItem')->name('updateItem');
         Route::delete('delete/item/{id}', 'User\CompanyController@deleteItem')->name('deleteItem');
 
+        // Company Expenses
+        Route::get('expense/category', 'User\CompanyController@expenseCategory')->name('expenseCategory');
+        Route::post('expense/category/store', 'User\CompanyController@expenseCategoryStore')->name('expenseCategoryStore');
+        Route::put('update-expense-category/{id}', 'User\CompanyController@updateExpenseCategory')->name('updateExpenseCategory');
+        Route::delete('delete/expense/category/{id}', 'User\CompanyController@deleteExpenseCategory')->name('deleteExpenseCategory');
+
+
         // Stock In
         Route::get('stock-list', 'User\CompanyController@stockList')->name('stockList');
         Route::get('add-stock', 'User\CompanyController@addStock')->name('addStock');
@@ -199,7 +204,6 @@ Route::group(['middleware' => ['auth', 'Maintenance'], 'prefix' => 'user', 'as' 
         Route::get('sales/return/{id}', 'User\CompanyController@returnSales')->name('returnSales');
         Route::post('return/sales/order/{id}', 'User\CompanyController@returnSalesOrder')->name('returnSalesOrder');
 
-
         // suppliers
         Route::get('suppliers', 'User\CompanyController@suppliers')->name('suppliers');
         Route::get('supplier/create', 'User\CompanyController@createSupplier')->name('createSupplier');
@@ -215,16 +219,15 @@ Route::group(['middleware' => ['auth', 'Maintenance'], 'prefix' => 'user', 'as' 
         Route::get('purchase-raw-item', 'User\CompanyController@purchaseRawItem')->name('purchaseRawItem');
         Route::post('store-purchase-item', 'User\CompanyController@storePurchaseItem')->name('storePurchaseItem');
         Route::get('purchase-raw-item-list', 'User\CompanyController@purchaseRawItemList')->name('purchaseRawItemList');
+        Route::get('purchase-raw-item-details/{item?}/{id}', 'User\CompanyController@rawItemPurchaseDetails')->name('rawItemPurchaseDetails');
+        Route::delete('delete/purchase/raw/item/{id}', 'User\CompanyController@deletePurchaseRawItem')->name('deletePurchaseRawItem');
         Route::post('selected-raw-item-unit', 'User\CompanyController@getSelectedRawItemUnit')->name('getSelectedRawItemUnit');
-
 
 
         Route::get('supplier-details/{id}', 'User\CompanyController@supplierDetails')->name('supplierDetails');
         Route::get('supplier-edit/{id}', 'User\CompanyController@supplierEdit')->name('supplierEdit');
         Route::post('supplier-update/{id}', 'User\CompanyController@supplierUpdate')->name('supplierUpdate');
         Route::delete('delete/supplier/{id}', 'User\CompanyController@deleteSupplier')->name('deleteSupplier');
-
-
 
 
         Route::put('update-item-unit-price/{id}', 'User\CompanyController@updateItemUnitPrice')->name('updateItemUnitPrice');
@@ -251,27 +254,6 @@ Route::group(['middleware' => ['auth', 'Maintenance'], 'prefix' => 'user', 'as' 
         Route::put('sales-invoice-update/{id}', 'User\CompanyController@salesInvoiceUpdate')->name('salesInvoiceUpdate');
 
         //Inventory Route End
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
         Route::post('get-division-district', [LocationController::class, 'getSelectedDivisionDistrict'])->name('getSelectedDivisionDistrict');
