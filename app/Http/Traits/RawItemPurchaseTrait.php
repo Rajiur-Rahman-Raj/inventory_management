@@ -24,16 +24,16 @@ trait RawItemPurchaseTrait
     }
 
 
-    public function storeRawItemPurchaseStock($request, $loggedInUser){
+    public function storeRawItemPurchaseStock($request, $purchaseIn, $admin){
         foreach ($request->item_id as $key => $value){
             $purchaseStock = RawItemPurchaseStock::firstOrNew([
-                'company_id' => $loggedInUser->active_company_id,
-                'supplier_id' => $request->supplier_id,
+                'company_id' => $admin->active_company_id,
                 'raw_item_id' => $value,
             ]);
 
-            $purchaseStock->company_id = $loggedInUser->active_company_id;
+            $purchaseStock->company_id = $admin->active_company_id;
             $purchaseStock->supplier_id = $request->supplier_id;
+            $purchaseStock->raw_item_purchase_in_id = $purchaseIn->id;
             $purchaseStock->raw_item_id = $value;
             $purchaseStock->quantity += $request->item_quantity[$key];
             $purchaseStock->cost_per_unit = ($purchaseStock->last_cost_per_unit) ?? $request->cost_per_unit[$key];

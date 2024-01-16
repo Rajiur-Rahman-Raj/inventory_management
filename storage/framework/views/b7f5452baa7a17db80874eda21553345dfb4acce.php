@@ -6,7 +6,7 @@
 
 <?php $__env->startSection('content'); ?>
 
-    <section class="pos-section section-1 ">
+    <section class="pos-section section-1">
         <div class="container-fluid ">
             <div class="row main">
                 <div class="col-xl-8 col-lg-8">
@@ -324,7 +324,7 @@ unset($__errorArgs, $__bag); ?>
                                         </div>
                                         <div class="order-btn d-flex flex-wrap">
                                             <button class="cancel cancelOrder" type="button">cacel order</button>
-                                            <button type="button" class="porcced proccedOrderBtn">procced order
+                                            <button type="button" class="porcced proccedOrderBtn">proceed order
                                             </button>
 
                                             <div class="procced-modal">

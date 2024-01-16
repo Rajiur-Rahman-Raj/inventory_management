@@ -114,7 +114,6 @@
                                     <span class="badge bg-warning">@lang('Due')</span>
                                 @endif
                             </td>
-
                             <td data-label="Action">
                                 <div class="sidebar-dropdown-items">
                                     <button

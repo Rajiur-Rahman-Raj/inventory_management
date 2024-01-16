@@ -39,19 +39,6 @@
                         </div>
 
                         <div class="input-box col-lg-3">
-                            <label for=""><?php echo app('translator')->get('Items'); ?></label>
-
-                            <select class="form-control js-example-basic-single" name="item_id"
-                                    aria-label="Default select example">
-                                <option value=""><?php echo app('translator')->get('All'); ?></option>
-                                <?php $__currentLoopData = $rawItems; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                    <option
-                                        value="<?php echo e($item->id); ?>" <?php echo e(@request()->item_id == $item->id ? 'selected' : ''); ?>><?php echo e($item->name); ?></option>
-                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                            </select>
-                        </div>
-
-                        <div class="input-box col-lg-3">
                             <label for="from_date"><?php echo app('translator')->get('Purchased From Date'); ?></label>
                             <input
                                 type="text" class="form-control datepicker from_date" name="from_date"
@@ -65,6 +52,17 @@
                                 value="<?php echo e(old('to_date',request()->to_date)); ?>" placeholder="<?php echo app('translator')->get('To date'); ?>"
                                 autocomplete="off" readonly disabled="true"/>
                         </div>
+
+                        <div class="input-box col-lg-3">
+                            <label for=""><?php echo app('translator')->get('Payment Status'); ?></label>
+                            <select class="form-control js-example-basic-single" name="payment_status"
+                                    aria-label="Default select example">
+                                <option value=""><?php echo app('translator')->get('All'); ?></option>
+                                <option value="paid" <?php echo e(@request()->payment_status == 'paid' ? 'selected' : ''); ?>><?php echo app('translator')->get('Paid'); ?></option>
+                                <option value="due" <?php echo e(@request()->payment_status == 'due' ? 'selected' : ''); ?>><?php echo app('translator')->get('Due'); ?></option>
+                            </select>
+                        </div>
+
                         <div class="input-box col-lg-12">
                             <button class="btn-custom w-100" type="submit"><i class="fal fa-search"></i><?php echo app('translator')->get('Search'); ?>
                             </button>
@@ -75,7 +73,7 @@
 
             <div class="d-flex justify-content-end mb-4">
                 <a href="<?php echo e(route('user.purchaseRawItem')); ?>" class="btn btn-custom text-white"> <i
-                        class="fa fa-plus-circle"></i> <?php echo app('translator')->get('Purchase In'); ?></a>
+                        class="fa fa-plus-circle"></i> <?php echo app('translator')->get('Purchase'); ?></a>
             </div>
 
             <div class="table-parent table-responsive me-2 ms-2 mt-4">
@@ -84,52 +82,34 @@
                         <tr>
                             <th scope="col"><?php echo app('translator')->get('SL'); ?></th>
                             <th scope="col"><?php echo app('translator')->get('Supplier'); ?></th>
-                            <th scope="col"><?php echo app('translator')->get('Item'); ?></th>
-                            <th scope="col"><?php echo app('translator')->get('Quantity'); ?></th>
-                            <th scope="col"><?php echo app('translator')->get('Cost Per Unit'); ?></th>
-                            <th scope="col"><?php echo app('translator')->get('Last Purchased Date'); ?></th>
-                            <th scope="col"><?php echo app('translator')->get('Action'); ?></th>
+                            <th scope="col"><?php echo app('translator')->get('Total Price'); ?></th>
+                            <th scope="col"><?php echo app('translator')->get('Purchase Date'); ?></th>
+                            <th scope="col"><?php echo app('translator')->get('Payment Status'); ?></th>
+                            <th scope="col" class="text-center"><?php echo app('translator')->get('Action'); ?></th>
                         </tr>
                     </thead>
                     <tbody>
                     <?php $__empty_1 = true; $__currentLoopData = $purchasedItems; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $purchaseItem): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                         <tr>
                             <td data-label="<?php echo app('translator')->get('SL'); ?>"><?php echo e(loopIndex($purchasedItems) + $key); ?></td>
-                            <td data-label="<?php echo app('translator')->get('Supplier'); ?>"> <?php echo e(optional($purchaseItem->suppliers)->name); ?> </td>
-                            <td data-label="<?php echo app('translator')->get('Item'); ?>"> <?php echo e(optional($purchaseItem->rawItem)->name); ?> </td>
-                            <td data-label="<?php echo app('translator')->get('Quantity'); ?>" class="font-weight-bold">
-                                <span
-                                    class="badge <?php echo e($purchaseItem->quantity > 0 ? 'bg-info' : 'bg-danger'); ?>"><?php echo e($purchaseItem->quantity); ?> </span>
+                            <td data-label="<?php echo app('translator')->get('Supplier'); ?>"> <?php echo e(optional($purchaseItem->supplier)->name); ?> </td>
+                            <td data-label="<?php echo app('translator')->get('Total Price'); ?>"> <?php echo e($basic->currency_symbol); ?><?php echo e($purchaseItem->total_price); ?> </td>
+                            <td data-label="<?php echo app('translator')->get('Purchased Date'); ?>"> <?php echo e(customDate($purchaseItem->purchase_date)); ?> </td>
+                            <td data-label="<?php echo app('translator')->get('Payment Status'); ?>">
+                                <?php if($purchaseItem->payment_status == 1): ?>
+                                    <span class="badge bg-success"><?php echo app('translator')->get('Paid'); ?></span>
+                                <?php else: ?>
+                                    <span class="badge bg-warning"><?php echo app('translator')->get('Due'); ?></span>
+                                <?php endif; ?>
                             </td>
-                            <td data-label="<?php echo app('translator')->get('Last Cost Per Unit'); ?>"> <?php echo e($purchaseItem->last_cost_per_unit); ?> <?php echo e($basic->currency_symbol); ?> </td>
-                            <td data-label="<?php echo app('translator')->get('Purchased Date'); ?>"> <?php echo e(customDate($purchaseItem->last_purchase_date)); ?> </td>
 
-                            <td data-label="Action">
-                                <div class="sidebar-dropdown-items">
-                                    <button
-                                        type="button"
-                                        class="dropdown-toggle"
-                                        data-bs-toggle="dropdown"
-                                        aria-expanded="false">
-                                        <i class="fal fa-cog"></i>
-                                    </button>
 
-                                    <ul class="dropdown-menu dropdown-menu-end">
-                                        <li>
-                                            <a href="<?php echo e(route('user.rawItemPurchaseDetails', [slug(optional($purchaseItem->rawItem)->name), $purchaseItem->id])); ?>"
-                                               class="dropdown-item"> <i class="fal fa-eye"></i> <?php echo app('translator')->get('Details'); ?> </a>
-                                        </li>
-
-                                        <li>
-                                            <a class="dropdown-item btn deletePurchaseRawItem"
-                                               data-route="<?php echo e(route('user.deletePurchaseRawItem', $purchaseItem->id)); ?>"
-                                               data-property="<?php echo e($purchaseItem); ?>">
-                                                <i class="fas fa-trash-alt"></i> <?php echo app('translator')->get('Delete'); ?>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
+                            <td data-label="Action" class="action d-flex justify-content-center">
+                                <a class="action-btn" href="<?php echo e(route('user.rawItemPurchaseDetails', $purchaseItem->id)); ?>">
+                                    <i class="fa fa-eye font-14" aria-hidden="true"></i>
+                                </a>
                             </td>
+
                         </tr>
                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                         <tr class="text-center">

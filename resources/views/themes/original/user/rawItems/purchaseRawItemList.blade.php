@@ -40,19 +40,6 @@
                         </div>
 
                         <div class="input-box col-lg-3">
-                            <label for="">@lang('Items')</label>
-
-                            <select class="form-control js-example-basic-single" name="item_id"
-                                    aria-label="Default select example">
-                                <option value="">@lang('All')</option>
-                                @foreach($rawItems as $item)
-                                    <option
-                                        value="{{ $item->id }}" {{ @request()->item_id == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <div class="input-box col-lg-3">
                             <label for="from_date">@lang('Purchased From Date')</label>
                             <input
                                 type="text" class="form-control datepicker from_date" name="from_date"
@@ -66,6 +53,17 @@
                                 value="{{ old('to_date',request()->to_date) }}" placeholder="@lang('To date')"
                                 autocomplete="off" readonly disabled="true"/>
                         </div>
+
+                        <div class="input-box col-lg-3">
+                            <label for="">@lang('Payment Status')</label>
+                            <select class="form-control js-example-basic-single" name="payment_status"
+                                    aria-label="Default select example">
+                                <option value="">@lang('All')</option>
+                                <option value="paid" {{ @request()->payment_status == 'paid' ? 'selected' : '' }}>@lang('Paid')</option>
+                                <option value="due" {{ @request()->payment_status == 'due' ? 'selected' : '' }}>@lang('Due')</option>
+                            </select>
+                        </div>
+
                         <div class="input-box col-lg-12">
                             <button class="btn-custom w-100" type="submit"><i class="fal fa-search"></i>@lang('Search')
                             </button>
@@ -76,7 +74,7 @@
 
             <div class="d-flex justify-content-end mb-4">
                 <a href="{{route('user.purchaseRawItem')}}" class="btn btn-custom text-white"> <i
-                        class="fa fa-plus-circle"></i> @lang('Purchase In')</a>
+                        class="fa fa-plus-circle"></i> @lang('Purchase')</a>
             </div>
 
             <div class="table-parent table-responsive me-2 ms-2 mt-4">
@@ -85,52 +83,34 @@
                         <tr>
                             <th scope="col">@lang('SL')</th>
                             <th scope="col">@lang('Supplier')</th>
-                            <th scope="col">@lang('Item')</th>
-                            <th scope="col">@lang('Quantity')</th>
-                            <th scope="col">@lang('Cost Per Unit')</th>
-                            <th scope="col">@lang('Last Purchased Date')</th>
-                            <th scope="col">@lang('Action')</th>
+                            <th scope="col">@lang('Total Price')</th>
+                            <th scope="col">@lang('Purchase Date')</th>
+                            <th scope="col">@lang('Payment Status')</th>
+                            <th scope="col" class="text-center">@lang('Action')</th>
                         </tr>
                     </thead>
                     <tbody>
                     @forelse($purchasedItems as $key => $purchaseItem)
                         <tr>
                             <td data-label="@lang('SL')">{{loopIndex($purchasedItems) + $key}}</td>
-                            <td data-label="@lang('Supplier')"> {{ optional($purchaseItem->suppliers)->name }} </td>
-                            <td data-label="@lang('Item')"> {{ optional($purchaseItem->rawItem)->name }} </td>
-                            <td data-label="@lang('Quantity')" class="font-weight-bold">
-                                <span
-                                    class="badge {{ $purchaseItem->quantity > 0 ? 'bg-info' : 'bg-danger' }}">{{ $purchaseItem->quantity }} </span>
+                            <td data-label="@lang('Supplier')"> {{ optional($purchaseItem->supplier)->name }} </td>
+                            <td data-label="@lang('Total Price')"> {{ $basic->currency_symbol }}{{ $purchaseItem->total_price }} </td>
+                            <td data-label="@lang('Purchased Date')"> {{ customDate($purchaseItem->purchase_date) }} </td>
+                            <td data-label="@lang('Payment Status')">
+                                @if($purchaseItem->payment_status == 1)
+                                    <span class="badge bg-success">@lang('Paid')</span>
+                                @else
+                                    <span class="badge bg-warning">@lang('Due')</span>
+                                @endif
                             </td>
-                            <td data-label="@lang('Last Cost Per Unit')"> {{ $purchaseItem->last_cost_per_unit }} {{ $basic->currency_symbol }} </td>
-                            <td data-label="@lang('Purchased Date')"> {{ customDate($purchaseItem->last_purchase_date) }} </td>
 
-                            <td data-label="Action">
-                                <div class="sidebar-dropdown-items">
-                                    <button
-                                        type="button"
-                                        class="dropdown-toggle"
-                                        data-bs-toggle="dropdown"
-                                        aria-expanded="false">
-                                        <i class="fal fa-cog"></i>
-                                    </button>
 
-                                    <ul class="dropdown-menu dropdown-menu-end">
-                                        <li>
-                                            <a href="{{ route('user.rawItemPurchaseDetails', [slug(optional($purchaseItem->rawItem)->name), $purchaseItem->id]) }}"
-                                               class="dropdown-item"> <i class="fal fa-eye"></i> @lang('Details') </a>
-                                        </li>
-
-                                        <li>
-                                            <a class="dropdown-item btn deletePurchaseRawItem"
-                                               data-route="{{route('user.deletePurchaseRawItem', $purchaseItem->id)}}"
-                                               data-property="{{ $purchaseItem }}">
-                                                <i class="fas fa-trash-alt"></i> @lang('Delete')
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
+                            <td data-label="Action" class="action d-flex justify-content-center">
+                                <a class="action-btn" href="{{ route('user.rawItemPurchaseDetails', $purchaseItem->id) }}">
+                                    <i class="fa fa-eye font-14" aria-hidden="true"></i>
+                                </a>
                             </td>
+
                         </tr>
                     @empty
                         <tr class="text-center">

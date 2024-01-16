@@ -6252,8 +6252,7 @@ a.btn-custom {
     width: 35px;
     color: var(--white);
     position: relative;
-    padding: 5px;
-    transition: 0.4s;
+    padding: 5px 9px;
     border-radius: 50%;
 }
 

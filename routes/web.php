@@ -184,6 +184,10 @@ Route::group(['middleware' => ['auth', 'Maintenance'], 'prefix' => 'user', 'as' 
         Route::put('update-expense-category/{id}', 'User\CompanyController@updateExpenseCategory')->name('updateExpenseCategory');
         Route::delete('delete/expense/category/{id}', 'User\CompanyController@deleteExpenseCategory')->name('deleteExpenseCategory');
 
+        Route::get('expense/list', 'User\CompanyController@expenseList')->name('expenseList');
+        Route::post('expense/list/store', 'User\CompanyController@expenseListStore')->name('expenseListStore');
+        Route::put('update/expense/list/{id}', 'User\CompanyController@updateExpenseList')->name('updateExpenseList');
+        Route::delete('delete/expense/list/{id}', 'User\CompanyController@deleteExpenseList')->name('deleteExpenseList');
 
         // Stock In
         Route::get('stock-list', 'User\CompanyController@stockList')->name('stockList');
@@ -219,10 +223,12 @@ Route::group(['middleware' => ['auth', 'Maintenance'], 'prefix' => 'user', 'as' 
         Route::get('purchase-raw-item', 'User\CompanyController@purchaseRawItem')->name('purchaseRawItem');
         Route::post('store-purchase-item', 'User\CompanyController@storePurchaseItem')->name('storePurchaseItem');
         Route::get('purchase-raw-item-list', 'User\CompanyController@purchaseRawItemList')->name('purchaseRawItemList');
-        Route::get('purchase-raw-item-details/{item?}/{id}', 'User\CompanyController@rawItemPurchaseDetails')->name('rawItemPurchaseDetails');
+        Route::get('purchase-raw-item-details/{id}', 'User\CompanyController@rawItemPurchaseDetails')->name('rawItemPurchaseDetails');
+
+        Route::get('purchase-raw-item-stocks', 'User\CompanyController@purchaseRawItemStocks')->name('purchaseRawItemStocks');
+
         Route::delete('delete/purchase/raw/item/{id}', 'User\CompanyController@deletePurchaseRawItem')->name('deletePurchaseRawItem');
         Route::post('selected-raw-item-unit', 'User\CompanyController@getSelectedRawItemUnit')->name('getSelectedRawItemUnit');
-
 
         Route::get('supplier-details/{id}', 'User\CompanyController@supplierDetails')->name('supplierDetails');
         Route::get('supplier-edit/{id}', 'User\CompanyController@supplierEdit')->name('supplierEdit');

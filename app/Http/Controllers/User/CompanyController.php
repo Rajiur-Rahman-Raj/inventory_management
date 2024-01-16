@@ -15,6 +15,7 @@ use App\Http\Traits\Upload;
 use App\Models\Customer;
 use App\Models\District;
 use App\Models\Division;
+use App\Models\Expense;
 use App\Models\ExpenseCategory;
 use App\Models\Item;
 use App\Models\RawItem;
@@ -430,7 +431,8 @@ class CompanyController extends Controller
         return back()->with('success', 'Item Deleted Successfully!');
     }
 
-    public function expenseCategory(Request $request){
+    public function expenseCategory(Request $request)
+    {
         $search = $request->all();
         $admin = $this->user;
         $data['expenseCategories'] = ExpenseCategory::where('company_id', $admin->active_company_id)
@@ -519,6 +521,121 @@ class CompanyController extends Controller
         $category = ExpenseCategory::findOrFail($id);
         $category->delete();
         return back()->with('success', 'Category Deleted Successfully!');
+    }
+
+    public function expenseList(Request $request)
+    {
+        $admin = $this->user;
+        $search = $request->all();
+        $fromDate = Carbon::parse($request->from_date);
+        $toDate = Carbon::parse($request->to_date)->addDay();
+
+        $data['expenseCategories'] = ExpenseCategory::where('company_id', $admin->active_company_id)->where('status', 1)->get();
+
+        $data['expenseList'] = Expense::with('expenseCategory:id,name')->where('company_id', $admin->active_company_id)
+            ->when(isset($search['category_id']), function ($query) use ($search) {
+                return $query->whereHas('expenseCategory', function ($q) use ($search) {
+                    $q->where('id', $search['category_id']);
+                });
+            })
+            ->when(isset($search['from_date']), function ($q2) use ($fromDate) {
+                return $q2->whereDate('created_at', '>=', $fromDate);
+            })
+            ->when(isset($search['to_date']), function ($q2) use ($fromDate, $toDate) {
+                return $q2->whereBetween('created_at', [$fromDate, $toDate]);
+            })
+            ->where('status', 1)->paginate(config('basic.paginate'));
+
+
+        return view($this->theme . 'user.expense.list', $data);
+    }
+
+    public function expenseListStore(Request $request)
+    {
+        $admin = $this->user;
+        $purifiedData = Purify::clean($request->except('_token', '_method'));
+
+        try {
+
+            $rules = [
+                'category_id' => 'required|exists:expense_categories,id',
+                'amount' => 'required',
+            ];
+
+            $message = [
+                'category_id.required' => __('Category field is required'),
+                'amount.required' => __('Amount field is required'),
+            ];
+
+            $validate = Validator::make($purifiedData, $rules, $message);
+
+            if ($validate->fails()) {
+                return back()->withInput()->withErrors($validate);
+            }
+
+            DB::beginTransaction();
+
+            $expense = Expense::firstOrNew([
+                'company_id' => $admin->active_company_id,
+                'category_id' => $request->category_id,
+            ]);
+
+            $expense->amount += $request->amount; // Increment the amount
+            $expense->save();
+
+            DB::commit();
+            return back()->with('success', 'Expense Added Successfully');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Something went wrong');
+        }
+    }
+
+    public function updateExpenseList(Request $request, $id)
+    {
+        $admin = $this->user;
+        $purifiedData = Purify::clean($request->except('_token', '_method'));
+
+        try {
+            $rules = [
+                'category_id' => 'required|exists:expense_categories,id',
+                'amount' => 'required',
+            ];
+
+            $message = [
+                'category_id.required' => __('Category field is required'),
+                'amount.required' => __('Amount field is required'),
+            ];
+
+            $validate = Validator::make($purifiedData, $rules, $message);
+
+            if ($validate->fails()) {
+                return back()->withInput()->withErrors($validate);
+            }
+
+            DB::beginTransaction();
+
+            $expense = Expense::where('company_id', $admin->active_company_id)->findOrFail($id);
+            $expense->category_id = $request->category_id;
+            $expense->amount = $request->amount;
+            $expense->save();
+
+            DB::commit();
+            return back()->with('success', 'Expense Update Successfully');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Something went wrong');
+        }
+    }
+
+    public function deleteExpenseList($id)
+    {
+        $admin = $this->user;
+        $expense = Expense::where('company_id', $admin->active_company_id)->findOrFail($id);
+        $expense->delete();
+        return back()->with('success', 'Expense Deleted Successfully!');
     }
 
     public function stockList(Request $request)
@@ -1662,7 +1779,8 @@ class CompanyController extends Controller
         }
     }
 
-    public function updateRawItem(Request $request, $id){
+    public function updateRawItem(Request $request, $id)
+    {
         if ($request->name == null) {
             return back()->with('error', 'Item name is required');
         }
@@ -1707,66 +1825,67 @@ class CompanyController extends Controller
         }
     }
 
-    public function deleteRawItem($id){
+    public function deleteRawItem($id)
+    {
         $rawItem = RawItem::findOrFail($id);
         $rawItem->delete();
         return back()->with('success', 'Raw Item Deleted Successfully!');
     }
 
-    public function purchaseRawItemList(Request $request){
+    public function purchaseRawItemList(Request $request)
+    {
         $admin = $this->user;
         $search = $request->all();
 
         $fromDate = Carbon::parse($request->from_date);
-        $toDate = Carbon::parse($request->to_date)->addDay();
+        $toDate = Carbon::parse($request->to_date);
 
-        $data['rawItems'] = RawItem::where('company_id', $admin->active_company_id)->where('status', 1)->get();
         $data['suppliers'] = Supplier::where('company_id', $admin->active_company_id)->where('status', 1)->get();
 
-
-        $data['purchasedItems'] = RawItemPurchaseStock::with('suppliers:id,name', 'rawItem:id,name')
+        $data['purchasedItems'] = RawItemPurchaseIn::with('supplier')
             ->when(isset($search['supplier_id']), function ($query) use ($search) {
-                return $query->whereHas('suppliers', function ($q) use ($search) {
-                    $q->where('id', $search['supplier_id']);
-                });
-            })
-            ->when(isset($search['item_id']), function ($query) use ($search) {
-                return $query->whereHas('rawItem', function ($q) use ($search) {
-                    $q->where('id', $search['item_id']);
-                });
+                return $query->where('supplier_id', $search['supplier_id']);
             })
             ->when(isset($search['from_date']), function ($q2) use ($fromDate) {
-                return $q2->whereDate('last_purchase_date', '>=', $fromDate);
+                return $q2->whereDate('purchase_date', '>=', $fromDate);
             })
             ->when(isset($search['to_date']), function ($q2) use ($fromDate, $toDate) {
-                return $q2->whereBetween('last_purchase_date', [$fromDate, $toDate]);
+                return $q2->whereBetween('purchase_date', [$fromDate, $toDate]);
+            })
+            ->when(isset($search['payment_status']) && $search['payment_status'] == 'paid', function ($q2) use ($search) {
+                return $q2->where('payment_status', 1);
+            })
+            ->when(isset($search['payment_status']) && $search['payment_status'] == 'due', function ($q2) use ($search) {
+                return $q2->where('payment_status', 0);
             })
             ->where('company_id', $admin->active_company_id)
             ->latest()
-            ->select('id', 'supplier_id', 'raw_item_id', 'quantity', 'last_cost_per_unit', 'last_purchase_date')
             ->paginate(config('basic.paginate'));
+
 
         return view($this->theme . 'user.rawItems.purchaseRawItemList', $data);
     }
 
-    public function rawItemPurchaseDetails($rawItem = null, $id){
-        $admin = $this->user;
-        $data['singlePurchaseItem'] = RawItemPurchaseStock::where('company_id', $admin->active_company_id)->findOrFail($id);
-        $data['singlePurchaseItemDetails'] = RawItemPurchaseInDetails::with('rawItem')->where('raw_item_id', $data['singlePurchaseItem']->raw_item_id)->latest()->get();
-        $data['totalItemCost'] = $data['singlePurchaseItemDetails']->sum('total_unit_cost');
-        return view($this->theme . 'user.rawItems.purchaseRawItemDetails', $data, compact('rawItem'));
-    }
-
-    public function deletePurchaseRawItem($id)
+    public function rawItemPurchaseDetails($id)
     {
         $admin = $this->user;
-        $purchaseRawItem = RawItemPurchaseStock::where('company_id', $admin->active_company_id)->findOrFail($id);
-        $purchaseRawItem->delete();
-        return back()->with('success', 'Deleted Successfully!');
+        $data['singlePurchaseItem'] = RawItemPurchaseIn::with('supplier:id,name')->where('company_id', $admin->active_company_id)->findOrFail($id);
+        $data['singlePurchaseItemDetails'] = RawItemPurchaseInDetails::with('rawItem:id,name')->where('raw_item_purchase_in_id', $id)->latest()->get();
+        $data['totalItemCost'] = $data['singlePurchaseItemDetails']->sum('total_unit_cost');
+        return view($this->theme . 'user.rawItems.purchaseRawItemDetails', $data);
     }
 
+//    public function deletePurchaseRawItem($id)
+//    {
+//        $admin = $this->user;
+//        $purchaseRawItem = RawItemPurchaseStock::where('company_id', $admin->active_company_id)->findOrFail($id);
+//        $purchaseRawItem->delete();
+//        return back()->with('success', 'Deleted Successfully!');
+//    }
 
-    public function purchaseRawItem(){
+
+    public function purchaseRawItem()
+    {
         $admin = $this->user;
         $data['suppliers'] = Supplier::where('company_id', $admin->active_company_id)->where('status', 1)->get();
         $data['allItems'] = RawItem::where('company_id', $admin->active_company_id)->where('status', 1)->get();
@@ -1775,7 +1894,8 @@ class CompanyController extends Controller
 
     public function storePurchaseItem(Request $request)
     {
-        $loggedInUser = $this->user;
+
+        $admin = $this->user;
 
         $purifiedData = Purify::clean($request->except('_token', '_method'));
 
@@ -1798,22 +1918,27 @@ class CompanyController extends Controller
             return back()->withInput()->withErrors($validate);
         }
 
-
         try {
             DB::beginTransaction();
             $purchaseIn = new RawItemPurchaseIn();
-            $purchaseIn->company_id = $loggedInUser->active_company_id;
+            $purchaseIn->company_id = $admin->active_company_id;
             $purchaseIn->supplier_id = $request->supplier_id;
             $purchaseIn->purchase_date = $request->purchase_date;
             $purchaseIn->sub_total = $request->sub_total;
             $purchaseIn->discount_percent = $request->discount_percentage ? $request->discount_percentage : 0;
             $purchaseIn->discount_amount = $request->discount_percentage ? (float)$request->sub_total - (float)$request->total_price : 0;
             $purchaseIn->total_price = $request->total_price;
+            $purchaseIn->paid_amount = $request->paid_amount;
+            $due_or_change_amount = (float)floor($request->due_or_change_amount);
+            $purchaseIn->due_amount = $due_or_change_amount <= 0 ? 0 : $request->due_or_change_amount;
+            $purchaseIn->payment_date = $request->payment_date;
+            $purchaseIn->payment_status = $due_or_change_amount <= 0 ? 1 : 0;
+            $purchaseIn->payment_note = $request->payment_note;
             $purchaseIn->save();
 
             $this->storeRawItemPurchaseInDetails($request, $purchaseIn);
 
-            $this->storeRawItemPurchaseStock($request, $loggedInUser);
+            $this->storeRawItemPurchaseStock($request, $purchaseIn, $admin);
             DB::commit();
             return back()->with('success', 'Raw items purchased successfully!');
 
@@ -1821,6 +1946,25 @@ class CompanyController extends Controller
             return back()->with('error', 'Something went wrong');
         }
 
+    }
+
+    public function purchaseRawItemStocks(Request $request){
+
+        $admin = $this->user;
+        $search = $request->all();
+
+        $data['suppliers'] = Supplier::where('company_id', $admin->active_company_id)->where('status', 1)->get();
+        $data['rawItems'] = RawItem::where('company_id', $admin->active_company_id)->where('status', 1)->get();
+
+        $data['purchasedItems'] = RawItemPurchaseStock::with('rawItem')
+            ->when(isset($search['item_id']), function ($query) use ($search) {
+                return $query->where('raw_item_id', $search['item_id']);
+            })
+            ->where('company_id', $admin->active_company_id)
+            ->latest()
+            ->paginate(config('basic.paginate'));
+
+        return view($this->theme . 'user.rawItems.purchaseRawItemStocks', $data);
     }
 
     public function getSelectedRawItemUnit(Request $request)

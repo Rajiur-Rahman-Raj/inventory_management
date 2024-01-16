@@ -140,7 +140,7 @@
                 <i class="fal fa-car-building"></i><?php echo app('translator')->get('Raw Items'); ?>
             </a>
             <div
-                class="collapse <?php echo e(menuActive(['user.rawItemList', 'user.purchaseRawItem', 'user.purchaseRawItemList', 'user.rawItemPurchaseDetails'],4)); ?> dropdownRawItems"
+                class="collapse <?php echo e(menuActive(['user.rawItemList', 'user.purchaseRawItem', 'user.purchaseRawItemList', 'user.rawItemPurchaseDetails', 'user.purchaseRawItemStocks'],4)); ?> dropdownRawItems"
                 id="dropdownRawItems">
                 <ul class="">
                     <li>
@@ -151,14 +151,21 @@
                     <li>
                         <a class="<?php echo e(in_array($currentRouteName, ['user.purchaseRawItem']) ? 'active' : ''); ?>"
                            href="<?php echo e(route('user.purchaseRawItem')); ?>"><i
-                                class="fal fa-house-return"></i><?php echo app('translator')->get('Purchase In'); ?>
+                                class="fal fa-house-return"></i><?php echo app('translator')->get('Purchase'); ?>
                         </a>
                     </li>
 
                     <li>
                         <a class="<?php echo e(in_array($currentRouteName, ['user.purchaseRawItemList', 'user.rawItemPurchaseDetails']) ? 'active' : ''); ?>"
                            href="<?php echo e(route('user.purchaseRawItemList')); ?>"><i
-                                class="fal fa-house-return"></i><?php echo app('translator')->get('Purchased List'); ?>
+                                class="fal fa-house-return"></i><?php echo app('translator')->get('Purchased History'); ?>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a class="<?php echo e(in_array($currentRouteName, ['user.purchaseRawItemStocks']) ? 'active' : ''); ?>"
+                           href="<?php echo e(route('user.purchaseRawItemStocks')); ?>"><i
+                                class="fal fa-house-return"></i><?php echo app('translator')->get('Item Stocks'); ?>
                         </a>
                     </li>
                 </ul>
@@ -179,13 +186,19 @@
                 <i class="fal fa-car-building"></i><?php echo app('translator')->get('Expense'); ?>
             </a>
             <div
-                class="collapse <?php echo e(menuActive(['user.expenseCategory'],4)); ?> dropDownExpense"
+                class="collapse <?php echo e(menuActive(['user.expenseCategory', 'user.expenseList'],4)); ?> dropDownExpense"
                 id="dropDownExpense">
                 <ul class="">
                     <li>
                         <a class="<?php echo e(in_array($currentRouteName, ['user.expenseCategory']) ? 'active' : ''); ?>"
                            href="<?php echo e(route('user.expenseCategory')); ?>"><i
                                 class="fal fa-sack-dollar"></i><?php echo app('translator')->get('Expense Category'); ?>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a class="<?php echo e(in_array($currentRouteName, ['user.expenseList']) ? 'active' : ''); ?>"
+                           href="<?php echo e(route('user.expenseList')); ?>"><i class="fal fa-sack-dollar"></i><?php echo app('translator')->get('Expense List'); ?>
                         </a>
                     </li>
                 </ul>

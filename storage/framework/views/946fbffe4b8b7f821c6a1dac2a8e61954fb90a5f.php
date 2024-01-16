@@ -113,7 +113,6 @@
                                     <span class="badge bg-warning"><?php echo app('translator')->get('Due'); ?></span>
                                 <?php endif; ?>
                             </td>
-
                             <td data-label="Action">
                                 <div class="sidebar-dropdown-items">
                                     <button

@@ -23,7 +23,7 @@
                             </nav>
                         </div>
                         <div>
-                            <a href="{{route('user.rawItemList')}}"
+                            <a href="{{route('user.purchaseRawItemList')}}"
                                class="btn btn-custom text-white create__ticket">
                                 <i class="fas fa-backward"></i> @lang('Back')</a>
                         </div>
@@ -44,12 +44,13 @@
                                         <div class="input-box col-md-6">
                                             <label for="supplier_id">@lang('Select Supplier')</label>
                                             <select
-                                                class="form-select js-example-basic-single @error('supplier_id') is-invalid @enderror"
+                                                class="form-select js-example-basic-single @error('supplier_id') is-invalid @enderror selectSupplier"
                                                 name="supplier_id"
                                                 aria-label="Default select example">
                                                 <option value="" selected disabled>@lang('Select Supplier')</option>
                                                 @foreach($suppliers as $key => $supplier)
-                                                    <option value="{{ $supplier->id }}" {{ old('supplier_id') == $supplier->id ? 'selected' : '' }}>{{ $supplier->name }}</option>
+                                                    <option
+                                                        value="{{ $supplier->id }}" {{ old('supplier_id') == $supplier->id ? 'selected' : '' }}>{{ $supplier->name }}</option>
                                                 @endforeach
                                             </select>
                                             @if($errors->has('supplier_id'))
@@ -62,12 +63,15 @@
                                             <label for="name">@lang('Purchase Date') </label>
                                             <div class="flatpickr">
                                                 <div class="input-group input-box">
-                                                    <input type="date" placeholder="@lang('Purchase Date')" class="form-control purchase_date"
+                                                    <input type="date" placeholder="@lang('Purchase Date')"
+                                                           class="form-control purchase_date purchaseDate"
                                                            name="purchase_date"
-                                                           value="{{ old('purchase_date',request()->purchase_date) }}" data-input>
+                                                           value="{{ old('purchase_date',request()->purchase_date) }}"
+                                                           data-input>
                                                     <div class="input-group-append" readonly="">
                                                         <div class="form-control">
-                                                            <a class="input-button cursor-pointer" title="clear" data-clear>
+                                                            <a class="input-button cursor-pointer" title="clear"
+                                                               data-clear>
                                                                 <i class="fas fa-times"></i>
                                                             </a>
                                                         </div>
@@ -109,7 +113,8 @@
                                                     aria-label="Default select example">
                                                     <option value="" selected disabled>@lang('Select Item')</option>
                                                     @foreach($allItems as $key => $item)
-                                                        <option value="{{ $item->id }}" {{ old('item_id.0') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
+                                                        <option
+                                                            value="{{ $item->id }}" {{ old('item_id.0') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
                                                     @endforeach
                                                 </select>
                                                 @if($errors->has('item_id'))
@@ -128,7 +133,8 @@
                                                            onkeyup="this.value = this.value.replace (/^\.|[^\d\.]/g, '')"
                                                            value="{{ old('item_quantity.0') }}" min="1">
                                                     <div class="input-group-append" readonly="">
-                                                        <div class="form-control currency_symbol append_group item_unit"></div>
+                                                        <div
+                                                            class="form-control currency_symbol append_group item_unit"></div>
                                                     </div>
                                                 </div>
 
@@ -200,14 +206,17 @@
                                                             class="form-select js-example-basic-single{{$i}} selectedItem @error("item_id.$i") is-invalid @enderror"
                                                             name="item_id[]"
                                                             aria-label="Default select example">
-                                                            <option value="" selected disabled>@lang('Select Item')</option>
+                                                            <option value="" selected
+                                                                    disabled>@lang('Select Item')</option>
                                                             @foreach($allItems as $key => $item)
-                                                                <option value="{{ $item->id }}" {{ old("item_id.$i") == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
+                                                                <option
+                                                                    value="{{ $item->id }}" {{ old("item_id.$i") == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
                                                             @endforeach
                                                         </select>
 
                                                         @if($errors->has("item_id.$i"))
-                                                            <div class="error text-danger">@lang($errors->first("item_id.$i"))</div>
+                                                            <div
+                                                                class="error text-danger">@lang($errors->first("item_id.$i"))</div>
                                                         @endif
                                                     </div>
 
@@ -219,7 +228,8 @@
                                                                    class="form-control @error("item_quantity.$i") is-invalid @enderror totalQuantity"
                                                                    value="{{ old("item_quantity.$i") }}" min="1">
                                                             <div class="input-group-append" readonly="">
-                                                                <div class="form-control currency_symbol append_group item_unit_{{$i}}"></div>
+                                                                <div
+                                                                    class="form-control currency_symbol append_group item_unit_{{$i}}"></div>
                                                             </div>
                                                         </div>
 
@@ -328,8 +338,76 @@
 
                                     <div class="row g-4 mt-4">
                                         <div class="input-box col-12">
-                                            <button class="btn-custom w-100"
-                                                    type="submit">@lang('Confirm Purchase')</button>
+                                            <button class="btn-custom w-100 proceedPurchaseBtn" type="button">@lang('Proceed Purchase')</button>
+{{--                                            data-bs-toggle="modal" data-bs-target="#proceedPurchaseModal"--}}
+{{--                                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#proceedPurchaseModal">--}}
+{{--                                                Launch demo modal--}}
+{{--                                            </button>--}}
+                                        </div>
+                                    </div>
+
+                                    <!-- Modal -->
+                                    <div class="procced-modal">
+                                        <div class="modal fade" id="proceedPurchaseModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog ">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h1 class="modal-title fs-5" id="exampleModalLabel">Make Payment</h1>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="total-amount d-flex align-items-center justify-content-between">
+                                                            <h5>Total Purchased Amount</h5>
+                                                            <h6 class="make-payment-total-amount"></h6>
+                                                        </div>
+                                                        <div class="enter-amount d-flex justify-content-between align-items-center">
+                                                            <h6>Paid Amount</h6>
+                                                            <input type="text" class="form-control customer-paid-amount" value="0" min="0" onkeyup="this.value = this.value.replace (/^\.|[^\d\.]/g, '')" id="exampleFormControlInput1" name="paid_amount">
+                                                        </div>
+                                                        <div class="change-amount d-flex align-items-center justify-content-between">
+                                                            <h4 class="m-2 due-or-change-text"></h4>  <span class="due-or-change-amount"></span>
+                                                            <input type="hidden" name="due_or_change_amount" class="due_or_change_amount_input">
+                                                        </div>
+                                                        <div class="total-amount d-flex align-items-center justify-content-between">
+                                                            <h5>@lang('Total Payable Amount')</h5>
+                                                            <h6 class="total-payable-amount"></h6>
+                                                            <input type="hidden" name="total_payable_amount" class="total_payable_amount_input">
+                                                        </div>
+                                                        <div class="file">
+                                                            <div class="mb-3">
+                                                                <label for="formFile" class="form-label">Payment
+                                                                    Date</label>
+
+                                                                <div class="flatpickr">
+                                                                    <div class="input-group">
+                                                                        <input type="hidden" placeholder="Select Payment Date" class="form-control payment_date flatpickr-input" name="payment_date" value="" data-input="">
+                                                                        <div class="input-group-append" readonly="">
+                                                                            <div class="form-control payment-date-times">
+                                                                                <a class="input-button cursor-pointer" title="clear" data-clear="">
+                                                                                    <i class="fas fa-times" aria-hidden="true"></i>
+                                                                                </a>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="invalid-feedback d-block">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+
+                                                            <div class="mb-3">
+                                                                <label for="formFile" class="form-label">Payment Note                                                                            <span><sub>(optional)</sub></span></label>
+                                                                <textarea class="form-control" id="exampleFormControlTextarea1" placeholder="Write payment note" rows="4" name="payment_note"></textarea>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">@lang('Cancel')
+                                                        </button>
+                                                        <button type="submit" class="btn btn-primary">@lang('Confirm Purchase')</button>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </form>
@@ -341,6 +419,9 @@
         </div>
     </div>
     <input type="hidden" name="update_sub_total" class="updateSubTotal" value="{{ old('update_sub_total') ?? '0' }}">
+
+
+
 @endsection
 
 @push('script')
@@ -349,12 +430,70 @@
     <script src="{{ asset('assets/global/js/flatpickr.js') }}"></script>
     <script>
         'use strict'
-
         $(".flatpickr").flatpickr({
             wrap: true,
             minDate: "today",
+            // maxDate: "today",
             altInput: true,
             dateFormat: "Y-m-d H:i",
+        });
+
+        $(document).on('click', '.proceedPurchaseBtn', function () {
+            let result = checkPurchaseBy();
+            if(result){
+                showPurchaseModal();
+            }
+        });
+
+        function checkPurchaseBy(){
+            let selectSupplier = $('.selectSupplier').val();
+            let purchaseDate = $('.purchaseDate').val();
+            if(!selectSupplier){
+                Notiflix.Notify.Failure('Please Select Supplier');
+                return false;
+            }else if(purchaseDate == ''){
+                Notiflix.Notify.Failure('Please Select Purchase Date');
+                return false;
+            }
+            return true;
+        }
+
+        function showPurchaseModal() {
+            var proceedPurchaseModal = new bootstrap.Modal(document.getElementById('proceedPurchaseModal'))
+            proceedPurchaseModal.show();
+
+            var totalAmount = parseFloat($('.totalPrice').val());
+            $('.make-payment-total-amount').text(`${totalAmount.toFixed(2)} {{ $basic->currency_symbol }}`)
+            $('.due-or-change-text').text('Due Amount');
+            $('.due-or-change-amount').text(`${totalAmount.toFixed(2)} {{ $basic->currency_symbol }}`)
+            $('.total-payable-amount').text(`${totalAmount.toFixed(2)} {{ $basic->currency_symbol }}`)
+
+            $('.due_or_change_amount_input').val(`${totalAmount.toFixed(2)}`)
+            $('.total_payable_amount_input').val(`${totalAmount.toFixed(2)}`)
+        }
+
+        $(document).on('keyup', '.customer-paid-amount', function () {
+            var totalAmount = parseFloat($('.totalPrice').val());
+            let customerPaidAmount = isNaN(parseFloat($(this).val())) ? 0 : parseFloat($(this).val());
+
+            let dueOrChangeAmount = totalAmount - customerPaidAmount;
+
+            if (dueOrChangeAmount >= 0) {
+                $('.due-or-change-text').text('Due Amount')
+                $('.due-or-change-amount').text(`${dueOrChangeAmount.toFixed(2)} {{ $basic->currency_symbol }}`)
+                $('.total-payable-amount').text(`${customerPaidAmount.toFixed(2)} {{ $basic->currency_symbol }}`)
+
+                $('.due_or_change_amount_input').val(`${dueOrChangeAmount.toFixed(2)}`)
+                $('.total_payable_amount_input').val(`${customerPaidAmount.toFixed(2)}`)
+
+            } else {
+                $('.due-or-change-text').text('Change Amount')
+                $('.due-or-change-amount').text(`${Math.abs(dueOrChangeAmount).toFixed(2)} {{ $basic->currency_symbol }}`)
+                $('.total-payable-amount').text(`${totalAmount.toFixed(2)} {{ $basic->currency_symbol }}`)
+
+                $('.due_or_change_amount_input').val(`${dueOrChangeAmount.toFixed(2)}`)
+                $('.total_payable_amount_input').val(`${totalAmount.toFixed(2)}`)
+            }
         });
 
 

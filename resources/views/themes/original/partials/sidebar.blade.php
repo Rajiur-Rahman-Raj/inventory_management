@@ -140,7 +140,7 @@
                 <i class="fal fa-car-building"></i>@lang('Raw Items')
             </a>
             <div
-                class="collapse {{menuActive(['user.rawItemList', 'user.purchaseRawItem', 'user.purchaseRawItemList', 'user.rawItemPurchaseDetails'],4)}} dropdownRawItems"
+                class="collapse {{menuActive(['user.rawItemList', 'user.purchaseRawItem', 'user.purchaseRawItemList', 'user.rawItemPurchaseDetails', 'user.purchaseRawItemStocks'],4)}} dropdownRawItems"
                 id="dropdownRawItems">
                 <ul class="">
                     <li>
@@ -151,14 +151,21 @@
                     <li>
                         <a class="{{ in_array($currentRouteName, ['user.purchaseRawItem']) ? 'active' : '' }}"
                            href="{{ route('user.purchaseRawItem') }}"><i
-                                class="fal fa-house-return"></i>@lang('Purchase In')
+                                class="fal fa-house-return"></i>@lang('Purchase')
                         </a>
                     </li>
 
                     <li>
                         <a class="{{ in_array($currentRouteName, ['user.purchaseRawItemList', 'user.rawItemPurchaseDetails']) ? 'active' : '' }}"
                            href="{{ route('user.purchaseRawItemList') }}"><i
-                                class="fal fa-house-return"></i>@lang('Purchased List')
+                                class="fal fa-house-return"></i>@lang('Purchased History')
+                        </a>
+                    </li>
+
+                    <li>
+                        <a class="{{ in_array($currentRouteName, ['user.purchaseRawItemStocks']) ? 'active' : '' }}"
+                           href="{{ route('user.purchaseRawItemStocks') }}"><i
+                                class="fal fa-house-return"></i>@lang('Item Stocks')
                         </a>
                     </li>
                 </ul>
@@ -179,13 +186,19 @@
                 <i class="fal fa-car-building"></i>@lang('Expense')
             </a>
             <div
-                class="collapse {{menuActive(['user.expenseCategory'],4)}} dropDownExpense"
+                class="collapse {{menuActive(['user.expenseCategory', 'user.expenseList'],4)}} dropDownExpense"
                 id="dropDownExpense">
                 <ul class="">
                     <li>
                         <a class="{{ in_array($currentRouteName, ['user.expenseCategory']) ? 'active' : '' }}"
                            href="{{ route('user.expenseCategory') }}"><i
                                 class="fal fa-sack-dollar"></i>@lang('Expense Category')
+                        </a>
+                    </li>
+
+                    <li>
+                        <a class="{{ in_array($currentRouteName, ['user.expenseList']) ? 'active' : '' }}"
+                           href="{{ route('user.expenseList') }}"><i class="fal fa-sack-dollar"></i>@lang('Expense List')
                         </a>
                     </li>
                 </ul>

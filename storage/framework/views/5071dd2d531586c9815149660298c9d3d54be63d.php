@@ -14,7 +14,8 @@
                     <nav aria-label="breadcrumb" class="ms-2">
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="<?php echo e(route('user.home')); ?>"><?php echo app('translator')->get('Dashboard'); ?></a></li>
-                            <li class="breadcrumb-item"><a href="<?php echo e(route('user.salesList')); ?>"><?php echo app('translator')->get('Sales List'); ?></a>
+                            <li class="breadcrumb-item">
+                                <a href="<?php echo e(route('user.salesList')); ?>"><?php echo app('translator')->get('Sales List'); ?></a>
                             </li>
                             <li class="breadcrumb-item active" aria-current="page"><?php echo app('translator')->get('Sales Details'); ?></li>
                         </ol>
