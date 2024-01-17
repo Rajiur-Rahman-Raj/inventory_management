@@ -91,7 +91,6 @@
                                                         @else
                                                             <p><span class="badge bg-warning">@lang('Due')</span></p>
                                                         @endif
-
                                                     </div>
                                                 </div>
 
@@ -281,10 +280,8 @@
                 myModal.show();
                 payDueAmountPaymentModal();
             };
-
         </script>
     @endif
-
 
     <script>
         'use strict'

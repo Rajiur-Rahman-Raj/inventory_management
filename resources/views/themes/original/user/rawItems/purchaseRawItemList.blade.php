@@ -110,7 +110,6 @@
                                     <i class="fa fa-eye font-14" aria-hidden="true"></i>
                                 </a>
                             </td>
-
                         </tr>
                     @empty
                         <tr class="text-center">
@@ -172,8 +171,6 @@
             $(document).on('click', '.addNewItem', function () {
                 var addItemModal = new bootstrap.Modal(document.getElementById('addItemModal'))
                 addItemModal.show();
-
-
             });
 
             $(document).on('click', '.editItem', function () {

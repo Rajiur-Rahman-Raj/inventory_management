@@ -174,7 +174,6 @@
 
         </li>
 
-
         <li>
             <a
                 class="dropdown-toggle"
@@ -198,11 +197,20 @@
 
                     <li>
                         <a class="<?php echo e(in_array($currentRouteName, ['user.expenseList']) ? 'active' : ''); ?>"
-                           href="<?php echo e(route('user.expenseList')); ?>"><i class="fal fa-sack-dollar"></i><?php echo app('translator')->get('Expense List'); ?>
+                           href="<?php echo e(route('user.expenseList')); ?>"><i
+                                class="fal fa-sack-dollar"></i><?php echo app('translator')->get('Expense List'); ?>
                         </a>
                     </li>
                 </ul>
             </div>
+        </li>
+
+        <li>
+            <a class="<?php echo e(menuActive(['user.wastageList'])); ?>" href="<?php echo e(route('user.wastageList')); ?>"><i class="fal fa-sitemap"></i><?php echo app('translator')->get('Wastage'); ?></a>
+        </li>
+
+        <li>
+            <a class="<?php echo e(menuActive(['user.affiliateMemberList'])); ?>" href="<?php echo e(route('user.affiliateMemberList')); ?>"><i class="fal fa-sitemap"></i><?php echo app('translator')->get('Affiliate'); ?></a>
         </li>
 
         <li class="d-lg-none">

@@ -90,7 +90,6 @@
                                                         <?php else: ?>
                                                             <p><span class="badge bg-warning"><?php echo app('translator')->get('Due'); ?></span></p>
                                                         <?php endif; ?>
-
                                                     </div>
                                                 </div>
 
@@ -288,10 +287,8 @@ unset($__errorArgs, $__bag); ?>
                 myModal.show();
                 payDueAmountPaymentModal();
             };
-
         </script>
     <?php endif; ?>
-
 
     <script>
         'use strict'

@@ -174,7 +174,6 @@
 
         </li>
 
-
         <li>
             <a
                 class="dropdown-toggle"
@@ -198,11 +197,20 @@
 
                     <li>
                         <a class="{{ in_array($currentRouteName, ['user.expenseList']) ? 'active' : '' }}"
-                           href="{{ route('user.expenseList') }}"><i class="fal fa-sack-dollar"></i>@lang('Expense List')
+                           href="{{ route('user.expenseList') }}"><i
+                                class="fal fa-sack-dollar"></i>@lang('Expense List')
                         </a>
                     </li>
                 </ul>
             </div>
+        </li>
+
+        <li>
+            <a class="{{menuActive(['user.wastageList'])}}" href="{{ route('user.wastageList') }}"><i class="fal fa-sitemap"></i>@lang('Wastage')</a>
+        </li>
+
+        <li>
+            <a class="{{menuActive(['user.affiliateMemberList'])}}" href="{{ route('user.affiliateMemberList') }}"><i class="fal fa-sitemap"></i>@lang('Affiliate')</a>
         </li>
 
         <li class="d-lg-none">

@@ -3,6 +3,7 @@
 namespace App\Http\Traits;
 
 
+use App\Models\ExpenseRawItem;
 use App\Models\Stock;
 use App\Models\StockInDetails;
 
@@ -19,6 +20,12 @@ trait StockInTrait
             $stockInDetails->total_unit_cost = $request->total_unit_cost[$key];
             $stockInDetails->stock_date = $request->stock_date;
             $stockInDetails->save();
+
+            $expenseRawItem = new ExpenseRawItem();
+            $expenseRawItem->stock_in_details_id = $stockInDetails->id;
+            $expenseRawItem->raw_item_id = $request->raw_item_id[$key];
+            $expenseRawItem->quantity = $request->raw_item_quantity[$key];
+            $expenseRawItem->save();
         }
     }
 

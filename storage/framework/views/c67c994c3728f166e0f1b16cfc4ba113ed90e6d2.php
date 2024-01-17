@@ -109,7 +109,6 @@
                                     <i class="fa fa-eye font-14" aria-hidden="true"></i>
                                 </a>
                             </td>
-
                         </tr>
                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                         <tr class="text-center">
@@ -171,8 +170,6 @@
             $(document).on('click', '.addNewItem', function () {
                 var addItemModal = new bootstrap.Modal(document.getElementById('addItemModal'))
                 addItemModal.show();
-
-
             });
 
             $(document).on('click', '.editItem', function () {

@@ -178,6 +178,13 @@ Route::group(['middleware' => ['auth', 'Maintenance'], 'prefix' => 'user', 'as' 
         Route::put('update-item/{id}', 'User\CompanyController@updateItem')->name('updateItem');
         Route::delete('delete/item/{id}', 'User\CompanyController@deleteItem')->name('deleteItem');
 
+        // Wastage List
+        Route::get('wastage-list', 'User\CompanyController@wastageList')->name('wastageList');
+        Route::post('wastage-store', 'User\CompanyController@wastageStore')->name('wastageStore');
+        Route::delete('delete/wastage/{id}', 'User\CompanyController@deleteWastage')->name('deleteWastage');
+        Route::get('affiliate/member/list', 'User\CompanyController@affiliateMemberList')->name('affiliateMemberList');
+//        Route::put('update/expense/list/{id}', 'User\CompanyController@updateExpenseList')->name('updateExpenseList');
+
         // Company Expenses
         Route::get('expense/category', 'User\CompanyController@expenseCategory')->name('expenseCategory');
         Route::post('expense/category/store', 'User\CompanyController@expenseCategoryStore')->name('expenseCategoryStore');
@@ -254,6 +261,8 @@ Route::group(['middleware' => ['auth', 'Maintenance'], 'prefix' => 'user', 'as' 
 
         Route::post('sales-order-store', 'User\CompanyController@salesOrderStore')->name('salesOrderStore');
         Route::put('sales-order-update/{id}', 'User\CompanyController@salesOrderUpdate')->name('salesOrderUpdate');
+
+        Route::put('purchase-item-due-amount-update/{id}', 'User\CompanyController@purchaseRawItemDueAmountUpdate')->name('purchaseRawItemDueAmountUpdate');
 
 
         Route::get('sales-invoice/{id}', 'User\CompanyController@salesInvoice')->name('salesInvoice');

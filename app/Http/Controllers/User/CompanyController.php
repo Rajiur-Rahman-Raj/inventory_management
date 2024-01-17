@@ -32,6 +32,7 @@ use App\Models\Supplier;
 use App\Models\Union;
 use App\Models\Upazila;
 use App\Models\User;
+use App\Models\Wastage;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -324,6 +325,73 @@ class CompanyController extends Controller
             })
             ->where('status', 1)->paginate(config('basic.paginate'));
         return view($this->theme . 'user.items.index', $data);
+    }
+
+    public function wastageList(Request $request){
+        $search = $request->all();
+        $admin = $this->user;
+        $data['rawItems'] = RawItem::where('company_id', $admin->active_company_id)->get();
+        $data['wastageLists'] = Wastage::with('rawItem')
+            ->when(isset($search['raw_item_id']), function ($query) use ($search) {
+               $query->where('raw_item_id', $search['raw_item_id']);
+            })
+            ->where('company_id', $admin->active_company_id)
+            ->latest()
+            ->paginate(config('basic.paginate'));
+        return view($this->theme . 'user.wastage.index', $data);
+    }
+
+    public function wastageStore(Request $request){
+        $admin = $this->user;
+        $purifiedData = Purify::clean($request->except('_token', '_method'));
+
+        try {
+            $rules = [
+                'raw_item_id' => 'required|exists:raw_items,id',
+                'quantity' => 'required',
+            ];
+
+            $message = [
+                'raw_item_id.required' => __('Item name field is required'),
+                'quantity.required' => __('Quantity field is required'),
+                'wastage_date.required' => __('Wastage Date is required'),
+            ];
+
+            $validate = Validator::make($purifiedData, $rules, $message);
+
+            if ($validate->fails()) {
+                return back()->withInput()->withErrors($validate);
+            }
+
+            $rawItemStock = RawItemPurchaseStock::where('company_id', $admin->active_company_id)->where('raw_item_id', $request->raw_item_id)->select('id', 'quantity')->first();
+
+            DB::beginTransaction();
+            $wastage = new Wastage();
+            if ($rawItemStock->quantity > 0){
+                $wastage->company_id = $admin->active_company_id;
+                $wastage->raw_item_id = $request->raw_item_id;
+                $wastage->quantity = $request->quantity;
+                $wastage->wastage_date = $request->wastage_date;
+                $wastage->save();
+
+                $rawItemStock->quantity = ($rawItemStock->quantity <= 0 ? 0 : $rawItemStock->quantity - $request->quantity);
+                $rawItemStock->save();
+            }
+
+
+            DB::commit();
+            return back()->with('success', 'Wastage added successfully');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Something went wrong');
+        }
+    }
+
+    public function deleteWastage(Request $request, $id){
+        $admin = $this->user;
+        $wastage = Wastage::where('company_id', $admin->active_company_id)->findOrFail($id);
+        $wastage->delete();
+        return back()->with('success', 'Wastage Deleted Successfully');
     }
 
     public function itemStore(Request $request)
@@ -676,15 +744,16 @@ class CompanyController extends Controller
 
     public function addStock()
     {
-        $loggedInUser = $this->user;
-        $data['allItems'] = Item::where('company_id', optional($loggedInUser->activeCompany)->id)->get();
+        $admin = $this->user;
+        $data['items'] = Item::where('company_id', $admin->active_company_id)->get();
+        $data['rawItems'] = RawItem::where('company_id', $admin->active_company_id)->get();
         return view($this->theme . 'user.stock.create', $data);
     }
 
     public function stockStore(Request $request)
     {
-
         $loggedInUser = $this->user;
+
 
         $purifiedData = Purify::clean($request->except('_token', '_method'));
 
@@ -710,16 +779,21 @@ class CompanyController extends Controller
             $stockIn->company_id = $loggedInUser->active_company_id;
             $stockIn->stock_date = $request->stock_date;
             $stockIn->total_cost = $request->sub_total;
-
             $stockIn->save();
 
             $this->storeStockInDetails($request, $stockIn);
 
             $this->storeStocks($request, $loggedInUser);
 
+            foreach ($request->raw_item_id as $key => $rawItemId){
+                $rawItemPurchaseStock = RawItemPurchaseStock::where('company_id', $loggedInUser->active_company_id)->findOrFail($rawItemId);
+                $rawItemPurchaseStock->quantity = $rawItemPurchaseStock->quantity - $request->raw_item_quantity[$key];
+                $rawItemPurchaseStock->save();
+            }
+
             DB::commit();
 
-            return back()->with('success', 'Item stock added successfully!s');
+            return back()->with('success', 'Item stock added successfully');
         } catch (\Exception $e) {
             return back()->with('error', 'Something went wrong');
         }
@@ -1337,6 +1411,41 @@ class CompanyController extends Controller
 
         return back()->with('success', 'Due payment complete successfully');
     }
+
+
+    public function purchaseRawItemDueAmountUpdate(Request $request, $id){
+        $purifiedData = Purify::clean($request->except('_token', '_method'));
+        $rules = [
+            'payment_date' => 'required',
+            'payment_note' => 'nullable',
+        ];
+
+        $message = [
+            'payment_date.required' => 'The payment date field is required.',
+        ];
+
+        $validate = Validator::make($purifiedData, $rules, $message);
+
+        if ($validate->fails()) {
+            return back()->withInput()->withErrors($validate);
+        }
+
+        $due_or_change_amount = (float)floor($request->due_or_change_amount);
+        $admin = $this->user;
+        $purchaseRawItem = RawItemPurchaseIn::where('company_id', $admin->active_company_id)->findOrFail($id);
+
+        $purchaseRawItem->paid_amount = $due_or_change_amount <= 0 ? $purchaseRawItem->total_price : (float)$request->paid_amount + (float)$purchaseRawItem->paid_amount;
+        $purchaseRawItem->due_amount = $due_or_change_amount <= 0 ? 0 : $request->due_or_change_amount;
+        $purchaseRawItem->payment_date = $request->payment_date;
+        $purchaseRawItem->payment_status = $due_or_change_amount <= 0 ? 1 : 0;
+        $purchaseRawItem->payment_note = $request->payment_note;
+
+        $purchaseRawItem->save();
+
+        return back()->with('success', 'Due payment completed successfully');
+    }
+
+
 
     public function salesInvoiceUpdate(Request $request, $id)
     {
@@ -1975,6 +2084,12 @@ class CompanyController extends Controller
 
         return response()->json(['unit' => $unit]);
     }
+
+    public function affiliateMemberList(){
+        $data['allDivisions'] = Division::where('status', 1)->get();
+        return view($this->theme.'user.affiliate.index', $data);
+    }
+
 
 
 }
