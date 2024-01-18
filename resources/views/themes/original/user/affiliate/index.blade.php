@@ -1,218 +1,229 @@
 @extends($theme.'layouts.user')
-@section('title',trans('Create Affiliate Member'))
-
+@section('title', trans('Affiliate Members'))
 @section('content')
-    <!-- profile setting -->
-    <div class="container-fluid">
-        <div class="main row">
-            <div class="row mt-2 d-flex justify-content-between">
-                <div class="col">
-                    <div class="d-flex justify-content-between mb-4">
-                        <div class="header-text-full">
-                            <h3 class="dashboard_breadcurmb_heading mb-1">@lang('Create Affiliate Member')</h3>
-                            <nav aria-label="breadcrumb" class="ms-2">
-                                <ol class="breadcrumb">
-                                    <li class="breadcrumb-item"><a
-                                            href="{{ route('user.home') }}">@lang('Dashboard')</a>
-                                    </li>
-                                    <li class="breadcrumb-item active"
-                                        aria-current="page">@lang('Create Affiliate Member')</li>
-                                </ol>
-                            </nav>
-                        </div>
-                        <div>
-                            <a href="{{route('user.affiliateMemberList')}}"
-                               class="btn btn-custom text-white create__ticket">
-                                <i class="fas fa-backward"></i> @lang('Back')</a>
-                        </div>
+    @push('style')
+        <link rel="stylesheet" href="{{ asset('assets/global/css/bootstrap-datepicker.css') }}"/>
+    @endpush
+    <!-- Invest history -->
+    <section class="transaction-history">
+        <div class="container-fluid">
+            <div class="row mt-4 mb-2">
+                <div class="col ms-2">
+                    <div class="header-text-full">
+                        <h3 class="dashboard_breadcurmb_heading mb-1">@lang('Affiliate Member List')</h3>
+                        <nav aria-label="breadcrumb" class="ms-2">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="{{ route('user.home') }}">@lang('Dashboard')</a>
+                                </li>
+                                <li class="breadcrumb-item active" aria-current="page">@lang('Affiliate Members')</li>
+                            </ol>
+                        </nav>
                     </div>
                 </div>
             </div>
 
-            <div class="col">
-                <!-- profile setting -->
-                <section class="profile-setting">
-                    <div class="row g-4 g-lg-5">
-                        <div class="col-lg-12">
-                            <div id="tab1" class="content active">
-                                <form action="{{ route('user.storeSalesCenter')}}" method="post"
-                                      enctype="multipart/form-data">
-                                    @csrf
-                                    <div class="row g-4">
-                                        <div class="input-box col-md-6">
-                                            <label for="name">@lang('Name') </label>
-                                            <input type="text"
-                                                   class="form-control"
-                                                   name="name"
-                                                   placeholder="@lang('member name')"
-                                                   value="{{ old('name') }}"/>
-                                            @if($errors->has('name'))
-                                                <div class="error text-danger">@lang($errors->first('name'))</div>
-                                            @endif
-                                        </div>
+            <!-- search area -->
+            <div class="search-bar mt-3 me-2 ms-2 p-0">
+                <form action="" method="get" enctype="multipart/form-data">
+                    <div class="row g-3 align-items-end">
+                        <div class="input-box col-lg-2">
+                            <label for="">@lang('Name')</label>
+                            <input
+                                type="text"
+                                name="name"
+                                value="{{ old('name', @request()->name) }}"
+                                class="form-control"
+                                placeholder="@lang('Member Name')"/>
+                        </div>
 
-                                        <div class="input-box col-md-6">
-                                            <label for="phone">@lang('Phone')</label>
-                                            <input type="text"
-                                                   name="phone"
-                                                   placeholder="@lang('phone number')"
-                                                   value="{{ old('phone') }}"
-                                                   class="form-control"/>
-                                            @if($errors->has('phone'))
-                                                <div class="error text-danger">@lang($errors->first('phone'))</div>
-                                            @endif
-                                        </div>
+                        <div class="input-box col-lg-2">
+                            <label for="">@lang('Email')</label>
+                            <input
+                                type="text"
+                                name="email"
+                                value="{{ old('email', @request()->email) }}"
+                                class="form-control"
+                                placeholder="@lang('Member Email')"
+                            />
+                        </div>
 
-                                        <div class="input-box col-md-6">
-                                            <label for="email">@lang('Email')</label>
-                                            <input type="email"
-                                                   name="email"
-                                                   placeholder="@lang('email address')"
-                                                   value="{{ old('email') }}"
-                                                   class="form-control"/>
-                                            @if($errors->has('email'))
-                                                <div
-                                                    class="error text-danger">@lang($errors->first('email'))
-                                                </div>
-                                            @endif
-                                        </div>
+                        <div class="input-box col-lg-2">
+                            <label for="">@lang('Phone')</label>
+                            <input
+                                type="text"
+                                name="phone"
+                                value="{{ old('phone', @request()->phone) }}"
+                                class="form-control"
+                                placeholder="@lang('Member Phone')"/>
+                        </div>
 
-                                        <div class="input-box col-md-6">
-                                            <label for="password">@lang('Password') </label>
-                                            <input type="password"
-                                                   name="password"
-                                                   placeholder="@lang('password')"
-                                                   value="{{ old('password') }}"
-                                                   class="form-control"/>
-                                            @if($errors->has('password'))
-                                                <div class="error text-danger">@lang($errors->first('password'))</div>
-                                            @endif
-                                        </div>
+                        <div class="input-box col-lg-2">
+                            <label for="from_date">@lang('From Date')</label>
+                            <input
+                                type="text" class="form-control datepicker from_date" name="from_date"
+                                value="{{ old('from_date',request()->from_date) }}" placeholder="@lang('From date')"
+                                autocomplete="off" readonly/>
+                        </div>
+                        <div class="input-box col-lg-2">
+                            <label for="to_date">@lang('To Date')</label>
+                            <input
+                                type="text" class="form-control datepicker to_date" name="to_date"
+                                value="{{ old('to_date',request()->to_date) }}" placeholder="@lang('To date')"
+                                autocomplete="off" readonly disabled="true"/>
+                        </div>
 
-                                        <div class="input-box col-md-6">
-                                            <label for="national_id">@lang('National Id') <span
-                                                    class="text-muted"> <sub>(@lang('optional'))</sub></span></label>
-                                            <input type="text" name="national_id" placeholder="@lang('national id')"
-                                                   class="form-control" value="{{ old('national_id') }}"/>
-                                            @if($errors->has('national_id'))
-                                                <div class="error text-danger">@lang($errors->first('national_id'))</div>
-                                            @endif
-                                        </div>
-
-                                        <div class="input-box col-md-6">
-                                            <label for="trade_id">@lang('Trade Id') <span class="text-muted"> <sub>(optional)</sub></span></label>
-                                            <input type="text" name="trade_id" placeholder="@lang('Trade Id')"
-                                                   class="form-control" value="{{ old('trade_id') }}"/>
-                                            @if($errors->has('trade_id'))
-                                                <div class="error text-danger">@lang($errors->first('trade_id'))
-                                                </div>
-                                            @endif
-                                        </div>
-
-                                        <div class="input-box col-md-6">
-                                            <label for="division_id">@lang('Division')</label>
-                                            <select class="form-select js-example-basic-single selectedDivision"
-                                                    name="division_id"
-                                                    aria-label="Default select example">
-                                                <option value="" selected disabled>@lang('Select Division')</option>
-                                                @foreach($allDivisions as $division)
-                                                    <option
-                                                        value="{{ $division->id }}" {{ old('division_id') == $division->id ? 'selected' : ''}}> @lang($division->name)</option>
-                                                @endforeach
-                                            </select>
-
-                                            @if($errors->has('division_id'))
-                                                <div
-                                                    class="error text-danger">@lang($errors->first('division_id'))
-                                                </div>
-                                            @endif
-                                        </div>
-
-                                        <div class="input-box col-md-6">
-                                            <label for="district_id">@lang('District') </label>
-                                            <select class="form-select js-example-basic-single selectedDistrict"
-                                                    name="district_id"
-                                                    aria-label="Default select example"
-                                                    data-olddistrictid="{{ old('district_id') }}">
-                                            </select>
-
-                                            @if($errors->has('district_id'))
-                                                <div
-                                                    class="error text-danger">@lang($errors->first('district_id'))
-                                                </div>
-                                            @endif
-                                        </div>
-
-                                        <div class="input-box col-md-6">
-                                            <label for="district_id">@lang('Upazila') <span class="text-muted"> <sub>(optional)</sub></span></label>
-                                            <select class="form-select js-example-basic-single selectedUpazila"
-                                                    name="upazila_id"
-                                                    aria-label="Default select example"
-                                                    data-oldupazilaid="{{ old('upazila_id') }}">
-                                            </select>
-
-                                            @if($errors->has('upazila_id'))
-                                                <div
-                                                    class="error text-danger">@lang($errors->first('upazila_id'))
-                                                </div>
-                                            @endif
-                                        </div>
-
-                                        <div class="input-box col-md-6">
-                                            <label for="union_id">@lang('Union') <span class="text-muted"> <sub>(optional)</sub></span></label>
-                                            <select class="form-select js-example-basic-single selectedUnion"
-                                                    name="union_id"
-                                                    aria-label="Default select example"
-                                                    data-oldunionid="{{ old('union_id') }}">
-                                            </select>
-
-                                            @if($errors->has('union_id'))
-                                                <div
-                                                    class="error text-danger">@lang($errors->first('union_id'))
-                                                </div>
-                                            @endif
-                                        </div>
-
-                                        <div class="input-box col-12">
-                                            <label for="address">@lang('Sales Center Address') </label>
-                                            <textarea class="form-control @error('address') is-invalid @enderror"
-                                                      cols="30" rows="3" placeholder="@lang('Sales Center Address')"
-                                                      name="address"></textarea>
-                                            @if($errors->has('address'))
-                                                <div class="error text-danger">@lang($errors->first('address'))
-                                                </div>
-                                            @endif
-                                        </div>
-
-                                        <div class="col-md-12 mb-4 input-box">
-                                            <label for="" class="golden-text">@lang('Owner Photo') <span
-                                                    class="text-muted"> <sub>(optional)</sub></span> </label>
-                                            <div class="attach-file">
-                                               <span class="prev">
-                                                  @lang('Upload Logo')
-                                               </span>
-                                                <input type="file" name="image" class="form-control"/>
-                                            </div>
-                                            @error('image')
-                                            <span class="text-danger">{{trans($message)}}</span>
-                                            @enderror
-                                        </div>
-
-                                        <div class="input-box col-12">
-                                            <button class="btn-custom w-100"
-                                                    type="submit">@lang('Create Sales Center')</button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
+                        <div class="input-box col-lg-2">
+                            <button class="btn-custom w-100" type="submit"><i class="fal fa-search"></i>@lang('Search')
+                            </button>
                         </div>
                     </div>
-                </section>
+                </form>
+            </div>
+
+            <div class="d-flex justify-content-end mb-4">
+                <a href="{{route('user.createAffiliateMember')}}" class="btn btn-custom text-white "> <i
+                        class="fa fa-plus-circle"></i> @lang('Add Member')</a>
+            </div>
+
+            <div class="table-parent table-responsive me-2 ms-2 mt-4">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th scope="col">@lang('SL')</th>
+                        <th scope="col">@lang('Name')</th>
+                        <th scope="col">@lang('Phone')</th>
+                        <th scope="col">@lang('Division')</th>
+                        <th scope="col">@lang('District')</th>
+                        <th scope="col">@lang('Join Date')</th>
+                        <th scope="col">@lang('Action')</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+{{--                    @forelse($affiliateMembers as $key => $member)--}}
+{{--                        <tr>--}}
+{{--                            <td data-label="@lang('SL')">{{loopIndex($affiliateMembers) + $key}}</td>--}}
+
+{{--                            <td class="company-logo" data-label="@lang('Name')">--}}
+{{--                                <div>--}}
+{{--                                    <a href=""--}}
+{{--                                       target="_blank">{{ $member->name }}</a>--}}
+{{--                                    <br>--}}
+{{--                                    @if($member->email)--}}
+{{--                                        <span class="text-muted font-14">--}}
+{{--                                        <span>{{ $member->email }}</span>--}}
+{{--                                    </span>--}}
+{{--                                    @endif--}}
+{{--                                </div>--}}
+{{--                            </td>--}}
+
+{{--                            <td data-label="@lang('Phone')">{{ $member->phone }}</td>--}}
+{{--                            <td data-label="@lang('Division')">{{ optional($member->division)->name }}</td>--}}
+{{--                            <td data-label="@lang('District')">{{ optional($member->district)->name }}</td>--}}
+{{--                            <td data-label="@lang('Join Date')">{{ dateTime($member->created_at) }}</td>--}}
+
+{{--                            <td data-label="Action">--}}
+{{--                                <div class="sidebar-dropdown-items">--}}
+{{--                                    <button--}}
+{{--                                        type="button"--}}
+{{--                                        class="dropdown-toggle"--}}
+{{--                                        data-bs-toggle="dropdown"--}}
+{{--                                        aria-expanded="false"--}}
+{{--                                    >--}}
+{{--                                        <i class="fal fa-cog"></i>--}}
+{{--                                    </button>--}}
+
+{{--                                    <ul class="dropdown-menu dropdown-menu-end">--}}
+{{--                                        <li>--}}
+{{--                                            <a href="{{ route('user.customerDetails', $member->id) }}"--}}
+{{--                                               class="dropdown-item"> <i class="fal fa-eye"></i> @lang('Details') </a>--}}
+{{--                                        </li>--}}
+
+{{--                                        <li>--}}
+{{--                                            <a class="dropdown-item btn" href="{{ route('user.customerEdit', $member->id) }}">--}}
+{{--                                                <i class="fas fa-edit"></i> @lang('Edit')--}}
+{{--                                            </a>--}}
+{{--                                        </li>--}}
+
+{{--                                        <li>--}}
+{{--                                            <a class="dropdown-item btn deleteCustomer"--}}
+{{--                                               data-route="{{route('user.deleteCustomer', $member->id)}}"--}}
+{{--                                               data-property="{{ $member }}">--}}
+{{--                                                <i class="fas fa-trash-alt"></i> @lang('Delete')--}}
+{{--                                            </a>--}}
+{{--                                        </li>--}}
+
+{{--                                    </ul>--}}
+{{--                                </div>--}}
+{{--                            </td>--}}
+{{--                        </tr>--}}
+{{--                    @empty--}}
+{{--                        <tr class="text-center">--}}
+{{--                            <td colspan="100%" class="text-danger text-center">{{trans('No Data Found!')}}</td>--}}
+{{--                        </tr>--}}
+{{--                    @endforelse--}}
+                    </tbody>
+                </table>
             </div>
         </div>
-    </div>
+    </section>
+
+    @push('loadModal')
+        <!-- Modal -->
+        <div class="modal fade" id="deleteCustomerModal" tabindex="-1" aria-labelledby="editModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog modal-dialog-top modal-md">
+                <div class="modal-content">
+                    <div class="modal-header modal-primary modal-header-custom">
+                        <h4 class="modal-title">@lang('Delete Confirmation')</h4>
+                        <button type="button" class="close-btn" data-bs-dismiss="modal" aria-label="Close">
+                            <i class="fal fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <span class="delete-customer-name"></span>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn-custom btn2 btn-secondary close_invest_modal close__btn"
+                                data-bs-dismiss="modal">@lang('No')</button>
+                        <form action="" method="post" class="deleteCustomerRoute">
+                            @csrf
+                            @method('delete')
+                            <button type="submit"
+                                    class="btn btn-sm btn-custom text-white">@lang('Yes')</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endpush
 @endsection
 
 @push('script')
-    @include($theme.'user.partials.locationJs')
+    <script src="{{ asset('assets/global/js/bootstrap-datepicker.js') }}"></script>
+    <script>
+        'use strict'
+        $(document).ready(function () {
+            $(".datepicker").datepicker({
+                autoclose: true,
+                clearBtn: true
+            });
+
+            $('.from_date').on('change', function () {
+                $('.to_date').removeAttr('disabled');
+            });
+
+            $(document).on('click', '.deleteCustomer', function () {
+                var deleteCustomerModal = new bootstrap.Modal(document.getElementById('deleteCustomerModal'))
+                deleteCustomerModal.show();
+
+                let dataRoute = $(this).data('route');
+                let dataProperty = $(this).data('property');
+
+                $('.deleteCustomerRoute').attr('action', dataRoute)
+
+                $('.delete-customer-name').text(`Are you sure to delete ${dataProperty.name}?`)
+
+            });
+        });
+    </script>
 @endpush

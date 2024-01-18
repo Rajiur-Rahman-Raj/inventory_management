@@ -1,232 +1,230 @@
-<?php $__env->startSection('title',trans('Create Affiliate Member')); ?>
-
+<?php $__env->startSection('title', trans('Affiliate Members')); ?>
 <?php $__env->startSection('content'); ?>
-    <!-- profile setting -->
-    <div class="container-fluid">
-        <div class="main row">
-            <div class="row mt-2 d-flex justify-content-between">
-                <div class="col">
-                    <div class="d-flex justify-content-between mb-4">
-                        <div class="header-text-full">
-                            <h3 class="dashboard_breadcurmb_heading mb-1"><?php echo app('translator')->get('Create Affiliate Member'); ?></h3>
-                            <nav aria-label="breadcrumb" class="ms-2">
-                                <ol class="breadcrumb">
-                                    <li class="breadcrumb-item"><a
-                                            href="<?php echo e(route('user.home')); ?>"><?php echo app('translator')->get('Dashboard'); ?></a>
-                                    </li>
-                                    <li class="breadcrumb-item active"
-                                        aria-current="page"><?php echo app('translator')->get('Create Affiliate Member'); ?></li>
-                                </ol>
-                            </nav>
-                        </div>
-                        <div>
-                            <a href="<?php echo e(route('user.affiliateMemberList')); ?>"
-                               class="btn btn-custom text-white create__ticket">
-                                <i class="fas fa-backward"></i> <?php echo app('translator')->get('Back'); ?></a>
-                        </div>
+    <?php $__env->startPush('style'); ?>
+        <link rel="stylesheet" href="<?php echo e(asset('assets/global/css/bootstrap-datepicker.css')); ?>"/>
+    <?php $__env->stopPush(); ?>
+    <!-- Invest history -->
+    <section class="transaction-history">
+        <div class="container-fluid">
+            <div class="row mt-4 mb-2">
+                <div class="col ms-2">
+                    <div class="header-text-full">
+                        <h3 class="dashboard_breadcurmb_heading mb-1"><?php echo app('translator')->get('Affiliate Member List'); ?></h3>
+                        <nav aria-label="breadcrumb" class="ms-2">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="<?php echo e(route('user.home')); ?>"><?php echo app('translator')->get('Dashboard'); ?></a>
+                                </li>
+                                <li class="breadcrumb-item active" aria-current="page"><?php echo app('translator')->get('Affiliate Members'); ?></li>
+                            </ol>
+                        </nav>
                     </div>
                 </div>
             </div>
 
-            <div class="col">
-                <!-- profile setting -->
-                <section class="profile-setting">
-                    <div class="row g-4 g-lg-5">
-                        <div class="col-lg-12">
-                            <div id="tab1" class="content active">
-                                <form action="<?php echo e(route('user.storeSalesCenter')); ?>" method="post"
-                                      enctype="multipart/form-data">
-                                    <?php echo csrf_field(); ?>
-                                    <div class="row g-4">
-                                        <div class="input-box col-md-6">
-                                            <label for="name"><?php echo app('translator')->get('Name'); ?> </label>
-                                            <input type="text"
-                                                   class="form-control"
-                                                   name="name"
-                                                   placeholder="<?php echo app('translator')->get('member name'); ?>"
-                                                   value="<?php echo e(old('name')); ?>"/>
-                                            <?php if($errors->has('name')): ?>
-                                                <div class="error text-danger"><?php echo app('translator')->get($errors->first('name')); ?></div>
-                                            <?php endif; ?>
-                                        </div>
+            <!-- search area -->
+            <div class="search-bar mt-3 me-2 ms-2 p-0">
+                <form action="" method="get" enctype="multipart/form-data">
+                    <div class="row g-3 align-items-end">
+                        <div class="input-box col-lg-2">
+                            <label for=""><?php echo app('translator')->get('Name'); ?></label>
+                            <input
+                                type="text"
+                                name="name"
+                                value="<?php echo e(old('name', @request()->name)); ?>"
+                                class="form-control"
+                                placeholder="<?php echo app('translator')->get('Member Name'); ?>"/>
+                        </div>
 
-                                        <div class="input-box col-md-6">
-                                            <label for="phone"><?php echo app('translator')->get('Phone'); ?></label>
-                                            <input type="text"
-                                                   name="phone"
-                                                   placeholder="<?php echo app('translator')->get('phone number'); ?>"
-                                                   value="<?php echo e(old('phone')); ?>"
-                                                   class="form-control"/>
-                                            <?php if($errors->has('phone')): ?>
-                                                <div class="error text-danger"><?php echo app('translator')->get($errors->first('phone')); ?></div>
-                                            <?php endif; ?>
-                                        </div>
+                        <div class="input-box col-lg-2">
+                            <label for=""><?php echo app('translator')->get('Email'); ?></label>
+                            <input
+                                type="text"
+                                name="email"
+                                value="<?php echo e(old('email', @request()->email)); ?>"
+                                class="form-control"
+                                placeholder="<?php echo app('translator')->get('Member Email'); ?>"
+                            />
+                        </div>
 
-                                        <div class="input-box col-md-6">
-                                            <label for="email"><?php echo app('translator')->get('Email'); ?></label>
-                                            <input type="email"
-                                                   name="email"
-                                                   placeholder="<?php echo app('translator')->get('email address'); ?>"
-                                                   value="<?php echo e(old('email')); ?>"
-                                                   class="form-control"/>
-                                            <?php if($errors->has('email')): ?>
-                                                <div
-                                                    class="error text-danger"><?php echo app('translator')->get($errors->first('email')); ?>
-                                                </div>
-                                            <?php endif; ?>
-                                        </div>
+                        <div class="input-box col-lg-2">
+                            <label for=""><?php echo app('translator')->get('Phone'); ?></label>
+                            <input
+                                type="text"
+                                name="phone"
+                                value="<?php echo e(old('phone', @request()->phone)); ?>"
+                                class="form-control"
+                                placeholder="<?php echo app('translator')->get('Member Phone'); ?>"/>
+                        </div>
 
-                                        <div class="input-box col-md-6">
-                                            <label for="password"><?php echo app('translator')->get('Password'); ?> </label>
-                                            <input type="password"
-                                                   name="password"
-                                                   placeholder="<?php echo app('translator')->get('password'); ?>"
-                                                   value="<?php echo e(old('password')); ?>"
-                                                   class="form-control"/>
-                                            <?php if($errors->has('password')): ?>
-                                                <div class="error text-danger"><?php echo app('translator')->get($errors->first('password')); ?></div>
-                                            <?php endif; ?>
-                                        </div>
+                        <div class="input-box col-lg-2">
+                            <label for="from_date"><?php echo app('translator')->get('From Date'); ?></label>
+                            <input
+                                type="text" class="form-control datepicker from_date" name="from_date"
+                                value="<?php echo e(old('from_date',request()->from_date)); ?>" placeholder="<?php echo app('translator')->get('From date'); ?>"
+                                autocomplete="off" readonly/>
+                        </div>
+                        <div class="input-box col-lg-2">
+                            <label for="to_date"><?php echo app('translator')->get('To Date'); ?></label>
+                            <input
+                                type="text" class="form-control datepicker to_date" name="to_date"
+                                value="<?php echo e(old('to_date',request()->to_date)); ?>" placeholder="<?php echo app('translator')->get('To date'); ?>"
+                                autocomplete="off" readonly disabled="true"/>
+                        </div>
 
-                                        <div class="input-box col-md-6">
-                                            <label for="national_id"><?php echo app('translator')->get('National Id'); ?> <span class="text-muted"> <sub>(<?php echo app('translator')->get('optional'); ?>)</sub></span></label>
-                                            <input type="text" name="national_id" placeholder="<?php echo app('translator')->get('national id'); ?>"
-                                                   class="form-control" value="<?php echo e(old('national_id')); ?>"/>
-                                            <?php if($errors->has('national_id')): ?>
-                                                <div class="error text-danger"><?php echo app('translator')->get($errors->first('national_id')); ?>
-                                                </div>
-                                            <?php endif; ?>
-                                        </div>
-
-                                        <div class="input-box col-md-6">
-                                            <label for="trade_id"><?php echo app('translator')->get('Trade Id'); ?> <span class="text-muted"> <sub>(optional)</sub></span></label>
-                                            <input type="text" name="trade_id" placeholder="<?php echo app('translator')->get('Trade Id'); ?>"
-                                                   class="form-control" value="<?php echo e(old('trade_id')); ?>"/>
-                                            <?php if($errors->has('trade_id')): ?>
-                                                <div class="error text-danger"><?php echo app('translator')->get($errors->first('trade_id')); ?>
-                                                </div>
-                                            <?php endif; ?>
-                                        </div>
-
-                                        <div class="input-box col-md-6">
-                                            <label for="division_id"><?php echo app('translator')->get('Division'); ?></label>
-                                            <select class="form-select js-example-basic-single selectedDivision"
-                                                    name="division_id"
-                                                    aria-label="Default select example">
-                                                <option value="" selected disabled><?php echo app('translator')->get('Select Division'); ?></option>
-                                                <?php $__currentLoopData = $allDivisions; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $division): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                    <option
-                                                        value="<?php echo e($division->id); ?>" <?php echo e(old('division_id') == $division->id ? 'selected' : ''); ?>> <?php echo app('translator')->get($division->name); ?></option>
-                                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                            </select>
-
-                                            <?php if($errors->has('division_id')): ?>
-                                                <div
-                                                    class="error text-danger"><?php echo app('translator')->get($errors->first('division_id')); ?>
-                                                </div>
-                                            <?php endif; ?>
-                                        </div>
-
-                                        <div class="input-box col-md-6">
-                                            <label for="district_id"><?php echo app('translator')->get('District'); ?> </label>
-                                            <select class="form-select js-example-basic-single selectedDistrict"
-                                                    name="district_id"
-                                                    aria-label="Default select example"
-                                                    data-olddistrictid="<?php echo e(old('district_id')); ?>">
-                                            </select>
-
-                                            <?php if($errors->has('district_id')): ?>
-                                                <div
-                                                    class="error text-danger"><?php echo app('translator')->get($errors->first('district_id')); ?>
-                                                </div>
-                                            <?php endif; ?>
-                                        </div>
-
-                                        <div class="input-box col-md-6">
-                                            <label for="district_id"><?php echo app('translator')->get('Upazila'); ?> <span class="text-muted"> <sub>(optional)</sub></span></label>
-                                            <select class="form-select js-example-basic-single selectedUpazila"
-                                                    name="upazila_id"
-                                                    aria-label="Default select example"
-                                                    data-oldupazilaid="<?php echo e(old('upazila_id')); ?>">
-                                            </select>
-
-                                            <?php if($errors->has('upazila_id')): ?>
-                                                <div
-                                                    class="error text-danger"><?php echo app('translator')->get($errors->first('upazila_id')); ?>
-                                                </div>
-                                            <?php endif; ?>
-                                        </div>
-
-                                        <div class="input-box col-md-6">
-                                            <label for="union_id"><?php echo app('translator')->get('Union'); ?> <span class="text-muted"> <sub>(optional)</sub></span></label>
-                                            <select class="form-select js-example-basic-single selectedUnion"
-                                                    name="union_id"
-                                                    aria-label="Default select example"
-                                                    data-oldunionid="<?php echo e(old('union_id')); ?>">
-                                            </select>
-
-                                            <?php if($errors->has('union_id')): ?>
-                                                <div
-                                                    class="error text-danger"><?php echo app('translator')->get($errors->first('union_id')); ?>
-                                                </div>
-                                            <?php endif; ?>
-                                        </div>
-
-                                        <div class="input-box col-12">
-                                            <label for="address"><?php echo app('translator')->get('Sales Center Address'); ?> </label>
-                                            <textarea class="form-control <?php $__errorArgs = ['address'];
-$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
-if ($__bag->has($__errorArgs[0])) :
-if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>"
-                                                      cols="30" rows="3" placeholder="<?php echo app('translator')->get('Sales Center Address'); ?>"
-                                                      name="address"></textarea>
-                                            <?php if($errors->has('address')): ?>
-                                                <div class="error text-danger"><?php echo app('translator')->get($errors->first('address')); ?>
-                                                </div>
-                                            <?php endif; ?>
-                                        </div>
-
-                                        <div class="col-md-12 mb-4 input-box">
-                                            <label for="" class="golden-text"><?php echo app('translator')->get('Owner Photo'); ?> <span class="text-muted"> <sub>(optional)</sub></span> </label>
-                                            <div class="attach-file">
-                                               <span class="prev">
-                                                  <?php echo app('translator')->get('Upload Logo'); ?>
-                                               </span>
-                                                <input type="file" name="image" class="form-control"/>
-                                            </div>
-                                            <?php $__errorArgs = ['image'];
-$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
-if ($__bag->has($__errorArgs[0])) :
-if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?>
-                                            <span class="text-danger"><?php echo e(trans($message)); ?></span>
-                                            <?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>
-                                        </div>
-
-                                        <div class="input-box col-12">
-                                            <button class="btn-custom w-100"
-                                                    type="submit"><?php echo app('translator')->get('Create Sales Center'); ?></button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
+                        <div class="input-box col-lg-2">
+                            <button class="btn-custom w-100" type="submit"><i class="fal fa-search"></i><?php echo app('translator')->get('Search'); ?>
+                            </button>
                         </div>
                     </div>
-                </section>
+                </form>
+            </div>
+
+            <div class="d-flex justify-content-end mb-4">
+                <a href="<?php echo e(route('user.createAffiliateMember')); ?>" class="btn btn-custom text-white "> <i
+                        class="fa fa-plus-circle"></i> <?php echo app('translator')->get('Add Member'); ?></a>
+            </div>
+
+            <div class="table-parent table-responsive me-2 ms-2 mt-4">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th scope="col"><?php echo app('translator')->get('SL'); ?></th>
+                        <th scope="col"><?php echo app('translator')->get('Name'); ?></th>
+                        <th scope="col"><?php echo app('translator')->get('Phone'); ?></th>
+                        <th scope="col"><?php echo app('translator')->get('Division'); ?></th>
+                        <th scope="col"><?php echo app('translator')->get('District'); ?></th>
+                        <th scope="col"><?php echo app('translator')->get('Join Date'); ?></th>
+                        <th scope="col"><?php echo app('translator')->get('Action'); ?></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    </tbody>
+                </table>
             </div>
         </div>
-    </div>
+    </section>
+
+    <?php $__env->startPush('loadModal'); ?>
+        <!-- Modal -->
+        <div class="modal fade" id="deleteCustomerModal" tabindex="-1" aria-labelledby="editModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog modal-dialog-top modal-md">
+                <div class="modal-content">
+                    <div class="modal-header modal-primary modal-header-custom">
+                        <h4 class="modal-title"><?php echo app('translator')->get('Delete Confirmation'); ?></h4>
+                        <button type="button" class="close-btn" data-bs-dismiss="modal" aria-label="Close">
+                            <i class="fal fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <span class="delete-customer-name"></span>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn-custom btn2 btn-secondary close_invest_modal close__btn"
+                                data-bs-dismiss="modal"><?php echo app('translator')->get('No'); ?></button>
+                        <form action="" method="post" class="deleteCustomerRoute">
+                            <?php echo csrf_field(); ?>
+                            <?php echo method_field('delete'); ?>
+                            <button type="submit"
+                                    class="btn btn-sm btn-custom text-white"><?php echo app('translator')->get('Yes'); ?></button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <?php $__env->stopPush(); ?>
 <?php $__env->stopSection(); ?>
 
 <?php $__env->startPush('script'); ?>
-    <?php echo $__env->make($theme.'user.partials.locationJs', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+    <script src="<?php echo e(asset('assets/global/js/bootstrap-datepicker.js')); ?>"></script>
+    <script>
+        'use strict'
+        $(document).ready(function () {
+            $(".datepicker").datepicker({
+                autoclose: true,
+                clearBtn: true
+            });
+
+            $('.from_date').on('change', function () {
+                $('.to_date').removeAttr('disabled');
+            });
+
+            $(document).on('click', '.deleteCustomer', function () {
+                var deleteCustomerModal = new bootstrap.Modal(document.getElementById('deleteCustomerModal'))
+                deleteCustomerModal.show();
+
+                let dataRoute = $(this).data('route');
+                let dataProperty = $(this).data('property');
+
+                $('.deleteCustomerRoute').attr('action', dataRoute)
+
+                $('.delete-customer-name').text(`Are you sure to delete ${dataProperty.name}?`)
+
+            });
+        });
+    </script>
 <?php $__env->stopPush(); ?>
 
 <?php echo $__env->make($theme.'layouts.user', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH D:\xammp\htdocs\inventory_management\project\resources\views/themes/original/user/affiliate/index.blade.php ENDPATH**/ ?>

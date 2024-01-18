@@ -182,8 +182,11 @@ Route::group(['middleware' => ['auth', 'Maintenance'], 'prefix' => 'user', 'as' 
         Route::get('wastage-list', 'User\CompanyController@wastageList')->name('wastageList');
         Route::post('wastage-store', 'User\CompanyController@wastageStore')->name('wastageStore');
         Route::delete('delete/wastage/{id}', 'User\CompanyController@deleteWastage')->name('deleteWastage');
+
+        // Affiliate Member
         Route::get('affiliate/member/list', 'User\CompanyController@affiliateMemberList')->name('affiliateMemberList');
-//        Route::put('update/expense/list/{id}', 'User\CompanyController@updateExpenseList')->name('updateExpenseList');
+        Route::get('affiliate/member/create', 'User\CompanyController@createAffiliateMember')->name('createAffiliateMember');
+        Route::post('affiliate/member/store', 'User\CompanyController@affiliateMemberStore')->name('affiliateMemberStore');
 
         // Company Expenses
         Route::get('expense/category', 'User\CompanyController@expenseCategory')->name('expenseCategory');

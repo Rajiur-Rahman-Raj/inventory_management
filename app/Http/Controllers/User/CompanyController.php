@@ -8,6 +8,7 @@ use App\Http\Requests\CompanyUpdateRequest;
 use App\Http\Requests\SalesCenterStoreRequest;
 use App\Http\Traits\Notify;
 use App\Http\Traits\RawItemPurchaseTrait;
+use App\Models\AffiliateMember;
 use App\Models\Badge;
 use App\Models\CartItems;
 use App\Models\Company;
@@ -327,13 +328,14 @@ class CompanyController extends Controller
         return view($this->theme . 'user.items.index', $data);
     }
 
-    public function wastageList(Request $request){
+    public function wastageList(Request $request)
+    {
         $search = $request->all();
         $admin = $this->user;
         $data['rawItems'] = RawItem::where('company_id', $admin->active_company_id)->get();
         $data['wastageLists'] = Wastage::with('rawItem')
             ->when(isset($search['raw_item_id']), function ($query) use ($search) {
-               $query->where('raw_item_id', $search['raw_item_id']);
+                $query->where('raw_item_id', $search['raw_item_id']);
             })
             ->where('company_id', $admin->active_company_id)
             ->latest()
@@ -341,7 +343,8 @@ class CompanyController extends Controller
         return view($this->theme . 'user.wastage.index', $data);
     }
 
-    public function wastageStore(Request $request){
+    public function wastageStore(Request $request)
+    {
         $admin = $this->user;
         $purifiedData = Purify::clean($request->except('_token', '_method'));
 
@@ -367,7 +370,7 @@ class CompanyController extends Controller
 
             DB::beginTransaction();
             $wastage = new Wastage();
-            if ($rawItemStock->quantity > 0){
+            if ($rawItemStock->quantity > 0) {
                 $wastage->company_id = $admin->active_company_id;
                 $wastage->raw_item_id = $request->raw_item_id;
                 $wastage->quantity = $request->quantity;
@@ -387,7 +390,8 @@ class CompanyController extends Controller
         }
     }
 
-    public function deleteWastage(Request $request, $id){
+    public function deleteWastage(Request $request, $id)
+    {
         $admin = $this->user;
         $wastage = Wastage::where('company_id', $admin->active_company_id)->findOrFail($id);
         $wastage->delete();
@@ -785,7 +789,7 @@ class CompanyController extends Controller
 
             $this->storeStocks($request, $loggedInUser);
 
-            foreach ($request->raw_item_id as $key => $rawItemId){
+            foreach ($request->raw_item_id as $key => $rawItemId) {
                 $rawItemPurchaseStock = RawItemPurchaseStock::where('company_id', $loggedInUser->active_company_id)->findOrFail($rawItemId);
                 $rawItemPurchaseStock->quantity = $rawItemPurchaseStock->quantity - $request->raw_item_quantity[$key];
                 $rawItemPurchaseStock->save();
@@ -1413,7 +1417,8 @@ class CompanyController extends Controller
     }
 
 
-    public function purchaseRawItemDueAmountUpdate(Request $request, $id){
+    public function purchaseRawItemDueAmountUpdate(Request $request, $id)
+    {
         $purifiedData = Purify::clean($request->except('_token', '_method'));
         $rules = [
             'payment_date' => 'required',
@@ -1444,7 +1449,6 @@ class CompanyController extends Controller
 
         return back()->with('success', 'Due payment completed successfully');
     }
-
 
 
     public function salesInvoiceUpdate(Request $request, $id)
@@ -2057,7 +2061,8 @@ class CompanyController extends Controller
 
     }
 
-    public function purchaseRawItemStocks(Request $request){
+    public function purchaseRawItemStocks(Request $request)
+    {
 
         $admin = $this->user;
         $search = $request->all();
@@ -2085,11 +2090,94 @@ class CompanyController extends Controller
         return response()->json(['unit' => $unit]);
     }
 
-    public function affiliateMemberList(){
+    public function affiliateMemberList()
+    {
         $data['allDivisions'] = Division::where('status', 1)->get();
-        return view($this->theme.'user.affiliate.index', $data);
+        return view($this->theme . 'user.affiliate.index', $data);
     }
 
+    public function createAffiliateMember()
+    {
+        $admin = $this->user;
+        $data['allDivisions'] = Division::where('status', 1)->get();
+        $data['saleCenters'] = SalesCenter::where('company_id', $admin->active_company_id)->where('status', 1)->get();
+        return view($this->theme . 'user.affiliate.create', $data);
+    }
 
+    public function affiliateMemberStore(Request $request)
+    {
+        $admin = $this->user;
+        dd($request->all());
+        
+        $purifiedData = Purify::clean($request->except('_token', '_method'));
+
+        $rules = [
+            'sale_center_id' => 'required|exists:sales_centers,id',
+            'member_name' => 'required|string|max:100',
+            'email' => 'nullable|email|unique:customers,email',
+            'phone' => 'required|unique:customers,phone',
+            'division_id' => 'required|exists:divisions,id',
+            'district_id' => 'required|exists:districts,id',
+            'upazila_id' => 'nullable|exists:upazilas,id',
+            'union_id' => 'nullable|exists:unions,id',
+            'member_national_id' => 'nullable',
+            'member_commission' => 'nullable',
+            'date_of_death' => 'nullable',
+            'wife_name' => 'nullable',
+            'wife_national_id' => 'nullable',
+            'address' => 'required',
+            'document' => 'nullable',
+        ];
+
+        $messages = [
+            'name.required' => __('Member Name is required'),
+            'email.email' => __('Invalid email format'),
+            'email.unique' => __('Email is already taken'),
+            'phone.required' => __('Phone number is required'),
+            'phone.unique' => __('Phone number is already taken'),
+            'division_id.exists' => __('Invalid division selected'),
+            'district_id.exists' => __('Invalid district selected'),
+            'upazila_id.exists' => __('Invalid upazila selected'),
+            'union_id.exists' => __('Invalid union selected'),
+            'address.required' => __('Address is required'),
+        ];
+
+        $validate = Validator::make($purifiedData, $rules, $messages);
+
+        if ($validate->fails()) {
+            return back()->withInput()->withErrors($validate);
+        }
+
+        try {
+
+            DB::beginTransaction();
+
+            $member = new AffiliateMember();
+            $member->name = $request->name;
+            $member->company_id = $admin->active_company_id;
+            $member->email = $request->email;
+            $member->phone = $request->phone;
+            $member->national_id = $request->national_id;
+            $member->division_id = $request->division_id;
+            $member->district_id = $request->district_id;
+            $member->upazila_id = $request->upazila_id;
+            $member->union_id = $request->union_id;
+            $member->address = $request->address;
+
+            if ($request->hasFile('image')) {
+                try {
+                    $member->image = $this->uploadImage($request->image, config('location.affiliate.path'), config('location.affiliate.size'));
+                } catch (\Exception $exp) {
+                    return back()->with('error', 'Logo could not be uploaded.');
+                }
+            }
+
+            $member->save();
+            DB::commit();
+            return back()->with('success', 'Member Created Successfully');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Something went wrong');
+        }
+    }
 
 }

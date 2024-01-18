@@ -87,4 +87,8 @@ return [
         'path' => 'assets/uploads/salesCenter/',
         'size' => '200x200'
     ],
+    'affiliate' => [
+        'path' => 'assets/uploads/affiliate/',
+        'size' => '200x200'
+    ],
 ];
