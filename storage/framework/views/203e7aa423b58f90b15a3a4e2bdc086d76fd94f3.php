@@ -210,7 +210,7 @@
         </li>
 
         <li>
-            <a class="<?php echo e(menuActive(['user.affiliateMemberList'])); ?>" href="<?php echo e(route('user.affiliateMemberList')); ?>"><i class="fal fa-sitemap"></i><?php echo app('translator')->get('Affiliate'); ?></a>
+            <a class="<?php echo e(menuActive(['user.affiliateMemberList', 'user.createAffiliateMember', 'user.affiliateMemberEdit'])); ?>" href="<?php echo e(route('user.affiliateMemberList')); ?>"><i class="fal fa-sitemap"></i><?php echo app('translator')->get('Affiliate'); ?></a>
         </li>
 
         <li class="d-lg-none">

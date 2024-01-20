@@ -7,12 +7,6 @@
         })
 
         function getSelectedDivisionDistrict(value) {
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-
             $.ajax({
                 url: "<?php echo e(route('user.getSelectedDivisionDistrict')); ?>",
                 method: 'POST',
@@ -41,12 +35,6 @@
         })
 
         function getSelectedDistrictUpazila(value) {
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-
             $.ajax({
                 url: "<?php echo e(route('user.getSelectedDistrictUpazila')); ?>",
                 method: 'POST',
@@ -75,11 +63,6 @@
         })
 
         function getSelectedUpazilaUnion(value) {
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
 
             $.ajax({
                 url: "<?php echo e(route('user.getSelectedUpazilaUnion')); ?>",
@@ -101,6 +84,82 @@
                 }
             });
         }
+
+
+        function getOldSelectedDivisionDistrict(){
+            let divisionId = $('.selectedDivision').val();
+            let OldDistrictId = $('.selectedDistrict').data('olddistrictid');
+            $.ajax({
+                url: "<?php echo e(route('user.getSelectedDivisionDistrict')); ?>",
+                method: 'POST',
+                data: {
+                    id: divisionId,
+                },
+                success: function (response) {
+                    let responseData = response;
+                    responseData.forEach(res => {
+                        $('.selectedDistrict').append(`<option value="${res.id}" ${res.id == OldDistrictId ? 'selected' : ''}>${res.name}</option>`)
+                    })
+
+                },
+                error: function (xhr, status, error) {
+                    console.log(error)
+                }
+            });
+        }
+
+        getOldSelectedDivisionDistrict();
+
+
+        function getOldSelectedDistrictUpazila(){
+            let districtId = $('.selectedDistrict').data('olddistrictid');
+            let OldUpazilaId = $('.selectedUpazila').data('oldupazilaid');
+
+            $.ajax({
+                url: "<?php echo e(route('user.getSelectedDistrictUpazila')); ?>",
+                method: 'POST',
+                data: {
+                    id: districtId,
+                },
+                success: function (response) {
+                    let responseData = response;
+                    responseData.forEach(res => {
+                        $('.selectedUpazila').append(`<option value="${res.id}" ${res.id == OldUpazilaId ? 'selected' : ''}>${res.name}</option>`)
+                    })
+                },
+                error: function (xhr, status, error) {
+                    console.log(error)
+                }
+            });
+        }
+
+        getOldSelectedDistrictUpazila();
+
+
+        function getOldSelectedUpazilaUnion(){
+            let upazilaId = $('.selectedUpazila').data('oldupazilaid');
+            let OldUnionId = $('.selectedUnion').data('oldunionid');
+
+            $.ajax({
+                url: "<?php echo e(route('user.getSelectedUpazilaUnion')); ?>",
+                method: 'POST',
+                data: {
+                    id: upazilaId,
+                },
+                success: function (response) {
+                    let responseData = response;
+                    responseData.forEach(res => {
+                        $('.selectedUnion').append(`<option value="${res.id}" ${res.id == OldUnionId ? 'selected' : ''}>${res.name}</option>`)
+                    })
+                },
+                error: function (xhr, status, error) {
+                    console.log(error)
+                }
+            });
+        }
+
+        getOldSelectedUpazilaUnion();
+
     });
 </script>
 <?php /**PATH D:\xammp\htdocs\inventory_management\project\resources\views/themes/original/user/partials/locationJs.blade.php ENDPATH**/ ?>

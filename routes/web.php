@@ -187,6 +187,10 @@ Route::group(['middleware' => ['auth', 'Maintenance'], 'prefix' => 'user', 'as' 
         Route::get('affiliate/member/list', 'User\CompanyController@affiliateMemberList')->name('affiliateMemberList');
         Route::get('affiliate/member/create', 'User\CompanyController@createAffiliateMember')->name('createAffiliateMember');
         Route::post('affiliate/member/store', 'User\CompanyController@affiliateMemberStore')->name('affiliateMemberStore');
+        Route::get('affiliate/member/edit/{id}', 'User\CompanyController@affiliateMemberEdit')->name('affiliateMemberEdit');
+        Route::post('affiliate/member/update/{id}', 'User\CompanyController@affiliateMemberUpdate')->name('affiliateMemberUpdate');
+        Route::delete('affiliate/member/delete/{id}', 'User\CompanyController@affiliateMemberDelete')->name('affiliateMemberDelete');
+        Route::get('affiliate/member/details/{id}', 'User\CompanyController@affiliateMemberDetails')->name('affiliateMemberDetails');
 
         // Company Expenses
         Route::get('expense/category', 'User\CompanyController@expenseCategory')->name('expenseCategory');
@@ -276,7 +280,7 @@ Route::group(['middleware' => ['auth', 'Maintenance'], 'prefix' => 'user', 'as' 
 
         Route::post('get-division-district', [LocationController::class, 'getSelectedDivisionDistrict'])->name('getSelectedDivisionDistrict');
         Route::post('get-district-upazila', [LocationController::class, 'getSelectedDistrictUpazila'])->name('getSelectedDistrictUpazila');
-        Route::post('get-upzila-union', [LocationController::class, 'getSelectedUpazilaUnion'])->name('getSelectedUpazilaUnion');
+        Route::post('get-upazila-union', [LocationController::class, 'getSelectedUpazilaUnion'])->name('getSelectedUpazilaUnion');
 
 
         Route::group(['prefix' => 'ticket', 'as' => 'ticket.'], function () {

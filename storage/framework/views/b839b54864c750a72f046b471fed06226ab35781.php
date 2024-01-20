@@ -1,4 +1,4 @@
-<?php $__env->startSection('title',trans('Add New Member')); ?>
+<?php $__env->startSection('title',trans('Add Affiliate Member')); ?>
 
 <?php $__env->startPush('style'); ?>
     <link href="<?php echo e(asset('assets/global/css/flatpickr.min.css')); ?>" rel="stylesheet">
@@ -20,7 +20,7 @@
                                     </li>
 
                                     <li class="breadcrumb-item"><a
-                                            href="<?php echo e(route('user.customerList')); ?>"><?php echo app('translator')->get('Member List'); ?></a>
+                                            href="<?php echo e(route('user.affiliateMemberList')); ?>"><?php echo app('translator')->get('Member List'); ?></a>
                                     </li>
 
                                     <li class="breadcrumb-item active"
@@ -48,19 +48,21 @@
                                     <?php echo csrf_field(); ?>
                                     <div class="row g-4">
                                         <div class="input-box col-md-6">
-                                            <label for="sale_center_id"><?php echo app('translator')->get('Sales Center'); ?> </label>
+                                            <label for="sales_center_id"><?php echo app('translator')->get('Sales Center'); ?> </label>
                                             <select class="form-select js-example-basic-single"
-                                                    name="sale_center_id"
-                                                    aria-label="Default select example">
-                                                <option value="" selected disabled><?php echo app('translator')->get('Select Sale Center'); ?></option>
+                                                    name="sales_center_id[]"
+                                                    aria-label="Default select example" multiple>
+                                                <option value="" disabled><?php echo app('translator')->get('Select Sale Center'); ?></option>
                                                 <?php $__currentLoopData = $saleCenters; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $saleCenter): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                    <option
-                                                        value="<?php echo e($saleCenter->id); ?>" <?php echo e(old('sale_center_id') == $saleCenter->id ? 'selected' : ''); ?>> <?php echo app('translator')->get($saleCenter->name); ?></option>
+                                                    <option value="<?php echo e($saleCenter->id); ?>"
+                                                        <?php echo e(in_array($saleCenter->id, old('sales_center_id', @request()->sales_center_id) ?: []) ? 'selected' : ''); ?>>
+                                                        <?php echo app('translator')->get($saleCenter->name); ?>
+                                                    </option>
                                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                             </select>
-                                            <?php if($errors->has('sale_center_id')): ?>
+                                            <?php if($errors->has('sales_center_id')): ?>
                                                 <div
-                                                    class="error text-danger"><?php echo app('translator')->get($errors->first('division_id')); ?></div>
+                                                    class="error text-danger"><?php echo app('translator')->get($errors->first('sales_center_id')); ?></div>
                                             <?php endif; ?>
                                         </div>
 
@@ -162,6 +164,24 @@
                                             <?php endif; ?>
                                         </div>
 
+                                        <div class="input-box col-12">
+                                            <label for="address"><?php echo app('translator')->get('Address'); ?> </label>
+                                            <textarea class="form-control <?php $__errorArgs = ['address'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
+                                                      cols="30" rows="3" placeholder="<?php echo app('translator')->get('Sales Center Address'); ?>"
+                                                      name="address"><?php echo e(old('address')); ?></textarea>
+                                            <?php if($errors->has('address')): ?>
+                                                <div class="error text-danger"><?php echo app('translator')->get($errors->first('address')); ?>
+                                                </div>
+                                            <?php endif; ?>
+                                        </div>
+
                                         <div class="input-box col-md-6">
                                             <label for="member_national_id"><?php echo app('translator')->get('National Id'); ?> <span
                                                     class="text-dark"> <sub>(optional)</sub></span></label>
@@ -186,7 +206,8 @@
                                         </div>
 
                                         <div class="input-box col-md-6">
-                                            <label for="date_of_death"><?php echo app('translator')->get('Date of death'); ?></label>
+                                            <label for="date_of_death"><?php echo app('translator')->get('Date of death'); ?> <span
+                                                    class="text-dark"><sub>(optional)</sub></span></label>
                                             <div class="flatpickr">
                                                 <div class="input-group">
                                                     <input type="date"
@@ -245,11 +266,11 @@ unset($__errorArgs, $__bag); ?>
 
                                         <div class="input-box col-md-6">
                                             <label for="national_id"><?php echo app('translator')->get('Wife Commission'); ?> <span class="text-dark"> (%) </span></label>
-                                            <input type="text" name="member_commission" placeholder=""
-                                                   class="form-control" value="<?php echo e(old('member_commission', 0.5)); ?>"/>
-                                            <?php if($errors->has('member_commission')): ?>
+                                            <input type="text" name="wife_commission" placeholder=""
+                                                   class="form-control" value="<?php echo e(old('wife_commission', 0.5)); ?>"/>
+                                            <?php if($errors->has('wife_commission')): ?>
                                                 <div
-                                                    class="error text-danger"><?php echo app('translator')->get($errors->first('member_commission')); ?></div>
+                                                    class="error text-danger"><?php echo app('translator')->get($errors->first('wife_commission')); ?></div>
                                             <?php endif; ?>
                                         </div>
 
@@ -271,24 +292,6 @@ $message = $__bag->first($__errorArgs[0]); ?>
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>
-                                        </div>
-
-                                        <div class="input-box col-12">
-                                            <label for="address"><?php echo app('translator')->get('Address'); ?> </label>
-                                            <textarea class="form-control <?php $__errorArgs = ['address'];
-$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
-if ($__bag->has($__errorArgs[0])) :
-if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>"
-                                                      cols="30" rows="3" placeholder="<?php echo app('translator')->get('Sales Center Address'); ?>"
-                                                      name="address"><?php echo e(old('address')); ?></textarea>
-                                            <?php if($errors->has('address')): ?>
-                                                <div class="error text-danger"><?php echo app('translator')->get($errors->first('address')); ?>
-                                                </div>
-                                            <?php endif; ?>
                                         </div>
 
                                         <div class="input-box col-12">
@@ -318,6 +321,7 @@ unset($__errorArgs, $__bag); ?>"
             altInput: true,
             dateFormat: "Y-m-d H:i",
         });
+
     </script>
 <?php $__env->stopPush(); ?>
 

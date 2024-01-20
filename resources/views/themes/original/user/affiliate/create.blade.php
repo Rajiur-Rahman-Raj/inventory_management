@@ -1,5 +1,5 @@
 @extends($theme.'layouts.user')
-@section('title',trans('Add New Member'))
+@section('title',trans('Add Affiliate Member'))
 
 @push('style')
     <link href="{{ asset('assets/global/css/flatpickr.min.css') }}" rel="stylesheet">
@@ -21,7 +21,7 @@
                                     </li>
 
                                     <li class="breadcrumb-item"><a
-                                            href="{{ route('user.customerList') }}">@lang('Member List')</a>
+                                            href="{{ route('user.affiliateMemberList') }}">@lang('Member List')</a>
                                     </li>
 
                                     <li class="breadcrumb-item active"
@@ -49,19 +49,21 @@
                                     @csrf
                                     <div class="row g-4">
                                         <div class="input-box col-md-6">
-                                            <label for="sale_center_id">@lang('Sales Center') </label>
+                                            <label for="sales_center_id">@lang('Sales Center') </label>
                                             <select class="form-select js-example-basic-single"
-                                                    name="sale_center_id"
-                                                    aria-label="Default select example">
-                                                <option value="" selected disabled>@lang('Select Sale Center')</option>
+                                                    name="sales_center_id[]"
+                                                    aria-label="Default select example" multiple>
+                                                <option value="" disabled>@lang('Select Sale Center')</option>
                                                 @foreach($saleCenters as $saleCenter)
-                                                    <option
-                                                        value="{{ $saleCenter->id }}" {{ old('sale_center_id') == $saleCenter->id ? 'selected' : ''}}> @lang($saleCenter->name)</option>
+                                                    <option value="{{ $saleCenter->id }}"
+                                                        {{ in_array($saleCenter->id, old('sales_center_id', @request()->sales_center_id) ?: []) ? 'selected' : '' }}>
+                                                        @lang($saleCenter->name)
+                                                    </option>
                                                 @endforeach
                                             </select>
-                                            @if($errors->has('sale_center_id'))
+                                            @if($errors->has('sales_center_id'))
                                                 <div
-                                                    class="error text-danger">@lang($errors->first('division_id'))</div>
+                                                    class="error text-danger">@lang($errors->first('sales_center_id'))</div>
                                             @endif
                                         </div>
 
@@ -163,6 +165,17 @@
                                             @endif
                                         </div>
 
+                                        <div class="input-box col-12">
+                                            <label for="address">@lang('Address') </label>
+                                            <textarea class="form-control @error('address') is-invalid @enderror"
+                                                      cols="30" rows="3" placeholder="@lang('Sales Center Address')"
+                                                      name="address">{{ old('address') }}</textarea>
+                                            @if($errors->has('address'))
+                                                <div class="error text-danger">@lang($errors->first('address'))
+                                                </div>
+                                            @endif
+                                        </div>
+
                                         <div class="input-box col-md-6">
                                             <label for="member_national_id">@lang('National Id') <span
                                                     class="text-dark"> <sub>(optional)</sub></span></label>
@@ -187,7 +200,8 @@
                                         </div>
 
                                         <div class="input-box col-md-6">
-                                            <label for="date_of_death">@lang('Date of death')</label>
+                                            <label for="date_of_death">@lang('Date of death') <span
+                                                    class="text-dark"><sub>(optional)</sub></span></label>
                                             <div class="flatpickr">
                                                 <div class="input-group">
                                                     <input type="date"
@@ -239,11 +253,11 @@
 
                                         <div class="input-box col-md-6">
                                             <label for="national_id">@lang('Wife Commission') <span class="text-dark"> (%) </span></label>
-                                            <input type="text" name="member_commission" placeholder=""
-                                                   class="form-control" value="{{ old('member_commission', 0.5) }}"/>
-                                            @if($errors->has('member_commission'))
+                                            <input type="text" name="wife_commission" placeholder=""
+                                                   class="form-control" value="{{ old('wife_commission', 0.5) }}"/>
+                                            @if($errors->has('wife_commission'))
                                                 <div
-                                                    class="error text-danger">@lang($errors->first('member_commission'))</div>
+                                                    class="error text-danger">@lang($errors->first('wife_commission'))</div>
                                             @endif
                                         </div>
 
@@ -258,17 +272,6 @@
                                             @error('document')
                                             <span class="text-danger">{{trans($message)}}</span>
                                             @enderror
-                                        </div>
-
-                                        <div class="input-box col-12">
-                                            <label for="address">@lang('Address') </label>
-                                            <textarea class="form-control @error('address') is-invalid @enderror"
-                                                      cols="30" rows="3" placeholder="@lang('Sales Center Address')"
-                                                      name="address">{{ old('address') }}</textarea>
-                                            @if($errors->has('address'))
-                                                <div class="error text-danger">@lang($errors->first('address'))
-                                                </div>
-                                            @endif
                                         </div>
 
                                         <div class="input-box col-12">
@@ -298,5 +301,6 @@
             altInput: true,
             dateFormat: "Y-m-d H:i",
         });
+
     </script>
 @endpush

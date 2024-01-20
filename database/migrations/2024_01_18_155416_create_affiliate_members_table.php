@@ -16,7 +16,6 @@ class CreateAffiliateMembersTable extends Migration
         Schema::create('affiliate_members', function (Blueprint $table) {
             $table->id();
             $table->foreignId('company_id')->nullable();
-            $table->foreignId('sales_center_id')->nullable();
             $table->string('member_name');
             $table->string('email')->nullable();
             $table->string('phone')->nullable();
@@ -31,6 +30,9 @@ class CreateAffiliateMembersTable extends Migration
             $table->string('wife_national_id')->nullable();
             $table->string('wife_commission')->nullable();
             $table->string('document')->nullable();
+            $table->text('address')->nullable();
+            $table->integer('created_by')->nullable();
+            $table->integer('updated_by')->nullable();
             $table->text('address')->nullable();
             $table->timestamps();
         });

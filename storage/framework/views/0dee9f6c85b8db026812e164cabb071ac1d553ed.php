@@ -89,77 +89,81 @@
                     <thead>
                     <tr>
                         <th scope="col"><?php echo app('translator')->get('SL'); ?></th>
-                        <th scope="col"><?php echo app('translator')->get('Name'); ?></th>
+                        <th scope="col"><?php echo app('translator')->get('Member'); ?></th>
+                        <th scope="col"><?php echo app('translator')->get('Sales Center'); ?></th>
                         <th scope="col"><?php echo app('translator')->get('Phone'); ?></th>
                         <th scope="col"><?php echo app('translator')->get('Division'); ?></th>
                         <th scope="col"><?php echo app('translator')->get('District'); ?></th>
+                        <th scope="col"><?php echo app('translator')->get('Commission'); ?>(%)</th>
                         <th scope="col"><?php echo app('translator')->get('Join Date'); ?></th>
                         <th scope="col"><?php echo app('translator')->get('Action'); ?></th>
                     </tr>
                     </thead>
                     <tbody>
+                    <?php $__empty_1 = true; $__currentLoopData = $affiliateMembers; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $member): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+                        <tr>
+                            <td data-label="<?php echo app('translator')->get('SL'); ?>"><?php echo e(loopIndex($affiliateMembers) + $key); ?></td>
 
+                            <td data-label="<?php echo app('translator')->get('Member'); ?>">
+                                <?php echo e($member->member_name); ?>
 
+                            </td>
 
+                            <td data-label="<?php echo app('translator')->get('Sales Center'); ?>">
+                                <?php if(count($member->salesCenter) > 0): ?>
+                                    <?php $__currentLoopData = $member->salesCenter; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $salesCenter): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <span class="badge bg-success"><?php echo e($salesCenter->name); ?></span>
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                <?php endif; ?>
+                            </td>
 
+                            <td data-label="<?php echo app('translator')->get('Phone'); ?>">
+                                <?php echo e($member->phone); ?></td>
+                            <td data-label="<?php echo app('translator')->get('Division'); ?>"><?php echo e(optional($member->division)->name); ?></td>
+                            <td data-label="<?php echo app('translator')->get('District'); ?>"><?php echo e(optional($member->district)->name); ?></td>
+                            <td data-label="<?php echo app('translator')->get('Commission'); ?>"><?php echo e($member->member_commission); ?></td>
+                            <td data-label="<?php echo app('translator')->get('Join Date'); ?>"><?php echo e(dateTime($member->created_at)); ?></td>
 
+                            <td data-label="Action">
+                                <div class="sidebar-dropdown-items">
+                                    <button
+                                        type="button"
+                                        class="dropdown-toggle"
+                                        data-bs-toggle="dropdown"
+                                        aria-expanded="false"
+                                    >
+                                        <i class="fal fa-cog"></i>
+                                    </button>
 
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        <li>
+                                            <a href="<?php echo e(route('user.affiliateMemberDetails', $member->id)); ?>"
+                                               class="dropdown-item"> <i class="fal fa-eye"></i> <?php echo app('translator')->get('Details'); ?> </a>
+                                        </li>
 
+                                        <li>
+                                            <a class="dropdown-item btn"
+                                               href="<?php echo e(route('user.affiliateMemberEdit', $member->id)); ?>">
+                                                <i class="fas fa-edit"></i> <?php echo app('translator')->get('Edit'); ?>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item btn deleteMember"
+                                               data-route="<?php echo e(route('user.affiliateMemberDelete', $member->id)); ?>"
+                                               data-property="<?php echo e($member); ?>">
+                                                <i class="fas fa-trash-alt"></i> <?php echo app('translator')->get('Delete'); ?>
+                                            </a>
+                                        </li>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
+                        <tr class="text-center">
+                            <td colspan="100%" class="text-danger text-center"><?php echo e(trans('No Data Found!')); ?></td>
+                        </tr>
+                    <?php endif; ?>
                     </tbody>
                 </table>
             </div>
@@ -168,7 +172,7 @@
 
     <?php $__env->startPush('loadModal'); ?>
         <!-- Modal -->
-        <div class="modal fade" id="deleteCustomerModal" tabindex="-1" aria-labelledby="editModalLabel"
+        <div class="modal fade" id="deleteMemberModal" tabindex="-1" aria-labelledby="editModalLabel"
              aria-hidden="true">
             <div class="modal-dialog modal-dialog-top modal-md">
                 <div class="modal-content">
@@ -179,7 +183,7 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <span class="delete-customer-name"></span>
+                        <span class="delete-member-name"></span>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn-custom btn2 btn-secondary close_invest_modal close__btn"
@@ -211,16 +215,16 @@
                 $('.to_date').removeAttr('disabled');
             });
 
-            $(document).on('click', '.deleteCustomer', function () {
-                var deleteCustomerModal = new bootstrap.Modal(document.getElementById('deleteCustomerModal'))
-                deleteCustomerModal.show();
+            $(document).on('click', '.deleteMember', function () {
+                var deleteMemberModal = new bootstrap.Modal(document.getElementById('deleteMemberModal'))
+                deleteMemberModal.show();
 
                 let dataRoute = $(this).data('route');
                 let dataProperty = $(this).data('property');
 
                 $('.deleteCustomerRoute').attr('action', dataRoute)
 
-                $('.delete-customer-name').text(`Are you sure to delete ${dataProperty.name}?`)
+                $('.delete-member-name').text(`Are you sure to delete ${dataProperty.member_name}?`)
 
             });
         });

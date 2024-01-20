@@ -210,7 +210,7 @@
         </li>
 
         <li>
-            <a class="{{menuActive(['user.affiliateMemberList'])}}" href="{{ route('user.affiliateMemberList') }}"><i class="fal fa-sitemap"></i>@lang('Affiliate')</a>
+            <a class="{{menuActive(['user.affiliateMemberList', 'user.createAffiliateMember', 'user.affiliateMemberEdit'])}}" href="{{ route('user.affiliateMemberList') }}"><i class="fal fa-sitemap"></i>@lang('Affiliate')</a>
         </li>
 
         <li class="d-lg-none">

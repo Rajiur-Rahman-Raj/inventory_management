@@ -26,5 +26,8 @@ class VerifyCsrfToken extends Middleware
         '*withdraw-bank-list',
         '*withdraw-bank-from',
         '*update-cart-items*',
+        '*get-division-district*',
+        '*get-district-upazila*',
+        '*get-upazila-union*',
     ];
 }

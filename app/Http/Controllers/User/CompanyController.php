@@ -9,6 +9,7 @@ use App\Http\Requests\SalesCenterStoreRequest;
 use App\Http\Traits\Notify;
 use App\Http\Traits\RawItemPurchaseTrait;
 use App\Models\AffiliateMember;
+use App\Models\AffiliateMemberSalesCenter;
 use App\Models\Badge;
 use App\Models\CartItems;
 use App\Models\Company;
@@ -2092,7 +2093,10 @@ class CompanyController extends Controller
 
     public function affiliateMemberList()
     {
+        $admin = $this->user;
         $data['allDivisions'] = Division::where('status', 1)->get();
+        $data['affiliateMembers'] = AffiliateMember::with('salesCenter', 'division', 'district', 'upazila', 'union')->where('company_id', $admin->active_company_id)->latest()->paginate(config('basic.paginate'));
+//        dd($data['affiliateMembers']);
         return view($this->theme . 'user.affiliate.index', $data);
     }
 
@@ -2106,16 +2110,16 @@ class CompanyController extends Controller
 
     public function affiliateMemberStore(Request $request)
     {
+
         $admin = $this->user;
-        dd($request->all());
-        
+
         $purifiedData = Purify::clean($request->except('_token', '_method'));
 
         $rules = [
-            'sale_center_id' => 'required|exists:sales_centers,id',
+            'sales_center_id' => 'required|exists:sales_centers,id',
             'member_name' => 'required|string|max:100',
-            'email' => 'nullable|email|unique:customers,email',
-            'phone' => 'required|unique:customers,phone',
+            'email' => 'nullable|email|unique:affiliate_members,email',
+            'phone' => 'required|unique:affiliate_members,phone',
             'division_id' => 'required|exists:divisions,id',
             'district_id' => 'required|exists:districts,id',
             'upazila_id' => 'nullable|exists:upazilas,id',
@@ -2123,14 +2127,15 @@ class CompanyController extends Controller
             'member_national_id' => 'nullable',
             'member_commission' => 'nullable',
             'date_of_death' => 'nullable',
-            'wife_name' => 'nullable',
+            'wife_name' => 'required|string|max:100',
             'wife_national_id' => 'nullable',
+            'wife_commission' => 'nullable',
             'address' => 'required',
-            'document' => 'nullable',
         ];
 
         $messages = [
-            'name.required' => __('Member Name is required'),
+            'sales_center_id.required' => __('Please select sales center'),
+            'member_name.required' => __('Member Name is required'),
             'email.email' => __('Invalid email format'),
             'email.unique' => __('Email is already taken'),
             'phone.required' => __('Phone number is required'),
@@ -2139,8 +2144,99 @@ class CompanyController extends Controller
             'district_id.exists' => __('Invalid district selected'),
             'upazila_id.exists' => __('Invalid upazila selected'),
             'union_id.exists' => __('Invalid union selected'),
+            'wife_name.required' => __('Member wife name is required'),
             'address.required' => __('Address is required'),
         ];
+
+
+        $validate = Validator::make($purifiedData, $rules, $messages);
+
+        if ($validate->fails()) {
+            return back()->withInput()->withErrors($validate);
+        }
+
+
+//        try {
+            DB::beginTransaction();
+            $member = new AffiliateMember();
+            $member->company_id = $admin->active_company_id;
+            $member->member_name = $request->member_name;
+            $member->email = $request->email;
+            $member->phone = $request->phone;
+            $member->division_id = $request->division_id;
+            $member->district_id = $request->district_id;
+            $member->upazila_id = $request->upazila_id;
+            $member->union_id = $request->union_id;
+            $member->member_national_id = $request->member_national_id;
+            $member->member_commission = $request->member_commission;
+            $member->date_of_death = $request->date_of_death;
+            $member->wife_name = $request->wife_name;
+            $member->wife_national_id = $request->wife_national_id;
+            $member->wife_commission = $request->wife_commission;
+            $member->address = $request->address;
+
+            if ($request->hasFile('document')) {
+                $image = $this->fileUpload($request->document, config('location.affiliate.path'), null, null, 'webp', 60, null, null);
+                throw_if(empty($image['path']), 'Document could not be uploaded.');
+            }
+
+            $member->save();
+
+            $member->salesCenter()->sync($request->sales_center_id);
+
+            DB::commit();
+            return back()->with('success', 'Member Updated Successfully');
+   /*     } catch (\Exception $e) {
+            return back()->with('error', 'Something went wrong');
+        }*/
+    }
+
+    public function affiliateMemberEdit($id)
+    {
+        $admin = $this->user;
+        $data['saleCenters'] = SalesCenter::where('company_id', $admin->active_company_id)->where('status', 1)->get();
+        $data['singleAffiliateMember'] = AffiliateMember::with('salesCenter', 'division', 'district', 'upazila', 'union')->where('company_id', $admin->active_company_id)->findOrFail($id);
+        $data['divisions'] = Division::select('id', 'name')->get();
+        return view($this->theme . 'user.affiliate.edit', $data);
+    }
+
+    public function affiliateMemberUpdate(Request $request, $id){
+
+        $admin = $this->user;
+        $purifiedData = Purify::clean($request->except('_token', '_method'));
+
+        $rules = [
+            'sales_center_id' => 'required|exists:sales_centers,id',
+            'member_name' => 'required|string|max:100',
+            'email' => 'nullable|email',
+            'phone' => 'required',
+            'division_id' => 'required|exists:divisions,id',
+            'district_id' => 'required|exists:districts,id',
+            'upazila_id' => 'nullable|exists:upazilas,id',
+            'union_id' => 'nullable|exists:unions,id',
+            'member_national_id' => 'nullable',
+            'member_commission' => 'nullable',
+            'date_of_death' => 'nullable',
+            'wife_name' => 'required|string|max:100',
+            'wife_national_id' => 'nullable',
+            'wife_commission' => 'nullable',
+            'document' => 'nullable',
+            'address' => 'required',
+        ];
+
+        $messages = [
+            'sales_center_id.required' => __('Please select sales center'),
+            'member_name.required' => __('Member Name is required'),
+            'email.email' => __('Invalid email format'),
+            'phone.required' => __('Phone number is required'),
+            'division_id.exists' => __('Invalid division selected'),
+            'district_id.exists' => __('Invalid district selected'),
+            'upazila_id.exists' => __('Invalid upazila selected'),
+            'union_id.exists' => __('Invalid union selected'),
+            'wife_name.required' => __('Member wife name is required'),
+            'address.required' => __('Address is required'),
+        ];
+
 
         $validate = Validator::make($purifiedData, $rules, $messages);
 
@@ -2149,35 +2245,58 @@ class CompanyController extends Controller
         }
 
         try {
-
             DB::beginTransaction();
-
-            $member = new AffiliateMember();
-            $member->name = $request->name;
-            $member->company_id = $admin->active_company_id;
+            $member = AffiliateMember::where('company_id', $admin->active_company_id)->findOrFail($id);
+            $member->member_name = $request->member_name;
             $member->email = $request->email;
             $member->phone = $request->phone;
-            $member->national_id = $request->national_id;
             $member->division_id = $request->division_id;
             $member->district_id = $request->district_id;
             $member->upazila_id = $request->upazila_id;
             $member->union_id = $request->union_id;
+            $member->member_national_id = $request->member_national_id;
+            $member->member_commission = $request->member_commission;
+            $member->date_of_death = $request->date_of_death;
+            $member->wife_name = $request->wife_name;
+            $member->wife_national_id = $request->wife_national_id;
+            $member->wife_commission = $request->wife_commission;
             $member->address = $request->address;
 
-            if ($request->hasFile('image')) {
-                try {
-                    $member->image = $this->uploadImage($request->image, config('location.affiliate.path'), config('location.affiliate.size'));
-                } catch (\Exception $exp) {
-                    return back()->with('error', 'Logo could not be uploaded.');
-                }
+            if ($request->hasFile('document')) {
+                $image = $this->fileUpload($request->document, config('location.affiliate.path'), null, null, 'webp', 60, null, null);
+                throw_if(empty($image['path']), 'Document could not be uploaded.');
             }
 
             $member->save();
+
+            $member->salesCenter()->sync($request->sales_center_id);
+
             DB::commit();
-            return back()->with('success', 'Member Created Successfully');
+            return back()->with('success', 'Member Updated Successfully');
         } catch (\Exception $e) {
+            DB::rollBack();
             return back()->with('error', 'Something went wrong');
         }
+    }
+
+    public function affiliateMemberDetails($id){
+        $admin = $this->user;
+        $data['memberDetails'] = AffiliateMember::with('salesCenter', 'division', 'district', 'upazila', 'union')->where('company_id', $admin->active_company_id)->findOrFail($id);
+
+        return view($this->theme.'user.affiliate.details', $data);
+    }
+
+    public function affiliateMemberDelete(Request $request, $id){
+        $admin = $this->user;
+        $member = AffiliateMember::where('company_id', $admin->active_company_id)->findOrFail($id);
+
+        $affiliateMemberSalesCenter = AffiliateMemberSalesCenter::where('affiliate_member_id', $id)->get();
+        foreach ($affiliateMemberSalesCenter as $salesCenter){
+            $salesCenter->delete();
+        }
+
+        $member->delete();
+        return back()->with('success', 'Affiliate Member Deleted Successfully!');
     }
 
 }

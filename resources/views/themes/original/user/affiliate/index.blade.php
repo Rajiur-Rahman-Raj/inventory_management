@@ -90,77 +90,80 @@
                     <thead>
                     <tr>
                         <th scope="col">@lang('SL')</th>
-                        <th scope="col">@lang('Name')</th>
+                        <th scope="col">@lang('Member')</th>
+                        <th scope="col">@lang('Sales Center')</th>
                         <th scope="col">@lang('Phone')</th>
                         <th scope="col">@lang('Division')</th>
                         <th scope="col">@lang('District')</th>
+                        <th scope="col">@lang('Commission')(%)</th>
                         <th scope="col">@lang('Join Date')</th>
                         <th scope="col">@lang('Action')</th>
                     </tr>
                     </thead>
                     <tbody>
-{{--                    @forelse($affiliateMembers as $key => $member)--}}
-{{--                        <tr>--}}
-{{--                            <td data-label="@lang('SL')">{{loopIndex($affiliateMembers) + $key}}</td>--}}
+                    @forelse($affiliateMembers as $key => $member)
+                        <tr>
+                            <td data-label="@lang('SL')">{{loopIndex($affiliateMembers) + $key}}</td>
 
-{{--                            <td class="company-logo" data-label="@lang('Name')">--}}
-{{--                                <div>--}}
-{{--                                    <a href=""--}}
-{{--                                       target="_blank">{{ $member->name }}</a>--}}
-{{--                                    <br>--}}
-{{--                                    @if($member->email)--}}
-{{--                                        <span class="text-muted font-14">--}}
-{{--                                        <span>{{ $member->email }}</span>--}}
-{{--                                    </span>--}}
-{{--                                    @endif--}}
-{{--                                </div>--}}
-{{--                            </td>--}}
+                            <td data-label="@lang('Member')">
+                                {{ $member->member_name }}
+                            </td>
 
-{{--                            <td data-label="@lang('Phone')">{{ $member->phone }}</td>--}}
-{{--                            <td data-label="@lang('Division')">{{ optional($member->division)->name }}</td>--}}
-{{--                            <td data-label="@lang('District')">{{ optional($member->district)->name }}</td>--}}
-{{--                            <td data-label="@lang('Join Date')">{{ dateTime($member->created_at) }}</td>--}}
+                            <td data-label="@lang('Sales Center')">
+                                @if(count($member->salesCenter) > 0)
+                                    @foreach($member->salesCenter as $salesCenter)
+                                        <span class="badge bg-success">{{ $salesCenter->name }}</span>
+                                    @endforeach
+                                @endif
+                            </td>
 
-{{--                            <td data-label="Action">--}}
-{{--                                <div class="sidebar-dropdown-items">--}}
-{{--                                    <button--}}
-{{--                                        type="button"--}}
-{{--                                        class="dropdown-toggle"--}}
-{{--                                        data-bs-toggle="dropdown"--}}
-{{--                                        aria-expanded="false"--}}
-{{--                                    >--}}
-{{--                                        <i class="fal fa-cog"></i>--}}
-{{--                                    </button>--}}
+                            <td data-label="@lang('Phone')">
+                                {{ $member->phone }}</td>
+                            <td data-label="@lang('Division')">{{ optional($member->division)->name }}</td>
+                            <td data-label="@lang('District')">{{ optional($member->district)->name }}</td>
+                            <td data-label="@lang('Commission')">{{ $member->member_commission }}</td>
+                            <td data-label="@lang('Join Date')">{{ dateTime($member->created_at) }}</td>
 
-{{--                                    <ul class="dropdown-menu dropdown-menu-end">--}}
-{{--                                        <li>--}}
-{{--                                            <a href="{{ route('user.customerDetails', $member->id) }}"--}}
-{{--                                               class="dropdown-item"> <i class="fal fa-eye"></i> @lang('Details') </a>--}}
-{{--                                        </li>--}}
+                            <td data-label="Action">
+                                <div class="sidebar-dropdown-items">
+                                    <button
+                                        type="button"
+                                        class="dropdown-toggle"
+                                        data-bs-toggle="dropdown"
+                                        aria-expanded="false"
+                                    >
+                                        <i class="fal fa-cog"></i>
+                                    </button>
 
-{{--                                        <li>--}}
-{{--                                            <a class="dropdown-item btn" href="{{ route('user.customerEdit', $member->id) }}">--}}
-{{--                                                <i class="fas fa-edit"></i> @lang('Edit')--}}
-{{--                                            </a>--}}
-{{--                                        </li>--}}
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        <li>
+                                            <a href="{{ route('user.affiliateMemberDetails', $member->id) }}"
+                                               class="dropdown-item"> <i class="fal fa-eye"></i> @lang('Details') </a>
+                                        </li>
 
-{{--                                        <li>--}}
-{{--                                            <a class="dropdown-item btn deleteCustomer"--}}
-{{--                                               data-route="{{route('user.deleteCustomer', $member->id)}}"--}}
-{{--                                               data-property="{{ $member }}">--}}
-{{--                                                <i class="fas fa-trash-alt"></i> @lang('Delete')--}}
-{{--                                            </a>--}}
-{{--                                        </li>--}}
+                                        <li>
+                                            <a class="dropdown-item btn"
+                                               href="{{ route('user.affiliateMemberEdit', $member->id) }}">
+                                                <i class="fas fa-edit"></i> @lang('Edit')
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item btn deleteMember"
+                                               data-route="{{route('user.affiliateMemberDelete', $member->id)}}"
+                                               data-property="{{ $member }}">
+                                                <i class="fas fa-trash-alt"></i> @lang('Delete')
+                                            </a>
+                                        </li>
 
-{{--                                    </ul>--}}
-{{--                                </div>--}}
-{{--                            </td>--}}
-{{--                        </tr>--}}
-{{--                    @empty--}}
-{{--                        <tr class="text-center">--}}
-{{--                            <td colspan="100%" class="text-danger text-center">{{trans('No Data Found!')}}</td>--}}
-{{--                        </tr>--}}
-{{--                    @endforelse--}}
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr class="text-center">
+                            <td colspan="100%" class="text-danger text-center">{{trans('No Data Found!')}}</td>
+                        </tr>
+                    @endforelse
                     </tbody>
                 </table>
             </div>
@@ -169,7 +172,7 @@
 
     @push('loadModal')
         <!-- Modal -->
-        <div class="modal fade" id="deleteCustomerModal" tabindex="-1" aria-labelledby="editModalLabel"
+        <div class="modal fade" id="deleteMemberModal" tabindex="-1" aria-labelledby="editModalLabel"
              aria-hidden="true">
             <div class="modal-dialog modal-dialog-top modal-md">
                 <div class="modal-content">
@@ -180,7 +183,7 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <span class="delete-customer-name"></span>
+                        <span class="delete-member-name"></span>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn-custom btn2 btn-secondary close_invest_modal close__btn"
@@ -212,16 +215,16 @@
                 $('.to_date').removeAttr('disabled');
             });
 
-            $(document).on('click', '.deleteCustomer', function () {
-                var deleteCustomerModal = new bootstrap.Modal(document.getElementById('deleteCustomerModal'))
-                deleteCustomerModal.show();
+            $(document).on('click', '.deleteMember', function () {
+                var deleteMemberModal = new bootstrap.Modal(document.getElementById('deleteMemberModal'))
+                deleteMemberModal.show();
 
                 let dataRoute = $(this).data('route');
                 let dataProperty = $(this).data('property');
 
                 $('.deleteCustomerRoute').attr('action', dataRoute)
 
-                $('.delete-customer-name').text(`Are you sure to delete ${dataProperty.name}?`)
+                $('.delete-member-name').text(`Are you sure to delete ${dataProperty.member_name}?`)
 
             });
         });
