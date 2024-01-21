@@ -459,14 +459,12 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
         Route::get('payment-methods/edit/{id}', 'Admin\PaymentMethodController@edit')->name('edit.payment.methods');
         Route::put('payment-methods/update/{id}', 'Admin\PaymentMethodController@update')->name('update.payment.methods');
 
-
         // Manual Methods
         Route::get('payment-methods/manual', 'Admin\ManualGatewayController@index')->name('deposit.manual.index');
         Route::get('payment-methods/manual/new', 'Admin\ManualGatewayController@create')->name('deposit.manual.create');
         Route::post('payment-methods/manual/new', 'Admin\ManualGatewayController@store')->name('deposit.manual.store');
         Route::get('payment-methods/manual/edit/{id}', 'Admin\ManualGatewayController@edit')->name('deposit.manual.edit');
         Route::put('payment-methods/manual/update/{id}', 'Admin\ManualGatewayController@update')->name('deposit.manual.update');
-
 
         Route::get('payment/pending', 'Admin\PaymentLogController@pending')->name('payment.pending');
         Route::put('payment/action/{id}', 'Admin\PaymentLogController@action')->name('payment.action');

@@ -757,9 +757,9 @@ class CompanyController extends Controller
 
     public function stockStore(Request $request)
     {
+        dd($request->all());
+
         $loggedInUser = $this->user;
-
-
         $purifiedData = Purify::clean($request->except('_token', '_method'));
 
         $rules = [
@@ -777,9 +777,7 @@ class CompanyController extends Controller
         }
 
         try {
-
             DB::beginTransaction();
-
             $stockIn = new StockIn();
             $stockIn->company_id = $loggedInUser->active_company_id;
             $stockIn->stock_date = $request->stock_date;

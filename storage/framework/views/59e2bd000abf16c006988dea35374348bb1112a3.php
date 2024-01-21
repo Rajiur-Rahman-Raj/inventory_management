@@ -95,9 +95,9 @@ unset($__errorArgs, $__bag); ?>
                                     </div>
 
                                     <div class="stockItemField">
-                                        <div class="row mt-4">
 
-                                            <div class="input-box col-md-4">
+                                        <div class="row mt-4">
+                                            <div class="input-box col-md-3">
                                                 <label for="item_id"><?php echo app('translator')->get('Select Item'); ?></label>
                                                 <select
                                                     class="form-select js-example-basic-single selectedItem <?php $__errorArgs = ['item_id.0'];
@@ -124,7 +124,7 @@ unset($__errorArgs, $__bag); ?>"
                                                 <?php endif; ?>
                                             </div>
 
-                                            <div class="input-box col-md-4">
+                                            <div class="input-box col-md-3">
                                                 <label for="item_quantity"> <?php echo app('translator')->get('Quantity'); ?></label>
                                                 <div class="input-group">
                                                     <input type="text" name="item_quantity[]"
@@ -156,7 +156,7 @@ unset($__errorArgs, $__bag); ?>
                                                 </div>
                                             </div>
 
-                                            <div class="input-box col-md-4 cost_per_unit_parent">
+                                            <div class="input-box col-md-3 cost_per_unit_parent">
                                                 <label for="cost_per_unit"> <?php echo app('translator')->get('Cost Per Unit'); ?></label>
                                                 <div class="input-group">
                                                     <input type="text" name="cost_per_unit[]"
@@ -190,7 +190,7 @@ unset($__errorArgs, $__bag); ?>
                                                 </div>
                                             </div>
 
-                                            <div class="input-box col-md-4 mt-3">
+                                            <div class="input-box col-md-3">
                                                 <label for="total_unit_cost"> <?php echo app('translator')->get('Total Cost'); ?></label>
                                                 <div class="input-group">
                                                     <input type="text" name="total_unit_cost[]"
@@ -222,9 +222,12 @@ endif;
 unset($__errorArgs, $__bag); ?>
                                                 </div>
                                             </div>
+                                        </div>
 
-                                            <div class="input-box col-md-4 mt-3">
-                                                <label for="item_id"><?php echo app('translator')->get('Select Raw Item'); ?></label>
+
+                                        <div class="row">
+                                            <div class="input-box col-md-6 mt-3">
+                                                <label for="raw_item_id"><?php echo app('translator')->get('Select Raw Item'); ?></label>
                                                 <select
                                                     class="form-select js-example-basic-single selectedRawItem <?php $__errorArgs = ['raw_item_id.0'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
@@ -236,7 +239,8 @@ endif;
 unset($__errorArgs, $__bag); ?>"
                                                     name="raw_item_id[]"
                                                     aria-label="Default select example">
-                                                    <option value="" selected disabled><?php echo app('translator')->get('Select Raw Item'); ?></option>
+                                                    <option value="" selected
+                                                            disabled><?php echo app('translator')->get('Select Raw Item'); ?></option>
                                                     <?php $__currentLoopData = $rawItems; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $rawItem): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                         <option
                                                             value="<?php echo e($rawItem->id); ?>" <?php echo e(old('raw_item_id.0') == $rawItem->id ? 'selected' : ''); ?>><?php echo e($rawItem->name); ?></option>
@@ -249,8 +253,7 @@ unset($__errorArgs, $__bag); ?>"
                                                     </div>
                                                 <?php endif; ?>
                                             </div>
-
-                                            <div class="input-box col-md-4 mt-3">
+                                            <div class="input-box col-md-5 mt-3">
                                                 <label for="raw_item_quantity"> <?php echo app('translator')->get('Expense Quantity'); ?></label>
                                                 <div class="input-group">
                                                     <input type="text" name="raw_item_quantity[]"
@@ -265,7 +268,8 @@ unset($__errorArgs, $__bag); ?> totalRawItemQuantity"
                                                            onkeyup="this.value = this.value.replace (/^\.|[^\d\.]/g, '')"
                                                            value="<?php echo e(old('raw_item_quantity.0')); ?>">
                                                     <div class="input-group-append" readonly="">
-                                                        <div class="form-control currency_symbol append_group raw_item_unit"></div>
+                                                        <div
+                                                            class="form-control currency_symbol append_group raw_item_unit"></div>
                                                     </div>
                                                 </div>
 
@@ -280,9 +284,107 @@ endif;
 unset($__errorArgs, $__bag); ?>
                                                 </div>
                                             </div>
+                                            <div class="input-box col-md-1 mt-5">
+                                                <span class="input-group-btn">
+                                                    <button class="btn btn-outline-success mt-2 rawItemFieldGenerate"
+                                                            type="button"
+                                                            id="rawItemFieldGenerate">
+                                                        <i class="fa fa-plus"></i>
+                                                    </button>
+                                                </span>
+                                            </div>
+                                        </div>
 
+                                        <div class="addRawItemField">
+                                            <?php
+                                                $oldRawItemCounts = old('raw_item_id') ? count(old('raw_item_id')) : 0;
+                                            ?>
+
+                                            <?php if($oldRawItemCounts > 1): ?>
+                                                <?php for($i = 1; $i < $oldRawItemCounts; $i++): ?>
+                                                    <div class="row">
+                                                        <div class="input-box col-md-6 mt-3">
+                                                            <label for="raw_item_id"><?php echo app('translator')->get('Select Raw Item'); ?></label>
+                                                            <select
+                                                                class="form-select js-example-basic-single<?php echo e($i); ?> selectedRawItem_<?php echo e($i); ?> <?php $__errorArgs = ["raw_item_id.$i"];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
+                                                                name="raw_item_id[]"
+                                                                onchange="selectedRawItemHandel(<?php echo e($i); ?>)"
+                                                                aria-label="Default select example">
+                                                                <option value="" selected
+                                                                        disabled><?php echo app('translator')->get('Select Raw Item'); ?></option>
+                                                                <?php $__currentLoopData = $rawItems; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $rawItem): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                                    <option
+                                                                        value="<?php echo e($rawItem->id); ?>" <?php echo e(old("raw_item_id.$i") == $rawItem->id ? 'selected' : ''); ?>><?php echo e($rawItem->name); ?></option>
+                                                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                            </select>
+                                                            <?php if($errors->has("raw_item_id.$i")): ?>
+                                                                <div
+                                                                    class="error text-danger"><?php echo app('translator')->get($errors->first("raw_item_id.$i")); ?></div>
+                                                            <?php endif; ?>
+                                                        </div>
+                                                        <div class="input-box col-md-5 mt-3">
+                                                            <label
+                                                                for="raw_item_quantity"> <?php echo app('translator')->get('Expense Quantity'); ?></label>
+                                                            <div class="input-group">
+                                                                <input type="text" name="raw_item_quantity[]"
+                                                                       value="<?php echo e(old("raw_item_quantity.$i")); ?>"
+                                                                       class="form-control <?php $__errorArgs = ["item_quantity.$i"];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?> totalRawItemQuantity">
+                                                                <div class="input-group-append" readonly="">
+                                                                    <div
+                                                                        class="form-control currency_symbol append_group raw_item_unit_<?php echo e($i); ?>"></div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="invalid-feedback">
+                                                                <?php $__errorArgs = ["raw_item_quantity.$i"];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> <?php echo app('translator')->get($message); ?> <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                                                            </div>
+                                                        </div>
+                                                        <div class="input-box col-md-1 mt-5">
+                                                            <span class="input-group-btn">
+                                                                <button
+                                                                    class="btn btn-outline-danger delete_raw_item_field mt-2"
+                                                                    type="button">
+                                                                    <i class="fa fa-minus"></i>
+                                                                </button>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                    <?php $__env->startPush('script'); ?>
+                                                        <script>
+                                                            const rawItemSelect2Class<?php echo e($i); ?> = `.js-example-basic-single<?php echo e($i); ?>`;
+                                                            $(document).ready(function () {
+                                                                $(rawItemSelect2Class<?php echo e($i); ?>).select2({
+                                                                    width: '100%',
+                                                                });
+                                                            });
+                                                        </script>
+                                                    <?php $__env->stopPush(); ?>
+                                                <?php endfor; ?>
+                                            <?php endif; ?>
                                         </div>
                                     </div>
+
+
 
                                     <div class="addedItemField">
 
@@ -293,7 +395,8 @@ unset($__errorArgs, $__bag); ?>
 
                                         <?php if($oldItemCounts > 1): ?>
                                             <?php for($i = 1; $i < $oldItemCounts; $i++): ?>
-                                                <div class="row mt-4 addMoreItemBox" id="removeItemField<?php echo e($i); ?>">
+                                                <div id=" id=" removeItemField<?php echo e($i); ?>"">
+                                                <div class="row mt-4 addMoreItemBox">
                                                     <div class="col-md-12 d-flex justify-content-end">
                                                         <button
                                                             class="btn btn-danger delete_item_desc custom_delete_desc_padding mt-4"
@@ -302,10 +405,10 @@ unset($__errorArgs, $__bag); ?>
                                                         </button>
                                                     </div>
 
-                                                    <div class="input-box col-md-4">
+                                                    <div class="input-box col-md-3">
                                                         <label for="item_id"><?php echo app('translator')->get('Select Item'); ?> </label>
                                                         <select
-                                                            class="form-select js-example-basic-single<?php echo e($i); ?> selectedItem <?php $__errorArgs = ["item_id.$i"];
+                                                            class="form-select js-example-basic-single<?php echo e($i); ?> selectedItem_<?php echo e($i); ?> <?php $__errorArgs = ["item_id.$i"];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
@@ -330,7 +433,7 @@ unset($__errorArgs, $__bag); ?>"
                                                     </div>
 
 
-                                                    <div class="input-box col-md-4">
+                                                    <div class="input-box col-md-3">
                                                         <label for="item_quantity"> <?php echo app('translator')->get('Quantity'); ?></label>
                                                         <div class="input-group">
                                                             <input type="text" name="item_quantity[]"
@@ -361,7 +464,7 @@ unset($__errorArgs, $__bag); ?>
                                                         </div>
                                                     </div>
 
-                                                    <div class="input-box col-md-4 cost_per_unit_parent">
+                                                    <div class="input-box col-md-3 cost_per_unit_parent">
                                                         <label for="cost_per_unit"> <?php echo app('translator')->get('Cost Per Unit'); ?></label>
                                                         <div class="input-group">
                                                             <input type="text" name="cost_per_unit[]"
@@ -394,7 +497,7 @@ unset($__errorArgs, $__bag); ?>
                                                         </div>
                                                     </div>
 
-                                                    <div class="input-box col-md-4 mt-3">
+                                                    <div class="input-box col-md-3 mt-3">
                                                         <label for="total_unit_cost"> <?php echo app('translator')->get('Total Cost'); ?></label>
                                                         <div class="input-group">
                                                             <input type="text" name="total_unit_cost[]"
@@ -427,10 +530,13 @@ unset($__errorArgs, $__bag); ?>
                                                         </div>
                                                     </div>
 
-                                                    <div class="input-box col-md-4 mt-3">
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="input-box col-md-6 mt-3">
                                                         <label for="raw_item_id"><?php echo app('translator')->get('Select Raw Item'); ?></label>
                                                         <select
-                                                            class="form-select js-example-basic-single<?php echo e($i); ?> <?php $__errorArgs = ["raw_item_id.$i"];
+                                                            class="form-select js-example-basic-single<?php echo e($i); ?> selectedRawItem_<?php echo e($i); ?> <?php $__errorArgs = ["raw_item_id.$i"];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
@@ -442,7 +548,6 @@ unset($__errorArgs, $__bag); ?>"
                                                             aria-label="Default select example">
                                                             <option value="" selected
                                                                     disabled><?php echo app('translator')->get('Select Raw Item'); ?></option>
-
                                                             <?php $__currentLoopData = $rawItems; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $rawItem): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                                 <option
                                                                     value="<?php echo e($rawItem->id); ?>" <?php echo e(old("raw_item_id.$i") == $rawItem->id ? 'selected' : ''); ?>><?php echo e($rawItem->name); ?></option>
@@ -456,7 +561,7 @@ unset($__errorArgs, $__bag); ?>"
                                                         <?php endif; ?>
                                                     </div>
 
-                                                    <div class="input-box col-md-4 mt-3">
+                                                    <div class="input-box col-md-5 mt-3">
                                                         <label for="raw_item_quantity"> <?php echo app('translator')->get('Expense Quantity'); ?></label>
                                                         <div class="input-group">
                                                             <input type="text" name="raw_item_quantity[]"
@@ -471,7 +576,8 @@ unset($__errorArgs, $__bag); ?> totalRawItemQuantity"
                                                                    onkeyup="this.value = this.value.replace (/^\.|[^\d\.]/g, '')"
                                                                    value="<?php echo e(old("raw_item_quantity.$i")); ?>">
                                                             <div class="input-group-append" readonly="">
-                                                                <div class="form-control currency_symbol append_group raw_item_unit"></div>
+                                                                <div
+                                                                    class="form-control currency_symbol append_group raw_item_unit_<?php echo e($i); ?>"></div>
                                                             </div>
                                                         </div>
 
@@ -486,54 +592,69 @@ endif;
 unset($__errorArgs, $__bag); ?>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            <?php endfor; ?>
-                                        <?php endif; ?>
-                                    </div>
-
-                                    <div class="border-line-area mt-5">
-                                        <h6 class="border-line-title"><?php echo app('translator')->get('Summary'); ?></h6>
-                                    </div>
-
-                                    <div class=" d-flex justify-content-end mt-2">
-                                        <div class="col-md-3 d-flex justify-content-end">
-                                            <span class="fw-bold mt-2 me-3"><?php echo app('translator')->get('Subtotal'); ?></span>
-                                            <div class="input-group w-50">
-                                                <input type="number" name="sub_total"
-                                                       value="<?php echo e(old('sub_total') ?? '0'); ?>"
-                                                       class="form-control bg-white text-dark itemSubTotal"
-                                                       data-subtotal="<?php echo e(old('sub_total')); ?>"
-                                                       readonly>
-                                                <div class="input-group-append" readonly="">
-                                                    <div class="form-control">
-                                                        <?php echo e($basic->currency_symbol); ?>
-
+                                                    <div class="input-box col-md-1 mt-5">
+                                                <span class="input-group-btn">
+                                                    <button class="btn btn-outline-success mt-2 rawItemFieldGenerate"
+                                                            type="button"
+                                                            id="rawItemFieldGenerate" onclick="myClickFunction($i)">
+                                                        <i class="fa fa-plus"></i>
+                                                    </button>
+                                                </span>
                                                     </div>
                                                 </div>
+
+                                                <div class="addRawItemField_<?php echo e($i); ?>">
+                                                    
+                                                </div>
+
+                                    </div>
+
+                                <?php endfor; ?>
+                                <?php endif; ?>
+                            </div>
+
+                            <div class="border-line-area mt-5">
+                                <h6 class="border-line-title"><?php echo app('translator')->get('Summary'); ?></h6>
+                            </div>
+
+                            <div class=" d-flex justify-content-end mt-2">
+                                <div class="col-md-3 d-flex justify-content-end">
+                                    <span class="fw-bold mt-2 me-3"><?php echo app('translator')->get('Subtotal'); ?></span>
+                                    <div class="input-group w-50">
+                                        <input type="number" name="sub_total"
+                                               value="<?php echo e(old('sub_total') ?? '0'); ?>"
+                                               class="form-control bg-white text-dark itemSubTotal"
+                                               data-subtotal="<?php echo e(old('sub_total')); ?>"
+                                               readonly>
+                                        <div class="input-group-append" readonly="">
+                                            <div class="form-control">
+                                                <?php echo e($basic->currency_symbol); ?>
+
                                             </div>
                                         </div>
                                     </div>
-
-                                    <div class="row g-4 mt-4">
-                                        <div class="input-box col-12">
-                                            <button class="btn-custom w-100"
-                                                    type="submit"><?php echo app('translator')->get('Add Stock'); ?></button>
-                                        </div>
-                                    </div>
-                                </form>
+                                </div>
                             </div>
+
+                            <div class="row g-4 mt-4">
+                                <div class="input-box col-12">
+                                    <button class="btn-custom w-100"
+                                            type="submit"><?php echo app('translator')->get('Add Stock'); ?></button>
+                                </div>
+                            </div>
+                            </form>
                         </div>
                     </div>
-                </section>
             </div>
+            </section>
         </div>
+    </div>
     </div>
     <input type="hidden" name="update_sub_total" class="updateSubTotal" value="<?php echo e(old('update_sub_total') ?? '0'); ?>">
 <?php $__env->stopSection(); ?>
 
 <?php $__env->startPush('script'); ?>
     <?php echo $__env->make($theme.'user.partials.getItemUnit', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
-
     <script src="<?php echo e(asset('assets/global/js/flatpickr.js')); ?>"></script>
     <script>
         'use strict'
@@ -548,7 +669,9 @@ unset($__errorArgs, $__bag); ?>
 
         $("#stockItemGenerate").on('click', function () {
             const id = Date.now();
-            var form = `<div class="row addMoreItemBox" id="removeItemField${id}">
+            var form = `
+            <div id="removeItemField${id}">
+                <div class="row addMoreItemBox">
                                 <div class="col-md-12 d-flex justify-content-end">
                                     <button
                                         class="btn btn-danger delete_item_desc custom_delete_desc_padding mt-4"
@@ -557,7 +680,7 @@ unset($__errorArgs, $__bag); ?>
                                     </button>
                                 </div>
 
-                                <div class="input-box col-md-4">
+                                <div class="input-box col-md-3">
                                     <label for="item_id"><?php echo app('translator')->get('Select Item'); ?></label>
                                     <select
                                         class="form-select js-example-basic-single${id} selectedItem_${id}" onchange="selectedItemHandel(${id})"
@@ -570,7 +693,7 @@ unset($__errorArgs, $__bag); ?>
             </select>
         </div>
 
-        <div class="input-box col-md-4">
+        <div class="input-box col-md-3">
             <label for="item_quantity"> <?php echo app('translator')->get('Quantity'); ?></label>
                                     <div class="input-group">
                                         <input type="text" name="item_quantity[]"
@@ -581,7 +704,7 @@ unset($__errorArgs, $__bag); ?>
                                     </div>
                                 </div>
 
-                                <div class="input-box col-md-4 cost_per_unit_parent">
+                                <div class="input-box col-md-3 cost_per_unit_parent">
                                     <label for="cost_per_unit"> <?php echo app('translator')->get('Cost Per Unit'); ?></label>
                                     <div class="input-group">
                                         <input type="text" name="cost_per_unit[]"
@@ -595,7 +718,7 @@ unset($__errorArgs, $__bag); ?>
     </div>
 </div>
 
-<div class="input-box col-md-4 mt-3">
+<div class="input-box col-md-3">
     <label for="total_unit_cost"> <?php echo app('translator')->get('Total Cost'); ?></label>
                                      <div class="input-group">
                                          <input type="text" name="total_unit_cost[]" class="form-control totalItemCost">
@@ -607,31 +730,51 @@ unset($__errorArgs, $__bag); ?>
         </div>
     </div>
 </div>
+</div>
 
 
-<div class="input-box col-md-4 mt-3">
-    <label for="item_id"> <?php echo app('translator')->get('Select Raw Item'); ?><span class="text-danger">*</span></label>
-                                    <select class="form-select js-example-basic-single${id} selectedRawItem_${id}" onchange="selectedRawItemHandel(${id})"
-                                        name="raw_item_id[]"
-                                        aria-label="Default select example">
-                                        <option value="" selected disabled><?php echo app('translator')->get('Select Raw Item'); ?></option>
-                                           <?php $__currentLoopData = $rawItems; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $rawItem): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-            <option value="<?php echo e($rawItem->id); ?>"><?php echo e($rawItem->name); ?></option>
-                                           <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+
+<div class="row">
+											<div class="input-box col-md-6 mt-3">
+												<label for="raw_item_id"><?php echo app('translator')->get('Select Raw Item'); ?></label>
+												<select
+													class="form-select js-example-basic-single${id} selectedRawItem_${id}"
+													onchange="selectedRawItemHandel(${id})"
+													name="raw_item_id[]"
+													aria-label="Default select example">
+													<option value="" selected
+															disabled><?php echo app('translator')->get('Select Raw Item'); ?></option>
+													<?php $__currentLoopData = $rawItems; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $rawItem): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+            <option
+                value="<?php echo e($rawItem->id); ?>"><?php echo e($rawItem->name); ?></option>
+													<?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </select>
-        </div>
+            </div>
 
-        <div class="input-box col-md-4 mt-3">
-            <label for="raw_item_quantity"> <?php echo app('translator')->get('Expense Quantity'); ?></label>
-                                    <div class="input-group">
-                                        <input type="text" name="raw_item_quantity[]"
-                                               class="form-control totalRawItemQuantity">
-                                        <div class="input-group-append" readonly="">
-                                            <div class="form-control currency_symbol append_group raw_item_unit"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>`;
+            <div class="input-box col-md-5 mt-3">
+                <label for="raw_item_quantity"> <?php echo app('translator')->get('Expense Quantity'); ?></label>
+												<div class="input-group">
+													<input type="text" name="raw_item_quantity[]"
+														   class="form-control totalRawItemQuantity">
+													<div class="input-group-append" readonly="">
+														<div
+															class="form-control currency_symbol append_group raw_item_unit_${id}"></div>
+													</div>
+												</div>
+        </div>
+        <div class="input-box col-md-1 mt-5">
+            <span class="input-group-btn">
+                <button class="btn btn-outline-success mt-2" type="button"
+                         onclick="myClickFunction(${id})">
+                    <i class="fa fa-plus"></i>
+                </button>
+            </span>
+        </div>
+    </div>
+    <div class="addRawItemField_${id}">
+
+    </div>
+            </div>`;
 
             $('.addedItemField').append(form)
 
@@ -647,6 +790,110 @@ unset($__errorArgs, $__bag); ?>
             $(`#removeItemField${id}`).remove();
             calculateItemTotalPrice();
         }
+
+
+        function myClickFunction($id) {
+            let id = $id;
+            var form = `<div class="row">
+                                                <div class="input-box col-md-6 mt-3">
+                                                    <label for="item_id"><?php echo app('translator')->get('Select Raw Item'); ?></label>
+                                                    <select
+                                                        class="form-select js-example-basic-single${id} selectedRawItem_${id}"
+                                                        name="raw_item_id[]"
+                                                        onchange="selectedRawItemHandel(${id})"
+                                                        aria-label="Default select example">
+                                                        <option value="" selected
+                                                                disabled><?php echo app('translator')->get('Select Raw Item'); ?></option>
+                                                        <?php $__currentLoopData = $rawItems; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $rawItem): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+            <option
+                value="<?php echo e($rawItem->id); ?>"><?php echo e($rawItem->name); ?></option>
+                                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+            </select>
+            </div>
+            <div class="input-box col-md-5 mt-3">
+                <label for="raw_item_quantity"> <?php echo app('translator')->get('Expense Quantity'); ?></label>
+                                                    <div class="input-group">
+                                                        <input type="text" name="raw_item_quantity[]"
+                                                               class="form-control totalRawItemQuantity">
+                                                        <div class="input-group-append" readonly="">
+                                                            <div
+                                                                class="form-control currency_symbol append_group raw_item_unit_${id}"></div>
+                                                        </div>
+                                                    </div>
+        </div>
+        <div class="input-box col-md-1 mt-5">
+        <span class="input-group-btn">
+            <button class="btn btn-outline-danger delete_raw_item_field mt-2" type="button">
+                <i class="fa fa-minus"></i>
+            </button>
+        </span>
+        </div>
+    </div>`;
+
+            $(`.addRawItemField_${id}`).append(form)
+
+            const rawItemSelect2Class = `.js-example-basic-single${id}`;
+            $(`.addRawItemField_${id}`).find(rawItemSelect2Class).each(function () {
+                $(this).select2({
+                    width: '100%',
+                });
+            });
+        }
+
+
+        $("#rawItemFieldGenerate").on('click', function () {
+            const id = Date.now();
+            var form = `<div class="row">
+                                                <div class="input-box col-md-6 mt-3">
+                                                    <label for="item_id"><?php echo app('translator')->get('Select Raw Item'); ?></label>
+                                                    <select
+                                                        class="form-select js-example-basic-single${id} selectedRawItem_${id}"
+                                                        name="raw_item_id[]"
+                                                        onchange="selectedRawItemHandel(${id})"
+                                                        aria-label="Default select example">
+                                                        <option value="" selected
+                                                                disabled><?php echo app('translator')->get('Select Raw Item'); ?></option>
+                                                        <?php $__currentLoopData = $rawItems; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $rawItem): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+            <option
+                value="<?php echo e($rawItem->id); ?>"><?php echo e($rawItem->name); ?></option>
+                                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+            </select>
+            </div>
+            <div class="input-box col-md-5 mt-3">
+                <label for="raw_item_quantity"> <?php echo app('translator')->get('Expense Quantity'); ?></label>
+                                                    <div class="input-group">
+                                                        <input type="text" name="raw_item_quantity[]"
+                                                               class="form-control totalRawItemQuantity">
+                                                        <div class="input-group-append" readonly="">
+                                                            <div
+                                                                class="form-control currency_symbol append_group raw_item_unit_${id}"></div>
+                                                        </div>
+                                                    </div>
+        </div>
+        <div class="input-box col-md-1 mt-5">
+        <span class="input-group-btn">
+            <button class="btn btn-outline-danger delete_raw_item_field mt-2" type="button">
+                <i class="fa fa-minus"></i>
+            </button>
+        </span>
+        </div>
+    </div>`;
+
+            $('.addRawItemField').append(form)
+
+            const rawItemSelect2Class = `.js-example-basic-single${id}`;
+            $(".addRawItemField").find(rawItemSelect2Class).each(function () {
+                $(this).select2({
+                    width: '100%',
+                });
+            });
+        });
+
+
+        $(document).on('click', '.delete_raw_item_field', function () {
+            $(this).closest('.input-box').parent().remove();
+        });
+
 
         $(document).on('input', '.costPerUnit', function () {
             calculateItemTotalPrice();

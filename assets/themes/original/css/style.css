@@ -20,6 +20,62 @@
     --gradient: linear-gradient(to right, #cc54f4 0%, #488ff9 100%);
     --bgLightGradient: linear-gradient(to right, #fcf6fe 0%, #f2f5fa 100%);
 }
+/* multiple select 2 css start */
+.select2-container--default .select2-selection--multiple {
+    background-color: var(--bgLight);
+    border: none;
+    border-radius: 4px;
+    cursor: text;
+    padding-bottom: 5px;
+    padding-right: 5px;
+    padding-left: 16px;
+    position: relative;
+    height: 50px !important;
+    padding-top: 7px
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice {
+    background-color: var(--primary) !important;
+    border: 1px solid #aaa;
+    color: #ffffff !important;
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+    border-right: 1px solid #FFFFFF;
+    color: #FFFFFF;
+}
+
+.select2-container--default.select2-container--focus .select2-selection--multiple {
+    border: none !important;
+}
+
+.select2-container--default .select2-selection--multiple, .select2-container--default.select2-container--focus .select2-selection--multiple {
+    outline: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+/* multiple select 2 css end */
+
+/*tags input css start*/
+.bootstrap-tagsinput {
+    background-color: var(--bgLight) !important;
+    padding: 13px 6px !important;
+}
+
+.bootstrap-tagsinput .badge {
+    background: var(--primary) !important;
+    color:white;
+}
+
+.bootstrap-tagsinput .badge::before {
+     background: none;
+}
+.bootstrap-tagsinput .badge [data-role="remove"] {
+    color:white;
+}
+/*tags input css end */
+
 
 .bgPrimary {
     background: var(--primary);
