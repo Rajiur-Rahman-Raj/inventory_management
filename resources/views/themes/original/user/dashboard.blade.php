@@ -31,7 +31,7 @@
                                     </h5>
                                     <h3><span class="text-white otal_available__balance"><small><sup>{{trans(config('basic.currency_symbol'))}}</sup></small>{{getAmount($interestBalance, config('basic.fraction_number'))}}</span></h3>
                                 </div>
-                                <a href="{{ route('user.addFund') }}" class="cash-in"><i class="fal fa-plus me-1"></i> @lang('Cash In')</a>
+                                <a href="#" class="cash-in"><i class="fal fa-plus me-1"></i> @lang('Cash In')</a>
                             </div>
                         </div>
                     </div>
@@ -69,80 +69,6 @@
                                     <h3 class="text-white"><small><sup>{{trans(config('basic.currency_symbol'))}}</sup></small><span> {{getAmount($investment['runningInvestAmount'])}}</span></h3>
                                     <i class="far fa-funnel-dollar text-white"></i>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-12 d-lg-none">
-                        <div class="quick-links">
-                            <div class="row g-2 g-lg-4">
-                                <div class="col-md-3 col-4 col-sm-3">
-                                    <div class="link-item">
-                                        <a href="{{ route('user.propertyMarket', 'investment-properties') }}">
-                                            <i class="fal fa-project-diagram"></i>
-                                            <span>@lang('Invest')</span>
-                                        </a>
-                                    </div>
-                                </div>
-                                <div class="col-md-3 col-4 col-sm-3">
-                                    <div class="link-item">
-                                        <a href="{{ route('user.addFund') }}">
-                                            <i class="fal fa-funnel-dollar" aria-hidden="true"></i>
-                                            <span>@lang('Deposit')</span>
-                                        </a>
-                                    </div>
-                                </div>
-                                <div class="col-md-3 col-4 col-sm-3">
-                                    <div class="link-item">
-                                        <a href="{{ route('user.payout.money') }}">
-                                            <i class="fal fa-hand-holding-usd" aria-hidden="true"></i>
-                                            <span>@lang('Withdraw')</span>
-                                        </a>
-                                    </div>
-                                </div>
-                                <div class="col-md-3 col-4 col-sm-3">
-                                    <div class="link-item">
-                                        <a href="{{ route('user.money-transfer') }}">
-                                            <i class="fal fa-exchange-alt"></i>
-                                            <span>@lang('Transfer')</span>
-                                        </a>
-                                    </div>
-                                </div>
-                                <div class="col-md-3 col-4 col-sm-3">
-                                    <div class="link-item">
-                                        <a href="{{ route('user.transaction') }}">
-                                            <i class="fal fa-sack-dollar" aria-hidden="true"></i>
-                                            <span>@lang('Transaction')</span>
-                                        </a>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-3 col-4 col-sm-3">
-                                    <div class="link-item">
-                                        <a href="{{ route('user.ticket.list') }}">
-                                            <i class="fal fa-user-headset"></i>
-                                            <span>@lang('Support')</span>
-                                        </a>
-                                    </div>
-                                </div>
-                                <div class="col-md-3 col-4 col-sm-3">
-                                    <div class="link-item">
-                                        <a href="{{ route('user.twostep.security') }}">
-                                            <i class="fal fa-badge-check"></i>
-                                            <span>@lang('2fa')</span>
-                                        </a>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-3 col-4 col-sm-3">
-                                    <div class="link-item">
-                                        <a href="{{ route('user.profile') }}">
-                                            <i class="fal fa-user-cog"></i>
-                                            <span>@lang('Settings')</span>
-                                        </a>
-                                    </div>
-                                </div>
-
                             </div>
                         </div>
                     </div>

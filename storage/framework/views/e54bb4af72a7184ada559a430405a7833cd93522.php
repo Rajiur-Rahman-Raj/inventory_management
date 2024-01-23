@@ -73,8 +73,10 @@
             </div>
 
             <div class="d-flex justify-content-end mb-4">
+                <?php if(userType() == 1): ?>
                 <a href="<?php echo e(route('user.addStock')); ?>" class="btn btn-custom text-white "> <i
                         class="fa fa-plus-circle"></i> <?php echo app('translator')->get('Add Stock'); ?></a>
+                <?php endif; ?>
             </div>
 
             <div class="table-parent table-responsive me-2 ms-2 mt-4">

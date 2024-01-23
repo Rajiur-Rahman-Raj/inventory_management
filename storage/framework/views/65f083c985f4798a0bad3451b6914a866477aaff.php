@@ -62,6 +62,24 @@
                                             <?php endif; ?>
                                         </div>
 
+                                        <div class="input-box col-12">
+                                            <label for="center_address"><?php echo app('translator')->get('Center Location'); ?> </label>
+                                            <textarea class="form-control <?php $__errorArgs = ['center_address'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
+                                                      cols="30" rows="3" placeholder="<?php echo app('translator')->get('Sales Center Address'); ?>"
+                                                      name="center_address" value="<?php echo e(old('center_address')); ?>"><?php echo e(old('center_address')); ?></textarea>
+                                            <?php if($errors->has('center_address')): ?>
+                                                <div class="error text-danger"><?php echo app('translator')->get($errors->first('center_address')); ?>
+                                                </div>
+                                            <?php endif; ?>
+                                        </div>
+
                                         <div class="input-box col-md-6">
                                             <label for="owner_name"><?php echo app('translator')->get('Owner Name'); ?></label>
                                             <input type="text"
@@ -86,7 +104,7 @@
                                             <?php endif; ?>
                                         </div>
 
-                                        <div class="input-box col-md-6">
+                                        <div class="input-box col-md-4">
                                             <label for="email"><?php echo app('translator')->get('Email'); ?></label>
                                             <input type="email"
                                                    name="email"
@@ -100,7 +118,19 @@
                                             <?php endif; ?>
                                         </div>
 
-                                        <div class="input-box col-md-6">
+                                        <div class="input-box col-md-4">
+                                            <label for="username"><?php echo app('translator')->get('Username'); ?> </label>
+                                            <input type="test"
+                                                   name="username"
+                                                   placeholder="<?php echo app('translator')->get('username'); ?>"
+                                                   value="<?php echo e(old('username')); ?>"
+                                                   class="form-control"/>
+                                            <?php if($errors->has('username')): ?>
+                                                <div class="error text-danger"><?php echo app('translator')->get($errors->first('username')); ?></div>
+                                            <?php endif; ?>
+                                        </div>
+
+                                        <div class="input-box col-md-4">
                                             <label for="password"><?php echo app('translator')->get('Password'); ?> </label>
                                             <input type="password"
                                                    name="password"
@@ -197,8 +227,8 @@
                                         </div>
 
                                         <div class="input-box col-12">
-                                            <label for="address"><?php echo app('translator')->get('Sales Center Address'); ?> </label>
-                                            <textarea class="form-control <?php $__errorArgs = ['address'];
+                                            <label for="owner_address"><?php echo app('translator')->get('Owner Address'); ?> </label>
+                                            <textarea class="form-control <?php $__errorArgs = ['owner_address'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
@@ -206,10 +236,10 @@ $message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>"
-                                                      cols="30" rows="3" placeholder="<?php echo app('translator')->get('Sales Center Address'); ?>"
-                                                      name="address"></textarea>
-                                            <?php if($errors->has('address')): ?>
-                                                <div class="error text-danger"><?php echo app('translator')->get($errors->first('address')); ?>
+                                                      cols="30" rows="3" placeholder="<?php echo app('translator')->get('Owner Address'); ?>"
+                                                      name="owner_address" value="<?php echo e(old('owner_address')); ?>"><?php echo e(old('owner_address')); ?></textarea>
+                                            <?php if($errors->has('owner_address')): ?>
+                                                <div class="error text-danger"><?php echo app('translator')->get($errors->first('owner_address')); ?>
                                                 </div>
                                             <?php endif; ?>
                                         </div>

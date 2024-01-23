@@ -12,15 +12,10 @@
             </li>
             <li>
                 <a href="{{ route('user.profile') }}">
-                    <i class="fal fa-user"></i> @lang('My Profile')
+                    <i class="fal fa-user"></i> @lang('Profile')
                 </a>
             </li>
 
-            <li>
-                <a href="{{route('user.twostep.security')}}">
-                    <i class="fal fa-lock"></i> @lang('2FA Security')
-                </a>
-            </li>
 
             <li>
                 <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">

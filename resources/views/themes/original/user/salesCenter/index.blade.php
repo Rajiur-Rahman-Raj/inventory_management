@@ -26,54 +26,33 @@
             <div class="search-bar mt-3 me-2 ms-2 p-0">
                 <form action="" method="get" enctype="multipart/form-data">
                     <div class="row g-3 align-items-end">
-                        <div class="input-box col-lg-2">
-                            <label for="">@lang('Name')</label>
-                            <input
-                                type="text"
-                                name="name"
-                                value="{{ old('name', @request()->name) }}"
-                                class="form-control"
-                                placeholder="@lang('Center Name')"
-                            />
-                        </div>
 
-                        <div class="input-box col-lg-2">
-                            <label for="">@lang('Code')</label>
-                            <input
-                                type="text"
-                                name="code"
-                                value="{{ old('name', @request()->code) }}"
-                                class="form-control"
-                                placeholder="@lang('Center Code')"
-                            />
-                        </div>
-
-                        <div class="input-box col-lg-2">
-                            <label for="">@lang('Owner')</label>
-                            <select class="form-control js-example-basic-single" name="owner" aria-label="Default select example">
+                        <div class="input-box col-lg-3">
+                            <label for="">@lang('Sales Center')</label>
+                            <select class="form-control js-example-basic-single" name="sales_center_id" aria-label="Default select example">
                                 <option value="">@lang('All')</option>
                                 @foreach($centerLists as $centerList)
                                     <option
-                                        value="{{ $centerList->id }}" {{ old('owner', @request()->owner) == $centerList->id ? 'selected' : '' }}>{{ $centerList->owner_name }}</option>
+                                        value="{{ $centerList->id }}" {{ old('sales_center_id', @request()->sales_center_id) == $centerList->id ? 'selected' : '' }}>{{ $centerList->name }}</option>
                                 @endforeach
                             </select>
                         </div>
 
-                        <div class="input-box col-lg-2">
+                        <div class="input-box col-lg-3">
                             <label for="from_date">@lang('From Date')</label>
                             <input
                                 type="text" class="form-control datepicker from_date" name="from_date"
                                 value="{{ old('from_date',request()->from_date) }}" placeholder="@lang('From date')"
                                 autocomplete="off" readonly/>
                         </div>
-                        <div class="input-box col-lg-2">
+                        <div class="input-box col-lg-3">
                             <label for="to_date">@lang('To Date')</label>
                             <input
                                 type="text" class="form-control datepicker to_date" name="to_date"
                                 value="{{ old('to_date',request()->to_date) }}" placeholder="@lang('To date')"
                                 autocomplete="off" readonly disabled="true"/>
                         </div>
-                        <div class="input-box col-lg-2">
+                        <div class="input-box col-lg-3">
                             <button class="btn-custom w-100" type="submit"><i class="fal fa-search"></i>@lang('Search')
                             </button>
                         </div>
@@ -90,10 +69,9 @@
                 <table class="table table-striped">
                     <thead>
                     <tr>
-                        <th scope="col">@lang('SL')</th>
-                        <th scope="col">@lang('Owner')</th>
                         <th scope="col">@lang('Center Code')</th>
                         <th scope="col">@lang('Center Name')</th>
+                        <th scope="col">@lang('Owner')</th>
                         <th scope="col">@lang('Division')</th>
                         <th scope="col">@lang('District')</th>
                         <th scope="col">@lang('Action')</th>
@@ -102,27 +80,24 @@
                     <tbody>
                     @forelse($centerLists as $key => $centerList)
                         <tr>
-                            <td data-label="@lang('SL')">{{loopIndex($centerLists) + $key}}</td>
-
+                            <td data-label="@lang('Center Code')">{{ $centerList->code }}</td>
+                            <td data-label="@lang('Center Name')">{{ $centerList->name }}</td>
                             <td class="company-logo" data-label="@lang('Owner')">
                                 <div>
                                     <a href="" target="_blank">
                                         <img
-                                            src="{{ getFile(config('location.salesCenter.path').$centerList->image) }}">
+                                            src="{{ getFile(config('location.user.path').optional($centerList->user)->image) }}">
                                     </a>
                                 </div>
                                 <div>
                                     <a href=""
-                                       target="_blank">{{ $centerList->owner_name }}</a>
+                                       target="_blank">{{ $centerList->user->name }}</a>
                                     <br>
                                     <span class="text-muted font-14">
-                                        <span>{{ optional($centerList->user)->email }}</span>
+                                        <span>{{ optional($centerList->user)->phone }}</span>
                                     </span>
                                 </div>
                             </td>
-
-                            <td data-label="@lang('Center Code')">{{ $centerList->code }}</td>
-                            <td data-label="@lang('Center Name')">{{ $centerList->name }}</td>
                             <td data-label="@lang('Division')">{{ optional($centerList->division)->name }}</td>
                             <td data-label="@lang('District')">{{ optional($centerList->district)->name }}</td>
 

@@ -19,13 +19,13 @@ class ActivityByUser
      * @param  \Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)  $next
      * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
      */
-    public function phandle(Request $request, Closure $next)
+    public function handle(Request $request, Closure $next)
     {
-
-        if (Auth::guard('web')->check()) {
+        dd('i am here');
+        if (auth()->check()) {
             $expiresAt = Carbon::now()->addMinute(1); // keep online for 1 min
-            Cache::put('user-is-online-' . Auth::user()->id, true, $expiresAt);
-            User::where('id', Auth::user()->id)->update(['last_seen' => (new \DateTime())->format("Y-m-d H:i:s")]);
+            Cache::put('user-is-online-' . auth()->id, true, $expiresAt);
+            User::where('id', auth()->id)->update(['last_seen' => (new \DateTime())->format("Y-m-d H:i:s")]);
         }
 
         return $next($request);

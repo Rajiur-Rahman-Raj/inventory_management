@@ -1,17 +1,14 @@
 <script>
     'use strict'
 
-    $('.selectedItem').on('change', function (){
-        let selectedItemId = $(this).val();
-        getSelectedItemUnit(selectedItemId);
+    $(document).on('change', '.selectedItem', function (){
+        let _this = $(this);
+        getSelectedItemUnit(_this);
     });
 
-    function selectedItemHandel(id = null){
-        let selectedItemId = $(`.selectedItem_${id}`).val();
-        getSelectedItemUnit(selectedItemId, id);
-    }
 
-    function getSelectedItemUnit(selectedItemId, id = null){
+    function getSelectedItemUnit(_this){
+        let selectedItemId = _this.val();
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -25,11 +22,7 @@
                 itemId: selectedItemId,
             },
             success: function (response) {
-                let itemUnitClass = '.item_unit';
-                if(id != null){
-                    itemUnitClass = `.item_unit_${id}`;
-                }
-                $(itemUnitClass).text(response.unit);
+                _this.parents('.parentItemRow').find('.item_unit').text(response.unit);
             },
             error: function (xhr, status, error) {
                 console.log(error)
@@ -38,17 +31,13 @@
     }
 
 
-    $('.selectedRawItem').on('change', function (){
-        let selectedRawItemId = $(this).val();
-        getSelectedRawItemUnit(selectedRawItemId);
+    $(document).on('change', '.selectedRawItem', function (){
+        let _this = $(this);
+        getSelectedRawItemUnit(_this);
     });
 
-    function selectedRawItemHandel(id = null){
-        let selectedRawItemId = $(`.selectedRawItem_${id}`).val();
-        getSelectedRawItemUnit(selectedRawItemId, id);
-    }
-
-    function getSelectedRawItemUnit(selectedRawItemId, id = null){
+    function getSelectedRawItemUnit(_this){
+        let selectedRawItemId = _this.val();
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -62,11 +51,7 @@
                 itemId: selectedRawItemId,
             },
             success: function (response) {
-                let rawItemUnitClass = '.raw_item_unit';
-                if(id != null){
-                    rawItemUnitClass = `.raw_item_unit_${id}`;
-                }
-                $(rawItemUnitClass).text(response.unit);
+                _this.parents('.parentRawItemRow').find('.raw_item_unit').text(response.unit);
             },
             error: function (xhr, status, error) {
                 console.log(error)

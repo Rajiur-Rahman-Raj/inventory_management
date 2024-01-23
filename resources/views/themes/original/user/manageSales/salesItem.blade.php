@@ -723,6 +723,7 @@
 
         $('.selectSalesCenter').on('change', function () {
             let selectedValue = $(this).val();
+
             getSelectedSalesCenter(selectedValue);
         });
 
@@ -734,10 +735,11 @@
                     id: value,
                 },
                 success: function (response) {
+
                     let salesCenter = response.salesCenter;
-                    $('.owner-name').val(salesCenter.owner_name);
+                    $('.owner-name').val(salesCenter.user.name);
                     $('.owner-phone').val(salesCenter.user.phone);
-                    $('.sales-center-address').val(salesCenter.address);
+                    $('.sales-center-address').val(salesCenter.center_address);
                 },
                 error: function (xhr, status, error) {
                     console.log(error);

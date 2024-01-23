@@ -63,6 +63,17 @@
                                             @endif
                                         </div>
 
+                                        <div class="input-box col-12">
+                                            <label for="center_address">@lang('Center Location') </label>
+                                            <textarea class="form-control @error('center_address') is-invalid @enderror"
+                                                      cols="30" rows="3" placeholder="@lang('Sales Center Address')"
+                                                      name="center_address" value="{{old('center_address')}}">{{ old('center_address') }}</textarea>
+                                            @if($errors->has('center_address'))
+                                                <div class="error text-danger">@lang($errors->first('center_address'))
+                                                </div>
+                                            @endif
+                                        </div>
+
                                         <div class="input-box col-md-6">
                                             <label for="owner_name">@lang('Owner Name')</label>
                                             <input type="text"
@@ -87,7 +98,7 @@
                                             @endif
                                         </div>
 
-                                        <div class="input-box col-md-6">
+                                        <div class="input-box col-md-4">
                                             <label for="email">@lang('Email')</label>
                                             <input type="email"
                                                    name="email"
@@ -101,7 +112,19 @@
                                             @endif
                                         </div>
 
-                                        <div class="input-box col-md-6">
+                                        <div class="input-box col-md-4">
+                                            <label for="username">@lang('Username') </label>
+                                            <input type="test"
+                                                   name="username"
+                                                   placeholder="@lang('username')"
+                                                   value="{{ old('username') }}"
+                                                   class="form-control"/>
+                                            @if($errors->has('username'))
+                                                <div class="error text-danger">@lang($errors->first('username'))</div>
+                                            @endif
+                                        </div>
+
+                                        <div class="input-box col-md-4">
                                             <label for="password">@lang('Password') </label>
                                             <input type="password"
                                                    name="password"
@@ -198,12 +221,12 @@
                                         </div>
 
                                         <div class="input-box col-12">
-                                            <label for="address">@lang('Sales Center Address') </label>
-                                            <textarea class="form-control @error('address') is-invalid @enderror"
-                                                      cols="30" rows="3" placeholder="@lang('Sales Center Address')"
-                                                      name="address"></textarea>
-                                            @if($errors->has('address'))
-                                                <div class="error text-danger">@lang($errors->first('address'))
+                                            <label for="owner_address">@lang('Owner Address') </label>
+                                            <textarea class="form-control @error('owner_address') is-invalid @enderror"
+                                                      cols="30" rows="3" placeholder="@lang('Owner Address')"
+                                                      name="owner_address" value="{{old('owner_address')}}">{{old('owner_address')}}</textarea>
+                                            @if($errors->has('owner_address'))
+                                                <div class="error text-danger">@lang($errors->first('owner_address'))
                                                 </div>
                                             @endif
                                         </div>

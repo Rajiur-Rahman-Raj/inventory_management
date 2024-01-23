@@ -30,7 +30,7 @@
                                     </h5>
                                     <h3><span class="text-white otal_available__balance"><small><sup><?php echo e(trans(config('basic.currency_symbol'))); ?></sup></small><?php echo e(getAmount($interestBalance, config('basic.fraction_number'))); ?></span></h3>
                                 </div>
-                                <a href="<?php echo e(route('user.addFund')); ?>" class="cash-in"><i class="fal fa-plus me-1"></i> <?php echo app('translator')->get('Cash In'); ?></a>
+                                <a href="#" class="cash-in"><i class="fal fa-plus me-1"></i> <?php echo app('translator')->get('Cash In'); ?></a>
                             </div>
                         </div>
                     </div>
@@ -68,80 +68,6 @@
                                     <h3 class="text-white"><small><sup><?php echo e(trans(config('basic.currency_symbol'))); ?></sup></small><span> <?php echo e(getAmount($investment['runningInvestAmount'])); ?></span></h3>
                                     <i class="far fa-funnel-dollar text-white"></i>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-12 d-lg-none">
-                        <div class="quick-links">
-                            <div class="row g-2 g-lg-4">
-                                <div class="col-md-3 col-4 col-sm-3">
-                                    <div class="link-item">
-                                        <a href="<?php echo e(route('user.propertyMarket', 'investment-properties')); ?>">
-                                            <i class="fal fa-project-diagram"></i>
-                                            <span><?php echo app('translator')->get('Invest'); ?></span>
-                                        </a>
-                                    </div>
-                                </div>
-                                <div class="col-md-3 col-4 col-sm-3">
-                                    <div class="link-item">
-                                        <a href="<?php echo e(route('user.addFund')); ?>">
-                                            <i class="fal fa-funnel-dollar" aria-hidden="true"></i>
-                                            <span><?php echo app('translator')->get('Deposit'); ?></span>
-                                        </a>
-                                    </div>
-                                </div>
-                                <div class="col-md-3 col-4 col-sm-3">
-                                    <div class="link-item">
-                                        <a href="<?php echo e(route('user.payout.money')); ?>">
-                                            <i class="fal fa-hand-holding-usd" aria-hidden="true"></i>
-                                            <span><?php echo app('translator')->get('Withdraw'); ?></span>
-                                        </a>
-                                    </div>
-                                </div>
-                                <div class="col-md-3 col-4 col-sm-3">
-                                    <div class="link-item">
-                                        <a href="<?php echo e(route('user.money-transfer')); ?>">
-                                            <i class="fal fa-exchange-alt"></i>
-                                            <span><?php echo app('translator')->get('Transfer'); ?></span>
-                                        </a>
-                                    </div>
-                                </div>
-                                <div class="col-md-3 col-4 col-sm-3">
-                                    <div class="link-item">
-                                        <a href="<?php echo e(route('user.transaction')); ?>">
-                                            <i class="fal fa-sack-dollar" aria-hidden="true"></i>
-                                            <span><?php echo app('translator')->get('Transaction'); ?></span>
-                                        </a>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-3 col-4 col-sm-3">
-                                    <div class="link-item">
-                                        <a href="<?php echo e(route('user.ticket.list')); ?>">
-                                            <i class="fal fa-user-headset"></i>
-                                            <span><?php echo app('translator')->get('Support'); ?></span>
-                                        </a>
-                                    </div>
-                                </div>
-                                <div class="col-md-3 col-4 col-sm-3">
-                                    <div class="link-item">
-                                        <a href="<?php echo e(route('user.twostep.security')); ?>">
-                                            <i class="fal fa-badge-check"></i>
-                                            <span><?php echo app('translator')->get('2fa'); ?></span>
-                                        </a>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-3 col-4 col-sm-3">
-                                    <div class="link-item">
-                                        <a href="<?php echo e(route('user.profile')); ?>">
-                                            <i class="fal fa-user-cog"></i>
-                                            <span><?php echo app('translator')->get('Settings'); ?></span>
-                                        </a>
-                                    </div>
-                                </div>
-
                             </div>
                         </div>
                     </div>

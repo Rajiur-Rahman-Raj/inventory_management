@@ -42,7 +42,7 @@
                                         </button>
                                     </div>
                                     <div class="text">
-                                        <h5 class="name"><?php echo app('translator')->get($user->fullname); ?></h5>
+                                        <h5 class="name"><?php echo app('translator')->get($user->name); ?></h5>
                                         <span><?php echo app('translator')->get($user->email); ?></span>
                                     </div>
                                 </div>
@@ -54,18 +54,6 @@
                                     <button tab-id="tab2" class="tab <?php echo e($errors->has('password') ? 'active' : ''); ?>">
                                         <i class="fal fa-key"></i> <?php echo app('translator')->get('Password setting'); ?>
                                     </button>
-                                    <?php if($basic->identity_verification == 1): ?>
-                                        <button tab-id="tab3" class="tab <?php echo e($errors->has('identity') ? 'active' : ''); ?>">
-                                            <i class="fal fa-id-card"></i> <?php echo app('translator')->get('identity verification'); ?>
-                                        </button>
-                                    <?php endif; ?>
-                                    <?php if($basic->address_verification == 1): ?>
-                                        <button tab-id="tab4"
-                                                class="tab <?php echo e($errors->has('addressVerification') ? 'active' : ''); ?>">
-                                            <i class="fal fa-map-marked-alt"></i>
-                                            <?php echo app('translator')->get('address verification'); ?>
-                                        </button>
-                                    <?php endif; ?>
                                 </div>
                             </div>
                         </div>
@@ -77,40 +65,24 @@
                                     <?php echo csrf_field(); ?>
                                     <div class="row g-4">
                                         <div class="input-box col-md-6">
-                                            <label for="firstname"><?php echo app('translator')->get('First Name'); ?></label>
+                                            <label for="name"><?php echo app('translator')->get('Name'); ?></label>
                                             <input type="text"
                                                    class="form-control"
-                                                   name="firstname"
-                                                   id="firstname"
-                                                   placeholder="<?php echo app('translator')->get('first name'); ?>"
-                                                   value="<?php echo e(old('firstname')?: $user->firstname); ?>"/>
-                                            <?php if($errors->has('firstname')): ?>
-                                                <div
-                                                    class="error text-danger"><?php echo app('translator')->get($errors->first('firstname')); ?>
-                                                </div>
+                                                   name="name"
+                                                   placeholder="<?php echo app('translator')->get('Full Name'); ?>"
+                                                   value="<?php echo e(old('name', $user->name)); ?>"/>
+                                            <?php if($errors->has('name')): ?>
+                                                <div class="error text-danger"><?php echo app('translator')->get($errors->first('name')); ?></div>
                                             <?php endif; ?>
                                         </div>
-                                        <div class="input-box col-md-6">
-                                            <label for="lastname"><?php echo app('translator')->get('Last Name'); ?></label>
-                                            <input type="text"
-                                                   id="lastname"
-                                                   name="lastname"
-                                                   placeholder="<?php echo app('translator')->get('last name'); ?>"
-                                                   class="form-control"
-                                                   value="<?php echo e(old('lastname')?: $user->lastname); ?>"/>
-                                            <?php if($errors->has('lastname')): ?>
-                                                <div
-                                                    class="error text-danger"><?php echo app('translator')->get($errors->first('lastname')); ?>
-                                                </div>
-                                            <?php endif; ?>
-                                        </div>
+
                                         <div class="input-box col-md-6">
                                             <label for="username"><?php echo app('translator')->get('Username'); ?></label>
                                             <input type="text"
                                                    id="username"
                                                    name="username"
                                                    placeholder="<?php echo app('translator')->get('username'); ?>"
-                                                   value="<?php echo e(old('username')?: $user->username); ?>"
+                                                   value="<?php echo e(old('username', $user->username)); ?>"
                                                    class="form-control"/>
                                             <?php if($errors->has('username')): ?>
                                                 <div
@@ -119,12 +91,12 @@
                                             <?php endif; ?>
                                         </div>
                                         <div class="input-box col-md-6">
-                                            <label for="email"><?php echo app('translator')->get('Email Address'); ?></label>
+                                            <label for="email"><?php echo app('translator')->get('Email'); ?></label>
                                             <input type="email"
                                                    id="email"
+                                                   name="email"
                                                    placeholder="<?php echo app('translator')->get('email'); ?>"
-                                                   value="<?php echo e($user->email); ?>"
-                                                   readonly
+                                                   value="<?php echo e(old('email', $user->email)); ?>"
                                                    class="form-control"/>
                                             <?php if($errors->has('email')): ?>
                                                 <div
@@ -136,8 +108,8 @@
                                             <label for="phone"><?php echo app('translator')->get('Phone Number'); ?></label>
                                             <input type="text"
                                                    id="phone"
+                                                   name="phone"
                                                    placeholder="<?php echo app('translator')->get('phone'); ?>"
-                                                   readonly
                                                    class="form-control"
                                                    value="<?php echo e(old('phone', $user->phone)); ?>"/>
                                             <?php if($errors->has('phone')): ?>
@@ -146,50 +118,10 @@
                                                 </div>
                                             <?php endif; ?>
                                         </div>
-                                        <div class="input-box col-md-6">
-                                            <label for="language_id"><?php echo app('translator')->get('Preferred language'); ?></label>
-                                            <select class="form-select"
-                                                    name="language_id"
-                                                    id="language_id"
-                                                    aria-label="Default select example">
-                                                <option value="" disabled><?php echo app('translator')->get('Select Language'); ?></option>
-                                                <?php $__currentLoopData = $languages; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $la): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                    <option
-                                                        value="<?php echo e($la->id); ?>" <?php echo e(old('language_id', $user->language_id) == $la->id ? 'selected' : ''); ?>> <?php echo app('translator')->get($la->name); ?></option>
-                                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                            </select>
-                                            <?php if($errors->has('language_id')): ?>
-                                                <div
-                                                    class="error text-danger"><?php echo app('translator')->get($errors->first('language_id')); ?>
-                                                </div>
-                                            <?php endif; ?>
-                                        </div>
 
-                                        <div class="input-box col-md-12">
-                                            <label for=""><?php echo app('translator')->get('Address'); ?></label>
-                                            <input
-                                                class="form-control <?php $__errorArgs = ['address'];
-$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
-if ($__bag->has($__errorArgs[0])) :
-if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>"
-                                                id="address"
-                                                name="address"
-                                                type="text"
-                                                placeholder="<?php echo app('translator')->get('address'); ?>"
-                                                value="<?php echo e(old('address', $user->address)); ?>"/>
-                                            <?php if($errors->has('address')): ?>
-                                                <div
-                                                    class="error text-danger"><?php echo app('translator')->get($errors->first('address')); ?>
-                                                </div>
-                                            <?php endif; ?>
-                                        </div>
 
                                         <div class="input-box col-12">
-                                            <label for=""><?php echo app('translator')->get('Bio'); ?></label>
+                                            <label for=""><?php echo app('translator')->get('Address'); ?></label>
                                             <textarea
                                                 class="form-control <?php $__errorArgs = ['Bio'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
@@ -201,95 +133,13 @@ endif;
 unset($__errorArgs, $__bag); ?>"
                                                 cols="30"
                                                 rows="3"
-                                                placeholder="<?php echo app('translator')->get('bio'); ?>"
-                                                name="bio"><?php echo app('translator')->get($user->bio); ?></textarea>
-                                            <?php if($errors->has('bio')): ?>
+                                                placeholder="<?php echo app('translator')->get('Address'); ?>"
+                                                name="address"><?php echo e(old('address', $user->address)); ?></textarea>
+                                            <?php if($errors->has('address')): ?>
                                                 <div
-                                                    class="error text-danger"><?php echo app('translator')->get($errors->first('bio')); ?>
+                                                    class="error text-danger"><?php echo app('translator')->get($errors->first('address')); ?>
                                                 </div>
                                             <?php endif; ?>
-                                        </div>
-
-                                        <div class="input-box col-12">
-                                            <label for=""><?php echo app('translator')->get('Social Links'); ?></label>
-                                            <div class="form website_social_links">
-                                                <?php
-                                                    $oldSocialCounts = max(old('social_icon', $social_links) ? count(old('social_icon', $social_links)) : 1, 1);
-                                                ?>
-
-                                                <?php if($oldSocialCounts > 0): ?>
-                                                    <?php for($i = 0; $i < $oldSocialCounts; $i++): ?>
-                                                        <div
-                                                            class="d-flex justify-content-between append_new_social_form removeSocialLinksInput">
-                                                            <div class="input-group mt-1">
-                                                                <input type="text" name="social_icon[]" value="<?php echo e(old("social_icon.$i", $social_links[$i]->social_icon ?? '')); ?>" class="form-control demo__icon__picker iconpicker1 <?php $__errorArgs = ["social_icon.$i"];
-$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
-if ($__bag->has($__errorArgs[0])) :
-if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>" placeholder="Pick a icon" aria-label="Pick a icon"
-                                                                       aria-describedby="basic-addon1" readonly>
-
-                                                                <div class="invalid-feedback">
-                                                                    <?php $__errorArgs = ["social_icon.$i"];
-$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
-if ($__bag->has($__errorArgs[0])) :
-if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?> <?php echo app('translator')->get($message); ?> <?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>
-                                                                </div>
-                                                            </div>
-
-                                                            <div class="input-box w-100 my-1 me-1">
-                                                                <input type="url" name="social_url[]"
-                                                                       value="<?php echo e(old("social_url.$i", $social_links[$i]->social_url ?? '')); ?>"
-                                                                       class="form-control <?php $__errorArgs = ["social_url.$i"];
-$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
-if ($__bag->has($__errorArgs[0])) :
-if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>"
-                                                                       placeholder="<?php echo app('translator')->get('URL'); ?>"/>
-                                                                <?php $__errorArgs = ["social_url.$i"];
-$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
-if ($__bag->has($__errorArgs[0])) :
-if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?>
-                                                                <span class="text-danger"><?php echo e($message); ?></span>
-                                                                <?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>
-
-                                                            </div>
-                                                            <div class="my-1 me-1">
-                                                                <?php if($i == 0): ?>
-                                                                    <button class="btn-custom add-new" type="button"
-                                                                            id="add_social_links">
-                                                                        <i class="fal fa-plus"></i>
-                                                                    </button>
-                                                                <?php else: ?>
-                                                                    <button
-                                                                        class="btn-custom add-new btn-custom-danger remove_social_link_input_field"
-                                                                        type="button">
-                                                                        <i class="fa fa-times"></i>
-                                                                    </button>
-                                                                <?php endif; ?>
-                                                            </div>
-                                                        </div>
-                                                    <?php endfor; ?>
-                                                <?php endif; ?>
-
-                                                <div class="new_social_links_form append_new_social_form">
-
-                                                </div>
-                                            </div>
                                         </div>
 
                                         <div class="input-box col-12">
@@ -348,249 +198,6 @@ unset($__errorArgs, $__bag); ?>
                                         </div>
                                     </div>
                                 </form>
-                            </div>
-
-                            <div id="tab3" class="content <?php echo e($errors->has('identity') ? 'active' : ''); ?>">
-                                <?php if(in_array($user->identity_verify,[0,3])  ): ?>
-                                    <?php if($user->identity_verify == 3): ?>
-                                        <div class="alert mb-0">
-                                            <i class="fal fa-times-circle"></i>
-                                            <span><?php echo app('translator')->get('You previous request has been rejected'); ?></span>
-                                        </div>
-                                    <?php endif; ?>
-                                    <form method="post" action="<?php echo e(route('user.verificationSubmit')); ?>"
-                                          enctype="multipart/form-data">
-                                        <?php echo csrf_field(); ?>
-                                        <div class="col-md-12 mb-3">
-                                            <div class="input-box col-md-12">
-                                                <label for="identity_type"><?php echo app('translator')->get('Identity Type'); ?></label>
-                                                <select class="form-select"
-                                                        name="identity_type" id="identity_type"
-                                                        aria-label="Default select example">
-                                                    <option value="" disabled><?php echo app('translator')->get('Select Language'); ?></option>
-                                                    <?php $__currentLoopData = $identityFormList; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $sForm): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                        <option
-                                                            value="<?php echo e($sForm->slug); ?>" <?php echo e(old('identity_type', @$identity_type) == $sForm->slug ? 'selected' : ''); ?>> <?php echo app('translator')->get($sForm->name); ?> </option>
-                                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                                </select>
-                                                <?php $__errorArgs = ['identity_type'];
-$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
-if ($__bag->has($__errorArgs[0])) :
-if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?>
-                                                <div class="error text-danger"><?php echo app('translator')->get($message); ?> </div>
-                                                <?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>
-                                            </div>
-                                        </div>
-
-                                        <?php if(isset($identityForm)): ?>
-                                            <?php $__currentLoopData = $identityForm->services_form; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $k => $v): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                <?php if($v->type == "text"): ?>
-                                                    <div class="input-box col-md-12">
-                                                        <label for="<?php echo e($k); ?>">
-                                                            <?php echo e(trans($v->field_level)); ?>
-
-                                                            <?php if($v->validation == 'required'): ?>
-                                                                <span class="text-danger">*</span>
-                                                            <?php endif; ?>
-                                                        </label>
-                                                        <input type="text" name="<?php echo e($k); ?>"
-                                                               class="form-control "
-                                                               value="<?php echo e(old($k)); ?>" id="<?php echo e($k); ?>"
-                                                               <?php if($v->validation == 'required'): ?> required <?php endif; ?>/>
-                                                        <?php if($errors->has($k)): ?>
-                                                            <div
-                                                                class="error text-danger"><?php echo app('translator')->get($errors->first($k)); ?></div>
-                                                        <?php endif; ?>
-                                                    </div>
-
-                                                <?php elseif($v->type == "textarea"): ?>
-                                                    <div class="input-box col-12 mt-2">
-                                                        <label for="<?php echo e($k); ?>">
-                                                            <?php echo e(trans($v->field_level)); ?>
-
-                                                            <?php if($v->validation == 'required'): ?>
-                                                                <span class="text-danger">*</span>
-                                                            <?php endif; ?>
-                                                        </label>
-                                                        <textarea
-                                                            name="<?php echo e($k); ?>"
-                                                            id="<?php echo e($k); ?>"
-                                                            class="form-control"
-                                                            cols="30"
-                                                            rows="3"
-                                                            placeholder="<?php echo e(trans('Type Here')); ?>"
-                                                            <?php if($v->validation == 'required'): ?><?php endif; ?>><?php echo e(old($k)); ?></textarea>
-                                                        <?php $__errorArgs = [$k];
-$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
-if ($__bag->has($__errorArgs[0])) :
-if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?>
-                                                        <div class="error text-danger">
-                                                            <?php echo e(trans($message)); ?>
-
-                                                        </div>
-                                                        <?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>
-                                                    </div>
-                                                <?php elseif($v->type == "file"): ?>
-                                                    <div class="col-md-12 mb-2">
-                                                        <div class="form-group">
-                                                            <label class="golden-text">
-                                                                <?php echo e(trans($v->field_level)); ?>
-
-                                                                <?php if($v->validation == 'required'): ?>
-                                                                    <span class="text-danger">*</span>
-                                                                <?php endif; ?>
-                                                            </label>
-
-                                                            <br>
-                                                            <div class="fileinput fileinput-new "
-                                                                 data-provides="fileinput">
-                                                                <div class="fileinput-new thumbnail "
-                                                                     data-trigger="fileinput">
-                                                                    <img class="w-150px custom-verification-img"
-                                                                         src="<?php echo e(getFile(config('location.default'))); ?>"
-                                                                         alt="<?php echo app('translator')->get('not found'); ?>">
-                                                                </div>
-                                                                <div
-                                                                    class="fileinput-preview fileinput-exists thumbnail wh-200-150 ">
-                                                                </div>
-
-                                                                <div class="img-input-div">
-                                                                    <span class="btn btn-success btn-file">
-                                                                        <span
-                                                                            class="fileinput-new"> <?php echo app('translator')->get('Select'); ?> <?php echo e($v->field_level); ?></span>
-                                                                        <span
-                                                                            class="fileinput-exists"> <?php echo app('translator')->get('Change'); ?></span>
-                                                                        <input type="file" name="<?php echo e($k); ?>"
-                                                                               value="<?php echo e(old($k)); ?>"
-                                                                               accept="image/*" <?php if($v->validation == "required"): ?><?php endif; ?>>
-                                                                    </span>
-                                                                    <a href="#" class="btn btn-danger fileinput-exists"
-                                                                       data-dismiss="fileinput"> <?php echo app('translator')->get('Remove'); ?></a>
-                                                                </div>
-                                                            </div>
-
-                                                            <?php $__errorArgs = [$k];
-$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
-if ($__bag->has($__errorArgs[0])) :
-if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?>
-                                                            <div class="error text-danger">
-                                                                <?php echo e(trans($message)); ?>
-
-                                                            </div>
-                                                            <?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>
-                                                        </div>
-                                                    </div>
-                                                <?php endif; ?>
-                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-
-                                            <button type="submit" class="gold-btn mt-2 btn-custom">
-                                                <?php echo app('translator')->get('Submit'); ?>
-                                            </button>
-                                        <?php endif; ?>
-                                    </form>
-                                <?php elseif($user->identity_verify == 1): ?>
-                                    <div class="alert mb-0">
-                                        <i class="fal fa-times-circle"></i>
-                                        <span> <?php echo app('translator')->get('Your KYC submission has been pending'); ?></span>
-                                    </div>
-                                <?php elseif($user->identity_verify == 2): ?>
-                                    <div class="alert mb-0">
-                                        <i class="fal fa-check-circle"></i>
-                                        <span> <?php echo app('translator')->get('Your KYC already verified'); ?></span>
-                                    </div>
-                                <?php endif; ?>
-                            </div>
-
-                            <div id="tab4" class="content <?php echo e($errors->has('addressVerification') ? 'active' : ''); ?>">
-                                <?php if(in_array($user->address_verify,[0,3])  ): ?>
-                                    <?php if($user->address_verify == 3): ?>
-                                        <div class="alert mb-0">
-                                            <i class="fal fa-times-circle"></i>
-                                            <span> <?php echo app('translator')->get('You previous request has been rejected'); ?></span>
-                                        </div>
-                                    <?php endif; ?>
-
-
-                                    <form method="post" action="<?php echo e(route('user.addressVerification')); ?>"
-                                          enctype="multipart/form-data">
-                                        <?php echo csrf_field(); ?>
-                                        <div class="col-md-12 mb-2">
-                                            <div class="form-group">
-                                                <label class="form-label golden-text"><?php echo e(trans('Address Proof')); ?> <span
-                                                        class="text-danger">*</span> </label><br>
-
-                                                <div class="fileinput fileinput-new "
-                                                     data-provides="fileinput">
-                                                    <div class="fileinput-new thumbnail "
-                                                         data-trigger="fileinput">
-                                                        <img class="custom-verification-img"
-                                                             src="<?php echo e(getFile(config('location.default'))); ?>"
-                                                             alt="...">
-                                                    </div>
-                                                    <div
-                                                        class="fileinput-preview fileinput-exists thumbnail wh-200-150 "></div>
-
-                                                    <div class="img-input-div">
-                                                        <span class="btn btn-success btn-file">
-                                                            <span
-                                                                class="fileinput-new "> <?php echo app('translator')->get('Select Image'); ?> </span>
-                                                            <span
-                                                                class="fileinput-exists"> <?php echo app('translator')->get('Change'); ?></span>
-                                                            <input type="file" name="addressProof"
-                                                                   value="<?php echo e(old('addressProof')); ?>"
-                                                                   accept="image/*">
-                                                        </span>
-                                                        <a href="#" class="btn btn-danger fileinput-exists"
-                                                           data-dismiss="fileinput"> <?php echo app('translator')->get('Remove'); ?></a>
-                                                    </div>
-
-                                                </div>
-
-                                                <?php $__errorArgs = ['addressProof'];
-$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
-if ($__bag->has($__errorArgs[0])) :
-if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?>
-                                                <div class="error text-danger">
-                                                    <?php echo e(trans($message)); ?>
-
-                                                </div>
-                                                <?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>
-                                            </div>
-                                        </div>
-
-                                        <button type="submit" class="gold-btn btn-custom">
-                                            <?php echo app('translator')->get('Submit'); ?>
-                                        </button>
-
-                                    </form>
-
-                                <?php elseif($user->address_verify == 1): ?>
-                                    <div class="alert mb-0">
-                                        <i class="fal fa-times-circle"></i>
-                                        <span> <?php echo app('translator')->get('Your KYC submission has been pending'); ?></span>
-                                    </div>
-                                <?php elseif($user->address_verify == 2): ?>
-                                    <div class="alert mb-0">
-                                        <i class="fal fa-check-circle"></i>
-                                        <span> <?php echo app('translator')->get('Your KYC already verified'); ?></span>
-                                    </div>
-                                <?php endif; ?>
                             </div>
                         </div>
                     </div>

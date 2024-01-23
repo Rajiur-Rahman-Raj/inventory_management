@@ -63,7 +63,17 @@
                     @forelse($purchasedItems as $key => $purchaseItem)
                         <tr>
                             <td data-label="@lang('SL')">{{loopIndex($purchasedItems) + $key}}</td>
-                            <td data-label="@lang('Item')"> {{ optional($purchaseItem->rawItem)->name }} </td>
+                            <td data-label="@lang('Image')">
+                                <div class="d-flex gap-2">
+                                    <div class="logo-brand">
+                                        <img src="{{ getFile(config('location.rawItemImage.path').optional($purchaseItem->rawItem)->image) }}"
+                                             alt="">
+                                    </div>
+                                    <div class="product-summary">
+                                        <p class="font-weight-bold mt-3">{{ optional($purchaseItem->rawItem)->name }}</p>
+                                    </div>
+                                </div>
+                            </td>
                             <td data-label="@lang('Quantity')" class="font-weight-bold">
                                 <span
                                     class="badge {{ $purchaseItem->quantity > 0 ? 'bg-info' : 'bg-danger' }}">{{ $purchaseItem->quantity }} </span>

@@ -55,6 +55,7 @@ class Kernel extends HttpKernel
      *
      * @var array
      */
+
     protected $routeMiddleware = [
         'auth' => \App\Http\Middleware\Authenticate::class,
         'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
@@ -70,5 +71,6 @@ class Kernel extends HttpKernel
         'DemoMode' => \App\Http\Middleware\DemoMode::class,
         'kyc' => \App\Http\Middleware\KYC::class,
         'Maintenance' => \App\Http\Middleware\IsMaintenanceMode::class,
+        'checkUserType' => \App\Http\Middleware\CheckUserType::class,
     ];
 }

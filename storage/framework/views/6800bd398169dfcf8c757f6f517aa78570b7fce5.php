@@ -60,7 +60,7 @@
                                                         <span><i class="fal fa-check-circle site__color"
                                                                  aria-hidden="true"></i> <span
                                                                 class="font-weight-bold text-muted"><?php echo app('translator')->get('Owner Name'); ?> :</span> <span
-                                                                class="text-muted"><?php echo e($salesCenter->owner_name); ?></span></span>
+                                                                class="text-muted"><?php echo e(optional($salesCenter->user)->name); ?></span></span>
                                                     </li>
 
                                                     <li class="my-3 list-style-none">
@@ -138,7 +138,7 @@
                                                         <span><i class="fal fa-check-circle site__color"
                                                                  aria-hidden="true"></i> <span
                                                                 class="font-weight-bold text-muted"><?php echo app('translator')->get('Address'); ?> :</span> <span
-                                                                class="text-muted"><?php echo e($salesCenter->address); ?></span></span>
+                                                                class="text-muted"><?php echo e(optional($salesCenter->user)->address); ?></span></span>
                                                     </li>
 
                                                 </ul>

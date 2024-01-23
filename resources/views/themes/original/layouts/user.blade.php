@@ -31,45 +31,39 @@
 
     @stack('style')
 
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-    <script type="application/javascript" src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-    <script type="application/javascript" src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
 </head>
 <body @if(session()->get('rtl') == 1) class="rtl" @endif id="body">
 
-<!------- Nav + Content ---------->
 <div class="bottom-nav fixed-bottom d-lg-none">
     <div class="link-item {{menuActive(['user.propertyMarket'])}}">
-        <a href="{{ route('user.propertyMarket', 'investment-properties') }}">
+        <a href="#">
             <i class="fal fa-project-diagram" aria-hidden="true"></i>
             <span>@lang('Invest')</span>
         </a>
     </div>
 
-    <div class="link-item {{menuActive(['user.addFund', 'user.addFund.confirm'])}}">
+    <div class="link-item">
+{{--        {{menuActive(['user.addFund', 'user.addFund.confirm'])}}--}}
         <a href="{{ route('user.addFund') }}">
             <i class="fal fa-funnel-dollar" aria-hidden="true"></i>
             <span>@lang('Deposit')</span>
         </a>
     </div>
 
-    <div class="link-item {{menuActive('user.home')}}">
+    <div class="link-item">
         <a href="{{ route('user.home') }}">
             <i class="fal fa-home-lg-alt"></i>
             <span>@lang('Home')</span>
         </a>
     </div>
 
-    <div class="link-item {{menuActive(['user.payout.money','user.payout.preview'])}}">
-        <a href="{{ route('user.payout.money') }}">
+    <div class="link-item">
+        <a href="#">
             <i class="fal fa-hand-holding-usd" aria-hidden="true"></i>
             <span>@lang('Withdraw')</span>
         </a>
     </div>
-    <div class="link-item {{menuActive(['user.profile'])}}">
+    <div class="link-item">
         <button onclick="toggleSideMenu()">
             <i class="fal fa-ellipsis-v-alt"></i>
             <span>@lang('Menu')</span>
@@ -80,7 +74,6 @@
 <div class="wrapper">
     <!------ sidebar ------->
     @include($theme.'partials.sidebar')
-
 
     <!-- content -->
     <div id="content">
@@ -182,7 +175,7 @@
     }
 
     @if(config('basic.push_notification') == 1)
-        let pushNotificationArea = new Vue({
+    let pushNotificationArea = new Vue({
         el: "#pushNotificationArea",
         data: {
             items: [],

@@ -20,5 +20,9 @@ class StockInDetails extends Model
         return $this->belongsTo(Item::class, 'item_id');
     }
 
+    public function rawItem()
+    {
+        return $this->belongsToMany(RawItem::class, 'stock_in_expense_raw_items')->withTimestamps();
+    }
 
 }

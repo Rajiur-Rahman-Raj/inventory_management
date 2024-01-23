@@ -43,7 +43,7 @@
                                         </button>
                                     </div>
                                     <div class="text">
-                                        <h5 class="name">@lang($user->fullname)</h5>
+                                        <h5 class="name">@lang($user->name)</h5>
                                         <span>@lang($user->email)</span>
                                     </div>
                                 </div>
@@ -55,18 +55,6 @@
                                     <button tab-id="tab2" class="tab {{ $errors->has('password') ? 'active' : '' }}">
                                         <i class="fal fa-key"></i> @lang('Password setting')
                                     </button>
-                                    @if($basic->identity_verification == 1)
-                                        <button tab-id="tab3" class="tab {{ $errors->has('identity') ? 'active' : '' }}">
-                                            <i class="fal fa-id-card"></i> @lang('identity verification')
-                                        </button>
-                                    @endif
-                                    @if($basic->address_verification == 1)
-                                        <button tab-id="tab4"
-                                                class="tab {{ $errors->has('addressVerification') ? 'active' : '' }}">
-                                            <i class="fal fa-map-marked-alt"></i>
-                                            @lang('address verification')
-                                        </button>
-                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -78,40 +66,24 @@
                                     @csrf
                                     <div class="row g-4">
                                         <div class="input-box col-md-6">
-                                            <label for="firstname">@lang('First Name')</label>
+                                            <label for="name">@lang('Name')</label>
                                             <input type="text"
                                                    class="form-control"
-                                                   name="firstname"
-                                                   id="firstname"
-                                                   placeholder="@lang('first name')"
-                                                   value="{{old('firstname')?: $user->firstname }}"/>
-                                            @if($errors->has('firstname'))
-                                                <div
-                                                    class="error text-danger">@lang($errors->first('firstname'))
-                                                </div>
+                                                   name="name"
+                                                   placeholder="@lang('Full Name')"
+                                                   value="{{old('name', $user->name) }}"/>
+                                            @if($errors->has('name'))
+                                                <div class="error text-danger">@lang($errors->first('name'))</div>
                                             @endif
                                         </div>
-                                        <div class="input-box col-md-6">
-                                            <label for="lastname">@lang('Last Name')</label>
-                                            <input type="text"
-                                                   id="lastname"
-                                                   name="lastname"
-                                                   placeholder="@lang('last name')"
-                                                   class="form-control"
-                                                   value="{{old('lastname')?: $user->lastname }}"/>
-                                            @if($errors->has('lastname'))
-                                                <div
-                                                    class="error text-danger">@lang($errors->first('lastname'))
-                                                </div>
-                                            @endif
-                                        </div>
+
                                         <div class="input-box col-md-6">
                                             <label for="username">@lang('Username')</label>
                                             <input type="text"
                                                    id="username"
                                                    name="username"
                                                    placeholder="@lang('username')"
-                                                   value="{{old('username')?: $user->username }}"
+                                                   value="{{old('username', $user->username) }}"
                                                    class="form-control"/>
                                             @if($errors->has('username'))
                                                 <div
@@ -120,12 +92,12 @@
                                             @endif
                                         </div>
                                         <div class="input-box col-md-6">
-                                            <label for="email">@lang('Email Address')</label>
+                                            <label for="email">@lang('Email')</label>
                                             <input type="email"
                                                    id="email"
+                                                   name="email"
                                                    placeholder="@lang('email')"
-                                                   value="{{ $user->email }}"
-                                                   readonly
+                                                   value="{{  old('email', $user->email) }}"
                                                    class="form-control"/>
                                             @if($errors->has('email'))
                                                 <div
@@ -137,8 +109,8 @@
                                             <label for="phone">@lang('Phone Number')</label>
                                             <input type="text"
                                                    id="phone"
+                                                   name="phone"
                                                    placeholder="@lang('phone')"
-                                                   readonly
                                                    class="form-control"
                                                    value="{{ old('phone', $user->phone) }}"/>
                                             @if($errors->has('phone'))
@@ -147,108 +119,21 @@
                                                 </div>
                                             @endif
                                         </div>
-                                        <div class="input-box col-md-6">
-                                            <label for="language_id">@lang('Preferred language')</label>
-                                            <select class="form-select"
-                                                    name="language_id"
-                                                    id="language_id"
-                                                    aria-label="Default select example">
-                                                <option value="" disabled>@lang('Select Language')</option>
-                                                @foreach($languages as $la)
-                                                    <option
-                                                        value="{{$la->id}}" {{ old('language_id', $user->language_id) == $la->id ? 'selected' : '' }}> @lang($la->name)</option>
-                                                @endforeach
-                                            </select>
-                                            @if($errors->has('language_id'))
-                                                <div
-                                                    class="error text-danger">@lang($errors->first('language_id'))
-                                                </div>
-                                            @endif
-                                        </div>
 
-                                        <div class="input-box col-md-12">
+
+                                        <div class="input-box col-12">
                                             <label for="">@lang('Address')</label>
-                                            <input
-                                                class="form-control @error('address') is-invalid @enderror"
-                                                id="address"
-                                                name="address"
-                                                type="text"
-                                                placeholder="@lang('address')"
-                                                value="{{ old('address', $user->address) }}"/>
+                                            <textarea
+                                                class="form-control @error('Bio') is-invalid @enderror"
+                                                cols="30"
+                                                rows="3"
+                                                placeholder="@lang('Address')"
+                                                name="address">{{ old('address', $user->address) }}</textarea>
                                             @if($errors->has('address'))
                                                 <div
                                                     class="error text-danger">@lang($errors->first('address'))
                                                 </div>
                                             @endif
-                                        </div>
-
-                                        <div class="input-box col-12">
-                                            <label for="">@lang('Bio')</label>
-                                            <textarea
-                                                class="form-control @error('Bio') is-invalid @enderror"
-                                                cols="30"
-                                                rows="3"
-                                                placeholder="@lang('bio')"
-                                                name="bio">@lang($user->bio)</textarea>
-                                            @if($errors->has('bio'))
-                                                <div
-                                                    class="error text-danger">@lang($errors->first('bio'))
-                                                </div>
-                                            @endif
-                                        </div>
-
-                                        <div class="input-box col-12">
-                                            <label for="">@lang('Social Links')</label>
-                                            <div class="form website_social_links">
-                                                @php
-                                                    $oldSocialCounts = max(old('social_icon', $social_links) ? count(old('social_icon', $social_links)) : 1, 1);
-                                                @endphp
-
-                                                @if($oldSocialCounts > 0)
-                                                    @for($i = 0; $i < $oldSocialCounts; $i++)
-                                                        <div
-                                                            class="d-flex justify-content-between append_new_social_form removeSocialLinksInput">
-                                                            <div class="input-group mt-1">
-                                                                <input type="text" name="social_icon[]" value="{{ old("social_icon.$i", $social_links[$i]->social_icon ?? '') }}" class="form-control demo__icon__picker iconpicker1 @error("social_icon.$i") is-invalid @enderror" placeholder="Pick a icon" aria-label="Pick a icon"
-                                                                       aria-describedby="basic-addon1" readonly>
-
-                                                                <div class="invalid-feedback">
-                                                                    @error("social_icon.$i") @lang($message) @enderror
-                                                                </div>
-                                                            </div>
-
-                                                            <div class="input-box w-100 my-1 me-1">
-                                                                <input type="url" name="social_url[]"
-                                                                       value="{{ old("social_url.$i", $social_links[$i]->social_url ?? '') }}"
-                                                                       class="form-control @error("social_url.$i") is-invalid @enderror"
-                                                                       placeholder="@lang('URL')"/>
-                                                                @error("social_url.$i")
-                                                                <span class="text-danger">{{ $message }}</span>
-                                                                @enderror
-
-                                                            </div>
-                                                            <div class="my-1 me-1">
-                                                                @if($i == 0)
-                                                                    <button class="btn-custom add-new" type="button"
-                                                                            id="add_social_links">
-                                                                        <i class="fal fa-plus"></i>
-                                                                    </button>
-                                                                @else
-                                                                    <button
-                                                                        class="btn-custom add-new btn-custom-danger remove_social_link_input_field"
-                                                                        type="button">
-                                                                        <i class="fa fa-times"></i>
-                                                                    </button>
-                                                                @endif
-                                                            </div>
-                                                        </div>
-                                                    @endfor
-                                                @endif
-
-                                                <div class="new_social_links_form append_new_social_form">
-
-                                                </div>
-                                            </div>
                                         </div>
 
                                         <div class="input-box col-12">
@@ -307,215 +192,6 @@
                                         </div>
                                     </div>
                                 </form>
-                            </div>
-
-                            <div id="tab3" class="content {{ $errors->has('identity') ? 'active' : '' }}">
-                                @if(in_array($user->identity_verify,[0,3])  )
-                                    @if($user->identity_verify == 3)
-                                        <div class="alert mb-0">
-                                            <i class="fal fa-times-circle"></i>
-                                            <span>@lang('You previous request has been rejected')</span>
-                                        </div>
-                                    @endif
-                                    <form method="post" action="{{route('user.verificationSubmit')}}"
-                                          enctype="multipart/form-data">
-                                        @csrf
-                                        <div class="col-md-12 mb-3">
-                                            <div class="input-box col-md-12">
-                                                <label for="identity_type">@lang('Identity Type')</label>
-                                                <select class="form-select"
-                                                        name="identity_type" id="identity_type"
-                                                        aria-label="Default select example">
-                                                    <option value="" disabled>@lang('Select Language')</option>
-                                                    @foreach($identityFormList as $sForm)
-                                                        <option
-                                                            value="{{$sForm->slug}}" {{ old('identity_type', @$identity_type) == $sForm->slug ? 'selected' : '' }}> @lang($sForm->name) </option>
-                                                    @endforeach
-                                                </select>
-                                                @error('identity_type')
-                                                <div class="error text-danger">@lang($message) </div>
-                                                @enderror
-                                            </div>
-                                        </div>
-
-                                        @if(isset($identityForm))
-                                            @foreach($identityForm->services_form as $k => $v)
-                                                @if($v->type == "text")
-                                                    <div class="input-box col-md-12">
-                                                        <label for="{{$k}}">
-                                                            {{trans($v->field_level)}}
-                                                            @if($v->validation == 'required')
-                                                                <span class="text-danger">*</span>
-                                                            @endif
-                                                        </label>
-                                                        <input type="text" name="{{$k}}"
-                                                               class="form-control "
-                                                               value="{{old($k)}}" id="{{$k}}"
-                                                               @if($v->validation == 'required') required @endif/>
-                                                        @if($errors->has($k))
-                                                            <div
-                                                                class="error text-danger">@lang($errors->first($k))</div>
-                                                        @endif
-                                                    </div>
-
-                                                @elseif($v->type == "textarea")
-                                                    <div class="input-box col-12 mt-2">
-                                                        <label for="{{$k}}">
-                                                            {{trans($v->field_level)}}
-                                                            @if($v->validation == 'required')
-                                                                <span class="text-danger">*</span>
-                                                            @endif
-                                                        </label>
-                                                        <textarea
-                                                            name="{{$k}}"
-                                                            id="{{$k}}"
-                                                            class="form-control"
-                                                            cols="30"
-                                                            rows="3"
-                                                            placeholder="{{trans('Type Here')}}"
-                                                            @if($v->validation == 'required')@endif>{{old($k)}}</textarea>
-                                                        @error($k)
-                                                        <div class="error text-danger">
-                                                            {{trans($message)}}
-                                                        </div>
-                                                        @enderror
-                                                    </div>
-                                                @elseif($v->type == "file")
-                                                    <div class="col-md-12 mb-2">
-                                                        <div class="form-group">
-                                                            <label class="golden-text">
-                                                                {{trans($v->field_level)}}
-                                                                @if($v->validation == 'required')
-                                                                    <span class="text-danger">*</span>
-                                                                @endif
-                                                            </label>
-
-                                                            <br>
-                                                            <div class="fileinput fileinput-new "
-                                                                 data-provides="fileinput">
-                                                                <div class="fileinput-new thumbnail "
-                                                                     data-trigger="fileinput">
-                                                                    <img class="w-150px custom-verification-img"
-                                                                         src="{{ getFile(config('location.default')) }}"
-                                                                         alt="@lang('not found')">
-                                                                </div>
-                                                                <div
-                                                                    class="fileinput-preview fileinput-exists thumbnail wh-200-150 ">
-                                                                </div>
-
-                                                                <div class="img-input-div">
-                                                                    <span class="btn btn-success btn-file">
-                                                                        <span
-                                                                            class="fileinput-new"> @lang('Select') {{$v->field_level}}</span>
-                                                                        <span
-                                                                            class="fileinput-exists"> @lang('Change')</span>
-                                                                        <input type="file" name="{{$k}}"
-                                                                               value="{{ old($k) }}"
-                                                                               accept="image/*" @if($v->validation == "required")@endif>
-                                                                    </span>
-                                                                    <a href="#" class="btn btn-danger fileinput-exists"
-                                                                       data-dismiss="fileinput"> @lang('Remove')</a>
-                                                                </div>
-                                                            </div>
-
-                                                            @error($k)
-                                                            <div class="error text-danger">
-                                                                {{trans($message)}}
-                                                            </div>
-                                                            @enderror
-                                                        </div>
-                                                    </div>
-                                                @endif
-                                            @endforeach
-
-                                            <button type="submit" class="gold-btn mt-2 btn-custom">
-                                                @lang('Submit')
-                                            </button>
-                                        @endif
-                                    </form>
-                                @elseif($user->identity_verify == 1)
-                                    <div class="alert mb-0">
-                                        <i class="fal fa-times-circle"></i>
-                                        <span> @lang('Your KYC submission has been pending')</span>
-                                    </div>
-                                @elseif($user->identity_verify == 2)
-                                    <div class="alert mb-0">
-                                        <i class="fal fa-check-circle"></i>
-                                        <span> @lang('Your KYC already verified')</span>
-                                    </div>
-                                @endif
-                            </div>
-
-                            <div id="tab4" class="content {{ $errors->has('addressVerification') ? 'active' : '' }}">
-                                @if(in_array($user->address_verify,[0,3])  )
-                                    @if($user->address_verify == 3)
-                                        <div class="alert mb-0">
-                                            <i class="fal fa-times-circle"></i>
-                                            <span> @lang('You previous request has been rejected')</span>
-                                        </div>
-                                    @endif
-
-
-                                    <form method="post" action="{{route('user.addressVerification')}}"
-                                          enctype="multipart/form-data">
-                                        @csrf
-                                        <div class="col-md-12 mb-2">
-                                            <div class="form-group">
-                                                <label class="form-label golden-text">{{trans('Address Proof')}} <span
-                                                        class="text-danger">*</span> </label><br>
-
-                                                <div class="fileinput fileinput-new "
-                                                     data-provides="fileinput">
-                                                    <div class="fileinput-new thumbnail "
-                                                         data-trigger="fileinput">
-                                                        <img class="custom-verification-img"
-                                                             src="{{ getFile(config('location.default')) }}"
-                                                             alt="...">
-                                                    </div>
-                                                    <div
-                                                        class="fileinput-preview fileinput-exists thumbnail wh-200-150 "></div>
-
-                                                    <div class="img-input-div">
-                                                        <span class="btn btn-success btn-file">
-                                                            <span
-                                                                class="fileinput-new "> @lang('Select Image') </span>
-                                                            <span
-                                                                class="fileinput-exists"> @lang('Change')</span>
-                                                            <input type="file" name="addressProof"
-                                                                   value="{{ old('addressProof')}}"
-                                                                   accept="image/*">
-                                                        </span>
-                                                        <a href="#" class="btn btn-danger fileinput-exists"
-                                                           data-dismiss="fileinput"> @lang('Remove')</a>
-                                                    </div>
-
-                                                </div>
-
-                                                @error('addressProof')
-                                                <div class="error text-danger">
-                                                    {{trans($message)}}
-                                                </div>
-                                                @enderror
-                                            </div>
-                                        </div>
-
-                                        <button type="submit" class="gold-btn btn-custom">
-                                            @lang('Submit')
-                                        </button>
-
-                                    </form>
-
-                                @elseif($user->address_verify == 1)
-                                    <div class="alert mb-0">
-                                        <i class="fal fa-times-circle"></i>
-                                        <span> @lang('Your KYC submission has been pending')</span>
-                                    </div>
-                                @elseif($user->address_verify == 2)
-                                    <div class="alert mb-0">
-                                        <i class="fal fa-check-circle"></i>
-                                        <span> @lang('Your KYC already verified')</span>
-                                    </div>
-                                @endif
                             </div>
                         </div>
                     </div>

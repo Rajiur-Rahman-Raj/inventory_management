@@ -194,7 +194,7 @@ class CompanyController extends Controller
         $loggedInUser = $this->user;
 
 
-        $data['centerLists'] = SalesCenter::with('user', 'division', 'district', 'upazila', 'union', 'activeCompanySalesCenter')
+        $data['centerLists'] = SalesCenter::with('user', 'division', 'district', 'upazila', 'union', 'company')
             ->when(isset($search['name']), function ($query) use ($search) {
                 $query->where('name', 'LIKE', '%' . $search['name'] . '%');
             })

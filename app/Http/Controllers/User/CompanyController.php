@@ -18,6 +18,7 @@ use App\Models\Customer;
 use App\Models\District;
 use App\Models\Division;
 use App\Models\Expense;
+use Exception;
 use App\Models\ExpenseCategory;
 use App\Models\Item;
 use App\Models\RawItem;
@@ -46,6 +47,7 @@ use Illuminate\Validation\Rule;
 use Stevebauman\Purify\Facades\Purify;
 use App\Http\Traits\StockInTrait;
 use App\Http\Traits\storeSalesTrait;
+use function PHPUnit\Framework\isNull;
 
 class CompanyController extends Controller
 {
@@ -203,15 +205,9 @@ class CompanyController extends Controller
         $loggedInUser = $this->user;
 
 
-        $data['centerLists'] = SalesCenter::with('user', 'division', 'district', 'upazila', 'union', 'activeCompanySalesCenter')
-            ->when(isset($search['name']), function ($query) use ($search) {
-                $query->where('name', 'LIKE', '%' . $search['name'] . '%');
-            })
-            ->when(isset($search['code']), function ($query) use ($search) {
-                $query->where('code', 'LIKE', '%' . $search['code'] . '%');
-            })
-            ->when(isset($search['owner']), function ($query) use ($search) {
-                $query->where('id', $search['owner']);
+        $data['centerLists'] = SalesCenter::with('user', 'division', 'district', 'upazila', 'union', 'company')
+            ->when(isset($search['sales_center_id']), function ($query) use ($search) {
+                $query->where('id', $search['sales_center_id']);
             })
             ->when(isset($search['from_date']), function ($q2) use ($fromDate) {
                 return $q2->whereDate('created_at', '>=', $fromDate);
@@ -232,39 +228,39 @@ class CompanyController extends Controller
 
     public function storeSalesCenter(SalesCenterStoreRequest $request)
     {
-        $loggedInUser = $this->user;
+        $admin = $this->user;
+        DB::beginTransaction();
         try {
-            DB::beginTransaction();
-
             $user = new User();
-
+            $user->name = $request->owner_name;
             $user->phone = $request->phone;
             $user->email = $request->email;
+            $user->username = $request->username;
+            $user->address = $request->owner_address;
             $user->password = Hash::make($request->password);
+
+            if ($request->hasFile('image')) {
+                try {
+                    $user->image = $this->uploadImage($request->image, config('location.user.path'), config('location.user.size'));
+                } catch (\Exception $exp) {
+                    return back()->with('error', 'Logo could not be uploaded.');
+                }
+            }
 
             $user->save();
 
             $salesCenter = new SalesCenter();
             $salesCenter->user_id = $user->id;
-            $salesCenter->company_id = optional($loggedInUser->activeCompany)->id;
+            $salesCenter->company_id = $admin->active_company_id;
             $salesCenter->name = $request->name;
             $salesCenter->code = $request->code;
-            $salesCenter->owner_name = $request->owner_name;
             $salesCenter->national_id = $request->national_id;
             $salesCenter->trade_id = $request->trade_id;
             $salesCenter->division_id = $request->division_id;
             $salesCenter->district_id = $request->district_id;
             $salesCenter->upazila_id = $request->upazila_id;
             $salesCenter->union_id = $request->union_id;
-            $salesCenter->address = $request->address;
-
-            if ($request->hasFile('image')) {
-                try {
-                    $salesCenter->image = $this->uploadImage($request->image, config('location.salesCenter.path'), config('location.salesCenter.size'));
-                } catch (\Exception $exp) {
-                    return back()->with('error', 'Logo could not be uploaded.');
-                }
-            }
+            $salesCenter->center_address = $request->center_address;
 
             $salesCenter->save();
             DB::commit();
@@ -279,6 +275,7 @@ class CompanyController extends Controller
 
             return back()->with('success', 'Sales Center Created Successfully');
         } catch (\Exception $e) {
+            DB::rollBack();
             return back()->with('error', 'Something went wrong');
         }
     }
@@ -714,12 +711,19 @@ class CompanyController extends Controller
     public function stockList(Request $request)
     {
         $admin = $this->user;
+
         $search = $request->all();
 
         $fromDate = Carbon::parse($request->from_date);
         $toDate = Carbon::parse($request->to_date)->addDay();
 
-        $data['allItems'] = Item::where('company_id', $admin->active_company_id)->where('status', 1)->get();
+        $data['allItems'] = Item::where('status', 1)
+        ->when(!isset($admin->salesCenter) && $admin->user_type == 1, function ($q2) use ($admin) {
+            $q2->where('company_id', $admin->active_company_id);
+        })->when(isset($admin->salesCenter) && $admin->user_type == 2, function ($q2) use ($admin) {
+            $q2->where('company_id', $admin->salesCenter->company_id);
+        })->where('status', 1)->get();
+
 
         $data['stockLists'] = Stock::with('item:id,name')
             ->when(isset($search['item_id']), function ($query) use ($search) {
@@ -739,11 +743,18 @@ class CompanyController extends Controller
             ->when(isset($search['to_date']), function ($q2) use ($fromDate, $toDate) {
                 return $q2->whereBetween('last_stock_date', [$fromDate, $toDate]);
             })
-            ->where('company_id', $admin->active_company_id)
-            ->whereNull('sales_center_id')
+            ->when(!isset($admin->salesCenter) && $admin->user_type == 1, function ($q2) use ($admin) {
+                $q2->where('company_id', $admin->active_company_id)
+                    ->whereNull('sales_center_id');
+            })
+            ->when(isset($admin->salesCenter) && $admin->user_type == 2, function ($q2) use ($admin) {
+                $q2->where('company_id', $admin->salesCenter->company_id)
+                    ->where('sales_center_id', $admin->salesCenter->id);
+            })
             ->latest()
             ->select('id', 'item_id', 'quantity', 'cost_per_unit', 'last_cost_per_unit', 'stock_date', 'last_stock_date')
             ->paginate(config('basic.paginate'));
+
         return view($this->theme . 'user.stock.index', $data);
     }
 
@@ -757,8 +768,6 @@ class CompanyController extends Controller
 
     public function stockStore(Request $request)
     {
-        dd($request->all());
-
         $loggedInUser = $this->user;
         $purifiedData = Purify::clean($request->except('_token', '_method'));
 
@@ -788,21 +797,15 @@ class CompanyController extends Controller
 
             $this->storeStocks($request, $loggedInUser);
 
-            foreach ($request->raw_item_id as $key => $rawItemId) {
-                $rawItemPurchaseStock = RawItemPurchaseStock::where('company_id', $loggedInUser->active_company_id)->findOrFail($rawItemId);
-                $rawItemPurchaseStock->quantity = $rawItemPurchaseStock->quantity - $request->raw_item_quantity[$key];
-                $rawItemPurchaseStock->save();
-            }
 
             DB::commit();
 
             return back()->with('success', 'Item stock added successfully');
         } catch (\Exception $e) {
-            return back()->with('error', 'Something went wrong');
+            return back()->with('error', $e->getMessage());
         }
 
     }
-
     public function stockDetails($item = null, $id = null)
     {
         $data['stock'] = Stock::select('id', 'item_id', 'last_stock_date')->findOrFail($id);
@@ -1110,7 +1113,7 @@ class CompanyController extends Controller
     public function getSelectedSalesCenter(Request $request)
     {
         $admin = $this->user;
-        $salesCenter = SalesCenter::with('user:id,phone')->where('company_id', $admin->active_company_id)->select('id', 'user_id', 'owner_name', 'address', 'code')->findOrFail($request->id);
+        $salesCenter = SalesCenter::with('user')->where('company_id', $admin->active_company_id)->select('id', 'user_id', 'name', 'center_address', 'code')->findOrFail($request->id);
         return response()->json(['salesCenter' => $salesCenter]);
     }
 
@@ -2155,38 +2158,38 @@ class CompanyController extends Controller
 
 
 //        try {
-            DB::beginTransaction();
-            $member = new AffiliateMember();
-            $member->company_id = $admin->active_company_id;
-            $member->member_name = $request->member_name;
-            $member->email = $request->email;
-            $member->phone = $request->phone;
-            $member->division_id = $request->division_id;
-            $member->district_id = $request->district_id;
-            $member->upazila_id = $request->upazila_id;
-            $member->union_id = $request->union_id;
-            $member->member_national_id = $request->member_national_id;
-            $member->member_commission = $request->member_commission;
-            $member->date_of_death = $request->date_of_death;
-            $member->wife_name = $request->wife_name;
-            $member->wife_national_id = $request->wife_national_id;
-            $member->wife_commission = $request->wife_commission;
-            $member->address = $request->address;
+        DB::beginTransaction();
+        $member = new AffiliateMember();
+        $member->company_id = $admin->active_company_id;
+        $member->member_name = $request->member_name;
+        $member->email = $request->email;
+        $member->phone = $request->phone;
+        $member->division_id = $request->division_id;
+        $member->district_id = $request->district_id;
+        $member->upazila_id = $request->upazila_id;
+        $member->union_id = $request->union_id;
+        $member->member_national_id = $request->member_national_id;
+        $member->member_commission = $request->member_commission;
+        $member->date_of_death = $request->date_of_death;
+        $member->wife_name = $request->wife_name;
+        $member->wife_national_id = $request->wife_national_id;
+        $member->wife_commission = $request->wife_commission;
+        $member->address = $request->address;
 
-            if ($request->hasFile('document')) {
-                $image = $this->fileUpload($request->document, config('location.affiliate.path'), null, null, 'webp', 60, null, null);
-                throw_if(empty($image['path']), 'Document could not be uploaded.');
-            }
+        if ($request->hasFile('document')) {
+            $image = $this->fileUpload($request->document, config('location.affiliate.path'), null, null, 'webp', 60, null, null);
+            throw_if(empty($image['path']), 'Document could not be uploaded.');
+        }
 
-            $member->save();
+        $member->save();
 
-            $member->salesCenter()->sync($request->sales_center_id);
+        $member->salesCenter()->sync($request->sales_center_id);
 
-            DB::commit();
-            return back()->with('success', 'Member Updated Successfully');
-   /*     } catch (\Exception $e) {
-            return back()->with('error', 'Something went wrong');
-        }*/
+        DB::commit();
+        return back()->with('success', 'Member Updated Successfully');
+        /*     } catch (\Exception $e) {
+                 return back()->with('error', 'Something went wrong');
+             }*/
     }
 
     public function affiliateMemberEdit($id)

@@ -61,7 +61,7 @@
                                                         <span><i class="fal fa-check-circle site__color"
                                                                  aria-hidden="true"></i> <span
                                                                 class="font-weight-bold text-muted">@lang('Owner Name') :</span> <span
-                                                                class="text-muted">{{ $salesCenter->owner_name }}</span></span>
+                                                                class="text-muted">{{ optional($salesCenter->user)->name }}</span></span>
                                                     </li>
 
                                                     <li class="my-3 list-style-none">
@@ -139,7 +139,7 @@
                                                         <span><i class="fal fa-check-circle site__color"
                                                                  aria-hidden="true"></i> <span
                                                                 class="font-weight-bold text-muted">@lang('Address') :</span> <span
-                                                                class="text-muted">{{ $salesCenter->address }}</span></span>
+                                                                class="text-muted">{{ optional($salesCenter->user)->address }}</span></span>
                                                     </li>
 
                                                 </ul>

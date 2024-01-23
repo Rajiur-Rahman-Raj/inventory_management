@@ -5179,7 +5179,13 @@ a.btn-custom {
 }
 
 #sidebar .sidebar-top .navbar-brand img {
-    width: 180px;
+    max-width: 130px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    position: relative;
+    top: 0;
+    left: 35px;
 }
 
 #sidebar .sidebar-top .sidebar-toggler {

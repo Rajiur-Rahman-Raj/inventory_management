@@ -94,7 +94,7 @@
                         <tr>
                             <td data-label="@lang('SL')">{{loopIndex($purchasedItems) + $key}}</td>
                             <td data-label="@lang('Supplier')"> {{ optional($purchaseItem->supplier)->name }} </td>
-                            <td data-label="@lang('Total Price')"> {{ $basic->currency_symbol }}{{ $purchaseItem->total_price }} </td>
+                            <td data-label="@lang('Total Price')"> {{ getAmount($purchaseItem->total_price) }} {{ $basic->currency_symbol }} </td>
                             <td data-label="@lang('Purchased Date')"> {{ customDate($purchaseItem->purchase_date) }} </td>
                             <td data-label="@lang('Payment Status')">
                                 @if($purchaseItem->payment_status == 1)

@@ -93,7 +93,7 @@
                         <tr>
                             <td data-label="<?php echo app('translator')->get('SL'); ?>"><?php echo e(loopIndex($purchasedItems) + $key); ?></td>
                             <td data-label="<?php echo app('translator')->get('Supplier'); ?>"> <?php echo e(optional($purchaseItem->supplier)->name); ?> </td>
-                            <td data-label="<?php echo app('translator')->get('Total Price'); ?>"> <?php echo e($basic->currency_symbol); ?><?php echo e($purchaseItem->total_price); ?> </td>
+                            <td data-label="<?php echo app('translator')->get('Total Price'); ?>"> <?php echo e(getAmount($purchaseItem->total_price)); ?> <?php echo e($basic->currency_symbol); ?> </td>
                             <td data-label="<?php echo app('translator')->get('Purchased Date'); ?>"> <?php echo e(customDate($purchaseItem->purchase_date)); ?> </td>
                             <td data-label="<?php echo app('translator')->get('Payment Status'); ?>">
                                 <?php if($purchaseItem->payment_status == 1): ?>

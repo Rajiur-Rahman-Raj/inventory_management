@@ -23,10 +23,8 @@ class CreateSalesCentersTable extends Migration
             $table->foreignId('union_id')->index()->nullable();
             $table->string('name');
             $table->string('code')->nullable();
-            $table->string('owner_name')->nullable();
             $table->string('national_id')->nullable();
             $table->string('trade_id')->nullable();
-            $table->string('address')->nullable();
             $table->timestamps();
         });
     }

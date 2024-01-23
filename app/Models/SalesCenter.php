@@ -31,7 +31,7 @@ class SalesCenter extends Model
         return $this->belongsTo(Union::class, 'union_id');
     }
 
-    public function activeCompanySalesCenter(){
+    public function company(){
         return $this->belongsTo(Company::class, 'company_id');
     }
 }

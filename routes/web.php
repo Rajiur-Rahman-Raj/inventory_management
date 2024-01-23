@@ -29,141 +29,25 @@ Route::group(['middleware' => ['guest']], function () {
     Route::get('register/{sponsor?}', 'Auth\RegisterController@sponsor')->name('register.sponsor');
 });
 
-Route::group(['middleware' => ['auth', 'Maintenance'], 'prefix' => 'user', 'as' => 'user.'], function () {
+Route::group(['middleware' => ['auth'], 'prefix' => 'user', 'as' => 'user.'], function () {
     Route::get('/check', 'User\VerificationController@check')->name('check');
     Route::get('/resend_code', 'User\VerificationController@resendCode')->name('resendCode');
     Route::post('/mail-verify', 'User\VerificationController@mailVerify')->name('mailVerify');
     Route::post('/sms-verify', 'User\VerificationController@smsVerify')->name('smsVerify');
     Route::post('twoFA-Verify', 'User\VerificationController@twoFAverify')->name('twoFA-Verify');
-    Route::middleware('userCheck')->group(function () {
-        Route::middleware('kyc')->group(function () {
+    //Inventory Route Start
 
-            Route::post('/khalti/payment/verify/{trx}', 'khaltiPaymentController@verifyPayment')->name('khalti.verifyPayment');
-            Route::post('/khalti/payment/store', 'khaltiPaymentController@storePayment')->name('khalti.storePayment');
-
-            // review
-            Route::post('/property-details/review', 'FrontendController@reviewPush')->name('review.push');
-            Route::get('/propertyReviews/{id?}', 'FrontendController@getReview')->name('propertyReviews');
-
-            Route::post('/send-message-to-property-investor', 'user\SendMailController@sendMessageToPropertyInvestor')->name('sendMessageToPropertyInvestor');
-
-            Route::get('/dashboard', 'User\HomeController@index')->name('home');
-            Route::get('payment', 'User\HomeController@payment')->name('payment');
-            Route::get('add-fund', 'User\HomeController@addFund')->name('addFund');
-            Route::post('add-fund', 'PaymentController@addFundRequest')->name('addFund.request');
-            Route::get('addFundConfirm', 'PaymentController@depositConfirm')->name('addFund.confirm');
-            Route::post('addFundConfirm', 'PaymentController@fromSubmit')->name('addFund.fromSubmit');
-
-            // Invest History
-            Route::get('invest-history', 'User\HomeController@investHistory')->name('invest-history');
-            Route::get('invest-history-details/{id}', 'User\HomeController@investHistoryDetails')->name('invest-history-details');
-            Route::put('/complete-due-payment/{id}', 'User\HomeController@completeDuePayment')->name('completeDuePayment');
-            Route::post('/invest-property/{id}', 'User\HomeController@investProperty')->name('invest-property');
-            Route::post('/property-make-offer/{id}', 'User\HomeController@propertyMakeOfferStore')->name('propertyMakeOfferStore');
-
-            // user Property Market
-            Route::get('/property-market/{type?}', 'User\HomeController@propertyMarket')->name('propertyMarket');
-            Route::post('/property-share-store/{id}', 'User\HomeController@propertyShareStore')->name('propertyShareStore');
-            Route::post('/property-share-update/{id}', 'User\HomeController@propertyShareUpdate')->name('propertyShareUpdate');
-            Route::delete('/property-share-remove/{id}', 'User\HomeController@propertyShareRemove')->name('propertyShareRemove');
-            Route::post('/property-offer-update/{id}', 'User\HomeController@propertyOfferUpdate')->name('propertyOfferUpdate');
-            Route::delete('/property-offer-remove/{id}', 'User\HomeController@propertyOfferRemove')->name('propertyOfferRemove');
-            Route::get('/offer-list/{id}', 'User\HomeController@offerList')->name('offerList');
-            Route::get('/offer-accept/{id}', 'User\HomeController@offerAccept')->name('offerAccept');
-            Route::get('/offer-reject/{id}', 'User\HomeController@offerReject')->name('offerReject');
-            Route::delete('/offer-remove/{id}', 'User\HomeController@offerRemove')->name('offerRemove');
-            Route::get('/offer-conversation/{id}', 'User\HomeController@offerConversation')->name('offerConversation');
-            Route::post('/offer/reply/message/render/', 'User\HomeController@offerReplyMessageRender')->name('offerReplyMessageRender');
-            Route::post('/offer/reply/message', 'User\HomeController@offerReplyMessage')->name('offerReplyMessage');
-            Route::post('/offer/payment/lock/{id}', 'User\HomeController@paymentLock')->name('paymentLock');
-            Route::post('/offer/payment/lock/update/{id}', 'User\HomeController@paymentLockUpdate')->name('paymentLockUpdate');
-            Route::get('/payment/lock/cancel/{id}', 'User\HomeController@paymentLockCancel')->name('paymentLockCancel');
-            Route::post('/payment/lock/confirm/{id}', 'User\HomeController@paymentLockConfirm')->name('paymentLockConfirm');
-
-            Route::post('/buy/share/{id}', 'User\HomeController@BuyShare')->name('directBuyShare');
-
-
-            // wishlist section
-            Route::post('/wish-list', 'User\FavouriteController@wishList')->name('wishList');
-
-            Route::get('/wish-list-property', 'User\FavouriteController@wishListProperty')->name('wishListProperty');
-            Route::delete('/wish-list-delete/{id?}', 'User\FavouriteController@favouriteListingDelete')->name('favouriteListingDelete');
-
-
-            // comment section
-            Route::post('/send-comment/{id?}', 'User\HomeController@sendComment')->name('sendComment');
-            Route::post('/send-reply/{id?}', 'User\HomeController@sendReply')->name('sendReply');
-
-            //transaction
-            Route::get('/transaction', 'User\HomeController@transaction')->name('transaction');
-            Route::get('/transaction-search', 'User\HomeController@transactionSearch')->name('transaction.search');
-            Route::get('fund-history', 'User\HomeController@fundHistory')->name('fund-history');
-            Route::get('fund-history-search', 'User\HomeController@fundHistorySearch')->name('fund-history.search');
-
-            // TWO-FACTOR SECURITY
-            Route::get('/twostep-security', 'User\HomeController@twoStepSecurity')->name('twostep.security');
-            Route::post('twoStep-enable', 'User\HomeController@twoStepEnable')->name('twoStepEnable');
-            Route::post('twoStep-disable', 'User\HomeController@twoStepDisable')->name('twoStepDisable');
-
-
-            Route::get('push-notification-show', 'SiteNotificationController@show')->name('push.notification.show');
-            Route::get('push.notification.readAll', 'SiteNotificationController@readAll')->name('push.notification.readAll');
-            Route::get('push-notification-readAt/{id}', 'SiteNotificationController@readAt')->name('push.notification.readAt');
-
-            Route::get('/payout', 'User\HomeController@payoutMoney')->name('payout.money');
-            Route::post('/payout', 'User\HomeController@payoutMoneyRequest')->name('payout.moneyRequest');
-            Route::get('/payout/preview', 'User\HomeController@payoutPreview')->name('payout.preview');
-            Route::post('/payout/preview', 'User\HomeController@payoutRequestSubmit')->name('payout.submit');
-            Route::post('/withdraw/paystack/{trx_id}', 'User\HomeController@paystackPayout')->name('payout.submit.paystack');
-            Route::post('/withdraw/flutterwave/{trx_id}', 'User\HomeController@flutterwavePayout')->name('payout.submit.flutterwave');
-            Route::post('withdraw-bank-list', 'User\HomeController@getBankList')->name('payout.getBankList');
-            Route::post('withdraw-bank-from', 'User\HomeController@getBankForm')->name('payout.getBankFrom');
-
-            Route::get('payout-history', 'User\HomeController@payoutHistory')->name('payout.history');
-            Route::get('payout-history-search', 'User\HomeController@payoutHistorySearch')->name('payout.history.search');
-
-            Route::get('/referral', 'User\HomeController@referral')->name('referral');
-            Route::get('/referral-bonus', 'User\HomeController@referralBonus')->name('referral.bonus');
-            Route::get('/referral-bonus-search', 'User\HomeController@referralBonusSearch')->name('referral.bonus.search');
-            Route::get('/badges', 'User\HomeController@badges')->name('badges');
-
-            // money-transfer
-            Route::get('/money-transfer', 'User\HomeController@moneyTransfer')->name('money-transfer');
-            Route::post('/money-transfer', 'User\HomeController@moneyTransferConfirm')->name('money.transfer');
-        });
-
-
-        Route::get('/profile', 'User\HomeController@profile')->name('profile');
-        Route::post('/updateProfile', 'User\HomeController@updateProfile')->name('updateProfile');
-        Route::post('/profileImageUpdate', 'User\HomeController@profileImageUpdate')->name('profileImageUpdate');
-        Route::put('/updateInformation', 'User\HomeController@updateInformation')->name('updateInformation');
-        Route::post('/updatePassword', 'User\HomeController@updatePassword')->name('updatePassword');
-
-        Route::post('/verificationSubmit', 'User\HomeController@verificationSubmit')->name('verificationSubmit');
-        Route::post('/addressVerification', 'User\HomeController@addressVerification')->name('addressVerification');
-
-        //Inventory Route Start
-
+    Route::middleware('checkUserType')->group(function () {
         // Company List
         Route::get('company-list', 'User\CompanyController@index')->name('companyList');
         Route::get('create-company', 'User\CompanyController@createCompany')->name('createCompany');
         Route::post('store-company', 'User\CompanyController@companyStore')->name('companyStore');
         Route::get('edit-company/{id}', 'User\CompanyController@companyEdit')->name('companyEdit');
         Route::post('update-company/{id}', 'User\CompanyController@companyUpdate')->name('companyUpdate');
-
         Route::put('active/company/{id}', 'User\CompanyController@activeCompany')->name('activeCompany');
         Route::get('company/active/{id}', 'User\CompanyController@companyActive')->name('companyActive');
         Route::put('inactive/company/{id}', 'User\CompanyController@inactiveCompany')->name('inactiveCompany');
         Route::delete('delete/company/{id}', 'User\CompanyController@deleteCompany')->name('deleteCompany');
-
-        // Customer List
-        Route::get('customer-list', 'User\CompanyController@customerList')->name('customerList');
-        Route::get('create-customer', 'User\CompanyController@createCustomer')->name('createCustomer');
-        Route::post('store-customer', 'User\CompanyController@customerStore')->name('customerStore');
-        Route::get('customer-details/{id}', 'User\CompanyController@customerDetails')->name('customerDetails');
-        Route::get('customer-edit/{id}', 'User\CompanyController@customerEdit')->name('customerEdit');
-        Route::post('customer-update/{id}', 'User\CompanyController@customerUpdate')->name('customerUpdate');
-        Route::delete('delete/customer/{id}', 'User\CompanyController@deleteCustomer')->name('deleteCustomer');
 
         // Sales Center
         Route::get('sales-center-list', 'User\CompanyController@salesCenterList')->name('salesCenterList');
@@ -203,25 +87,6 @@ Route::group(['middleware' => ['auth', 'Maintenance'], 'prefix' => 'user', 'as' 
         Route::put('update/expense/list/{id}', 'User\CompanyController@updateExpenseList')->name('updateExpenseList');
         Route::delete('delete/expense/list/{id}', 'User\CompanyController@deleteExpenseList')->name('deleteExpenseList');
 
-        // Stock In
-        Route::get('stock-list', 'User\CompanyController@stockList')->name('stockList');
-        Route::get('add-stock', 'User\CompanyController@addStock')->name('addStock');
-        Route::post('stock-store', 'User\CompanyController@stockStore')->name('stockStore');
-        Route::put('update-stock/{id}', 'User\CompanyController@updateStock')->name('updateStock');
-        Route::delete('delete/stock/{id}', 'User\CompanyController@deleteStock')->name('deleteStock');
-        Route::get('stock-details/{id}', 'User\CompanyController@stockDetails')->name('stockDetails');
-        Route::get('stock-details/{item?}/{id?}', 'User\CompanyController@stockDetails')->name('stockDetails');
-        Route::post('selected-item-unit', 'User\CompanyController@getSelectedItemUnit')->name('getSelectedItemUnit');
-
-        // Manage Sales
-        Route::get('sales-items', 'User\CompanyController@salesItem')->name('salesItem');
-        Route::get('sales-list', 'User\CompanyController@salesList')->name('salesList');
-        Route::get('sales-details/{id}', 'User\CompanyController@salesDetails')->name('salesDetails');
-
-        // Sales Return
-        Route::get('sales/return/{id}', 'User\CompanyController@returnSales')->name('returnSales');
-        Route::post('return/sales/order/{id}', 'User\CompanyController@returnSalesOrder')->name('returnSalesOrder');
-
         // suppliers
         Route::get('suppliers', 'User\CompanyController@suppliers')->name('suppliers');
         Route::get('supplier/create', 'User\CompanyController@createSupplier')->name('createSupplier');
@@ -251,9 +116,7 @@ Route::group(['middleware' => ['auth', 'Maintenance'], 'prefix' => 'user', 'as' 
 
 
         Route::put('update-item-unit-price/{id}', 'User\CompanyController@updateItemUnitPrice')->name('updateItemUnitPrice');
-        Route::post('get-selected-items', 'User\CompanyController@getSelectedItems')->name('getSelectedItems');
-        Route::post('get-selected-customer', 'User\CompanyController@getSelectedCustomer')->name('getSelectedCustomer');
-        Route::post('get-selected-sales-center', 'User\CompanyController@getSelectedSalesCenter')->name('getSelectedSalesCenter');
+
 
         Route::post('store-cart-items', 'User\CompanyController@storeCartItems')->name('storeCartItems');
         Route::post('update-cart-items', 'User\CompanyController@updateCartItems')->name('updateCartItems');
@@ -275,24 +138,191 @@ Route::group(['middleware' => ['auth', 'Maintenance'], 'prefix' => 'user', 'as' 
         Route::get('sales-invoice/{id}', 'User\CompanyController@salesInvoice')->name('salesInvoice');
         Route::put('sales-invoice-update/{id}', 'User\CompanyController@salesInvoiceUpdate')->name('salesInvoiceUpdate');
 
-        //Inventory Route End
+//        Route::post('/verificationSubmit', 'User\HomeController@verificationSubmit')->name('verificationSubmit');
+//        Route::post('/addressVerification', 'User\HomeController@addressVerification')->name('addressVerification');
 
+        // Stock In
+        Route::get('add-stock', 'User\CompanyController@addStock')->name('addStock');
 
-        Route::post('get-division-district', [LocationController::class, 'getSelectedDivisionDistrict'])->name('getSelectedDivisionDistrict');
-        Route::post('get-district-upazila', [LocationController::class, 'getSelectedDistrictUpazila'])->name('getSelectedDistrictUpazila');
-        Route::post('get-upazila-union', [LocationController::class, 'getSelectedUpazilaUnion'])->name('getSelectedUpazilaUnion');
-
-
-        Route::group(['prefix' => 'ticket', 'as' => 'ticket.'], function () {
-            Route::get('/', 'User\SupportController@index')->name('list');
-            Route::get('/create', 'User\SupportController@create')->name('create');
-            Route::post('/create', 'User\SupportController@store')->name('store');
-            Route::get('/view/{ticket}', 'User\SupportController@ticketView')->name('view');
-            Route::put('/reply/{ticket}', 'User\SupportController@reply')->name('reply');
-            Route::get('/download/{ticket}', 'User\SupportController@download')->name('download');
-        });
     });
+
+    // Profile
+    Route::get('/profile', 'User\HomeController@profile')->name('profile');
+    Route::post('/updateProfile', 'User\HomeController@updateProfile')->name('updateProfile');
+    Route::post('/profileImageUpdate', 'User\HomeController@profileImageUpdate')->name('profileImageUpdate');
+    Route::put('/updateInformation', 'User\HomeController@updateInformation')->name('updateInformation');
+    Route::post('/updatePassword', 'User\HomeController@updatePassword')->name('updatePassword');
+
+    // Customer List
+    Route::get('customer-list', 'User\CompanyController@customerList')->name('customerList');
+    Route::get('create-customer', 'User\CompanyController@createCustomer')->name('createCustomer');
+    Route::post('store-customer', 'User\CompanyController@customerStore')->name('customerStore');
+    Route::get('customer-details/{id}', 'User\CompanyController@customerDetails')->name('customerDetails');
+    Route::get('customer-edit/{id}', 'User\CompanyController@customerEdit')->name('customerEdit');
+    Route::post('customer-update/{id}', 'User\CompanyController@customerUpdate')->name('customerUpdate');
+    Route::delete('delete/customer/{id}', 'User\CompanyController@deleteCustomer')->name('deleteCustomer');
+
+
+
+
+
+
+
+
+    // Stock In
+    Route::get('stock-list', 'User\CompanyController@stockList')->name('stockList');
+    Route::post('stock-store', 'User\CompanyController@stockStore')->name('stockStore');
+    Route::put('update-stock/{id}', 'User\CompanyController@updateStock')->name('updateStock');
+    Route::delete('delete/stock/{id}', 'User\CompanyController@deleteStock')->name('deleteStock');
+    Route::get('stock-details/{id}', 'User\CompanyController@stockDetails')->name('stockDetails');
+    Route::get('stock-details/{item?}/{id?}', 'User\CompanyController@stockDetails')->name('stockDetails');
+    Route::post('selected-item-unit', 'User\CompanyController@getSelectedItemUnit')->name('getSelectedItemUnit');
+
+    // Manage Sales
+    Route::get('sales-items', 'User\CompanyController@salesItem')->name('salesItem');
+    Route::get('sales-list', 'User\CompanyController@salesList')->name('salesList');
+    Route::get('sales-details/{id}', 'User\CompanyController@salesDetails')->name('salesDetails');
+
+    // Sales Return
+    Route::get('sales/return/{id}', 'User\CompanyController@returnSales')->name('returnSales');
+    Route::post('return/sales/order/{id}', 'User\CompanyController@returnSalesOrder')->name('returnSalesOrder');
+
+
+
+
+
+    // inventory ajax route
+    Route::post('get-division-district', [LocationController::class, 'getSelectedDivisionDistrict'])->name('getSelectedDivisionDistrict');
+    Route::post('get-district-upazila', [LocationController::class, 'getSelectedDistrictUpazila'])->name('getSelectedDistrictUpazila');
+    Route::post('get-upazila-union', [LocationController::class, 'getSelectedUpazilaUnion'])->name('getSelectedUpazilaUnion');
+
+
+    Route::post('get-selected-items', 'User\CompanyController@getSelectedItems')->name('getSelectedItems');
+    Route::post('get-selected-customer', 'User\CompanyController@getSelectedCustomer')->name('getSelectedCustomer');
+    Route::post('get-selected-sales-center', 'User\CompanyController@getSelectedSalesCenter')->name('getSelectedSalesCenter');
+
+    //Inventory Route End
+
+
+
+
+
+    Route::post('/khalti/payment/verify/{trx}', 'khaltiPaymentController@verifyPayment')->name('khalti.verifyPayment');
+    Route::post('/khalti/payment/store', 'khaltiPaymentController@storePayment')->name('khalti.storePayment');
+
+    // review
+    Route::post('/property-details/review', 'FrontendController@reviewPush')->name('review.push');
+    Route::get('/propertyReviews/{id?}', 'FrontendController@getReview')->name('propertyReviews');
+
+    Route::post('/send-message-to-property-investor', 'user\SendMailController@sendMessageToPropertyInvestor')->name('sendMessageToPropertyInvestor');
+
+    Route::get('/dashboard', 'User\HomeController@index')->name('home');
+    Route::get('payment', 'User\HomeController@payment')->name('payment');
+    Route::get('add-fund', 'User\HomeController@addFund')->name('addFund');
+    Route::post('add-fund', 'PaymentController@addFundRequest')->name('addFund.request');
+    Route::get('addFundConfirm', 'PaymentController@depositConfirm')->name('addFund.confirm');
+    Route::post('addFundConfirm', 'PaymentController@fromSubmit')->name('addFund.fromSubmit');
+
+    // Invest History
+    Route::get('invest-history', 'User\HomeController@investHistory')->name('invest-history');
+    Route::get('invest-history-details/{id}', 'User\HomeController@investHistoryDetails')->name('invest-history-details');
+    Route::put('/complete-due-payment/{id}', 'User\HomeController@completeDuePayment')->name('completeDuePayment');
+    Route::post('/invest-property/{id}', 'User\HomeController@investProperty')->name('invest-property');
+    Route::post('/property-make-offer/{id}', 'User\HomeController@propertyMakeOfferStore')->name('propertyMakeOfferStore');
+
+    // user Property Market
+    Route::get('/property-market/{type?}', 'User\HomeController@propertyMarket')->name('propertyMarket');
+    Route::post('/property-share-store/{id}', 'User\HomeController@propertyShareStore')->name('propertyShareStore');
+    Route::post('/property-share-update/{id}', 'User\HomeController@propertyShareUpdate')->name('propertyShareUpdate');
+    Route::delete('/property-share-remove/{id}', 'User\HomeController@propertyShareRemove')->name('propertyShareRemove');
+    Route::post('/property-offer-update/{id}', 'User\HomeController@propertyOfferUpdate')->name('propertyOfferUpdate');
+    Route::delete('/property-offer-remove/{id}', 'User\HomeController@propertyOfferRemove')->name('propertyOfferRemove');
+    Route::get('/offer-list/{id}', 'User\HomeController@offerList')->name('offerList');
+    Route::get('/offer-accept/{id}', 'User\HomeController@offerAccept')->name('offerAccept');
+    Route::get('/offer-reject/{id}', 'User\HomeController@offerReject')->name('offerReject');
+    Route::delete('/offer-remove/{id}', 'User\HomeController@offerRemove')->name('offerRemove');
+    Route::get('/offer-conversation/{id}', 'User\HomeController@offerConversation')->name('offerConversation');
+    Route::post('/offer/reply/message/render/', 'User\HomeController@offerReplyMessageRender')->name('offerReplyMessageRender');
+    Route::post('/offer/reply/message', 'User\HomeController@offerReplyMessage')->name('offerReplyMessage');
+    Route::post('/offer/payment/lock/{id}', 'User\HomeController@paymentLock')->name('paymentLock');
+    Route::post('/offer/payment/lock/update/{id}', 'User\HomeController@paymentLockUpdate')->name('paymentLockUpdate');
+    Route::get('/payment/lock/cancel/{id}', 'User\HomeController@paymentLockCancel')->name('paymentLockCancel');
+    Route::post('/payment/lock/confirm/{id}', 'User\HomeController@paymentLockConfirm')->name('paymentLockConfirm');
+
+    Route::post('/buy/share/{id}', 'User\HomeController@BuyShare')->name('directBuyShare');
+
+
+    // wishlist section
+    Route::post('/wish-list', 'User\FavouriteController@wishList')->name('wishList');
+
+    Route::get('/wish-list-property', 'User\FavouriteController@wishListProperty')->name('wishListProperty');
+    Route::delete('/wish-list-delete/{id?}', 'User\FavouriteController@favouriteListingDelete')->name('favouriteListingDelete');
+
+
+    // comment section
+    Route::post('/send-comment/{id?}', 'User\HomeController@sendComment')->name('sendComment');
+    Route::post('/send-reply/{id?}', 'User\HomeController@sendReply')->name('sendReply');
+
+    //transaction
+    Route::get('/transaction', 'User\HomeController@transaction')->name('transaction');
+    Route::get('/transaction-search', 'User\HomeController@transactionSearch')->name('transaction.search');
+    Route::get('fund-history', 'User\HomeController@fundHistory')->name('fund-history');
+    Route::get('fund-history-search', 'User\HomeController@fundHistorySearch')->name('fund-history.search');
+
+    // TWO-FACTOR SECURITY
+    Route::get('/twostep-security', 'User\HomeController@twoStepSecurity')->name('twostep.security');
+    Route::post('twoStep-enable', 'User\HomeController@twoStepEnable')->name('twoStepEnable');
+    Route::post('twoStep-disable', 'User\HomeController@twoStepDisable')->name('twoStepDisable');
+
+
+    Route::get('push-notification-show', 'SiteNotificationController@show')->name('push.notification.show');
+    Route::get('push.notification.readAll', 'SiteNotificationController@readAll')->name('push.notification.readAll');
+    Route::get('push-notification-readAt/{id}', 'SiteNotificationController@readAt')->name('push.notification.readAt');
+
+    Route::get('/payout', 'User\HomeController@payoutMoney')->name('payout.money');
+    Route::post('/payout', 'User\HomeController@payoutMoneyRequest')->name('payout.moneyRequest');
+    Route::get('/payout/preview', 'User\HomeController@payoutPreview')->name('payout.preview');
+    Route::post('/payout/preview', 'User\HomeController@payoutRequestSubmit')->name('payout.submit');
+    Route::post('/withdraw/paystack/{trx_id}', 'User\HomeController@paystackPayout')->name('payout.submit.paystack');
+    Route::post('/withdraw/flutterwave/{trx_id}', 'User\HomeController@flutterwavePayout')->name('payout.submit.flutterwave');
+    Route::post('withdraw-bank-list', 'User\HomeController@getBankList')->name('payout.getBankList');
+    Route::post('withdraw-bank-from', 'User\HomeController@getBankForm')->name('payout.getBankFrom');
+
+    Route::get('payout-history', 'User\HomeController@payoutHistory')->name('payout.history');
+    Route::get('payout-history-search', 'User\HomeController@payoutHistorySearch')->name('payout.history.search');
+
+    Route::get('/referral', 'User\HomeController@referral')->name('referral');
+    Route::get('/referral-bonus', 'User\HomeController@referralBonus')->name('referral.bonus');
+    Route::get('/referral-bonus-search', 'User\HomeController@referralBonusSearch')->name('referral.bonus.search');
+    Route::get('/badges', 'User\HomeController@badges')->name('badges');
+
+    // money-transfer
+    Route::get('/money-transfer', 'User\HomeController@moneyTransfer')->name('money-transfer');
+    Route::post('/money-transfer', 'User\HomeController@moneyTransferConfirm')->name('money.transfer');
 });
+
+
+
+
+
+Route::group(['prefix' => 'ticket', 'as' => 'ticket.'], function () {
+    Route::get('/', 'User\SupportController@index')->name('list');
+    Route::get('/create', 'User\SupportController@create')->name('create');
+    Route::post('/create', 'User\SupportController@store')->name('store');
+    Route::get('/view/{ticket}', 'User\SupportController@ticketView')->name('view');
+    Route::put('/reply/{ticket}', 'User\SupportController@reply')->name('reply');
+    Route::get('/download/{ticket}', 'User\SupportController@download')->name('download');
+});
+
+
+
+
+
+
+
+
+
+
 
 Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
     Route::get('/', 'Admin\LoginController@showLoginForm')->name('login');

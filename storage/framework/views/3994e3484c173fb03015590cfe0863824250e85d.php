@@ -25,54 +25,33 @@
             <div class="search-bar mt-3 me-2 ms-2 p-0">
                 <form action="" method="get" enctype="multipart/form-data">
                     <div class="row g-3 align-items-end">
-                        <div class="input-box col-lg-2">
-                            <label for=""><?php echo app('translator')->get('Name'); ?></label>
-                            <input
-                                type="text"
-                                name="name"
-                                value="<?php echo e(old('name', @request()->name)); ?>"
-                                class="form-control"
-                                placeholder="<?php echo app('translator')->get('Center Name'); ?>"
-                            />
-                        </div>
 
-                        <div class="input-box col-lg-2">
-                            <label for=""><?php echo app('translator')->get('Code'); ?></label>
-                            <input
-                                type="text"
-                                name="code"
-                                value="<?php echo e(old('name', @request()->code)); ?>"
-                                class="form-control"
-                                placeholder="<?php echo app('translator')->get('Center Code'); ?>"
-                            />
-                        </div>
-
-                        <div class="input-box col-lg-2">
-                            <label for=""><?php echo app('translator')->get('Owner'); ?></label>
-                            <select class="form-control js-example-basic-single" name="owner" aria-label="Default select example">
+                        <div class="input-box col-lg-3">
+                            <label for=""><?php echo app('translator')->get('Sales Center'); ?></label>
+                            <select class="form-control js-example-basic-single" name="sales_center_id" aria-label="Default select example">
                                 <option value=""><?php echo app('translator')->get('All'); ?></option>
                                 <?php $__currentLoopData = $centerLists; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $centerList): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                     <option
-                                        value="<?php echo e($centerList->id); ?>" <?php echo e(old('owner', @request()->owner) == $centerList->id ? 'selected' : ''); ?>><?php echo e($centerList->owner_name); ?></option>
+                                        value="<?php echo e($centerList->id); ?>" <?php echo e(old('sales_center_id', @request()->sales_center_id) == $centerList->id ? 'selected' : ''); ?>><?php echo e($centerList->name); ?></option>
                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </select>
                         </div>
 
-                        <div class="input-box col-lg-2">
+                        <div class="input-box col-lg-3">
                             <label for="from_date"><?php echo app('translator')->get('From Date'); ?></label>
                             <input
                                 type="text" class="form-control datepicker from_date" name="from_date"
                                 value="<?php echo e(old('from_date',request()->from_date)); ?>" placeholder="<?php echo app('translator')->get('From date'); ?>"
                                 autocomplete="off" readonly/>
                         </div>
-                        <div class="input-box col-lg-2">
+                        <div class="input-box col-lg-3">
                             <label for="to_date"><?php echo app('translator')->get('To Date'); ?></label>
                             <input
                                 type="text" class="form-control datepicker to_date" name="to_date"
                                 value="<?php echo e(old('to_date',request()->to_date)); ?>" placeholder="<?php echo app('translator')->get('To date'); ?>"
                                 autocomplete="off" readonly disabled="true"/>
                         </div>
-                        <div class="input-box col-lg-2">
+                        <div class="input-box col-lg-3">
                             <button class="btn-custom w-100" type="submit"><i class="fal fa-search"></i><?php echo app('translator')->get('Search'); ?>
                             </button>
                         </div>
@@ -89,10 +68,9 @@
                 <table class="table table-striped">
                     <thead>
                     <tr>
-                        <th scope="col"><?php echo app('translator')->get('SL'); ?></th>
-                        <th scope="col"><?php echo app('translator')->get('Owner'); ?></th>
                         <th scope="col"><?php echo app('translator')->get('Center Code'); ?></th>
                         <th scope="col"><?php echo app('translator')->get('Center Name'); ?></th>
+                        <th scope="col"><?php echo app('translator')->get('Owner'); ?></th>
                         <th scope="col"><?php echo app('translator')->get('Division'); ?></th>
                         <th scope="col"><?php echo app('translator')->get('District'); ?></th>
                         <th scope="col"><?php echo app('translator')->get('Action'); ?></th>
@@ -101,27 +79,24 @@
                     <tbody>
                     <?php $__empty_1 = true; $__currentLoopData = $centerLists; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $centerList): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                         <tr>
-                            <td data-label="<?php echo app('translator')->get('SL'); ?>"><?php echo e(loopIndex($centerLists) + $key); ?></td>
-
+                            <td data-label="<?php echo app('translator')->get('Center Code'); ?>"><?php echo e($centerList->code); ?></td>
+                            <td data-label="<?php echo app('translator')->get('Center Name'); ?>"><?php echo e($centerList->name); ?></td>
                             <td class="company-logo" data-label="<?php echo app('translator')->get('Owner'); ?>">
                                 <div>
                                     <a href="" target="_blank">
                                         <img
-                                            src="<?php echo e(getFile(config('location.salesCenter.path').$centerList->image)); ?>">
+                                            src="<?php echo e(getFile(config('location.user.path').optional($centerList->user)->image)); ?>">
                                     </a>
                                 </div>
                                 <div>
                                     <a href=""
-                                       target="_blank"><?php echo e($centerList->owner_name); ?></a>
+                                       target="_blank"><?php echo e($centerList->user->name); ?></a>
                                     <br>
                                     <span class="text-muted font-14">
-                                        <span><?php echo e(optional($centerList->user)->email); ?></span>
+                                        <span><?php echo e(optional($centerList->user)->phone); ?></span>
                                     </span>
                                 </div>
                             </td>
-
-                            <td data-label="<?php echo app('translator')->get('Center Code'); ?>"><?php echo e($centerList->code); ?></td>
-                            <td data-label="<?php echo app('translator')->get('Center Name'); ?>"><?php echo e($centerList->name); ?></td>
                             <td data-label="<?php echo app('translator')->get('Division'); ?>"><?php echo e(optional($centerList->division)->name); ?></td>
                             <td data-label="<?php echo app('translator')->get('District'); ?>"><?php echo e(optional($centerList->district)->name); ?></td>
 

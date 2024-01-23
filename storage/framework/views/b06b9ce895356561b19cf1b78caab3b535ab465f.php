@@ -13,15 +13,10 @@
             </li>
             <li>
                 <a href="<?php echo e(route('user.profile')); ?>">
-                    <i class="fal fa-user"></i> <?php echo app('translator')->get('My Profile'); ?>
+                    <i class="fal fa-user"></i> <?php echo app('translator')->get('Profile'); ?>
                 </a>
             </li>
 
-            <li>
-                <a href="<?php echo e(route('user.twostep.security')); ?>">
-                    <i class="fal fa-lock"></i> <?php echo app('translator')->get('2FA Security'); ?>
-                </a>
-            </li>
 
             <li>
                 <a href="<?php echo e(route('logout')); ?>" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">

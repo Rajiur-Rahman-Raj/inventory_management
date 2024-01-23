@@ -62,7 +62,17 @@
                     <?php $__empty_1 = true; $__currentLoopData = $purchasedItems; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $purchaseItem): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                         <tr>
                             <td data-label="<?php echo app('translator')->get('SL'); ?>"><?php echo e(loopIndex($purchasedItems) + $key); ?></td>
-                            <td data-label="<?php echo app('translator')->get('Item'); ?>"> <?php echo e(optional($purchaseItem->rawItem)->name); ?> </td>
+                            <td data-label="<?php echo app('translator')->get('Image'); ?>">
+                                <div class="d-flex gap-2">
+                                    <div class="logo-brand">
+                                        <img src="<?php echo e(getFile(config('location.rawItemImage.path').optional($purchaseItem->rawItem)->image)); ?>"
+                                             alt="">
+                                    </div>
+                                    <div class="product-summary">
+                                        <p class="font-weight-bold mt-3"><?php echo e(optional($purchaseItem->rawItem)->name); ?></p>
+                                    </div>
+                                </div>
+                            </td>
                             <td data-label="<?php echo app('translator')->get('Quantity'); ?>" class="font-weight-bold">
                                 <span
                                     class="badge <?php echo e($purchaseItem->quantity > 0 ? 'bg-info' : 'bg-danger'); ?>"><?php echo e($purchaseItem->quantity); ?> </span>

@@ -550,7 +550,7 @@ unset($__errorArgs, $__bag); ?>
         'use strict'
         $(".flatpickr").flatpickr({
             wrap: true,
-            minDate: "today",
+            maxDate: "today",
             // maxDate: "today",
             altInput: true,
             dateFormat: "Y-m-d H:i",

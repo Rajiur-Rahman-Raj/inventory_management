@@ -26,7 +26,6 @@ class SalesCenterStoreRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'min:3', 'max:500'],
             'code' => ['required', 'string', 'min:1', 'max:100'],
-            'owner_name' => ['required', 'string', 'min:3', 'max:50'],
             'email' => ['required'],
             'phone' => ['required', 'min:1', 'max:100'],
             'password' => ['required', 'min:3'],
@@ -36,7 +35,8 @@ class SalesCenterStoreRequest extends FormRequest
             'district_id' => ['required', 'exists:districts,id'],
             'upazila_id' => ['nullable'],
             'union_id' => ['nullable'],
-            'address' => ['required'],
+            'center_address' => ['required'],
+            'owner_address' => ['required'],
             'image' => ['nullable'],
         ];
     }
@@ -50,9 +50,8 @@ class SalesCenterStoreRequest extends FormRequest
             'name.max' => 'The name may not be greater than :max characters.',
             'division_id.exists' => 'The selected division is invalid.',
             'district_id.exists' => 'The selected district is invalid.',
-            'address.required' => 'The address field is required.',
-            'address.min' => 'The address must be at least :min characters.',
-            'address.max' => 'The address may not be greater than :max characters.',
+            'center_address.required' => 'The Center location field is required.',
+            'owner_address.required' => 'The owner address field is required.',
         ];
     }
 }
