@@ -1091,7 +1091,8 @@ class CompanyController extends Controller
     public function salesItem()
     {
         $admin = $this->user;
-        $data['items'] = Item::where('company_id', $admin->active_company_id)
+        $companyId = ($admin->user_type == 1 ? $admin->active_company_id : $admin->salesCenter->company_id);
+        $data['items'] = Item::where('company_id', $companyId)
             ->select('id', 'name')
             ->latest()
             ->get();
@@ -1882,12 +1883,22 @@ class CompanyController extends Controller
 
         $data['subTotal'] = $data['cartItems']->sum('cost');
 
-        $data['items'] = Item::where('company_id', $admin->active_company_id)
+        $companyId = ($admin->user_type == 1 ? $admin->active_company_id : $admin->salesCenter->company_id);
+        $data['items'] = Item::where('company_id', $companyId)
             ->select('id', 'name')
             ->latest()
             ->get();
 
-        $data['stocks'] = Stock::with('item:id,name,image')->where('company_id', $admin->active_company_id)->whereNull('sales_center_id')
+        $data['stocks'] = Stock::with('item:id,name,image')
+            ->when(!isset($admin->salesCenter) && $admin->user_type == 1, function ($query) use ($admin) {
+                return $query->where('company_id', $admin->active_company_id)->whereNull('sales_center_id');
+            })
+            ->when(isset($admin->salesCenter) && $admin->user_type == 2, function ($query) use ($admin) {
+                return $query->where([
+                    ['company_id', $admin->salesCenter->company_id],
+                    ['sales_center_id', $admin->salesCenter->id],
+                ]);
+            })
             ->select('id', 'item_id', 'quantity', 'cost_per_unit', 'last_cost_per_unit', 'selling_price')
             ->latest()
             ->get();

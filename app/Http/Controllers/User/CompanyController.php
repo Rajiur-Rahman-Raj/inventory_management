@@ -1643,6 +1643,7 @@ class CompanyController extends Controller
 
     public function salesOrderUpdate(Request $request, $id)
     {
+
         $purifiedData = Purify::clean($request->except('_token', '_method'));
         $rules = [
             'payment_date' => 'required',
@@ -1661,7 +1662,18 @@ class CompanyController extends Controller
 
         $due_or_change_amount = (float)floor($request->due_or_change_amount);
         $admin = $this->user;
-        $sale = Sale::where('company_id', $admin->active_company_id)->findOrFail($id);
+
+        $sale = Sale::when(!isset($admin->salesCenter) && $admin->user_type == 1, function ($query) use ($admin) {
+                return $query->where('company_id', $admin->active_company_id)->where('sales_by', 1);
+            })
+            ->when(isset($admin->salesCenter) && $admin->user_type == 2, function ($query) use ($admin) {
+                return $query->where([
+                    ['company_id', $admin->salesCenter->company_id],
+                    ['sales_center_id', $admin->salesCenter->id],
+                    ['sales_by', 2],
+                ]);
+            })
+            ->findOrFail($id);
 
         $sale->customer_paid_amount = $due_or_change_amount <= 0 ? $sale->total_amount : (float)$request->customer_paid_amount + (float)$sale->customer_paid_amount;
         $sale->due_amount = $due_or_change_amount <= 0 ? 0 : $request->due_or_change_amount;
@@ -1870,10 +1882,10 @@ class CompanyController extends Controller
         }
 
         $data['cartItems'] = CartItems::with('item')
-            ->when(!isset($admin->salesCenter) && $admin->user_type == 1, function ($query) use($admin){
+            ->when(!isset($admin->salesCenter) && $admin->user_type == 1, function ($query) use ($admin) {
                 return $query->where('company_id', $admin->active_company_id)->whereNull('sales_center_id');
             })
-            ->when(isset($admin->salesCenter) && $admin->user_type == 2, function ($query) use($admin){
+            ->when(isset($admin->salesCenter) && $admin->user_type == 2, function ($query) use ($admin) {
                 return $query->where([
                     ['company_id', $admin->salesCenter->company_id],
                     ['sales_center_id', $admin->salesCenter->id],
@@ -1910,6 +1922,8 @@ class CompanyController extends Controller
     {
         $admin = $this->user;
         $purifiedData = Purify::clean($request->except('_token', '_method'));
+
+        DB::beginTransaction();
         try {
             $rules = [
                 'items' => 'nullable',
@@ -1927,11 +1941,21 @@ class CompanyController extends Controller
                 return back()->withInput()->withErrors($validate);
             }
 
-            DB::beginTransaction();
+            $companyId = ($admin->user_type == 1) ? $admin->active_company_id : $admin->salesCenter->company_id;
+            $sale = Sale::with('salesItems')
+                ->when(!isset($admin->salesCenter) && $admin->user_type == 1, function ($query) use ($companyId) {
+                    return $query->where('company_id', $companyId)->where('sales_by', 1);
+                })
+                ->when(isset($admin->salesCenter) && $admin->user_type == 2, function ($query) use ($admin, $companyId) {
+                    return $query->where([
+                        ['company_id', $companyId],
+                        ['sales_center_id', $admin->salesCenter->id],
+                        ['sales_by', 2],
+                    ]);
+                })->findOrFail($id);
+
+
             $due_or_change_amount = (float)floor($request->due_or_change_amount);
-
-
-            $sale = Sale::with('salesItems')->where('company_id', $admin->active_company_id)->findOrFail($id);
 
             $sale->sub_total = $request->sub_total;
             $sale->discount_parcent = (isset($request->discount_parcent) ? $request->discount_parcent : 0);
@@ -1945,12 +1969,17 @@ class CompanyController extends Controller
             $items = $this->storeSalesItems($request, $sale);
             $sale->save();
 
-
             $this->updateSalesItems($request, $sale);
 
-
-            CartItems::where('company_id', $admin->active_company_id)
-                ->whereNull('sales_center_id')
+            CartItems::when(!isset($admin->salesCenter) && $admin->user_type == 1, function ($query) use ($admin) {
+                    return $query->where('company_id', $admin->active_company_id)->whereNull('sales_center_id');
+                })
+                ->when(isset($admin->salesCenter) && $admin->user_type == 2, function ($query) use ($admin) {
+                    return $query->where([
+                        ['company_id', $admin->salesCenter->company_id],
+                        ['sales_center_id', $admin->salesCenter->id],
+                    ]);
+                })
                 ->delete();
 
             DB::commit();

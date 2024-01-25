@@ -54,17 +54,13 @@ trait StoreSalesTrait
         foreach ($request->item_name as $key => $value) {
             $salesItem = SalesItem::where('sales_id', $sale->id)->where('stock_id', $request->stock_id[$key])->where('item_id', $request->item_id[$key])->first();
 
-            $companyId = ($admin->user_type == 1) ? $admin->active_company_id : $admin->salesCenter->company_id;
-            $salesCenterId = ($admin->user_type == 1) ? $sale->sales_center_id : $admin->salesCenter->id;
-
             $salesCenterStock = Stock::where([
-                'company_id' => $companyId,
+                'company_id' => $admin->active_company_id,
                 'item_id' => $request->item_id[$key],
-                'sales_center_id' => $salesCenterId,
+                'sales_center_id' => $sale->sales_center_id,
             ])->first();
 
-
-            $companyStock = Stock::where('company_id', $companyId)
+            $companyStock = Stock::where('company_id', $admin->active_company_id)
                 ->where('id', $request->stock_id[$key])
                 ->where('item_id', $request->item_id[$key])
                 ->whereNull('sales_center_id')
@@ -72,7 +68,7 @@ trait StoreSalesTrait
 
             if ($salesItem) {
                 if (($sale->company_id && $sale->sales_center_id) && ($sale->customer_id == null)){
-                    // sales center item return to company
+                    // sales center item return
                     if ($salesItem->item_quantity > (int)$request->item_quantity[$key]) {
                         // company stock (+) and sales center stock (-)
                         $updateStockQuantity = $salesItem->item_quantity - $request->item_quantity[$key];
@@ -92,35 +88,18 @@ trait StoreSalesTrait
                         $salesCenterStock->save();
                     }
                 }else{
-                    // customer item return to sales center + company
-                    if ($admin->user_type == 1){
-                        // customer return items to direct company
-                        if ($salesItem->item_quantity > (int)$request->item_quantity[$key]) {
-                            // company stock (+)
-                            $updateStockQuantity = $salesItem->item_quantity - $request->item_quantity[$key];
-                            $companyStock->quantity += $updateStockQuantity;
-                            $companyStock->save();
+                    // customer item return
+                    if ($salesItem->item_quantity > (int)$request->item_quantity[$key]) {
+                        // company stock (+)
+                        $updateStockQuantity = $salesItem->item_quantity - $request->item_quantity[$key];
+                        $companyStock->quantity += $updateStockQuantity;
+                        $companyStock->save();
 
-                        } elseif ($salesItem->item_quantity < $request->item_quantity[$key]) {
-                            // company stock (-)
-                            $updateStockQuantity = $request->item_quantity[$key] - $salesItem->item_quantity;
-                            $companyStock->quantity -= $updateStockQuantity;
-                            $companyStock->save();
-                        }
-                    }else{
-                        // customer return items to sales center
-                        if ($salesItem->item_quantity > (int)$request->item_quantity[$key]) {
-                            // sales center stock (+)
-                            $updateStockQuantity = $salesItem->item_quantity - $request->item_quantity[$key];
-                            $salesCenterStock->quantity += $updateStockQuantity;
-                            $salesCenterStock->save();
-
-                        } elseif ($salesItem->item_quantity < $request->item_quantity[$key]) {
-                            // sales center stock (-)
-                            $updateStockQuantity = $request->item_quantity[$key] - $salesItem->item_quantity;
-                            $salesCenterStock->quantity -= $updateStockQuantity;
-                            $salesCenterStock->save();
-                        }
+                    } elseif ($salesItem->item_quantity < $request->item_quantity[$key]) {
+                        // company stock (-)
+                        $updateStockQuantity = $request->item_quantity[$key] - $salesItem->item_quantity;
+                        $companyStock->quantity -= $updateStockQuantity;
+                        $companyStock->save();
                     }
                 }
 
@@ -141,16 +120,15 @@ trait StoreSalesTrait
                 $newSalesItem->save();
 
 
-//                $salesCenterStock = Stock::firstOrNew([
-//                    'company_id' => $admin->active_company_id,
-//                    'item_id' => $request->item_id[$key],
-//                    'sales_center_id' => $sale->sales_center_id,
-//                ]);
+                $salesCenterStock = Stock::firstOrNew([
+                    'company_id' => $admin->active_company_id,
+                    'item_id' => $request->item_id[$key],
+                    'sales_center_id' => $sale->sales_center_id,
+                ]);
 
                 if (($sale->company_id && $sale->sales_center_id) && ($sale->customer_id == null)){
-                    // sales center purchase new item, so sales center stock (+) and company stock (-)
-                    $salesCenterStock->company_id = $companyId;
-                    $salesCenterStock->sales_center_id = $salesCenterId;
+                    $salesCenterStock->company_id = $admin->active_company_id;
+                    $salesCenterStock->sales_center_id = $sale->sales_center_id;
                     $salesCenterStock->item_id = $request->item_id[$key];
                     $salesCenterStock->quantity += (int)$request->item_quantity[$key];
                     $salesCenterStock->cost_per_unit = ($salesCenterStock->last_cost_per_unit) ?? $request->cost_per_unit[$key];
@@ -159,40 +137,11 @@ trait StoreSalesTrait
                     $salesCenterStock->stock_date = ($salesCenterStock->last_stock_date) ?? Carbon::now();
                     $salesCenterStock->last_stock_date = Carbon::now();
                     $salesCenterStock->save();
-
-                    $companyStock->quantity -= (int)$request->item_quantity[$key];
-                    $companyStock->save();
-                }else{
-                    // customer purchase new item so company stock (-) or sales center stock (-)
-                    if ($admin->user_type == 1){
-                        // company stock (-)
-                        $companyStock->quantity -= (int)$request->item_quantity[$key];
-                        $companyStock->save();
-                    }else{
-                        $salesCenterStock->quantity -= (int)$request->item_quantity[$key];
-                        $salesCenterStock->save();
-                    }
                 }
 
-
-
-//
-//                if (($sale->company_id && $sale->sales_center_id) && ($sale->customer_id == null)){
-//                    $salesCenterStock->company_id = $admin->active_company_id;
-//                    $salesCenterStock->sales_center_id = $sale->sales_center_id;
-//                    $salesCenterStock->item_id = $request->item_id[$key];
-//                    $salesCenterStock->quantity += (int)$request->item_quantity[$key];
-//                    $salesCenterStock->cost_per_unit = ($salesCenterStock->last_cost_per_unit) ?? $request->cost_per_unit[$key];
-//                    $salesCenterStock->last_cost_per_unit = $request->cost_per_unit[$key];
-//                    $salesCenterStock->selling_price = $request->cost_per_unit[$key];
-//                    $salesCenterStock->stock_date = ($salesCenterStock->last_stock_date) ?? Carbon::now();
-//                    $salesCenterStock->last_stock_date = Carbon::now();
-//                    $salesCenterStock->save();
-//                }
-//
-//                $companyStock = Stock::where('company_id', $admin->active_company_id)->where('id', $request->stock_id[$key])->where('item_id', $request->item_id[$key])->whereNull('sales_center_id')->first();
-//                $companyStock->quantity -= (int)$request->item_quantity[$key];
-//                $companyStock->save();
+                $companyStock = Stock::where('company_id', $admin->active_company_id)->where('id', $request->stock_id[$key])->where('item_id', $request->item_id[$key])->whereNull('sales_center_id')->first();
+                $companyStock->quantity -= (int)$request->item_quantity[$key];
+                $companyStock->save();
             }
         }
     }

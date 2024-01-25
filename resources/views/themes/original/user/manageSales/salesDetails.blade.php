@@ -32,7 +32,7 @@
                             <div class="card investment-details-card">
                                 <div class="card-body">
                                     <div class="d-flex justify-content-end investment__block">
-                                        @if($singleSalesDetails->payment_status != 1)
+                                        @if(($singleSalesDetails->payment_status != 1) && (userType() == 2 && $singleSalesDetails->sales_by == 2))
                                             <a href="javascript:void(0)"
                                                class="btn btn-sm btn-primary text-white me-2 invest-details-back paidDueAmountBtn"
                                                data-route="{{ route('user.salesOrderUpdate', $singleSalesDetails->id) }}"
