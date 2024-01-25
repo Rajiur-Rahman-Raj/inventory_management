@@ -35,19 +35,21 @@
                                 autocomplete="off"/>
                         </div>
 
-                        <div class="input-box col-lg-3">
-                            <label for="">@lang('Sales Center')</label>
-                            <select
-                                class="form-select js-example-basic-single select-sales-center salesCenterId"
-                                name="sales_center_id"
-                                aria-label="Default select example">
-                                <option value="all">@lang('All')</option>
-                                @foreach($salesCenters as $saleCenter)
-                                    <option
-                                        value="{{ $saleCenter->id }}" {{ old('sales_center_id', @request()->sales_center_id) == $saleCenter->id ? 'selected' : ''}}> @lang($saleCenter->name)</option>
-                                @endforeach
-                            </select>
-                        </div>
+                        @if(userType() == 1)
+                            <div class="input-box col-lg-3">
+                                <label for="">@lang('Sales Center')</label>
+                                <select
+                                    class="form-select js-example-basic-single select-sales-center salesCenterId"
+                                    name="sales_center_id"
+                                    aria-label="Default select example">
+                                    <option value="all">@lang('All')</option>
+                                    @foreach($salesCenters as $saleCenter)
+                                        <option
+                                            value="{{ $saleCenter->id }}" {{ old('sales_center_id', @request()->sales_center_id) == $saleCenter->id ? 'selected' : ''}}> @lang($saleCenter->name)</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        @endif
 
                         <div class="input-box col-lg-2">
                             <label for="sales_date">@lang('Sales Date')</label>
@@ -135,12 +137,21 @@
                                             <a href="{{ route('user.salesDetails', $salesList->id) }}"
                                                class="dropdown-item"> <i class="fal fa-eye"></i> @lang('Details') </a>
                                         </li>
+                                        @if(userType() == 2 && $salesList->sales_by == 2)
+                                            <li>
+                                                <a href="{{ route('user.returnSales', $salesList->id) }}"
+                                                   class="dropdown-item"> <i
+                                                        class="fal fa-backward"></i> @lang('Return Sales') </a>
+                                            </li>
+                                        @endif
 
-                                        <li>
-                                            <a href="{{ route('user.returnSales', $salesList->id) }}"
-                                               class="dropdown-item"> <i
-                                                    class="fal fa-backward"></i> @lang('Return Sales') </a>
-                                        </li>
+                                        @if(userType() == 1 && $salesList->sales_by == 1)
+                                            <li>
+                                                <a href="{{ route('user.returnSales', $salesList->id) }}"
+                                                   class="dropdown-item"> <i
+                                                        class="fal fa-backward"></i> @lang('Return Sales') </a>
+                                            </li>
+                                        @endif
                                     </ul>
                                 </div>
                             </td>

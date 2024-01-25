@@ -34,19 +34,21 @@
                                 autocomplete="off"/>
                         </div>
 
-                        <div class="input-box col-lg-3">
-                            <label for=""><?php echo app('translator')->get('Sales Center'); ?></label>
-                            <select
-                                class="form-select js-example-basic-single select-sales-center salesCenterId"
-                                name="sales_center_id"
-                                aria-label="Default select example">
-                                <option value="all"><?php echo app('translator')->get('All'); ?></option>
-                                <?php $__currentLoopData = $salesCenters; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $saleCenter): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                    <option
-                                        value="<?php echo e($saleCenter->id); ?>" <?php echo e(old('sales_center_id', @request()->sales_center_id) == $saleCenter->id ? 'selected' : ''); ?>> <?php echo app('translator')->get($saleCenter->name); ?></option>
-                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                            </select>
-                        </div>
+                        <?php if(userType() == 1): ?>
+                            <div class="input-box col-lg-3">
+                                <label for=""><?php echo app('translator')->get('Sales Center'); ?></label>
+                                <select
+                                    class="form-select js-example-basic-single select-sales-center salesCenterId"
+                                    name="sales_center_id"
+                                    aria-label="Default select example">
+                                    <option value="all"><?php echo app('translator')->get('All'); ?></option>
+                                    <?php $__currentLoopData = $salesCenters; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $saleCenter): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <option
+                                            value="<?php echo e($saleCenter->id); ?>" <?php echo e(old('sales_center_id', @request()->sales_center_id) == $saleCenter->id ? 'selected' : ''); ?>> <?php echo app('translator')->get($saleCenter->name); ?></option>
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                </select>
+                            </div>
+                        <?php endif; ?>
 
                         <div class="input-box col-lg-2">
                             <label for="sales_date"><?php echo app('translator')->get('Sales Date'); ?></label>
@@ -134,12 +136,21 @@
                                             <a href="<?php echo e(route('user.salesDetails', $salesList->id)); ?>"
                                                class="dropdown-item"> <i class="fal fa-eye"></i> <?php echo app('translator')->get('Details'); ?> </a>
                                         </li>
+                                        <?php if(userType() == 2 && $salesList->sales_by == 2): ?>
+                                            <li>
+                                                <a href="<?php echo e(route('user.returnSales', $salesList->id)); ?>"
+                                                   class="dropdown-item"> <i
+                                                        class="fal fa-backward"></i> <?php echo app('translator')->get('Return Sales'); ?> </a>
+                                            </li>
+                                        <?php endif; ?>
 
-                                        <li>
-                                            <a href="<?php echo e(route('user.returnSales', $salesList->id)); ?>"
-                                               class="dropdown-item"> <i
-                                                    class="fal fa-backward"></i> <?php echo app('translator')->get('Return Sales'); ?> </a>
-                                        </li>
+                                        <?php if(userType() == 1 && $salesList->sales_by == 1): ?>
+                                            <li>
+                                                <a href="<?php echo e(route('user.returnSales', $salesList->id)); ?>"
+                                                   class="dropdown-item"> <i
+                                                        class="fal fa-backward"></i> <?php echo app('translator')->get('Return Sales'); ?> </a>
+                                            </li>
+                                        <?php endif; ?>
                                     </ul>
                                 </div>
                             </td>
