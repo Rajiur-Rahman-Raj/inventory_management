@@ -1377,87 +1377,49 @@ class CompanyController extends Controller
 
     public function updateCartItems(Request $request)
     {
-
         $admin = $this->user;
 
-        $stock = Stock::when(!isset($admin->salesCenter) && $admin->user_type == 1, function ($query) use ($admin) {
-            return $query->where('company_id', $admin->active_company_id)->whereNull('sales_center_id');
-        })
-            ->when(isset($admin->salesCenter) && $admin->user_type == 2, function ($query) use ($admin) {
-                return $query->where([
-                    ['company_id', $admin->salesCenter->company_id],
-                    ['sales_center_id', $admin->salesCenter->id],
-                ]);
-            })
+        $stock = Stock::where('company_id', $admin->active_company_id)
+            ->whereNull('sales_center_id')
             ->select('id', 'quantity')
             ->findOrFail($request->stockId);
 
-//        $oldPlusNewQuantity = $request->cartQuantity + $stock->quantity;
+        $oldPlusNewQuantity = $request->oldBuyItemQuantity + $stock->quantity;
 
-        if ($request->cartQuantity && ($request->cartQuantity > $stock->quantity)) {
+        if ($request->oldBuyItemQuantity && ($request->cartQuantity > $oldPlusNewQuantity)) {
             $status = false;
             $message = "This item is out of stock";
-            $stockQuantity = $stock->quantity;
+            $stockQuantity = $oldPlusNewQuantity;
         } else {
-            $cartItem = CartItems::when(!isset($admin->salesCenter) && $admin->user_type == 1, function ($query) use ($admin, $request) {
-                return $query->where([
-                    'company_id' => $admin->active_company_id,
-                    'stock_id' => $request->stockId,
-                    'item_id' => $request->itemId,
-                ]);
-            })
-                ->when(isset($admin->salesCenter) && $admin->user_type == 2, function ($query) use ($admin, $request) {
-                    return $query->where([
-                        'company_id' => $admin->salesCenter->company_id,
-                        'sales_center_id' => $admin->salesCenter->id,
-                        'stock_id' => $request->stockId,
-                        'item_id' => $request->itemId,
-                    ]);
-                })
-                ->first();
+            $cartItem = CartItems::where([
+                'company_id' => $admin->active_company_id,
+                'stock_id' => $request->stockId,
+                'item_id' => $request->itemId,
+            ])->first();
 
-            if ($cartItem && $request->cartQuantity > $stock->quantity) {
+            if ($cartItem && $request->cartQuantity > ($request->oldBuyItemQuantity ? $oldPlusNewQuantity : $stock->quantity)) {
                 $status = false;
                 $message = "This item is out of stock";
-                $stockQuantity = $stock->quantity;
+                $stockQuantity = $oldPlusNewQuantity;
             } else {
-                CartItems::when(!isset($admin->salesCenter) && $admin->user_type == 1, function ($query) use ($admin, $request) {
-                        return $query->updateOrInsert(
-                            [
-                                'company_id' => $admin->active_company_id,
-                                'sales_center_id' => null,
-                                'stock_id' => $request->stockId,
-                                'item_id' => $request->itemId,
-                            ],
-                            [
-                                'quantity' => $request->cartQuantity,
-                                'cost' => DB::raw('quantity * cost_per_unit'),
-                                'updated_at' => Carbon::now()
-                            ]
-                        );
-                    })
-                    ->when(isset($admin->salesCenter) && $admin->user_type == 2, function ($query) use ($admin, $request) {
-                        return $query->updateOrInsert(
-                            [
-                                'company_id' => $admin->salesCenter->company_id,
-                                'sales_center_id' => $admin->salesCenter->id,
-                                'stock_id' => $request->stockId,
-                                'item_id' => $request->itemId,
-                            ],
-                            [
-                                'quantity' => $request->cartQuantity,
-                                'cost' => DB::raw('quantity * cost_per_unit'),
-                                'updated_at' => Carbon::now()
-                            ]
-                        );
-                    });
+                CartItems::updateOrInsert(
+                    [
+                        'company_id' => $admin->active_company_id,
+                        'stock_id' => $request->stockId,
+                        'item_id' => $request->itemId,
+                    ],
+                    [
+                        'quantity' => $request->cartQuantity,
+                        'cost' => DB::raw('quantity * cost_per_unit'),
+                        'updated_at' => Carbon::now()
+                    ]
+                );
 
                 $status = true;
                 $message = "Cart item added successfully";
                 $stockQuantity = null;
             }
         }
-
         return response()->json([
             'status' => $status,
             'message' => $message,
@@ -1496,8 +1458,8 @@ class CompanyController extends Controller
     {
         $admin = $this->user;
         CartItems::when(!isset($admin->salesCenter) && $admin->user_type == 1, function ($query) use ($admin) {
-            return $query->where('company_id', $admin->active_company_id)->whereNull('sales_center_id');
-        })
+                return $query->where('company_id', $admin->active_company_id)->whereNull('sales_center_id');
+            })
             ->when(isset($admin->salesCenter) && $admin->user_type == 2, function ($query) use ($admin) {
                 return $query->where([
                     ['company_id', $admin->salesCenter->company_id],
@@ -1508,15 +1470,15 @@ class CompanyController extends Controller
             ->delete();
 
         $cartItems = CartItems::with('item')
-            ->when(!isset($admin->salesCenter) && $admin->user_type == 1, function ($query) use ($admin) {
-                return $query->where('company_id', $admin->active_company_id)->whereNull('sales_center_id');
-            })
-            ->when(isset($admin->salesCenter) && $admin->user_type == 2, function ($query) use ($admin) {
-                return $query->where([
-                    ['company_id', $admin->salesCenter->company_id],
-                    ['sales_center_id', $admin->salesCenter->id],
-                ]);
-            })->get();
+                ->when(!isset($admin->salesCenter) && $admin->user_type == 1, function ($query) use ($admin) {
+                    return $query->where('company_id', $admin->active_company_id)->whereNull('sales_center_id');
+                })
+                ->when(isset($admin->salesCenter) && $admin->user_type == 2, function ($query) use ($admin) {
+                    return $query->where([
+                        ['company_id', $admin->salesCenter->company_id],
+                        ['sales_center_id', $admin->salesCenter->id],
+                    ]);
+                })->get();
 
         return response()->json([
             'cartItems' => $cartItems,

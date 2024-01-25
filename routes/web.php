@@ -115,10 +115,6 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'user', 'as' => 'user.'], fu
         Route::delete('delete/supplier/{id}', 'User\CompanyController@deleteSupplier')->name('deleteSupplier');
 
 
-        Route::put('update-item-unit-price/{id}', 'User\CompanyController@updateItemUnitPrice')->name('updateItemUnitPrice');
-
-
-
 
 //        Route::post('/verificationSubmit', 'User\HomeController@verificationSubmit')->name('verificationSubmit');
 //        Route::post('/addressVerification', 'User\HomeController@addressVerification')->name('addressVerification');
@@ -132,6 +128,8 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'user', 'as' => 'user.'], fu
 
     // sales center stock
     Route::get('sales/center/stock/details/{item?}/{id?}', 'User\CompanyController@salesCenterStockDetails')->name('salesCenterStockDetails');
+
+    Route::put('update-item-unit-price/{id}', 'User\CompanyController@updateItemUnitPrice')->name('updateItemUnitPrice');
 
     Route::post('store-cart-items', 'User\CompanyController@storeCartItems')->name('storeCartItems');
     Route::post('update-cart-items', 'User\CompanyController@updateCartItems')->name('updateCartItems');
