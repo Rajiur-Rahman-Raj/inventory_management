@@ -22,10 +22,17 @@
                                                 name="item_id"
                                                 aria-label="Default select example">
                                             <option value="all">@lang('All Items')</option>
-                                            @foreach($items as $item)
-                                                <option
-                                                    value="{{ $item->id }}" {{ old('item_id', session('filterItemId')) == $item->id ? 'selected' : ''}}> @lang($item->name)</option>
-                                            @endforeach
+                                            @if(userType() == 1)
+                                                @foreach($items as $item)
+                                                    <option
+                                                        value="{{ $item->id }}" {{ old('item_id', session('filterItemId')) == $item->id ? 'selected' : ''}}> @lang($item->name)</option>
+                                                @endforeach
+                                            @else
+                                                @foreach($stocks as $stock)
+                                                    <option
+                                                        value="{{ optional($stock->item)->id }}" {{ old('item_id', session('filterItemId')) == optional($stock->item)->id ? 'selected' : ''}}> {{ optional($stock->item)->name }} </option>
+                                                @endforeach
+                                            @endif
                                         </select>
                                     </div>
                                 </div>
@@ -105,47 +112,50 @@
                                 <div class="tab-tille">
                                     <h4>@lang('sales by')</h4>
                                 </div>
-                                <div class="description-tab">
-                                    <ul class="nav nav-tabs" id="myTab" role="tablist">
-                                        <li class="nav-item" role="presentation">
-                                            <button class="nav-link active" id="home-tab" data-bs-toggle="tab"
-                                                    data-bs-target="#home-tab-pane" type="button" role="tab"
-                                                    aria-controls="home-tab-pane"
-                                                    aria-selected="true">@lang('Customer')
-                                            </button>
-                                        </li>
-                                        <li class="nav-item" role="presentation">
-                                            <button class="nav-link" id="contact-tab" data-bs-toggle="tab"
-                                                    data-bs-target="#contact-tab-pane" type="button" role="tab"
-                                                    aria-controls="contact-tab-pane" aria-selected="false">
-                                                @lang('Sales Center')
-                                            </button>
-                                        </li>
-                                    </ul>
-                                </div>
+                                @if(userType() == 1)
+                                    <div class="description-tab">
+                                        <ul class="nav nav-tabs" id="myTab" role="tablist">
+                                            <li class="nav-item" role="presentation">
+                                                <button class="nav-link active" id="home-tab" data-bs-toggle="tab"
+                                                        data-bs-target="#home-tab-pane" type="button" role="tab"
+                                                        aria-controls="home-tab-pane"
+                                                        aria-selected="true">@lang('Customer')
+                                                </button>
+                                            </li>
+                                            <li class="nav-item" role="presentation">
+                                                <button class="nav-link" id="contact-tab" data-bs-toggle="tab"
+                                                        data-bs-target="#contact-tab-pane" type="button" role="tab"
+                                                        aria-controls="contact-tab-pane" aria-selected="false">
+                                                    @lang('Sales Center')
+                                                </button>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                @endif
                                 <div class="description-content mt-2">
                                     <div class="tab-content" id="myTabContent">
                                         <div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel"
                                              aria-labelledby="home-tab" tabindex="0">
-
-                                            <div class="cutomer-select mt-2">
-                                                <label for="sales_center_id"
-                                                       class="mb-2">@lang('Which Sales Center?')</label>
-                                                <select
-                                                    class="form-select js-example-basic-single select-sales-center salesCenterId"
-                                                    name="sales_center_id"
-                                                    aria-label="Default select example">
-                                                    <option value="" selected
-                                                            disabled>@lang('Select Sales Center')</option>
-                                                    @foreach($salesCenters as $saleCenter)
-                                                        <option
-                                                            value="{{ $saleCenter->id }}" {{ old('sales_center_id', @request()->sales_center_id) == $saleCenter->id ? 'selected' : ''}}> @lang($saleCenter->name)</option>
-                                                    @endforeach
-                                                </select>
-                                                <div class="invalid-feedback d-block">
-                                                    @error('sales_center_id') @lang($message) @enderror
+                                            @if(userType() == 1)
+                                                <div class="cutomer-select mt-2">
+                                                    <label for="sales_center_id"
+                                                           class="mb-2">@lang('Which Sales Center?')</label>
+                                                    <select
+                                                        class="form-select js-example-basic-single select-sales-center salesCenterId"
+                                                        name="sales_center_id"
+                                                        aria-label="Default select example">
+                                                        <option value="" selected
+                                                                disabled>@lang('Select Sales Center')</option>
+                                                        @foreach($salesCenters as $saleCenter)
+                                                            <option
+                                                                value="{{ $saleCenter->id }}" {{ old('sales_center_id', @request()->sales_center_id) == $saleCenter->id ? 'selected' : ''}}> @lang($saleCenter->name)</option>
+                                                        @endforeach
+                                                    </select>
+                                                    <div class="invalid-feedback d-block">
+                                                        @error('sales_center_id') @lang($message) @enderror
+                                                    </div>
                                                 </div>
-                                            </div>
+                                            @endif
 
                                             <div class="cutomer-select mt-3">
                                                 <select
@@ -629,6 +639,7 @@
                     id: value,
                 },
                 success: function (response) {
+                    console.log(response);
                     let stocks = response.stocks;
                     let itemsData = '';
 

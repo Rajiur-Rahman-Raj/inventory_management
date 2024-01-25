@@ -118,25 +118,7 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'user', 'as' => 'user.'], fu
         Route::put('update-item-unit-price/{id}', 'User\CompanyController@updateItemUnitPrice')->name('updateItemUnitPrice');
 
 
-        Route::post('store-cart-items', 'User\CompanyController@storeCartItems')->name('storeCartItems');
-        Route::post('update-cart-items', 'User\CompanyController@updateCartItems')->name('updateCartItems');
 
-        Route::post('store-sales-cart-items', 'User\CompanyController@storeSalesCartItems')->name('storeSalesCartItems');
-
-        Route::delete('clear-cart-items', 'User\CompanyController@clearCartItems')->name('clearCartItems');
-        Route::post('clear-sale-cart-items', 'User\CompanyController@clearSaleCartItems')->name('clearSaleCartItems');
-        Route::post('clear-single-cart-item', 'User\CompanyController@clearSingleCartItem')->name('clearSingleCartItem');
-        Route::post('clear-single-return-cart-item', 'User\CompanyController@clearSingleReturnCartItem')->name('clearSingleReturnCartItem');
-
-
-        Route::post('sales-order-store', 'User\CompanyController@salesOrderStore')->name('salesOrderStore');
-        Route::put('sales-order-update/{id}', 'User\CompanyController@salesOrderUpdate')->name('salesOrderUpdate');
-
-        Route::put('purchase-item-due-amount-update/{id}', 'User\CompanyController@purchaseRawItemDueAmountUpdate')->name('purchaseRawItemDueAmountUpdate');
-
-
-        Route::get('sales-invoice/{id}', 'User\CompanyController@salesInvoice')->name('salesInvoice');
-        Route::put('sales-invoice-update/{id}', 'User\CompanyController@salesInvoiceUpdate')->name('salesInvoiceUpdate');
 
 //        Route::post('/verificationSubmit', 'User\HomeController@verificationSubmit')->name('verificationSubmit');
 //        Route::post('/addressVerification', 'User\HomeController@addressVerification')->name('addressVerification');
@@ -144,7 +126,43 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'user', 'as' => 'user.'], fu
         // Stock In
         Route::get('add-stock', 'User\CompanyController@addStock')->name('addStock');
 
+
+
     });
+
+    // sales center stock
+    Route::get('sales/center/stock/details/{item?}/{id?}', 'User\CompanyController@salesCenterStockDetails')->name('salesCenterStockDetails');
+
+    Route::post('store-cart-items', 'User\CompanyController@storeCartItems')->name('storeCartItems');
+    Route::post('update-cart-items', 'User\CompanyController@updateCartItems')->name('updateCartItems');
+
+    Route::post('store-sales-cart-items', 'User\CompanyController@storeSalesCartItems')->name('storeSalesCartItems');
+
+    Route::delete('clear-cart-items', 'User\CompanyController@clearCartItems')->name('clearCartItems');
+    Route::post('clear-sale-cart-items', 'User\CompanyController@clearSaleCartItems')->name('clearSaleCartItems');
+    Route::post('clear-single-cart-item', 'User\CompanyController@clearSingleCartItem')->name('clearSingleCartItem');
+    Route::post('clear-single-return-cart-item', 'User\CompanyController@clearSingleReturnCartItem')->name('clearSingleReturnCartItem');
+
+
+    Route::post('sales-order-store', 'User\CompanyController@salesOrderStore')->name('salesOrderStore');
+    Route::put('sales-order-update/{id}', 'User\CompanyController@salesOrderUpdate')->name('salesOrderUpdate');
+
+    Route::put('purchase-item-due-amount-update/{id}', 'User\CompanyController@purchaseRawItemDueAmountUpdate')->name('purchaseRawItemDueAmountUpdate');
+
+
+    Route::get('sales-invoice/{id}', 'User\CompanyController@salesInvoice')->name('salesInvoice');
+    Route::put('sales-invoice-update/{id}', 'User\CompanyController@salesInvoiceUpdate')->name('salesInvoiceUpdate');
+
+
+
+
+
+
+
+
+
+
+
 
     // Profile
     Route::get('/profile', 'User\HomeController@profile')->name('profile');
@@ -161,12 +179,6 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'user', 'as' => 'user.'], fu
     Route::get('customer-edit/{id}', 'User\CompanyController@customerEdit')->name('customerEdit');
     Route::post('customer-update/{id}', 'User\CompanyController@customerUpdate')->name('customerUpdate');
     Route::delete('delete/customer/{id}', 'User\CompanyController@deleteCustomer')->name('deleteCustomer');
-
-
-
-
-
-
 
 
     // Stock In
@@ -188,9 +200,6 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'user', 'as' => 'user.'], fu
     Route::post('return/sales/order/{id}', 'User\CompanyController@returnSalesOrder')->name('returnSalesOrder');
 
 
-
-
-
     // inventory ajax route
     Route::post('get-division-district', [LocationController::class, 'getSelectedDivisionDistrict'])->name('getSelectedDivisionDistrict');
     Route::post('get-district-upazila', [LocationController::class, 'getSelectedDistrictUpazila'])->name('getSelectedDistrictUpazila');
@@ -202,9 +211,6 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'user', 'as' => 'user.'], fu
     Route::post('get-selected-sales-center', 'User\CompanyController@getSelectedSalesCenter')->name('getSelectedSalesCenter');
 
     //Inventory Route End
-
-
-
 
 
     Route::post('/khalti/payment/verify/{trx}', 'khaltiPaymentController@verifyPayment')->name('khalti.verifyPayment');
@@ -302,9 +308,6 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'user', 'as' => 'user.'], fu
 });
 
 
-
-
-
 Route::group(['prefix' => 'ticket', 'as' => 'ticket.'], function () {
     Route::get('/', 'User\SupportController@index')->name('list');
     Route::get('/create', 'User\SupportController@create')->name('create');
@@ -313,15 +316,6 @@ Route::group(['prefix' => 'ticket', 'as' => 'ticket.'], function () {
     Route::put('/reply/{ticket}', 'User\SupportController@reply')->name('reply');
     Route::get('/download/{ticket}', 'User\SupportController@download')->name('download');
 });
-
-
-
-
-
-
-
-
-
 
 
 Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {

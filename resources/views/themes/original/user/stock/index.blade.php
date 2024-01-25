@@ -32,10 +32,15 @@
                             <select class="form-control js-example-basic-single" name="item_id"
                                     aria-label="Default select example">
                                 <option value="">@lang('All')</option>
-                                @foreach($allItems as $item)
-                                    <option
-                                        value="{{ $item->id }}" {{ @request()->item_id == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
-                                @endforeach
+                                @if(userType() == 1)
+                                    @foreach($allItems as $item)
+                                        <option value="{{ $item->id }}" {{ @request()->item_id == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
+                                    @endforeach
+                                @else
+                                    @foreach($stockLists as $stock)
+                                        <option value="{{ optional($stock->item)->id }}" {{ @request()->item_id == optional($stock->item)->id ? 'selected' : '' }}>{{ optional($stock->item)->name }}</option>
+                                    @endforeach
+                                @endif
                             </select>
                         </div>
 
@@ -75,8 +80,8 @@
 
             <div class="d-flex justify-content-end mb-4">
                 @if(userType() == 1)
-                <a href="{{route('user.addStock')}}" class="btn btn-custom text-white "> <i
-                        class="fa fa-plus-circle"></i> @lang('Add Stock')</a>
+                    <a href="{{route('user.addStock')}}" class="btn btn-custom text-white "> <i
+                            class="fa fa-plus-circle"></i> @lang('Add Stock')</a>
                 @endif
             </div>
 
@@ -117,11 +122,19 @@
                                     </button>
 
                                     <ul class="dropdown-menu dropdown-menu-end">
-                                        <li>
-                                            {{--                                            <a href="{{ route('user.stockDetails', $stockList->id) }}"--}}
-                                            <a href="{{ route('user.stockDetails', [slug(optional($stockList->item)->name), $stockList->id]) }}"
-                                               class="dropdown-item"> <i class="fal fa-eye"></i> @lang('Details') </a>
-                                        </li>
+                                        @if(userType() == 1)
+                                            <li>
+                                                <a href="{{ route('user.stockDetails', [slug(optional($stockList->item)->name), $stockList->id]) }}"
+                                                   class="dropdown-item"> <i class="fal fa-eye"></i> @lang('Details')
+                                                </a>
+                                            </li>
+                                        @else
+                                            <li>
+                                                <a href="{{ route('user.salesCenterStockDetails', [slug(optional($stockList->item)->name), $stockList->id]) }}"
+                                                   class="dropdown-item"> <i class="fal fa-eye"></i> @lang('Details')
+                                                </a>
+                                            </li>
+                                        @endif
                                         {{--                                        <li>--}}
                                         {{--                                            <a class="dropdown-item btn editItem"--}}
                                         {{--                                               data-route="{{route('user.updateItem', $itemList->id)}}"--}}

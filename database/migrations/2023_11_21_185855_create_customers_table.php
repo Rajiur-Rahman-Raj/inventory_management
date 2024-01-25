@@ -26,6 +26,8 @@ class CreateCustomersTable extends Migration
             $table->string('upazila_id')->nullable();
             $table->string('union_id')->nullable();
             $table->text('address')->nullable();
+            $table->integer('created_by')->nullable();
+            $table->integer('updated_by')->nullable();
             $table->timestamps();
         });
     }

@@ -48,21 +48,21 @@
                                         <div class="row">
                                             <div class="col-md-12">
                                                 <div class="border-bottom">
-                                                    <div class="investmentDate d-flex justify-content-between">
+                                                    <div class="investmentDate d-flex justify-content-start">
                                                         <h6 class="font-weight-bold text-dark"><i
-                                                                class="fal fa-user me-2 text-info"></i> @lang('Purchased From')
+                                                                class="fal fa-user me-2 text-info"></i> @lang('Purchased From: ')
                                                         </h6>
-                                                        <p>{{ optional($singlePurchaseItem->supplier)->name }}</p>
+                                                        <h6 class="ms-2">{{ optional($singlePurchaseItem->supplier)->name }}</h6>
                                                     </div>
 
-                                                    <div class="investmentDate d-flex justify-content-between">
+                                                    <div class="investmentDate d-flex justify-content-start">
                                                         <h6 class="font-weight-bold text-dark"><i
-                                                                class="far fa-calendar-check me-2 text-primary"></i> @lang('Purchased Date')
+                                                                class="far fa-calendar-check me-2 text-primary"></i> @lang('Purchased Date: ')
                                                         </h6>
-                                                        <p>{{ dateTime(customDate($singlePurchaseItem->purchase_date)) }}</p>
+                                                        <h6 class="ms-2">{{ dateTime(customDate($singlePurchaseItem->purchase_date)) }}</h6>
                                                     </div>
 
-                                                    <div class="investmentDate d-flex justify-content-between">
+                                                    <div class="investmentDate d-flex justify-content-start">
                                                         <h6 class="font-weight-bold text-dark"> @if($singlePurchaseItem->payment_status == 1)
                                                                 <i class="fal fa-check-double me-2 text-success"></i>
                                                             @else
@@ -70,10 +70,17 @@
                                                             @endif  @lang('Payment Status')
                                                             : </h6>
                                                         @if($singlePurchaseItem->payment_status == 1)
-                                                            <p><span class="badge bg-success">@lang('Paid')</span></p>
+                                                            <h6 class="ms-2"><span class="badge bg-success">@lang('Paid')</span></h6>
                                                         @else
-                                                            <p><span class="badge bg-warning">@lang('Due')</span></p>
+                                                            <h6 class="ms-2"><span class="badge bg-warning">@lang('Due')</span></h6>
                                                         @endif
+                                                    </div>
+
+                                                    <div class="investmentDate d-flex justify-content-start">
+                                                        <h6 class="font-weight-bold text-dark"><i class="fal fa-money-bill-wave mt-1 text-success"></i> @lang('Payment Note: ')
+                                                        </h6>
+
+                                                        <h6 class="ms-2">{{ $singlePurchaseItem->payment_note }}</h6>
                                                     </div>
 
                                                 </div>

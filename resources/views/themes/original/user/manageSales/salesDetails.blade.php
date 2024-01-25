@@ -51,35 +51,36 @@
                                             <div class="col-md-12">
                                                 <div class="border-bottom">
                                                     @if($singleSalesDetails->customer)
-                                                        <div class="investmentDate d-flex justify-content-between">
+                                                        <div class="investmentDate d-flex justify-content-start">
                                                             <h6 class="font-weight-bold text-dark"><i
                                                                     class="fal fa-user me-2 text-primary"></i> @lang('Sales To Customer')
                                                                 : </h6>
-                                                            <p>{{ optional($singleSalesDetails->customer)->name }}</p>
+                                                            <h6 class="ms-2">{{ optional($singleSalesDetails->customer)->name }}</h6>
                                                         </div>
                                                     @endif
 
-                                                    <div class="investmentDate d-flex justify-content-between">
-                                                        <h6 class="font-weight-bold text-dark"> <i class="fas fa-file-invoice me-2 text-purple"></i> @lang('Invoice Id')
+                                                    <div class="investmentDate d-flex justify-content-start">
+                                                        <h6 class="font-weight-bold text-dark"><i
+                                                                class="fas fa-file-invoice me-2 text-purple"></i> @lang('Invoice Id')
                                                             : </h6>
-                                                        <p>{{ $singleSalesDetails->invoice_id }}</p>
+                                                        <h6 class="ms-2">{{ $singleSalesDetails->invoice_id }}</h6>
                                                     </div>
 
-                                                    <div class="investmentDate d-flex justify-content-between">
+                                                    <div class="investmentDate d-flex justify-content-start">
                                                         <h6 class="font-weight-bold text-dark"><i
                                                                 class="far fa-calendar-check me-2 text-success"></i> @lang('Sales Date')
                                                             : </h6>
-                                                        <p>{{ customDate($singleSalesDetails->created_at) }}</p>
+                                                        <h6 class="ms-2">{{ customDate($singleSalesDetails->created_at) }}</h6>
                                                     </div>
 
-                                                    <div class="investmentDate d-flex justify-content-between">
+                                                    <div class="investmentDate d-flex justify-content-start">
                                                         <h6 class="font-weight-bold text-dark"><i
                                                                 class="fa fa-bangladeshi-taka-sign me-2 text-warning">
                                                                 ৳ </i> @lang('Last Payment Date')
                                                             : </h6>
-                                                        <p>{{ customDate($singleSalesDetails->payment_date) }}</p>
+                                                        <h6 class="ms-2">{{ customDate($singleSalesDetails->payment_date) }}</h6>
                                                     </div>
-                                                    <div class="investmentDate d-flex justify-content-between">
+                                                    <div class="investmentDate d-flex justify-content-start">
                                                         <h6 class="font-weight-bold text-dark"> @if($singleSalesDetails->payment_status == 1)
                                                                 <i class="fal fa-check-double me-2 text-success"></i>
                                                             @else
@@ -87,10 +88,18 @@
                                                             @endif  @lang('Payment Status')
                                                             : </h6>
                                                         @if($singleSalesDetails->payment_status == 1)
-                                                            <p><span class="badge bg-success">@lang('Paid')</span></p>
+                                                            <h6 class="ms-2"><span
+                                                                    class="badge bg-success">@lang('Paid')</span></h6>
                                                         @else
-                                                            <p><span class="badge bg-warning">@lang('Due')</span></p>
+                                                            <p class="ms-2"><span
+                                                                    class="badge bg-warning">@lang('Due')</span></p>
                                                         @endif
+                                                    </div>
+
+                                                    <div class="investmentDate d-flex justify-content-start">
+                                                        <h6 class="font-weight-bold text-dark"> <i class="fal fa-info me-2 text-purple"></i> @lang('Note')
+                                                            : </h6>
+                                                        <h6 class="ms-2">{{ $singleSalesDetails->payment_note }}</h6>
                                                     </div>
                                                 </div>
 

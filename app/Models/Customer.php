@@ -11,6 +11,18 @@ class Customer extends Model
 
     protected $guarded = ['id'];
 
+
+    protected static function booted(): void
+    {
+        static::creating(function (Customer $customer) {
+            $customer->created_by = auth()->id();
+        });
+
+        static::updating(function (Customer $customer){
+            $customer->updated_by = auth()->id();
+        });
+    }
+
     public function division(){
         return $this->belongsTo(Division::class, 'division_id');
     }

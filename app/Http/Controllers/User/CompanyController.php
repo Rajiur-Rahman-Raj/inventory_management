@@ -267,7 +267,7 @@ class CompanyController extends Controller
 
             $this->sendMailSms($user, $type = 'CREATE_SALES_CENTER', [
                 'center_name' => optional($user->salesCenter)->name,
-                'owner_name' => optional($user->salesCenter)->owner_name,
+                'owner_name' => $user->name,
                 'code' => optional($user->salesCenter)->code,
                 'email' => $user->email,
                 'password' => $request->password,
@@ -718,11 +718,11 @@ class CompanyController extends Controller
         $toDate = Carbon::parse($request->to_date)->addDay();
 
         $data['allItems'] = Item::where('status', 1)
-        ->when(!isset($admin->salesCenter) && $admin->user_type == 1, function ($q2) use ($admin) {
-            $q2->where('company_id', $admin->active_company_id);
-        })->when(isset($admin->salesCenter) && $admin->user_type == 2, function ($q2) use ($admin) {
-            $q2->where('company_id', $admin->salesCenter->company_id);
-        })->where('status', 1)->get();
+            ->when(!isset($admin->salesCenter) && $admin->user_type == 1, function ($q2) use ($admin) {
+                $q2->where('company_id', $admin->active_company_id);
+            })->when(isset($admin->salesCenter) && $admin->user_type == 2, function ($q2) use ($admin) {
+                $q2->where('company_id', $admin->salesCenter->company_id);
+            })->where('status', 1)->get();
 
 
         $data['stockLists'] = Stock::with('item:id,name')
@@ -768,7 +768,8 @@ class CompanyController extends Controller
 
     public function stockStore(Request $request)
     {
-        $loggedInUser = $this->user;
+
+        $admin = $this->user;
         $purifiedData = Purify::clean($request->except('_token', '_method'));
 
         $rules = [
@@ -788,15 +789,13 @@ class CompanyController extends Controller
         try {
             DB::beginTransaction();
             $stockIn = new StockIn();
-            $stockIn->company_id = $loggedInUser->active_company_id;
+            $stockIn->company_id = $admin->active_company_id;
             $stockIn->stock_date = $request->stock_date;
             $stockIn->total_cost = $request->sub_total;
             $stockIn->save();
 
             $this->storeStockInDetails($request, $stockIn);
-
-            $this->storeStocks($request, $loggedInUser);
-
+            $this->storeStocks($request, $admin);
 
             DB::commit();
 
@@ -804,16 +803,25 @@ class CompanyController extends Controller
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
         }
-
     }
+
     public function stockDetails($item = null, $id = null)
     {
         $data['stock'] = Stock::select('id', 'item_id', 'last_stock_date')->findOrFail($id);
 
         $data['singleStockDetails'] = StockInDetails::with('item')->where('item_id', $data['stock']->item_id)->latest()->get();
+
         $data['totalItemCost'] = $data['singleStockDetails']->sum('total_unit_cost');
 
         return view($this->theme . 'user.stock.details', $data, compact('item'));
+    }
+
+    public function salesCenterStockDetails($item = null, $id = null)
+    {
+        $data['stock'] = Stock::select('id', 'item_id', 'last_stock_date')->findOrFail($id);
+        $data['singleStockDetails'] = SalesItem::with('item')->where('item_id', $data['stock']->item_id)->latest()->get();
+        $data['totalItemCost'] = $data['singleStockDetails']->sum('item_price');
+        return view($this->theme . 'user.stock.salesCenterStockDetails', $data, compact('item'));
     }
 
     public function getSelectedItemUnit(Request $request)
@@ -828,7 +836,6 @@ class CompanyController extends Controller
     public function customerList(Request $request)
     {
         $admin = $this->user;
-
         $search = $request->all();
         $fromDate = Carbon::parse($request->from_date);
         $toDate = Carbon::parse($request->to_date)->addDay();
@@ -850,7 +857,15 @@ class CompanyController extends Controller
                 return $q2->whereBetween('created_at', [$fromDate, $toDate]);
             })
             ->select('id', 'division_id', 'district_id', 'upazila_id', 'union_id', 'name', 'email', 'phone', 'national_id', 'address', 'created_at')
-            ->where('company_id', $admin->active_company_id)
+            ->when(!isset($admin->salesCenter) && $admin->user_type == 1, function ($query) use ($admin) {
+                return $query->where('company_id', $admin->active_company_id)->whereNull('sales_center_id');
+            })
+            ->when(isset($admin->salesCenter) && $admin->user_type == 2, function ($query) use ($admin) {
+                return $query->where([
+                    ['company_id', $admin->salesCenter->company_id],
+                    ['sales_center_id', $admin->salesCenter->id],
+                ]);
+            })
             ->latest()->paginate(config('basic.paginate'));
 
         return view($this->theme . 'user.customer.index', $data);
@@ -864,8 +879,7 @@ class CompanyController extends Controller
 
     public function customerStore(Request $request)
     {
-        $loggedInUser = $this->user;
-
+        $admin = $this->user;
         $purifiedData = Purify::clean($request->except('_token', '_method'));
 
         $rules = [
@@ -899,27 +913,19 @@ class CompanyController extends Controller
             return back()->withInput()->withErrors($validate);
         }
 
+        DB::beginTransaction();
         try {
-            DB::beginTransaction();
 
             $customer = new Customer();
-
-            $customer->name = $request->name;
-            $customer->company_id = $loggedInUser->active_company_id;
-            $customer->email = $request->email;
-            $customer->phone = $request->phone;
-            $customer->national_id = $request->national_id;
-            $customer->division_id = $request->division_id;
-            $customer->district_id = $request->district_id;
-            $customer->upazila_id = $request->upazila_id;
-            $customer->union_id = $request->union_id;
-            $customer->address = $request->address;
+            $customer->company_id = ($admin->user_type == 2) ? optional($admin->salesCenter)->company_id : $admin->active_company_id;
+            $customer->sales_center_id = ($admin->user_type == 2) ? optional($admin->salesCenter)->id : null;
+            $customer->fill($request->only(['name', 'email', 'phone', 'national_id', 'division_id', 'district_id', 'upazila_id', 'union_id', 'address']));
             $customer->save();
-
             DB::commit();
 
             return back()->with('success', 'Customer Created Successfully');
         } catch (\Exception $e) {
+            DB::rollBack();
             return back()->with('error', 'Something went wrong');
         }
     }
@@ -927,14 +933,35 @@ class CompanyController extends Controller
     public function customerDetails($id)
     {
         $admin = $this->user;
-        $data['customer'] = Customer::with('division', 'district', 'upazila', 'union')->where('company_id', $admin->active_company_id)->whereNull('sales_center_id')->findOrFail($id);
+        $data['customer'] = Customer::with('division', 'district', 'upazila', 'union')
+            ->when(!isset($admin->salesCenter) && $admin->user_type == 1, function ($query) use ($admin) {
+                return $query->where('company_id', $admin->active_company_id)->whereNull('sales_center_id');
+            })
+            ->when(isset($admin->salesCenter) && $admin->user_type == 2, function ($query) use ($admin) {
+                return $query->where([
+                    ['company_id', $admin->salesCenter->company_id],
+                    ['sales_center_id', $admin->salesCenter->id],
+                ]);
+            })->findOrFail($id);
+
         return view($this->theme . "user.customer.details", $data);
     }
 
     public function customerEdit($id)
     {
         $admin = $this->user;
-        $data['customer'] = Customer::with('division', 'district', 'upazila', 'union')->where('company_id', $admin->active_company_id)->whereNull('sales_center_id')->findOrFail($id);
+
+        $data['customer'] = Customer::with('division', 'district', 'upazila', 'union')
+            ->when(!isset($admin->salesCenter) && $admin->user_type == 1, function ($query) use ($admin) {
+                return $query->where('company_id', $admin->active_company_id)->whereNull('sales_center_id');
+            })
+            ->when(isset($admin->salesCenter) && $admin->user_type == 2, function ($query) use ($admin) {
+                return $query->where([
+                    ['company_id', $admin->salesCenter->company_id],
+                    ['sales_center_id', $admin->salesCenter->id],
+                ]);
+            })->findOrFail($id);
+
         $data['divisions'] = Division::select('id', 'name')->get();
         $data['districts'] = District::select('id', 'name')->get();
         $data['upazilas'] = Upazila::select('id', 'name')->get();
@@ -944,8 +971,6 @@ class CompanyController extends Controller
 
     public function customerUpdate(Request $request, $id)
     {
-        $loggedInUser = $this->user;
-
         $purifiedData = Purify::clean($request->except('_token', '_method'));
 
         $rules = [
@@ -1029,10 +1054,17 @@ class CompanyController extends Controller
             ->when(isset($search['status']) && $search['status'] != 'all', function ($q) use ($search) {
                 $q->whereRaw("payment_status REGEXP '[[:<:]]{$search['status']}[[:>:]]'");
             })
-            ->where('company_id', $admin->active_company_id)
+            ->when(!isset($admin->salesCenter) && $admin->user_type == 1, function ($query) use ($admin) {
+                return $query->where('company_id', $admin->active_company_id);
+            })
+            ->when(isset($admin->salesCenter) && $admin->user_type == 2, function ($query) use ($admin) {
+                return $query->where([
+                    ['company_id', $admin->salesCenter->company_id],
+                    ['sales_center_id', $admin->salesCenter->id],
+                ])->whereNotNull('customer_id');
+            })
             ->latest()
             ->paginate(config('basic.paginate'));
-
         return view($this->theme . 'user.manageSales.salesList', $data);
     }
 
@@ -1052,12 +1084,32 @@ class CompanyController extends Controller
             ->latest()
             ->get();
 
-        $data['stocks'] = Stock::with('item:id,name,image')->where('company_id', $admin->active_company_id)->whereNull('sales_center_id')
+        $data['stocks'] = Stock::with('item:id,name,image')
+            ->when(!isset($admin->salesCenter) && $admin->user_type == 1, function ($query) use ($admin) {
+                return $query->where('company_id', $admin->active_company_id)->whereNull('sales_center_id');
+            })
+            ->when(isset($admin->salesCenter) && $admin->user_type == 2, function ($query) use ($admin) {
+                return $query->where([
+                    ['company_id', $admin->salesCenter->company_id],
+                    ['sales_center_id', $admin->salesCenter->id],
+                ]);
+            })
             ->select('id', 'item_id', 'quantity', 'cost_per_unit', 'last_cost_per_unit', 'selling_price')
             ->latest()
             ->get();
 
-        $data['customers'] = Customer::where('company_id', $admin->active_company_id)->whereNull('sales_center_id')->latest()->get();
+        $data['customers'] = Customer::when(!isset($admin->salesCenter) && $admin->user_type == 1, function ($query) use ($admin) {
+                return $query->where('company_id', $admin->active_company_id)->whereNull('sales_center_id');
+            })
+            ->when(isset($admin->salesCenter) && $admin->user_type == 2, function ($query) use ($admin) {
+                return $query->where([
+                    ['company_id', $admin->salesCenter->company_id],
+                    ['sales_center_id', $admin->salesCenter->id],
+                ]);
+            })
+            ->latest()
+            ->get();
+
 
         $data['salesCenters'] = SalesCenter::where('company_id', $admin->active_company_id)->latest()->get();
 
@@ -1085,8 +1137,17 @@ class CompanyController extends Controller
 
         $query = Stock::with('item:id,name,image')
             ->select('id', 'item_id', 'quantity', 'cost_per_unit', 'last_cost_per_unit', 'selling_price')
-            ->where('company_id', $admin->active_company_id)
-            ->whereNull('sales_center_id');
+            ->when(!isset($admin->salesCenter) && $admin->user_type == 1, function ($query) use ($admin) {
+                return $query->where('company_id', $admin->active_company_id)
+                    ->whereNull('sales_center_id');
+            })
+            ->when(isset($admin->salesCenter) && $admin->user_type == 2, function ($query) use ($admin) {
+                return $query->where([
+                    ['company_id', $admin->salesCenter->company_id],
+                    ['sales_center_id', $admin->salesCenter->id],
+                ]);
+            });
+
 
         if ($request->id !== "all") {
             $query->where('item_id', $request->id);
@@ -1105,7 +1166,19 @@ class CompanyController extends Controller
     {
         $admin = $this->user;
 
-        $customer = Customer::where('company_id', $admin->active_company_id)->whereNull('sales_center_id')->select('id', 'name', 'phone', 'address')->findOrFail($request->id);
+        $customer = Customer::
+            when(!isset($admin->salesCenter) && $admin->user_type == 1, function ($query) use($admin){
+                return $query->where('company_id', $admin->active_company_id)
+                    ->whereNull('sales_center_id');
+            })
+            ->when(isset($admin->salesCenter) && $admin->user_type == 2, function ($query) use($admin){
+                return $query->where([
+                    ['company_id', $admin->salesCenter->company_id],
+                    ['sales_center_id', $admin->salesCenter->id],
+                ]);
+            })
+            ->select('id', 'name', 'phone', 'address')
+            ->findOrFail($request->id);
 
         return response()->json(['customer' => $customer]);
     }
@@ -1323,10 +1396,10 @@ class CompanyController extends Controller
 
     public function salesOrderStore(Request $request)
     {
-
         $admin = $this->user;
         $purifiedData = Purify::clean($request->except('_token', '_method'));
 
+        DB::beginTransaction();
         try {
             $rules = [
                 'items' => 'nullable',
@@ -1344,8 +1417,6 @@ class CompanyController extends Controller
                 return back()->withInput()->withErrors($validate);
             }
 
-
-            DB::beginTransaction();
             $sale = new Sale();
             $salesCenter = SalesCenter::where('company_id', $admin->active_company_id)->select('id', 'code')->findOrFail($request->sales_center_id);
             $invoiceId = mt_rand(1000000, 9999999);
@@ -1355,7 +1426,7 @@ class CompanyController extends Controller
             $sale->sales_center_id = $request->sales_center_id;
             $sale->customer_id = $request->customer_id;
             $sale->sub_total = $request->sub_total;
-            $sale->discount_parcent = ($request->discount_parcent ? $request->discount_parcent : 0);
+            $sale->discount_parcent = isset($request->discount_parcent) ? $request->discount_parcent : 0;
             $sale->discount = $request->discount_amount;
             $sale->total_amount = $request->total_amount;
             $sale->customer_paid_amount = $due_or_change_amount <= 0 ? $request->total_amount : $request->customer_paid_amount;
@@ -1364,13 +1435,12 @@ class CompanyController extends Controller
             $sale->payment_status = $due_or_change_amount <= 0 ? 1 : 0;
             $sale->payment_note = $request->payment_note;
             $sale->invoice_id = $salesCenter->code . '-' . $invoiceId;
+
             $items = $this->storeSalesItems($request, $sale);
             $sale->save();
             $this->storeSalesItemsInSalesItemModel($request, $sale);
 
-
-            $this->storeAndUpdateStocks($request, $items, $admin);
-
+            $this->storeAndUpdateStocks($request, $sale, $items);
 
             CartItems::where('company_id', $admin->active_company_id)
                 ->whereNull('sales_center_id')
@@ -1591,6 +1661,7 @@ class CompanyController extends Controller
 
 
             $sale = Sale::with('salesItems')->where('company_id', $admin->active_company_id)->findOrFail($id);
+
             $sale->sub_total = $request->sub_total;
             $sale->discount_parcent = (isset($request->discount_parcent) ? $request->discount_parcent : 0);
             $sale->discount = $request->discount_amount;
@@ -1603,7 +1674,9 @@ class CompanyController extends Controller
             $items = $this->storeSalesItems($request, $sale);
             $sale->save();
 
+
             $this->updateSalesItems($request, $sale);
+
 
             CartItems::where('company_id', $admin->active_company_id)
                 ->whereNull('sales_center_id')
@@ -2201,7 +2274,8 @@ class CompanyController extends Controller
         return view($this->theme . 'user.affiliate.edit', $data);
     }
 
-    public function affiliateMemberUpdate(Request $request, $id){
+    public function affiliateMemberUpdate(Request $request, $id)
+    {
 
         $admin = $this->user;
         $purifiedData = Purify::clean($request->except('_token', '_method'));
@@ -2280,19 +2354,21 @@ class CompanyController extends Controller
         }
     }
 
-    public function affiliateMemberDetails($id){
+    public function affiliateMemberDetails($id)
+    {
         $admin = $this->user;
         $data['memberDetails'] = AffiliateMember::with('salesCenter', 'division', 'district', 'upazila', 'union')->where('company_id', $admin->active_company_id)->findOrFail($id);
 
-        return view($this->theme.'user.affiliate.details', $data);
+        return view($this->theme . 'user.affiliate.details', $data);
     }
 
-    public function affiliateMemberDelete(Request $request, $id){
+    public function affiliateMemberDelete(Request $request, $id)
+    {
         $admin = $this->user;
         $member = AffiliateMember::where('company_id', $admin->active_company_id)->findOrFail($id);
 
         $affiliateMemberSalesCenter = AffiliateMemberSalesCenter::where('affiliate_member_id', $id)->get();
-        foreach ($affiliateMemberSalesCenter as $salesCenter){
+        foreach ($affiliateMemberSalesCenter as $salesCenter) {
             $salesCenter->delete();
         }
 
