@@ -334,7 +334,7 @@ unset($__errorArgs, $__bag); ?>
                                         </div>
                                         <div class="order-btn d-flex flex-wrap">
                                             <button class="cancel cancelOrder" type="button">cacel order</button>
-                                            <button type="button" class="porcced proccedOrderBtn">proceed order
+                                            <button type="button" class="porcced proccedOrderBtn" data-admin="<?php echo e(auth()->user()); ?>">proceed order
                                             </button>
 
                                             <div class="procced-modal">
@@ -857,13 +857,23 @@ unset($__errorArgs, $__bag); ?>"
         }
 
 
-        function checkSalesBy() {
+        function checkSalesBySalesCenter(){
+            let customerId = $('.customerId').val();
+            if (!customerId){
+                Notiflix.Notify.Failure('Please select customer');
+                return false;
+            }
+            return true;
+        }
+
+        function checkSalesByCompany() {
             var activeTab = $('#myTab li button.nav-link.active').attr('id');
             var activeDataBsTarget = $('#myTab li button.nav-link.active').attr('data-bs-target');
 
             let saleCenterId = $(activeDataBsTarget).children().find('.salesCenterId').val();
 
             if (activeTab == 'home-tab') {
+
                 let customerId = $(activeDataBsTarget).children().find('.customerId').val();
                 if (!saleCenterId) {
                     Notiflix.Notify.Failure('please select sales center');
@@ -888,11 +898,19 @@ unset($__errorArgs, $__bag); ?>"
 
 
         $(document).on('click', '.proccedOrderBtn', function () {
-            showProccedOrderModal();
+            let _this = $(this);
+            showProccedOrderModal(_this);
         });
 
-        function showProccedOrderModal() {
-            let result = checkSalesBy();
+        function showProccedOrderModal(_this) {
+            let admin = _this.data('admin');
+            let result;
+            if (admin.user_type == 1){
+                result = checkSalesByCompany();
+            }else{
+                result = checkSalesBySalesCenter();
+            }
+
             if (result) {
                 var proccedOrderModal = new bootstrap.Modal(document.getElementById('proccedOrderModal'))
                 proccedOrderModal.show();

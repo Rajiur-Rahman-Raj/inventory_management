@@ -183,29 +183,41 @@ trait StoreSalesTrait
 
     public function storeAndUpdateStocks($request, $sale, $items){
         $admin = $this->user;
+        $companyId = ($admin->user_type == 1) ? $admin->active_company_id : $admin->salesCenter->company_id;
+        $salesCenterId = ($admin->user_type == 1) ? $request->sales_center_id : $admin->salesCenter->id;
+
         foreach ($items as $item) {
             $salesCenterStock = Stock::firstOrNew([
-                'company_id' => $admin->active_company_id,
+                'company_id' => $companyId,
                 'item_id' => $item['item_id'],
-                'sales_center_id' => $request->sales_center_id,
+                'sales_center_id' => $salesCenterId,
             ]);
 
-            if (($sale->company_id && $sale->sales_center_id) && ($sale->customer_id == null)){
-                $salesCenterStock->company_id = $admin->active_company_id;
-                $salesCenterStock->sales_center_id = $request->sales_center_id;
-                $salesCenterStock->item_id = $item['item_id'];
-                $salesCenterStock->quantity += (int)$item['item_quantity'];
-                $salesCenterStock->cost_per_unit = ($salesCenterStock->last_cost_per_unit) ?? $item['cost_per_unit'];
-                $salesCenterStock->last_cost_per_unit = $item['cost_per_unit'];
-                $salesCenterStock->selling_price = $item['cost_per_unit'];
-                $salesCenterStock->stock_date = ($salesCenterStock->last_stock_date) ?? Carbon::now();
-                $salesCenterStock->last_stock_date = Carbon::now();
+            if ($admin->user_type == 1){
+                if (($sale->company_id && $sale->sales_center_id) && ($sale->customer_id == null)){
+                    $salesCenterStock->company_id = $companyId;
+                    $salesCenterStock->sales_center_id = $salesCenterId;
+                    $salesCenterStock->item_id = $item['item_id'];
+                    $salesCenterStock->quantity += (int)$item['item_quantity'];
+                    $salesCenterStock->cost_per_unit = ($salesCenterStock->last_cost_per_unit) ?? $item['cost_per_unit'];
+                    $salesCenterStock->last_cost_per_unit = $item['cost_per_unit'];
+                    $salesCenterStock->selling_price = $item['cost_per_unit'];
+                    $salesCenterStock->stock_date = ($salesCenterStock->last_stock_date) ?? Carbon::now();
+                    $salesCenterStock->last_stock_date = Carbon::now();
+                    $salesCenterStock->save();
+                }
+            }
+
+            if ($admin->user_type == 2){
+                $salesCenterStock->quantity -= (int)$item['item_quantity'];
                 $salesCenterStock->save();
             }
 
-            $companyStock = Stock::where('company_id', $admin->active_company_id)->whereNull('sales_center_id')->where('item_id', $item['item_id'])->first();
-            $companyStock->quantity -= (int)$item['item_quantity'];
-            $companyStock->save();
+            if ($admin->user_type == 1){
+                $companyStock = Stock::where('company_id', $admin->active_company_id)->whereNull('sales_center_id')->where('item_id', $item['item_id'])->first();
+                $companyStock->quantity -= (int)$item['item_quantity'];
+                $companyStock->save();
+            }
         }
     }
 

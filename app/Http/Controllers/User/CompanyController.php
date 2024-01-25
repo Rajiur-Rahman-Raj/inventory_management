@@ -1556,7 +1556,9 @@ class CompanyController extends Controller
 
     public function salesOrderStore(Request $request)
     {
+
         $admin = $this->user;
+
         $purifiedData = Purify::clean($request->except('_token', '_method'));
 
         DB::beginTransaction();
@@ -1577,13 +1579,17 @@ class CompanyController extends Controller
                 return back()->withInput()->withErrors($validate);
             }
 
-            $sale = new Sale();
-            $salesCenter = SalesCenter::where('company_id', $admin->active_company_id)->select('id', 'code')->findOrFail($request->sales_center_id);
-            $invoiceId = mt_rand(1000000, 9999999);
+            $companyId = ($admin->user_type == 1) ? $admin->active_company_id : $admin->salesCenter->company_id;
+            $salesCenterId = ($admin->user_type == 1) ? $request->sales_center_id : $admin->salesCenter->id;
+            $salesCenter = SalesCenter::where('company_id', $companyId)->select('id', 'code')->findOrFail($salesCenterId);
 
+            $sale = new Sale();
+
+            $invoiceId = mt_rand(1000000, 9999999);
             $due_or_change_amount = (float)floor($request->due_or_change_amount);
-            $sale->company_id = $admin->active_company_id;
-            $sale->sales_center_id = $request->sales_center_id;
+
+            $sale->company_id = ($admin->user_type == 1) ? $admin->active_company_id : $admin->salesCenter->company_id;
+            $sale->sales_center_id = ($admin->user_type == 1) ? $request->sales_center_id : $admin->salesCenter->id;
             $sale->customer_id = $request->customer_id;
             $sale->sub_total = $request->sub_total;
             $sale->discount_parcent = isset($request->discount_parcent) ? $request->discount_parcent : 0;
@@ -1594,16 +1600,23 @@ class CompanyController extends Controller
             $sale->payment_date = $request->payment_date;
             $sale->payment_status = $due_or_change_amount <= 0 ? 1 : 0;
             $sale->payment_note = $request->payment_note;
+            $sale->sales_by = ($admin->user_type == 1) ? 1 : 2;
             $sale->invoice_id = $salesCenter->code . '-' . $invoiceId;
 
             $items = $this->storeSalesItems($request, $sale);
             $sale->save();
             $this->storeSalesItemsInSalesItemModel($request, $sale);
-
             $this->storeAndUpdateStocks($request, $sale, $items);
 
-            CartItems::where('company_id', $admin->active_company_id)
-                ->whereNull('sales_center_id')
+            CartItems::when(!isset($admin->salesCenter) && $admin->user_type == 1, function ($query) use($companyId){
+                    return $query->where('company_id', $companyId)->whereNull('sales_center_id');
+                })
+                ->when(isset($admin->salesCenter) && $admin->user_type == 2, function ($query) use($admin, $companyId, $salesCenterId){
+                    return $query->where([
+                        ['company_id', $companyId],
+                        ['sales_center_id', $salesCenterId],
+                    ]);
+                })
                 ->delete();
 
             DB::commit();
@@ -1740,7 +1753,19 @@ class CompanyController extends Controller
     public function salesInvoice($id)
     {
         $admin = $this->user;
-        $data['singleSalesDetails'] = Sale::with('company', 'salesCenter.user', 'salesCenter.division', 'salesCenter.district', 'salesCenter.upazila', 'customer', 'customer.division', 'customer.district', 'customer.upazila')->where('company_id', $admin->active_company_id)->findOrFail($id);
+        $companyId = ($admin->user_type == 1) ? $admin->active_company_id : $admin->salesCenter->company_id;
+        $data['singleSalesDetails'] = Sale::with('company', 'salesCenter.user', 'salesCenter.division', 'salesCenter.district', 'salesCenter.upazila', 'customer', 'customer.division', 'customer.district', 'customer.upazila')
+            ->when(!isset($admin->salesCenter) && $admin->user_type == 1, function ($query) use($companyId){
+                return $query->where('company_id', $companyId)->where('sales_by', 1);
+            })
+            ->when(isset($admin->salesCenter) && $admin->user_type == 2, function ($query) use($admin, $companyId){
+                return $query->where([
+                    ['company_id', $companyId],
+                    ['sales_center_id', $admin->salesCenter->id],
+                    ['sales_by', 2],
+                ]);
+            })
+            ->findOrFail($id);
 
         return view($this->theme . 'user.manageSales.salesInvoice', $data);
     }
