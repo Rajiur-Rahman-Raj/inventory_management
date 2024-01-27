@@ -168,7 +168,7 @@
                                         <div class="input-box col-12">
                                             <label for="address">@lang('Address') </label>
                                             <textarea class="form-control @error('address') is-invalid @enderror"
-                                                      cols="30" rows="3" placeholder="@lang('Sales Center Address')"
+                                                      cols="30" rows="3" placeholder="@lang('Member Address')"
                                                       name="address">{{ old('address') }}</textarea>
                                             @if($errors->has('address'))
                                                 <div class="error text-danger">@lang($errors->first('address'))

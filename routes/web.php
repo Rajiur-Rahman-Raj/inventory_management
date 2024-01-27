@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\LocationController;
+use App\Http\Controllers\User\HomeController;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
@@ -125,6 +126,13 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'user', 'as' => 'user.'], fu
 
 
     });
+
+
+    /* ===== Company Dashbaord data fetch using ajax ===== */
+    Route::get('get-sales-stat-records', [HomeController::class, 'getSalesStatRecords'])->name('getSalesStatRecords');
+    Route::get('get-item-data', [HomeController::class, 'getItemRecords'])->name('getItemRecords');
+//    Route::get('get-branch-stat-records', [AdminController::class, 'getBranchStatRecords'])->name('getBranchStatRecords');
+
 
     // sales center stock
     Route::get('sales/center/stock/details/{item?}/{id?}', 'User\CompanyController@salesCenterStockDetails')->name('salesCenterStockDetails');

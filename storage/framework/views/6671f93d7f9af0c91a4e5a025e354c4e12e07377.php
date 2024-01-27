@@ -2,8 +2,12 @@
 <?php $__env->startSection('content'); ?>
     <?php $__env->startPush('style'); ?>
         <style>
-            .balance-box {
-                background: linear-gradient(to right,<?php echo e(hex2rgba(config('basic.base_color'))); ?>,<?php echo e(hex2rgba(config('basic.secondary_color'))); ?>);
+            
+            
+            
+            
+             .balance-box {
+                background: linear-gradient(to right,rgb(73 159 233),rgb(207 115 223));
             }
         </style>
     <?php $__env->stopPush(); ?>
@@ -13,59 +17,70 @@
             <div class="col-12">
                 <div class="row g-3">
                     <div class="col-xl-4 col-lg-6">
-                        <div class="card-box balance-box p-0 h-100">
+                        <div class="card-box balance-box p-0 h-100 sales-statistics">
                             <div class="user-account-number p-4 h-100">
                                 <i class="account-wallet far fa-wallet"></i>
                                 <div class="mb-4">
                                     <h5 class="text-white mb-2">
-                                        <?php echo app('translator')->get('Main Balance'); ?>
+                                        <?php echo app('translator')->get('Total Sales Amount'); ?>
                                     </h5>
                                     <h3>
-                                        <span class="text-white"><small><sup><?php echo e(trans(config('basic.currency_symbol'))); ?></sup></small><?php echo e(getAmount($walletBalance, config('basic.fraction_number'))); ?></span>
+                                        <span class="text-white total_sales_amount"></span>
                                     </h3>
+
+                                        <p class="mb-0"><span class="text-sm font-weight-normal userCurrentYearClass text-danger"><i class="userCurrentYearArrowIcon fal fa-arrow-down"></i><span class="userCurrentYearPercentage"> 87.5%</span></span> than previous year	</p>
+
                                 </div>
                                 <div class="">
                                     <h5 class="text-white mb-2">
-                                        <?php echo app('translator')->get('Interest Balance'); ?>
+                                        <?php echo app('translator')->get('Total Profit Amount'); ?>
                                     </h5>
-                                    <h3><span class="text-white otal_available__balance"><small><sup><?php echo e(trans(config('basic.currency_symbol'))); ?></sup></small><?php echo e(getAmount($interestBalance, config('basic.fraction_number'))); ?></span></h3>
+                                    <h3>
+                                        <span class="text-white total_profit_amount"><small><sup class="currency_symbol"></sup></small></span>
+                                    </h3>
+                                    <p class="mb-0"><span class="text-sm font-weight-normal userCurrentYearClass text-success"><i class="userCurrentYearArrowIcon fal fa-arrow-up"></i><span class="userCurrentYearPercentage"> 87.5%</span></span> than previous year</p>
                                 </div>
-                                <a href="#" class="cash-in"><i class="fal fa-plus me-1"></i> <?php echo app('translator')->get('Cash In'); ?></a>
+                                <a href="#" class="cash-in"> <i class="fal fa-shopping-cart me-1"></i> <?php echo app('translator')->get('Sales Item'); ?></a>
                             </div>
                         </div>
                     </div>
                     <div class="col-xl-4 col-lg-6 d-sm-block d-none">
                         <div class="row g-3">
-                            <div class="col-lg-12 col-6">
+                            <div class="col-lg-12 col-6 sales-statistics">
                                 <div class="dashboard-box gr-bg-1">
-                                    <h5 class="text-white"><?php echo app('translator')->get('Total Deposit'); ?></h5>
-                                    <h3 class="text-white"><small><sup><?php echo e(trans(config('basic.currency_symbol'))); ?></sup></small><span><?php echo e(getAmount($totalDeposit, config('basic.fraction_number'))); ?></span></h3>
+                                    <h5 class="text-white"><?php echo app('translator')->get('Sold To Sales Centers'); ?></h5>
+                                    <h3 class="text-white sold_to_sales_centers"></span>
+                                    </h3>
                                     <i class="fal fa-file-invoice-dollar text-white"></i>
                                 </div>
                             </div>
 
-                            <div class="col-lg-12 col-6">
+                            <div class="col-lg-12 col-6 sales-statistics">
                                 <div class="dashboard-box gr-bg-2">
-                                    <h5 class="text-white"><?php echo app('translator')->get('Total Payout'); ?></h5>
-                                    <h3 class="text-white"><small><sup><?php echo e(trans(config('basic.currency_symbol'))); ?></sup></small><span><?php echo e(getAmount($totalPayout)); ?></span></h3>
+                                    <h5 class="text-white"><?php echo app('translator')->get('Sold To Customers'); ?></h5>
+                                    <h3 class="text-white sold_to_customers"></span>
+                                    </h3>
                                     <i class="fal fa-usd-circle text-white"></i>
                                 </div>
                             </div>
                         </div>
                     </div>
+
                     <div class="col-xl-4 d-sm-block d-none">
                         <div class="row g-3">
-                            <div class="col-xl-12 col-6">
+                            <div class="col-xl-12 col-6 sales-statistics">
                                 <div class="dashboard-box gr-bg-3">
-                                    <h5 class="text-white"><?php echo app('translator')->get('Total Invest'); ?></h5>
-                                    <h3 class="text-white"><small><sup><?php echo e(trans(config('basic.currency_symbol'))); ?></sup></small><span><?php echo e(getAmount($investment['totalInvestAmount'])); ?></span></h3>
+                                    <h5 class="text-white"><?php echo app('translator')->get('Sales Centers Due Amount'); ?></h5>
+                                    <h3 class="text-white sales_center_due_amount"></span>
+                                    </h3>
                                     <i class="far fa-funnel-dollar text-white"></i>
                                 </div>
                             </div>
-                            <div class="col-xl-12 col-6 box">
+                            <div class="col-xl-12 col-6 box sales-statistics">
                                 <div class="dashboard-box gr-bg-4">
-                                    <h5 class="text-white"><?php echo app('translator')->get('Running Invest'); ?></h5>
-                                    <h3 class="text-white"><small><sup><?php echo e(trans(config('basic.currency_symbol'))); ?></sup></small><span> <?php echo e(getAmount($investment['runningInvestAmount'])); ?></span></h3>
+                                    <h5 class="text-white"><?php echo app('translator')->get('Customers Due Amount'); ?></h5>
+                                    <h3 class="text-white customer_due_amount"></span>
+                                    </h3>
                                     <i class="far fa-funnel-dollar text-white"></i>
                                 </div>
                             </div>
@@ -82,65 +97,71 @@
             <div class="col-12">
                 <div class="dashboard-box-wrapper d-none d-lg-block">
                     <div class="row g-3 mb-4">
-
-                        <div class="col-xl-3 col-md-6 box">
+                        <div class="col-xl-3 col-md-6 box item-statistics">
                             <div class="dashboard-box">
-                                <h5><?php echo app('translator')->get('Total Investment'); ?></h5>
-                                <h3><?php echo e($investment['totalInvestment']); ?></h3>
+                                <h5><?php echo app('translator')->get('Total Items'); ?></h5>
+                                <h3 class="totalInvestment"></h3>
+                                <i class="fal fa-lightbulb-dollar"></i>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-3 col-md-6 box item-statistics">
+                            <div class="dashboard-box">
+                                <h5><?php echo app('translator')->get('Stock Out Items'); ?></h5>
+                                <h3 class="runningInvestment"></h3>
+                                <i class="fal fa-lightbulb-dollar"></i>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-3 col-md-6 box block-statistics">
+                            <div class="dashboard-box">
+                                <h5><?php echo app('translator')->get('Total Customers'); ?></h5>
+                                <h3 class="dueInvestment"></h3>
+                                <i class="fal fa-lightbulb-dollar"></i>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-3 col-md-6 box block-statistics">
+                            <div class="dashboard-box">
+                                <h5><?php echo app('translator')->get('Total Expense'); ?></h5>
+                                <h3 class="completedInvestment"><?php echo e($investment['completedInvestment']); ?></h3>
                                 <i class="fal fa-lightbulb-dollar"></i>
                             </div>
                         </div>
 
                         <div class="col-xl-3 col-md-6 box">
                             <div class="dashboard-box">
-                                <h5><?php echo app('translator')->get('Running Investment'); ?></h5>
-                                <h3><?php echo e($investment['runningInvestment']); ?></h3>
+                                <h5><?php echo app('translator')->get('Raw Item Purchase'); ?></h5>
+                                <h3>
+                                    <small><sup><?php echo e(trans(config('basic.currency_symbol'))); ?></sup></small><?php echo e(getAmount($depositBonus + $investBonus + $profitBonus)); ?>
+
+                                </h3>
                                 <i class="fal fa-lightbulb-dollar"></i>
                             </div>
                         </div>
 
                         <div class="col-xl-3 col-md-6 box">
                             <div class="dashboard-box">
-                                <h5><?php echo app('translator')->get('Due Investment'); ?></h5>
-                                <h3><?php echo e($investment['dueInvestment']); ?></h3>
-                                <i class="fal fa-lightbulb-dollar"></i>
-                            </div>
-                        </div>
-
-                        <div class="col-xl-3 col-md-6 box">
-                            <div class="dashboard-box">
-                                <h5><?php echo app('translator')->get('Completed Investment'); ?></h5>
-                                <h3><?php echo e($investment['completedInvestment']); ?></h3>
-                                <i class="fal fa-lightbulb-dollar"></i>
-                            </div>
-                        </div>
-
-                        <div class="col-xl-3 col-md-6 box">
-                            <div class="dashboard-box">
-                                <h5><?php echo app('translator')->get('Total Referral Bonus'); ?></h5>
-                                <h3><small><sup><?php echo e(trans(config('basic.currency_symbol'))); ?></sup></small><?php echo e(getAmount($depositBonus + $investBonus + $profitBonus)); ?></h3>
-                                <i class="fal fa-lightbulb-dollar"></i>
-                            </div>
-                        </div>
-
-                        <div class="col-xl-3 col-md-6 box">
-                            <div class="dashboard-box">
-                                <h5><?php echo app('translator')->get('Last Referral Bonus'); ?></h5>
-                                <h3><small><sup><?php echo e(trans(config('basic.currency_symbol'))); ?></sup></small><span><?php echo e(getAmount($lastBonus)); ?></span></h3>
+                                <h5><?php echo app('translator')->get('Wastage Raw Items'); ?></h5>
+                                <h3>
+                                    <small><sup><?php echo e(trans(config('basic.currency_symbol'))); ?></sup></small><span><?php echo e(getAmount($lastBonus)); ?></span>
+                                </h3>
                                 <i class="far fa-badge-dollar"></i>
                             </div>
                         </div>
                         <div class="col-xl-3 col-md-6 box">
                             <div class="dashboard-box">
-                                <h5><?php echo app('translator')->get('Total Earn'); ?></h5>
-                                <h3><small><sup><?php echo e(trans(config('basic.currency_symbol'))); ?></sup></small><span><?php echo e(getAmount($totalInterestProfit, config('basic.fraction_number'))); ?></span></h3>
+                                <h5><?php echo app('translator')->get('Due Amount Supplier'); ?></h5>
+                                <h3>
+                                    <small><sup><?php echo e(trans(config('basic.currency_symbol'))); ?></sup></small><span><?php echo e(getAmount($totalInterestProfit, config('basic.fraction_number'))); ?></span>
+                                </h3>
                                 <i class="far fa-hand-holding-usd"></i>
                             </div>
                         </div>
 
                         <div class="col-xl-3 col-md-6 box">
                             <div class="dashboard-box">
-                                <h5><?php echo app('translator')->get('Total Ticket'); ?></h5>
+                                <h5><?php echo app('translator')->get('Total Affiliate Member'); ?></h5>
                                 <h3><?php echo e($ticket); ?></h3>
                                 <i class="fal fa-ticket"></i>
                             </div>
@@ -151,7 +172,7 @@
                 <div class="d-lg-none mb-4">
                     <div class="card-box-wrapper owl-carousel card-boxes">
                         <div class="dashboard-box gr-bg-1">
-                            <h5 class="text-white"><?php echo app('translator')->get('Main Balance'); ?></h5>
+                            <h5 class="text-white"><?php echo app('translator')->get('Total Sales Amount'); ?></h5>
                             <h3 class="text-white">
                                 <small><sup><?php echo e(trans(config('basic.currency_symbol'))); ?></sup></small><?php echo e(getAmount($walletBalance, config('basic.fraction_number'))); ?>
 
@@ -236,101 +257,16 @@
                 <div class="chart-information d-none d-lg-block">
                     <div class="row justify-content-center">
                         <div class="row">
-                            <div class="col-lg-6 mb-4 mb-lg-0">
+                            <div class="col-lg-12 mb-4 mb-lg-0">
                                 <div class="progress-wrapper">
                                     <div id="container" class="apexcharts-canvas"></div>
                                 </div>
                             </div>
 
-                            <div class="col-lg-6 col-md-6">
-                                <div class="progress-wrapper2">
-                                    <div class="row">
-                                        <div class="col-lg-6 col-md-6 box mb-3">
-                                            <div class="badge-dashboard-box2" id="custom_badge_dashboad_box2">
-                                                <h5 class="mb-0"><?php echo app('translator')->get('Current Level'); ?></h5>
-                                                <div>
 
-                                                    <div class="level-box">
-                                                        <h6 class="m-0">
-                                                            <?php if($lastInvestorBadge == null): ?>
-                                                                <i class="fa fa-times"></i>
-                                                            <?php else: ?>
-                                                                <?php echo app('translator')->get(optional($investorBadge->details)->rank_level); ?>
-                                                            <?php endif; ?>
-                                                        </h6>
-                                                        <?php if($lastInvestorBadge != null && optional($investorBadge->details)->rank_level != null): ?>
-                                                            <img src="<?php echo e(getFile(config('location.badge.path').$lastInvestorBadge->badge_icon)); ?>" alt="" class="level-badge" />
-                                                        <?php endif; ?>
-                                                    </div>
-
-                                                    <?php if($lastInvestorBadge != null): ?>
-                                                        <p class="custom__p <?php echo e(optional($investorBadge->details)->rank_level == null ? 'opacity-0' : ''); ?>"> <?php echo e(optional($investorBadge->details)->rank_level == null ? '...' : trans(optional($investorBadge->details)->rank_name)); ?></p>
-                                                    <?php else: ?>
-                                                        <p class="opacity-0"><?php echo app('translator')->get('no level'); ?></p>
-                                                    <?php endif; ?>
-                                                </div>
-
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-6 col-md-6 box mb-3">
-                                            <div class="badge-dashboard-box1">
-                                                <h5><?php echo app('translator')->get('Level Bonus'); ?></h5>
-                                                <h3><small><sup><?php echo e(trans(config('basic.currency_symbol'))); ?></sup></small><span><?php echo e($totalBadgeBonus); ?></span></h3>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-12">
-                                            <div>
-                                                <div class="badge-dashboard-box2">
-                                                    <div class="row">
-                                                        <div class="col-md-12">
-                                                            <h5><?php echo app('translator')->get('All Badges'); ?></h5>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        <?php $__currentLoopData = $allBadges; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $badge): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                            <div class="col-xl-3 col-md-6 box">
-                                                                <div class="badge-box badge-box-two <?php echo e(Auth::user()->ranking($badge->id) == 'true' ? '' : 'locked'); ?>" id="badge-box-two">
-                                                                    <img src="<?php echo e(getFile(config('location.badge.path').$badge->badge_icon)); ?>" alt="" />
-                                                                    <p class="mb-3 text-center m-auto"><?php echo app('translator')->get(optional($badge->details)->rank_name); ?></p>
-                                                                    <div class="lock-icon">
-                                                                        <i class="far fa-lock-alt"></i>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
 
                     </div>
-                </div>
-
-                <!-- refferal-information -->
-                <div class="search-bar refferal-link  g-4 mt-4 mb-4 coin-box-wrapper">
-                    <form class="mb-3">
-                        <div class="row g-3 align-items-end">
-                            <div class="input-box col-lg-12">
-                                <label for=""><?php echo app('translator')->get('Referral Link'); ?></label>
-                                <div class="input-group mt-0">
-                                    <input
-                                        type="text"
-                                        value="<?php echo e(route('register.sponsor',[Auth::user()->username])); ?>"
-                                        class="form-control"
-                                        id="sponsorURL"
-                                        readonly />
-                                    <button class="gold-btn copyReferalLink" type="button"><i class="fal fa-copy"></i></button>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
                 </div>
 
             </div>
@@ -341,9 +277,94 @@
 <?php $__env->startPush('script'); ?>
     <script src="<?php echo e(asset($themeTrue.'js/apexcharts.js')); ?>"></script>
 
+
+    <script defer>
+
+        document.addEventListener('DOMContentLoaded', onDocumentLoad);
+
+        function delayProcess(blockClass, svgColor) {
+            Notiflix.Block.standard(`.${blockClass}`, {
+                backgroundColor: 'rgb(201 200 255 / 20%)',
+                svgColor: svgColor,
+                messageColor: '#696969',
+                messageFontSize: '18px',
+                fontFamily: 'Oswald, sans-serif'
+            });
+        }
+
+        function removeProcess(blockClass) {
+            Notiflix.Block.remove(`.${blockClass}`);
+        }
+
+        function onDocumentLoad() {
+            salesStatRecords();
+            itemRecords();
+        }
+
+        function salesStatRecords() {
+            delayProcess('sales-statistics', '#000000');
+            setTimeout(function () {
+                $.ajax({
+                    url: "<?php echo e(route('user.getSalesStatRecords')); ?>",
+                    method: 'GET',
+                    success: function (response) {
+                        removeProcess('sales-statistics');
+                        let salesStatRecords = response.data.salesStatRecords;
+                        let currency = response.currency;
+                        salesStatistics(salesStatRecords, currency);
+                    },
+                    error: function (xhr, status, error) {
+                        console.log(error)
+                    }
+                });
+            }, 1000)
+        }
+        function salesStatistics(salesStatRecords, currency) {
+            $('.total_sales_amount').text(parseFloat(salesStatRecords.totalSalesAmount).toFixed(2) + ` ${currency}`);
+            $('.sold_to_sales_centers').text(parseFloat(salesStatRecords.soldSalesCenterAmount).toFixed(2) + ` ${currency}`);
+            $('.sold_to_customers').text(parseFloat(salesStatRecords.soldCustomerAmount).toFixed(2) + ` ${currency}`);
+            $('.sales_center_due_amount').text(parseFloat(salesStatRecords.dueSalesCenterAmount).toFixed(2) + ` ${currency}`);
+            $('.customer_due_amount').text(parseFloat(salesStatRecords.dueCustomerAmount).toFixed(2) + ` ${currency}`);
+        }
+
+        function itemRecords(){
+            delayProcess('item-statistics', '#000000');
+            setTimeout(function () {
+                $.ajax({
+                    url: "<?php echo e(route('user.getItemRecords')); ?>",
+                    method: 'GET',
+                    success: function (response) {
+                        console.log(response)
+                        return 0;
+                        removeProcess('item-statistics');
+                        let salesStatRecords = response.data.salesStatRecords;
+                        console.log(salesStatRecords);
+                        let currency = response.currency;
+                        itemStatistics(salesStatRecords, currency);
+                    },
+                    error: function (xhr, status, error) {
+                        console.log(error)
+                    }
+                });
+            }, 1000)
+        }
+
+        function itemStatistics(salesStatRecords, currency) {
+            $('.total_sales_amount').text(parseFloat(salesStatRecords.totalSalesAmount).toFixed(2) + ` ${currency}`);
+            $('.sold_to_sales_centers').text(parseFloat(salesStatRecords.soldSalesCenterAmount).toFixed(2) + ` ${currency}`);
+            $('.sold_to_customers').text(parseFloat(salesStatRecords.soldCustomerAmount).toFixed(2) + ` ${currency}`);
+            $('.sales_center_due_amount').text(parseFloat(salesStatRecords.dueSalesCenterAmount).toFixed(2) + ` ${currency}`);
+            $('.customer_due_amount').text(parseFloat(salesStatRecords.dueCustomerAmount).toFixed(2) + ` ${currency}`);
+        }
+
+
+
+
+
+    </script>
+
     <script>
         "use strict";
-
         var options = {
             theme: {
                 mode: "light",

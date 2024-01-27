@@ -22,6 +22,7 @@
     <link rel="stylesheet" href="{{asset('assets/global/css/owl.theme.default.min.css')}}"/>
     <link rel="stylesheet" type="text/css" href="{{asset($themeTrue.'css/range-slider.css')}}">
     <link rel="stylesheet" type="text/css" href="{{asset($themeTrue.'css/fancybox.css')}}">
+    <link rel="stylesheet" href="{{ asset('assets/global/css/notiflix-3.2.6.min.css') }}">
 
     @stack('css-lib')
 
@@ -116,10 +117,11 @@
 
 @stack('extra-js')
 
-<script src="{{asset('assets/global/js/notiflix-aio-2.7.0.min.js')}}"></script>
+{{--<script src="{{asset('assets/global/js/notiflix-aio-2.7.0.min.js')}}"></script>--}}
 <script src="{{asset('assets/global/js/pusher.min.js')}}"></script>
 <script src="{{asset('assets/global/js/vue.min.js')}}"></script>
 <script src="{{asset('assets/global/js/axios.min.js')}}"></script>
+<script src="{{ asset('assets/global/js/notiflix-aio-3.2.6.min.js') }}"></script>
 <!-- custom script -->
 <script src="{{asset($themeTrue.'js/script.js')}}"></script>
 
@@ -241,19 +243,19 @@
 
 @if (session()->has('success'))
     <script>
-        Notiflix.Notify.Success("@lang(session('success'))");
+        Notiflix.Notify.success("@lang(session('success'))");
     </script>
 @endif
 
 @if (session()->has('error'))
     <script>
-        Notiflix.Notify.Failure("@lang(session('error'))");
+        Notiflix.Notify.failure("@lang(session('error'))");
     </script>
 @endif
 
 @if (session()->has('warning'))
     <script>
-        Notiflix.Notify.Warning("@lang(session('warning'))");
+        Notiflix.Notify.warning("@lang(session('warning'))");
     </script>
 @endif
 

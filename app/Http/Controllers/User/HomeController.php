@@ -14,6 +14,7 @@ use App\Models\Fund;
 use App\Models\Gateway;
 use App\Models\IdentifyForm;
 use App\Models\Investment;
+use App\Models\Item;
 use App\Models\KYC;
 use App\Models\Language;
 use App\Models\ManageProperty;
@@ -25,6 +26,8 @@ use App\Models\PayoutMethod;
 use App\Models\PayoutSetting;
 use App\Models\PropertyOffer;
 use App\Models\PropertyShare;
+use App\Models\Sale;
+use App\Models\Stock;
 use App\Models\Ticket;
 use App\Models\Transaction;
 use App\Models\User;
@@ -68,6 +71,60 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
+
+
+    public function getSalesStatRecords()
+    {
+        $admin = $this->user;
+        $currency = config('basic.currency_symbol');
+        $data['salesStatRecords'] = collect(Sale::when(!isset($admin->salesCenter) && $admin->user_type == 1, function ($query) use ($admin) {
+            return $query->where('company_id', $admin->active_company_id)->where('sales_by', 1)
+                ->selectRaw('SUM(CASE WHEN customer_id IS NULL AND sales_by = 1 THEN total_amount END) AS soldSalesCenterAmount')
+                ->selectRaw('SUM(CASE WHEN customer_id IS NOT NULL AND sales_by = 1 THEN total_amount END) AS soldCustomerAmount')
+                ->selectRaw('SUM(CASE WHEN customer_id IS NULL AND sales_by = 1 AND payment_status = 0 THEN total_amount END) AS dueSalesCenterAmount')
+                ->selectRaw('SUM(CASE WHEN customer_id IS NOT NULL AND sales_by = 1 AND payment_status = 0 THEN total_amount END) AS dueCustomerAmount');
+
+        })
+            ->when(isset($admin->salesCenter) && $admin->user_type == 2, function ($query) use ($admin) {
+                return $query->where([
+                    ['company_id', $admin->salesCenter->company_id],
+                    ['sales_center_id', $admin->salesCenter->id],
+                    ['sales_by', 2],
+                ])->whereNotNull('customer_id')
+                    ->selectRaw('SUM(CASE WHEN customer_id IS NOT NULL AND sales_by = 2 AND payment_status = 0 THEN total_amount END) AS totalDueAmount');
+            })
+            ->selectRaw('SUM(total_amount) AS totalSalesAmount')
+            ->get()->makeHidden('nextPayment')->toArray())->collapse();
+
+        return response()->json(['data' => $data, 'currency' => $currency]);
+    }
+
+    public function getItemRecords()
+    {
+        $admin = $this->user;
+        $currency = config('basic.currency_symbol');
+        $data['itemRecords'] = collect(Stock::when(!isset($admin->salesCenter) && $admin->user_type == 1, function ($query) use ($admin) {
+            return $query->where('company_id', $admin->active_company_id)->whereNull('sales_center_id');
+        })
+            ->when(isset($admin->salesCenter) && $admin->user_type == 2, function ($query) use ($admin) {
+                return $query->where([
+                    ['company_id', $admin->salesCenter->company_id],
+                    ['sales_center_id', $admin->salesCenter->id],
+                ]);
+            })->get()->toArray())->collapse();
+
+//        dd($data['itemRecords']);
+
+//        $stockOutItems = Stock::when(!isset($admin->salesCenter) && $admin->user_type == 1, function ($query) use($admin){
+//            return $query->where('company_id', $admin->active_company_id)->whereNull('sales_center_id');
+//        })
+
+        return $data['itemRecords'];
+
+        return response()->json(['data' => $data, 'currency' => $currency]);
+    }
+
+
     public function index()
     {
         $data['walletBalance'] = getAmount($this->user->balance);
@@ -183,9 +240,9 @@ class HomeController extends Controller
         $monthlyProfit = collect(['January' => 0, 'February' => 0, 'March' => 0, 'April' => 0, 'May' => 0, 'June' => 0, 'July' => 0, 'August' => 0, 'September' => 0, 'October' => 0, 'November' => 0, 'December' => 0]);
 
         $this->user->transaction()->whereBetween('created_at', [
-                Carbon::now()->startOfYear(),
-                Carbon::now()->endOfYear(),
-            ])
+            Carbon::now()->startOfYear(),
+            Carbon::now()->endOfYear(),
+        ])
             ->select(
                 DB::raw('SUM((CASE WHEN remarks LIKE "%Interest From%" THEN amount END)) AS totalAmount'),
                 DB::raw("DATE_FORMAT(created_at,'%M') as months")
@@ -197,21 +254,19 @@ class HomeController extends Controller
         $monthly['monthlyGaveProfit'] = $monthlyProfit;
 
 
-
         $latestRegisteredUser = User::where('referral_id', $this->user->id)->latest()->first();
         $data['allBadges'] = Badge::with('details')->where('status', 1)->orderBy('sort_by', 'ASC')->get();
         $user = $this->user;
 
         $data['investorBadge'] = BasicService::getInvestorCurrentBadge($user);
-        if ($data['investorBadge'] != null){
+        if ($data['investorBadge'] != null) {
             $data['lastInvestorBadge'] = $data['investorBadge']->with('details')->first();
-        }else{
+        } else {
             $data['lastInvestorBadge'] = null;
         }
 
         return view($this->theme . 'user.dashboard', $data, compact('monthly', 'latestRegisteredUser'));
     }
-
 
 
     public function profile(Request $request)

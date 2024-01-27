@@ -5819,6 +5819,8 @@ a.btn-custom {
     border-radius: 10px;
     padding: 20px;
     z-index: 1;
+    height: 100%;
+    min-height: 126px;
 }
 
 #content .badge-dashboard-box2 .level-box i {
@@ -6878,9 +6880,9 @@ a.btn-custom {
     font-size: 18px;
 }
 
-#Notiflix-Icon-Success,
-#Notiflix-Icon-Failure,
-#Notiflix-Icon-Warning {
+#Notiflix-Icon-success,
+#Notiflix-Icon-failure,
+#Notiflix-Icon-warning {
     fill: #fff !important;
 }
 

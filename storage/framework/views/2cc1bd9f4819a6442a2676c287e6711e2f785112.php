@@ -22,6 +22,7 @@
     <link rel="stylesheet" href="<?php echo e(asset('assets/global/css/owl.theme.default.min.css')); ?>"/>
     <link rel="stylesheet" type="text/css" href="<?php echo e(asset($themeTrue.'css/range-slider.css')); ?>">
     <link rel="stylesheet" type="text/css" href="<?php echo e(asset($themeTrue.'css/fancybox.css')); ?>">
+    <link rel="stylesheet" href="<?php echo e(asset('assets/global/css/notiflix-3.2.6.min.css')); ?>">
 
     <?php echo $__env->yieldPushContent('css-lib'); ?>
 
@@ -116,10 +117,11 @@
 
 <?php echo $__env->yieldPushContent('extra-js'); ?>
 
-<script src="<?php echo e(asset('assets/global/js/notiflix-aio-2.7.0.min.js')); ?>"></script>
+
 <script src="<?php echo e(asset('assets/global/js/pusher.min.js')); ?>"></script>
 <script src="<?php echo e(asset('assets/global/js/vue.min.js')); ?>"></script>
 <script src="<?php echo e(asset('assets/global/js/axios.min.js')); ?>"></script>
+<script src="<?php echo e(asset('assets/global/js/notiflix-aio-3.2.6.min.js')); ?>"></script>
 <!-- custom script -->
 <script src="<?php echo e(asset($themeTrue.'js/script.js')); ?>"></script>
 
@@ -241,19 +243,19 @@
 
 <?php if(session()->has('success')): ?>
     <script>
-        Notiflix.Notify.Success("<?php echo app('translator')->get(session('success')); ?>");
+        Notiflix.Notify.success("<?php echo app('translator')->get(session('success')); ?>");
     </script>
 <?php endif; ?>
 
 <?php if(session()->has('error')): ?>
     <script>
-        Notiflix.Notify.Failure("<?php echo app('translator')->get(session('error')); ?>");
+        Notiflix.Notify.failure("<?php echo app('translator')->get(session('error')); ?>");
     </script>
 <?php endif; ?>
 
 <?php if(session()->has('warning')): ?>
     <script>
-        Notiflix.Notify.Warning("<?php echo app('translator')->get(session('warning')); ?>");
+        Notiflix.Notify.warning("<?php echo app('translator')->get(session('warning')); ?>");
     </script>
 <?php endif; ?>
 

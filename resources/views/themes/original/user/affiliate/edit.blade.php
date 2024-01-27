@@ -181,6 +181,17 @@
                                             @endif
                                         </div>
 
+                                        <div class="input-box col-12">
+                                            <label for="address">@lang('Address') </label>
+                                            <textarea class="form-control @error('address') is-invalid @enderror"
+                                                      cols="30" rows="3" placeholder="@lang('Member Address')"
+                                                      name="address">{{ old('address', $singleAffiliateMember->address) }}</textarea>
+                                            @if($errors->has('address'))
+                                                <div class="error text-danger">@lang($errors->first('address'))
+                                                </div>
+                                            @endif
+                                        </div>
+
                                         <div class="input-box col-md-6">
                                             <label for="member_national_id">@lang('National Id') <span
                                                     class="text-dark"> <sub>(optional)</sub></span></label>
@@ -284,17 +295,6 @@
                                             @error('document')
                                             <span class="text-danger">{{trans($message)}}</span>
                                             @enderror
-                                        </div>
-
-                                        <div class="input-box col-12">
-                                            <label for="address">@lang('Address') </label>
-                                            <textarea class="form-control @error('address') is-invalid @enderror"
-                                                      cols="30" rows="3" placeholder="@lang('Sales Center Address')"
-                                                      name="address">{{ old('address', $singleAffiliateMember->address) }}</textarea>
-                                            @if($errors->has('address'))
-                                                <div class="error text-danger">@lang($errors->first('address'))
-                                                </div>
-                                            @endif
                                         </div>
 
                                         <div class="input-box col-12">
