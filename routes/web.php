@@ -123,15 +123,22 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'user', 'as' => 'user.'], fu
         // Stock In
         Route::get('add-stock', 'User\CompanyController@addStock')->name('addStock');
 
-
-
     });
 
 
     /* ===== Company Dashbaord data fetch using ajax ===== */
     Route::get('get-sales-stat-records', [HomeController::class, 'getSalesStatRecords'])->name('getSalesStatRecords');
     Route::get('get-item-data', [HomeController::class, 'getItemRecords'])->name('getItemRecords');
-//    Route::get('get-branch-stat-records', [AdminController::class, 'getBranchStatRecords'])->name('getBranchStatRecords');
+    Route::get('get-customer-records', [HomeController::class, 'getCustomerRecords'])->name('getCustomerRecords');
+    Route::get('get-raw-item-records', [HomeController::class, 'getRawItemRecords'])->name('getRawItemRecords');
+    Route::get('get-affiliate-member-records', [HomeController::class, 'getAffiliateMemberRecords'])->name('getAffiliateMemberRecords');
+    Route::get('sales-center-records', [HomeController::class, 'getSalesCenterRecords'])->name('getSalesCenterRecords');
+    Route::get('get-supplier-records', [HomeController::class, 'getSupplierRecords'])->name('getSupplierRecords');
+    Route::get('get-expense-records', [HomeController::class, 'getExpenseRecords'])->name('getExpenseRecords');
+
+    Route::get('get-year-sales-transaction-chart-records', [HomeController::class, 'getYearSalesTransactionChartRecords'])->name('getYearSalesTransactionChartRecords');
+    Route::get('get-year-sales-center-transaction-chart-records', [HomeController::class, 'getSalesCenterYearSalesTransactionChartRecords'])->name('getSalesCenterYearSalesTransactionChartRecords');
+
 
 
     // sales center stock

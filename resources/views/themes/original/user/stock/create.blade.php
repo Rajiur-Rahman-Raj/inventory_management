@@ -101,7 +101,7 @@
                                                     </div>
                                                 @endif
                                             </div>
-                                            <div class="input-box col-md-3">
+                                            <div class="input-box col-md-2">
                                                 <label for="item_quantity"> @lang('Quantity')</label>
                                                 <div class="input-group">
                                                     <input type="text" name="item_quantity[]"
@@ -118,7 +118,7 @@
                                                     @error('item_quantity.0') @lang($message) @enderror
                                                 </div>
                                             </div>
-                                            <div class="input-box col-md-3 cost_per_unit_parent">
+                                            <div class="input-box col-md-2 cost_per_unit_parent">
                                                 <label for="cost_per_unit"> @lang('Cost Per Unit')</label>
                                                 <div class="input-group">
                                                     <input type="text" name="cost_per_unit[]"
@@ -136,6 +136,7 @@
                                                     @error('item_quantity.0') @lang($message) @enderror
                                                 </div>
                                             </div>
+
                                             <div class="input-box col-md-3">
                                                 <label for="total_unit_cost"> @lang('Total Cost')</label>
                                                 <div class="input-group">
@@ -151,6 +152,25 @@
 
                                                 <div class="invalid-feedback">
                                                     @error('total_unit_cost.0') @lang($message) @enderror
+                                                </div>
+                                            </div>
+
+                                            <div class="input-box col-md-2">
+                                                <label for="selling_price"> @lang('Selling Price')</label>
+                                                <div class="input-group">
+                                                    <input type="text" name="selling_price[]"
+                                                           class="form-control @error('selling_price.0') is-invalid @enderror"
+                                                           onkeyup="this.value = this.value.replace (/^\.|[^\d\.]/g, '')"
+                                                           value="{{ old('selling_price.0') }}">
+                                                    <div class="input-group-append" readonly="">
+                                                        <div class="form-control currency_symbol append_group">
+                                                            {{ $basic->currency_symbol }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="invalid-feedback">
+                                                    @error('selling_price.0') @lang($message) @enderror
                                                 </div>
                                             </div>
                                         </div>
@@ -185,7 +205,8 @@
                                                            onkeyup="this.value = this.value.replace (/^\.|[^\d\.]/g, '')"
                                                            value="{{ old('raw_item_quantity.0.0') }}">
                                                     <div class="input-group-append" readonly="">
-                                                        <div class="form-control currency_symbol append_group raw_item_unit"></div>
+                                                        <div
+                                                            class="form-control currency_symbol append_group raw_item_unit"></div>
                                                     </div>
                                                 </div>
 
@@ -310,7 +331,7 @@
                                                             @endif
                                                         </div>
 
-                                                        <div class="input-box col-md-3">
+                                                        <div class="input-box col-md-2">
                                                             <label for="item_quantity"> @lang('Quantity')</label>
                                                             <div class="input-group">
                                                                 <input type="text" name="item_quantity[]"
@@ -327,7 +348,7 @@
                                                             </div>
                                                         </div>
 
-                                                        <div class="input-box col-md-3 cost_per_unit_parent">
+                                                        <div class="input-box col-md-2 cost_per_unit_parent">
                                                             <label for="cost_per_unit"> @lang('Cost Per Unit')</label>
                                                             <div class="input-group">
                                                                 <input type="text" name="cost_per_unit[]"
@@ -363,6 +384,26 @@
                                                                 @error("total_unit_cost.$i") @lang($message) @enderror
                                                             </div>
                                                         </div>
+
+                                                        <div class="input-box col-md-2">
+                                                            <label for="selling_price"> @lang('Selling Price')</label>
+                                                            <div class="input-group">
+                                                                <input type="text" name="selling_price[]"
+                                                                       class="form-control @error("selling_price.$i") is-invalid @enderror"
+                                                                       onkeyup="this.value = this.value.replace (/^\.|[^\d\.]/g, '')"
+                                                                       value="{{ old("selling_price.$i") }}">
+                                                                <div class="input-group-append" readonly="">
+                                                                    <div class="form-control currency_symbol append_group">
+                                                                        {{ $basic->currency_symbol }}
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="invalid-feedback">
+                                                                @error("selling_price.$i") @lang($message) @enderror
+                                                            </div>
+                                                        </div>
+
                                                     </div>
 
                                                     <div class="row">
@@ -542,7 +583,6 @@
         $(document).on('click', '.rawItemFieldRemove', function () {
             $(this).parents('.parentRawItemRow').remove();
         });
-
 
 
         $(document).on('input', '.costPerUnit', function () {

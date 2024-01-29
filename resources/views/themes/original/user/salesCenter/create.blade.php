@@ -39,7 +39,7 @@
                                       enctype="multipart/form-data">
                                     @csrf
                                     <div class="row g-4">
-                                        <div class="input-box col-md-6">
+                                        <div class="input-box col-md-4">
                                             <label for="name">@lang('Center Name') </label>
                                             <input type="text"
                                                    class="form-control"
@@ -51,7 +51,7 @@
                                             @endif
                                         </div>
 
-                                        <div class="input-box col-md-6">
+                                        <div class="input-box col-md-4">
                                             <label for="name">@lang('Code') </label>
                                             <input type="text"
                                                    class="form-control"
@@ -61,6 +61,17 @@
                                             @if($errors->has('name'))
                                                 <div class="error text-danger">@lang($errors->first('name'))</div>
                                             @endif
+                                        </div>
+
+                                        <div class="input-box col-md-4">
+                                            <label for="name">@lang('Discount') </label>
+                                            <div class="input-group mb-3">
+                                                <input type="number" class="form-control" aria-label="" name="discount_percent" placeholder="discount" value="5">
+                                                <span class="input-group-text">%</span>
+                                                @if($errors->has('discount_percent'))
+                                                    <div class="error text-danger">@lang($errors->first('discount_percent'))</div>
+                                                @endif
+                                            </div>
                                         </div>
 
                                         <div class="input-box col-12">

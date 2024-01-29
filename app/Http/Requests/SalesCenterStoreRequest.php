@@ -26,6 +26,7 @@ class SalesCenterStoreRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'min:3', 'max:500'],
             'code' => ['required', 'string', 'min:1', 'max:100'],
+            'discount_percent' => ['required', 'integer', 'min:0', 'max:100'],
             'email' => ['required'],
             'phone' => ['required', 'min:1', 'max:100'],
             'password' => ['required', 'min:3'],

@@ -5781,11 +5781,11 @@ a.btn-custom {
 }
 
 #content .dashboard-box-wrapper .box:nth-child(1) .dashboard-box i {
-    color: #ff6379;
+    color: #4da2eb;
 }
 
 #content .dashboard-box-wrapper .box:nth-child(2) .dashboard-box i {
-    color: #ffce00;
+    color: #ff6379;
 }
 
 #content .dashboard-box-wrapper .box:nth-child(3) .dashboard-box i {
@@ -5801,15 +5801,31 @@ a.btn-custom {
 }
 
 #content .dashboard-box-wrapper .box:nth-child(6) .dashboard-box i {
-    color: #ff6379;
+    color: #ffce00;
 }
 
 #content .dashboard-box-wrapper .box:nth-child(7) .dashboard-box i {
-    color: #20c997;
+    color: #ff6379;
 }
 
 #content .dashboard-box-wrapper .box:nth-child(8) .dashboard-box i {
     color: #ffce00;
+}
+
+#content .dashboard-box-wrapper .box:nth-child(9) .dashboard-box i {
+    color: #cc54f4;
+}
+
+#content .dashboard-box-wrapper .box:nth-child(10) .dashboard-box i {
+    color: #59c8ff;
+}
+
+#content .dashboard-box-wrapper .box:nth-child(11) .dashboard-box i {
+    color: #cc54f4;
+}
+
+#content .dashboard-box-wrapper .box:nth-child(12) .dashboard-box i {
+    color: #4da2eb;
 }
 
 #content .dashboard-box, .badge-dashboard-box1, .badge-dashboard-box2 {
@@ -8533,6 +8549,7 @@ button.gold-btn.copyReferalLink {
 
 .user-account-number {
     position: relative;
+    padding: 15px 15px;
 }
 
 .user-account-number .account-wallet {

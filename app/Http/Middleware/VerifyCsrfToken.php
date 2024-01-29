@@ -30,5 +30,7 @@ class VerifyCsrfToken extends Middleware
         '*get-district-upazila*',
         '*get-upazila-union*',
         '*get-selected-sales-center*',
+        '*get-year-sales-transaction-chart-records*',
+        '*get-year-sales-center-transaction-chart-records*',
     ];
 }

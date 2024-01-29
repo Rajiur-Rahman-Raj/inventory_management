@@ -6,9 +6,8 @@
 @endpush
 
 @section('content')
-
     <section class="pos-section section-1">
-        <div class="container-fluid ">
+        <div class="container-fluid">
             <div class="row main">
                 <div class="col-xl-8 col-lg-8">
                     <div class="product-bg">
@@ -734,7 +733,6 @@
 
         $('.selectSalesCenter').on('change', function () {
             let selectedValue = $(this).val();
-
             getSelectedSalesCenter(selectedValue);
         });
 
@@ -746,11 +744,12 @@
                     id: value,
                 },
                 success: function (response) {
-
                     let salesCenter = response.salesCenter;
                     $('.owner-name').val(salesCenter.user.name);
                     $('.owner-phone').val(salesCenter.user.phone);
                     $('.sales-center-address').val(salesCenter.center_address);
+                    $('.itemsDiscountInput').val(salesCenter.discount_percent);
+                    updateTotal();
                 },
                 error: function (xhr, status, error) {
                     console.log(error);
@@ -772,9 +771,9 @@
                 },
                 success: function (response) {
                     if (response.status) {
-                        Notiflix.Notify.Success(response.message);
+                        Notiflix.Notify.success(response.message);
                     } else {
-                        Notiflix.Notify.Warning(response.message);
+                        Notiflix.Notify.warning(response.message);
                     }
 
                     let cartItems = response.cartItems;
@@ -830,7 +829,7 @@
         function checkSalesBySalesCenter(){
             let customerId = $('.customerId').val();
             if (!customerId){
-                Notiflix.Notify.Failure('Please select customer');
+                Notiflix.Notify.failure('Please select customer');
                 return false;
             }
             return true;
@@ -846,10 +845,10 @@
 
                 let customerId = $(activeDataBsTarget).children().find('.customerId').val();
                 if (!saleCenterId) {
-                    Notiflix.Notify.Failure('please select sales center');
+                    Notiflix.Notify.failure('please select sales center');
                     return false;
                 } else if (!customerId) {
-                    Notiflix.Notify.Failure('please select customer');
+                    Notiflix.Notify.failure('please select customer');
                     return false;
                 } else {
                     return true;
@@ -857,7 +856,7 @@
             } else {
 
                 if (!saleCenterId) {
-                    Notiflix.Notify.Failure('please select sales center');
+                    Notiflix.Notify.failure('please select sales center');
                     return false;
                 } else {
                     return true;
@@ -1036,7 +1035,7 @@
             // Recalculate total after updating the discount
             let discount = $(this).val();
             if (discount > 100) {
-                Notiflix.Notify.Warning('Discount cannot exceed 100%');
+                Notiflix.Notify.warning('Discount cannot exceed 100%');
                 thisClass.attr('max', 100)
                 return;
             }
@@ -1104,7 +1103,7 @@
                         thisClass.val(response.stockQuantity)
 
                         if (!response.status && canShowWarning) {
-                            Notiflix.Notify.Warning(response.message);
+                            Notiflix.Notify.warning(response.message);
                             canShowWarning = false;
                             setTimeout(() => {
                                 canShowWarning = true;

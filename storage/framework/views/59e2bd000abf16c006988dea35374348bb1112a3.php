@@ -115,7 +115,7 @@ unset($__errorArgs, $__bag); ?>"
                                                     </div>
                                                 <?php endif; ?>
                                             </div>
-                                            <div class="input-box col-md-3">
+                                            <div class="input-box col-md-2">
                                                 <label for="item_quantity"> <?php echo app('translator')->get('Quantity'); ?></label>
                                                 <div class="input-group">
                                                     <input type="text" name="item_quantity[]"
@@ -146,7 +146,7 @@ endif;
 unset($__errorArgs, $__bag); ?>
                                                 </div>
                                             </div>
-                                            <div class="input-box col-md-3 cost_per_unit_parent">
+                                            <div class="input-box col-md-2 cost_per_unit_parent">
                                                 <label for="cost_per_unit"> <?php echo app('translator')->get('Cost Per Unit'); ?></label>
                                                 <div class="input-group">
                                                     <input type="text" name="cost_per_unit[]"
@@ -179,6 +179,7 @@ endif;
 unset($__errorArgs, $__bag); ?>
                                                 </div>
                                             </div>
+
                                             <div class="input-box col-md-3">
                                                 <label for="total_unit_cost"> <?php echo app('translator')->get('Total Cost'); ?></label>
                                                 <div class="input-group">
@@ -202,6 +203,40 @@ unset($__errorArgs, $__bag); ?> totalItemCost"
 
                                                 <div class="invalid-feedback">
                                                     <?php $__errorArgs = ['total_unit_cost.0'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> <?php echo app('translator')->get($message); ?> <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                                                </div>
+                                            </div>
+
+                                            <div class="input-box col-md-2">
+                                                <label for="selling_price"> <?php echo app('translator')->get('Selling Price'); ?></label>
+                                                <div class="input-group">
+                                                    <input type="text" name="selling_price[]"
+                                                           class="form-control <?php $__errorArgs = ['selling_price.0'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
+                                                           onkeyup="this.value = this.value.replace (/^\.|[^\d\.]/g, '')"
+                                                           value="<?php echo e(old('selling_price.0')); ?>">
+                                                    <div class="input-group-append" readonly="">
+                                                        <div class="form-control currency_symbol append_group">
+                                                            <?php echo e($basic->currency_symbol); ?>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="invalid-feedback">
+                                                    <?php $__errorArgs = ['selling_price.0'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
@@ -257,7 +292,8 @@ unset($__errorArgs, $__bag); ?> totalRawItemQuantity"
                                                            onkeyup="this.value = this.value.replace (/^\.|[^\d\.]/g, '')"
                                                            value="<?php echo e(old('raw_item_quantity.0.0')); ?>">
                                                     <div class="input-group-append" readonly="">
-                                                        <div class="form-control currency_symbol append_group raw_item_unit"></div>
+                                                        <div
+                                                            class="form-control currency_symbol append_group raw_item_unit"></div>
                                                     </div>
                                                 </div>
 
@@ -417,7 +453,7 @@ unset($__errorArgs, $__bag); ?>"
                                                             <?php endif; ?>
                                                         </div>
 
-                                                        <div class="input-box col-md-3">
+                                                        <div class="input-box col-md-2">
                                                             <label for="item_quantity"> <?php echo app('translator')->get('Quantity'); ?></label>
                                                             <div class="input-group">
                                                                 <input type="text" name="item_quantity[]"
@@ -448,7 +484,7 @@ unset($__errorArgs, $__bag); ?>
                                                             </div>
                                                         </div>
 
-                                                        <div class="input-box col-md-3 cost_per_unit_parent">
+                                                        <div class="input-box col-md-2 cost_per_unit_parent">
                                                             <label for="cost_per_unit"> <?php echo app('translator')->get('Cost Per Unit'); ?></label>
                                                             <div class="input-group">
                                                                 <input type="text" name="cost_per_unit[]"
@@ -514,6 +550,41 @@ endif;
 unset($__errorArgs, $__bag); ?>
                                                             </div>
                                                         </div>
+
+                                                        <div class="input-box col-md-2">
+                                                            <label for="selling_price"> <?php echo app('translator')->get('Selling Price'); ?></label>
+                                                            <div class="input-group">
+                                                                <input type="text" name="selling_price[]"
+                                                                       class="form-control <?php $__errorArgs = ["selling_price.$i"];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
+                                                                       onkeyup="this.value = this.value.replace (/^\.|[^\d\.]/g, '')"
+                                                                       value="<?php echo e(old("selling_price.$i")); ?>">
+                                                                <div class="input-group-append" readonly="">
+                                                                    <div class="form-control currency_symbol append_group">
+                                                                        <?php echo e($basic->currency_symbol); ?>
+
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="invalid-feedback">
+                                                                <?php $__errorArgs = ["selling_price.$i"];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> <?php echo app('translator')->get($message); ?> <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                                                            </div>
+                                                        </div>
+
                                                     </div>
 
                                                     <div class="row">
@@ -715,7 +786,6 @@ unset($__errorArgs, $__bag); ?>
         $(document).on('click', '.rawItemFieldRemove', function () {
             $(this).parents('.parentRawItemRow').remove();
         });
-
 
 
         $(document).on('input', '.costPerUnit', function () {

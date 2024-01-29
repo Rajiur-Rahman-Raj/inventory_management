@@ -8,8 +8,11 @@ use App\Helper\SystemInfo;
 use App\Http\Controllers\Controller;
 use App\Http\Traits\Notify;
 use App\Http\Traits\Upload;
+use App\Models\AffiliateMember;
 use App\Models\Badge;
 use App\Models\Comment;
+use App\Models\Customer;
+use App\Models\Expense;
 use App\Models\Fund;
 use App\Models\Gateway;
 use App\Models\IdentifyForm;
@@ -26,12 +29,19 @@ use App\Models\PayoutMethod;
 use App\Models\PayoutSetting;
 use App\Models\PropertyOffer;
 use App\Models\PropertyShare;
+use App\Models\RawItemPurchaseIn;
+use App\Models\RawItemPurchaseStock;
 use App\Models\Sale;
+use App\Models\SalesCenter;
 use App\Models\Stock;
+use App\Models\StockIn;
+use App\Models\Supplier;
 use App\Models\Ticket;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Models\UserSocial;
+use App\Models\Wastage;
+use Cassandra\Custom;
 use Facades\App\Services\InvestmentService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -72,6 +82,177 @@ class HomeController extends Controller
      * @return \Illuminate\Contracts\Support\Renderable
      */
 
+    public function getSalesCenterYearSalesTransactionChartRecords()
+    {
+        $admin = $this->user;
+        $basic = config('basic');
+        $today = today();
+        $data['yearLabels'] = ['January', 'February', 'March', 'April', 'May', 'June', 'July ', 'August', 'September', 'October', 'November', 'December'];
+
+        $monthlySalesCenterSalesTransactions = Sale::when(isset($admin->salesCenter) && $admin->user_type == 2, function ($query) use ($admin, $today) {
+            return $query->where([
+                ['company_id', $admin->salesCenter->company_id],
+                ['sales_center_id', $admin->salesCenter->id],
+                ['sales_by', 2],
+            ])
+                ->whereNotNull('customer_id')
+                ->select('created_at')
+                ->whereYear('created_at', $today)
+                ->groupBy([DB::raw("DATE_FORMAT(created_at, '%m')")])
+                ->selectRaw('SUM(total_amount) AS totalSalesAmount')
+                ->selectRaw('SUM(CASE WHEN customer_id IS NOT NULL AND sales_by = 2 AND payment_status = 0 THEN due_amount END) AS totalDueAmount')
+                ->get()
+                ->groupBy([function ($query) {
+                    return $query->created_at->format('F');
+                }]);
+        });
+
+
+        $monthlySalesCenterStockTransactions = Sale::when(isset($admin->salesCenter) && $admin->user_type == 2, function ($query) use ($admin, $today) {
+            return $query->where([
+                ['company_id', $admin->salesCenter->company_id],
+                ['sales_center_id', $admin->salesCenter->id],
+                ['sales_by', 1],
+            ])->whereNull('customer_id')
+                ->select('created_at')
+                ->whereYear('created_at', $today)
+                ->groupBy([DB::raw("DATE_FORMAT(created_at, '%m')")])
+                ->selectRaw('SUM(total_amount) AS totalStockAmount')
+                ->get()
+                ->groupBy([function ($query) {
+                    return $query->created_at->format('F');
+                }]);
+        });
+
+
+        $yearTotalStockAmount = [];
+        $yearTotalSalesAmount = [];
+        $yearTotalDueAmount = [];
+
+        foreach ($data['yearLabels'] as $yearLabel) {
+            $currentTotalStockAmount = 0;
+            $currentTotalSalesAmount = 0;
+            $currentTotalDueAmount = 0;
+
+            if (isset($monthlySalesCenterStockTransactions[$yearLabel])) {
+                foreach ($monthlySalesCenterStockTransactions[$yearLabel] as $key => $stock) {
+                    $currentTotalStockAmount += $stock->totalStockAmount;
+                }
+            }
+
+            if (isset($monthlySalesCenterSalesTransactions[$yearLabel])) {
+                foreach ($monthlySalesCenterSalesTransactions[$yearLabel] as $key => $sale) {
+                    $currentTotalSalesAmount += $sale->totalSalesAmount;
+                    $currentTotalDueAmount += $sale->totalDueAmount;
+                }
+            }
+
+            $yearTotalStockAmount[] = $currentTotalStockAmount;
+            $yearTotalSalesAmount[] = $currentTotalSalesAmount;
+            $yearTotalDueAmount[] = $currentTotalDueAmount;
+        }
+
+        $data['yearSalesCenterSalesTransactionChartRecords'] = [
+            'yearLabels' => $data['yearLabels'],
+            'yearTotalStockAmount' => $yearTotalStockAmount,
+            'yearTotalSalesAmount' => $yearTotalSalesAmount,
+            'yearTotalDueAmount' => $yearTotalDueAmount,
+        ];
+
+        return response()->json(['data' => $data, 'basic' => $basic]);
+
+    }
+
+
+    public function getYearSalesTransactionChartRecords()
+    {
+        $admin = $this->user;
+        $basic = config('basic');
+        $today = today();
+        $data['yearLabels'] = ['January', 'February', 'March', 'April', 'May', 'June', 'July ', 'August', 'September', 'October', 'November', 'December'];
+
+        $monthlySalesTransactions = Sale::when(!isset($admin->salesCenter) && $admin->user_type == 1, function ($query) use ($admin, $today) {
+            return $query->where('company_id', $admin->active_company_id)->where('sales_by', 1)
+                ->select('created_at')
+                ->whereYear('created_at', $today)
+                ->groupBy([DB::raw("DATE_FORMAT(created_at, '%m')")])
+                ->selectRaw('SUM(total_amount) AS totalSalesAmount')
+                ->selectRaw('SUM(CASE WHEN customer_id IS NULL AND sales_by = 1 THEN total_amount END) AS soldSalesCenterAmount')
+                ->selectRaw('SUM(CASE WHEN customer_id IS NOT NULL AND sales_by = 1 THEN total_amount END) AS soldCustomerAmount')
+                ->selectRaw('SUM(CASE WHEN customer_id IS NULL AND sales_by = 1 AND payment_status = 0 THEN due_amount END) AS dueSalesCenterAmount')
+                ->selectRaw('SUM(CASE WHEN customer_id IS NOT NULL AND sales_by = 1 AND payment_status = 0 THEN due_amount END) AS dueCustomerAmount')
+                ->get()
+                ->groupBy([function ($query) {
+                    return $query->created_at->format('F');
+                }]);
+        });
+
+        $monthlyStockTransactions = StockIn::where('company_id', $admin->active_company_id)
+            ->select('created_at')
+            ->whereYear('created_at', $today)
+            ->groupBy([DB::raw("DATE_FORMAT(created_at, '%m')")])
+            ->selectRaw('SUM(total_cost) AS totalStockAmount')
+            ->get()
+            ->groupBy([function ($query) {
+                return $query->created_at->format('F');
+            }]);
+
+
+        $yearTotalStockAmount = [];
+
+        $yearTotalSalesAmount = [];
+        $yearTotalSoldSalesCenterAmount = [];
+        $yearTotalSoldCustomerAmount = [];
+        $yearTotalDueSalesCenterAmount = [];
+        $yearTotalDueCustomerAmount = [];
+
+        foreach ($data['yearLabels'] as $yearLabel) {
+            $currentTotalStockAmount = 0;
+
+            $currentTotalSalesAmount = 0;
+            $currentTotalSoldSalesCenterAmount = 0;
+            $currentTotalSoldCustomerAmount = 0;
+            $currentTotalDueSalesCenterAmount = 0;
+            $currentTotalDueCustomerAmount = 0;
+
+            if (isset($monthlyStockTransactions[$yearLabel])) {
+                foreach ($monthlyStockTransactions[$yearLabel] as $key => $stock) {
+                    $currentTotalStockAmount += $stock->totalStockAmount;
+                }
+            }
+
+            if (isset($monthlySalesTransactions[$yearLabel])) {
+                foreach ($monthlySalesTransactions[$yearLabel] as $key => $sale) {
+                    $currentTotalSalesAmount += $sale->totalSalesAmount;
+                    $currentTotalSoldSalesCenterAmount += $sale->soldSalesCenterAmount;
+                    $currentTotalSoldCustomerAmount += $sale->soldCustomerAmount;
+                    $currentTotalDueSalesCenterAmount += $sale->dueSalesCenterAmount;
+                    $currentTotalDueCustomerAmount += $sale->dueCustomerAmount;
+                }
+            }
+
+            $yearTotalStockAmount[] = $currentTotalStockAmount;
+
+            $yearTotalSalesAmount[] = $currentTotalSalesAmount;
+            $yearTotalSoldSalesCenterAmount[] = $currentTotalSoldSalesCenterAmount;
+            $yearTotalSoldCustomerAmount[] = $currentTotalSoldCustomerAmount;
+            $yearTotalDueSalesCenterAmount[] = $currentTotalDueSalesCenterAmount;
+            $yearTotalDueCustomerAmount[] = $currentTotalDueCustomerAmount;
+        }
+
+        $data['yearSalesTransactionChartRecords'] = [
+            'yearLabels' => $data['yearLabels'],
+            'yearTotalStockAmount' => $yearTotalStockAmount,
+            'yearTotalSalesAmount' => $yearTotalSalesAmount,
+            'yearTotalSoldSalesCenterAmount' => $yearTotalSoldSalesCenterAmount,
+            'yearTotalSoldCustomerAmount' => $yearTotalSoldCustomerAmount,
+            'yearTotalDueSalesCenterAmount' => $yearTotalDueSalesCenterAmount,
+            'yearTotalDueCustomerAmount' => $yearTotalDueCustomerAmount,
+        ];
+
+        return response()->json(['data' => $data, 'basic' => $basic]);
+    }
+
 
     public function getSalesStatRecords()
     {
@@ -81,8 +262,8 @@ class HomeController extends Controller
             return $query->where('company_id', $admin->active_company_id)->where('sales_by', 1)
                 ->selectRaw('SUM(CASE WHEN customer_id IS NULL AND sales_by = 1 THEN total_amount END) AS soldSalesCenterAmount')
                 ->selectRaw('SUM(CASE WHEN customer_id IS NOT NULL AND sales_by = 1 THEN total_amount END) AS soldCustomerAmount')
-                ->selectRaw('SUM(CASE WHEN customer_id IS NULL AND sales_by = 1 AND payment_status = 0 THEN total_amount END) AS dueSalesCenterAmount')
-                ->selectRaw('SUM(CASE WHEN customer_id IS NOT NULL AND sales_by = 1 AND payment_status = 0 THEN total_amount END) AS dueCustomerAmount');
+                ->selectRaw('SUM(CASE WHEN customer_id IS NULL AND sales_by = 1 AND payment_status = 0 THEN due_amount END) AS dueSalesCenterAmount')
+                ->selectRaw('SUM(CASE WHEN customer_id IS NOT NULL AND sales_by = 1 AND payment_status = 0 THEN due_amount END) AS dueCustomerAmount');
 
         })
             ->when(isset($admin->salesCenter) && $admin->user_type == 2, function ($query) use ($admin) {
@@ -91,10 +272,23 @@ class HomeController extends Controller
                     ['sales_center_id', $admin->salesCenter->id],
                     ['sales_by', 2],
                 ])->whereNotNull('customer_id')
-                    ->selectRaw('SUM(CASE WHEN customer_id IS NOT NULL AND sales_by = 2 AND payment_status = 0 THEN total_amount END) AS totalDueAmount');
+                    ->selectRaw('SUM(CASE WHEN customer_id IS NOT NULL AND sales_by = 2 AND payment_status = 0 THEN due_amount END) AS dueCustomerAmount');
             })
             ->selectRaw('SUM(total_amount) AS totalSalesAmount')
             ->get()->makeHidden('nextPayment')->toArray())->collapse();
+
+        if (userType() == 1){
+            $data['salesStatRecords']['totalStockAmount'] = StockIn::where('company_id', $admin->active_company_id)->sum('total_cost');
+        }else{
+            $data['salesStatRecords']['totalStockAmount'] = Sale::when(isset($admin->salesCenter) && $admin->user_type == 2, function ($query) use ($admin) {
+                return $query->where([
+                    ['company_id', $admin->salesCenter->company_id],
+                    ['sales_center_id', $admin->salesCenter->id],
+                    ['sales_by', 1],
+                ])->whereNull('customer_id')
+                    ->sum('total_amount');
+            });
+        }
 
         return response()->json(['data' => $data, 'currency' => $currency]);
     }
@@ -102,8 +296,8 @@ class HomeController extends Controller
     public function getItemRecords()
     {
         $admin = $this->user;
-        $currency = config('basic.currency_symbol');
-        $data['itemRecords'] = collect(Stock::when(!isset($admin->salesCenter) && $admin->user_type == 1, function ($query) use ($admin) {
+        $itemRecords = [];
+        $totalItemsCount = Stock::when(!isset($admin->salesCenter) && $admin->user_type == 1, function ($query) use ($admin) {
             return $query->where('company_id', $admin->active_company_id)->whereNull('sales_center_id');
         })
             ->when(isset($admin->salesCenter) && $admin->user_type == 2, function ($query) use ($admin) {
@@ -111,15 +305,107 @@ class HomeController extends Controller
                     ['company_id', $admin->salesCenter->company_id],
                     ['sales_center_id', $admin->salesCenter->id],
                 ]);
-            })->get()->toArray())->collapse();
+            })
+            ->count();
 
-//        dd($data['itemRecords']);
+        $totalOutOfStockItemsCount = Stock::when(!isset($admin->salesCenter) && $admin->user_type == 1, function ($query) use ($admin) {
+            return $query->where('company_id', $admin->active_company_id)->whereNull('sales_center_id')->where('quantity', 0);
+        })
+            ->when(isset($admin->salesCenter) && $admin->user_type == 2, function ($query) use ($admin) {
+                return $query->where([
+                    ['company_id', $admin->salesCenter->company_id],
+                    ['sales_center_id', $admin->salesCenter->id],
+                ])->where('quantity', 0);
+            })
+            ->count();
 
-//        $stockOutItems = Stock::when(!isset($admin->salesCenter) && $admin->user_type == 1, function ($query) use($admin){
-//            return $query->where('company_id', $admin->active_company_id)->whereNull('sales_center_id');
-//        })
+        $itemRecords['totalItems'] = $totalItemsCount;
+        $itemRecords['totalOutOfStockItems'] = $totalOutOfStockItemsCount;
+        return response()->json(['itemRecords' => $itemRecords]);
+    }
 
-        return $data['itemRecords'];
+    public function getCustomerRecords()
+    {
+        $admin = $this->user;
+
+        $customerRecords = [];
+        $customersCount = Customer::when(!isset($admin->salesCenter) && $admin->user_type == 1, function ($query) use ($admin) {
+            return $query->where('company_id', $admin->active_company_id)->whereNull('sales_center_id');
+        })
+            ->when(isset($admin->salesCenter) && $admin->user_type == 2, function ($query) use ($admin) {
+                return $query->where([
+                    ['company_id', $admin->salesCenter->company_id],
+                    ['sales_center_id', $admin->salesCenter->id],
+                ]);
+            })
+            ->count();
+
+        $customerRecords['totalCustomers'] = $customersCount;
+        return response()->json(['customerRecords' => $customerRecords]);
+    }
+
+    public function getRawItemRecords()
+    {
+        $admin = $this->user;
+        $currency = config('basic.currency_symbol');
+        $data['rawItemStatRecords'] = collect(RawItemPurchaseIn::where('company_id', $admin->active_company_id)
+            ->selectRaw('SUM(total_price) AS totalRawItemPurchaseAmount')
+            ->selectRaw('SUM(CASE WHEN payment_status = 0 THEN due_amount END) AS totalRawItemDueAmount')
+            ->get()->toArray())->collapse();
+
+        $data['rawItemStatRecords']['totalRawItemWastageAmount'] = Wastage::with('rawItemStock')
+            ->where('company_id', $admin->active_company_id)->get()
+            ->sum(function ($wastage) {
+                return $wastage->quantity * optional($wastage->rawItemStock)->last_cost_per_unit;
+            });
+
+        $data['rawItemStatRecords']['totalOutOfStockRawItems'] = RawItemPurchaseStock::where('company_id', $admin->active_company_id)->where('quantity', '<=', 0)->count();
+
+        return response()->json(['data' => $data, 'currency' => $currency]);
+
+    }
+
+    public function getAffiliateMemberRecords()
+    {
+        $admin = $this->user;
+
+        $currency = config('basic.currency_symbol');
+
+        $data['affiliateMemberStatRecords'] = collect(AffiliateMember::where('company_id', $admin->active_company_id)
+            ->selectRaw('SUM(total_commission_amount) AS totalAffiliateMemberCommission')
+            ->selectRaw('COUNT(id) AS totalAffiliateMembers')
+            ->get()->toArray())->collapse();
+
+        return response()->json(['data' => $data, 'currency' => $currency]);
+    }
+
+
+    public function getSalesCenterRecords()
+    {
+        $admin = $this->user;
+        $data['salesCenterStatRecords'] = collect(SalesCenter::where('company_id', $admin->active_company_id)
+            ->selectRaw('COUNT(id) AS totalSalesCenter')
+            ->get()->toArray())->collapse();
+        return response()->json(['data' => $data]);
+    }
+
+    public function getSupplierRecords()
+    {
+        $admin = $this->user;
+        $data['supplierStatRecords'] = collect(Supplier::where('company_id', $admin->active_company_id)
+            ->selectRaw('COUNT(id) AS totalSuppliers')
+            ->get()->toArray())->collapse();
+
+        return response()->json(['data' => $data]);
+    }
+
+    public function getExpenseRecords()
+    {
+        $admin = $this->user;
+        $currency = config('basic.currency_symbol');
+        $data['expenseStatRecords'] = collect(Expense::where('company_id', $admin->active_company_id)
+            ->selectRaw('SUM(amount) AS totalExpenseAmount')
+            ->get()->toArray())->collapse();
 
         return response()->json(['data' => $data, 'currency' => $currency]);
     }

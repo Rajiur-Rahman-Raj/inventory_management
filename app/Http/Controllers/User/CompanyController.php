@@ -254,6 +254,7 @@ class CompanyController extends Controller
             $salesCenter->company_id = $admin->active_company_id;
             $salesCenter->name = $request->name;
             $salesCenter->code = $request->code;
+            $salesCenter->discount_percent = $request->discount_percent ?? 0;
             $salesCenter->national_id = $request->national_id;
             $salesCenter->trade_id = $request->trade_id;
             $salesCenter->division_id = $request->division_id;
@@ -768,7 +769,6 @@ class CompanyController extends Controller
 
     public function stockStore(Request $request)
     {
-
         $admin = $this->user;
         $purifiedData = Purify::clean($request->except('_token', '_method'));
 
@@ -1219,7 +1219,7 @@ class CompanyController extends Controller
     public function getSelectedSalesCenter(Request $request)
     {
         $admin = $this->user;
-        $salesCenter = SalesCenter::with('user')->where('company_id', $admin->active_company_id)->select('id', 'user_id', 'name', 'center_address', 'code')->findOrFail($request->id);
+        $salesCenter = SalesCenter::with('user')->where('company_id', $admin->active_company_id)->select('id', 'user_id', 'name', 'center_address', 'code', 'discount_percent')->findOrFail($request->id);
         return response()->json(['salesCenter' => $salesCenter]);
     }
 
