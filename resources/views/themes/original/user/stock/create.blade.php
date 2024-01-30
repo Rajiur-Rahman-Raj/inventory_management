@@ -142,8 +142,8 @@
                                                 <div class="input-group">
                                                     <input type="text" name="total_unit_cost[]"
                                                            class="form-control @error('total_unit_cost.0') is-invalid @enderror totalItemCost"
-                                                           value="{{ old('total_unit_cost.0') }}">
-                                                    <div class="input-group-append" readonly="">
+                                                           value="{{ old('total_unit_cost.0') }}" readonly="">
+                                                    <div class="input-group-append">
                                                         <div class="form-control currency_symbol append_group">
                                                             {{ $basic->currency_symbol }}
                                                         </div>
@@ -372,8 +372,8 @@
                                                             <div class="input-group">
                                                                 <input type="text" name="total_unit_cost[]"
                                                                        class="form-control @error("total_unit_cost.$i") is-invalid @enderror totalItemCost"
-                                                                       value="{{ old("total_unit_cost.$i") }}">
-                                                                <div class="input-group-append" readonly="">
+                                                                       value="{{ old("total_unit_cost.$i") }}" readonly>
+                                                                <div class="input-group-append">
                                                                     <div class="form-control currency_symbol">
                                                                         {{ $basic->currency_symbol }}
                                                                     </div>

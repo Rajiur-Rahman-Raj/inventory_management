@@ -75,13 +75,6 @@
                                                         <?php endif; ?>
                                                     </div>
 
-                                                    <div class="investmentDate d-flex justify-content-start">
-                                                        <h6 class="font-weight-bold text-dark"><i class="fal fa-money-bill-wave mt-1 text-success"></i> <?php echo app('translator')->get('Payment Note: '); ?>
-                                                        </h6>
-
-                                                        <h6 class="ms-2"><?php echo e($singlePurchaseItem->payment_note); ?></h6>
-                                                    </div>
-
                                                 </div>
 
                                                 <?php if(count($singlePurchaseItemDetails) > 0): ?>
@@ -133,25 +126,23 @@
         <div class="modal fade" id="paidDueAmountModal" tabindex="-1" aria-labelledby="exampleModalLabel"
              aria-hidden="true">
             <div class="modal-dialog ">
-                <form action="" method="post"
-                      class="paidDueAmountRoute">
-                    <input type="hidden" name="_token" value="j0Cedo5p8zis1aZ9l1BUEYukosgjK56CxpEs0kPm"> <input
-                        type="hidden" name="_method" value="put">
+                <form action="" method="post" class="paidDueAmountRoute">
+                    <?php echo csrf_field(); ?>
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="exampleModalLabel">Make Payment</h1>
+                            <h1 class="modal-title fs-5" id="exampleModalLabel"><?php echo app('translator')->get('Make Payment'); ?></h1>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
                             <div class="total-amount d-flex align-items-center justify-content-between">
-                                <h5>Total Due Amount</h5>
+                                <h5><?php echo app('translator')->get('Total Due Amount'); ?></h5>
                                 <h6 class="total-due-amount"></h6>
                             </div>
                             <div class="enter-amount d-flex justify-content-between align-items-center">
-                                <h6>Paid Amount</h6>
+                                <h6><?php echo app('translator')->get('Paid Amount'); ?></h6>
                                 <input type="text" class="form-control paid-amount" value="0" min="0"
                                        onkeyup="this.value = this.value.replace (/^\.|[^\d\.]/g, '')"
-                                       id="exampleFormControlInput1" name="customer_paid_amount">
+                                       id="exampleFormControlInput1" name="paid_amount">
                             </div>
                             <div class="change-amount d-flex align-items-center justify-content-between">
                                 <h4 class="m-2 due-or-change-text">Due Amount</h4>  <span
@@ -188,10 +179,10 @@
                                 </div>
 
                                 <div class="mb-3">
-                                    <label for="formFile" class="form-label">Payment Note
+                                    <label for="formFile" class="form-label"><?php echo app('translator')->get('Note'); ?>
                                         <span><sub>(optional)</sub></span></label>
                                     <textarea class="form-control" id="exampleFormControlTextarea1"
-                                              placeholder="Write payment note" rows="4" name="payment_note"></textarea>
+                                              placeholder="Details note write here" rows="4" name="note"></textarea>
                                 </div>
                             </div>
                         </div>

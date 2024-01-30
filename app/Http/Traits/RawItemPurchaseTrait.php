@@ -3,8 +3,10 @@
 namespace App\Http\Traits;
 
 
+use App\Models\PurchaseRawItemMakePayment;
 use App\Models\RawItemPurchaseInDetails;
 use App\Models\RawItemPurchaseStock;
+use Carbon\Carbon;
 
 trait RawItemPurchaseTrait
 {
@@ -23,6 +25,16 @@ trait RawItemPurchaseTrait
         }
     }
 
+    public function storePurchaseRawItemMakePayment($request, $purchaseIn, $admin){
+        $purchaseRawItemMakePayment = new PurchaseRawItemMakePayment();
+        $purchaseRawItemMakePayment->raw_item_purchase_in_id = $purchaseIn->id;
+        $purchaseRawItemMakePayment->amount = $request->paid_amount;
+        $purchaseRawItemMakePayment->payment_date = Carbon::parse($request->payment_date);
+        $purchaseRawItemMakePayment->note = $request->note;
+        $purchaseRawItemMakePayment->paid_by = $admin->id;
+        $purchaseRawItemMakePayment->save();
+    }
+
 
     public function storeRawItemPurchaseStock($request, $purchaseIn, $admin){
         foreach ($request->item_id as $key => $value){
@@ -39,8 +51,8 @@ trait RawItemPurchaseTrait
             $purchaseStock->cost_per_unit = ($purchaseStock->last_cost_per_unit) ?? $request->cost_per_unit[$key];
             $purchaseStock->last_cost_per_unit = $request->cost_per_unit[$key];
 
-            $purchaseStock->purchase_date = ($purchaseStock->last_purchase_date) ?? $request->purchase_date;
-            $purchaseStock->last_purchase_date = $request->purchase_date;
+            $purchaseStock->purchase_date = (Carbon::parse($purchaseStock->last_purchase_date)) ?? Carbon::parse($request->purchase_date);
+            $purchaseStock->last_purchase_date = Carbon::parse($request->purchase_date);
             $purchaseStock->save();
         }
 

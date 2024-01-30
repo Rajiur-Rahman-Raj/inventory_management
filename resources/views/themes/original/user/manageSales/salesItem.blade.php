@@ -53,6 +53,16 @@
                                                     <a href="javascript:void(0)"
                                                        class="text-danger border-danger">@lang('out of stock')</a>
                                                 @endif
+
+                                                    @if($stock->quantity > 0)
+                                                        <button class="cart-btn btn btn-sm addToCartButton"
+                                                                data-property="{{ $stock }}"><i
+                                                                class="fa fa-cart-plus"></i></button>
+                                                    @else
+                                                        <button class="cart-btn btn btn-sm addToCartButton opacity-0 disabled"><i
+                                                                class="fa fa-cart-plus"></i></button>
+                                                    @endif
+
                                             </div>
                                             <div class="product-img">
                                                 <a href="javascript:void(0)">
@@ -68,25 +78,27 @@
                                                     </h6>
 
                                                 </div>
+                                                <div class="d-flex justify-content-between">
+                                                    <p class="mb-2">
+                                                        <span>{{ userType() == 1 ? 'Cost Per Unit' : 'Purchase Price' }}</span>
+                                                    </p>
+                                                    <p class="mb-2">
+                                                        <span>@lang('Selling Price')</span>
+                                                    </p>
+                                                </div>
+
                                                 <div
                                                     class="shopping-icon d-flex align-items-center justify-content-between">
                                                     <h4>
-                                                        <button class="sellingPriceButton updateUnitPrice"
-                                                                data-sellingprice="{{ $stock->selling_price }}"
-                                                                data-route="{{ route('user.updateItemUnitPrice', $stock->id) }}">{{ $stock->selling_price }} {{ $basic->currency_symbol }}</button>
+                                                        <button class="sellingPriceButton {{ userType() == 1 ? 'updateUnitPrice costPerUnitBtn' : '' }}"
+                                                                data-costperunit="{{ $stock->last_cost_per_unit }}"
+                                                                data-route="{{ route('user.updateItemUnitPrice', $stock->id) }}">{{ $stock->last_cost_per_unit }} {{ $basic->currency_symbol }}</button>
                                                     </h4>
-                                                    @if($stock->quantity > 0)
-                                                        <button class="btn btn-sm addToCartButton"
-                                                                data-property="{{ $stock }}"><i
-                                                                class="fa fa-cart-plus"></i></button>
-                                                    @else
-                                                        <button class="btn btn-sm addToCartButton opacity-0 disabled"><i
-                                                                class="fa fa-cart-plus"></i></button>
-                                                    @endif
+                                                    <h4>
+                                                        <button class="sellingPriceButton btn">{{ $stock->selling_price }} {{ $basic->currency_symbol }}</button>
+                                                    </h4>
                                                 </div>
-                                                <p>
-                                                    <span>Purchase Price:</span> {{ $stock->last_cost_per_unit }} {{ $basic->currency_symbol }}
-                                                </p>
+
                                             </div>
                                         </div>
                                     </div>
@@ -397,13 +409,13 @@
 
                                                                     <div class="mb-3">
                                                                         <label for="formFile"
-                                                                               class="form-label">@lang('Payment Note')
+                                                                               class="form-label">@lang('Note')
                                                                             <span><sub>(@lang('optional'))</sub></span></label>
                                                                         <textarea class="form-control"
                                                                                   id="exampleFormControlTextarea1"
                                                                                   placeholder="Write payment note"
                                                                                   rows="4"
-                                                                                  name="payment_note"></textarea>
+                                                                                  name="note"></textarea>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -438,30 +450,30 @@
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="cartModal">Update Unit Price</h1>
+                        <h1 class="modal-title fs-5" id="cartModal">@lang('Update Unit Price')</h1>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                                 aria-label="Close"></button>
                     </div>
-                    <form action="" class="m-0 p-0 updateItemUnitPriceRoute" method="post">
+                    <form action="" class="m-0 p-0 updateCostPerUnitPriceRoute" method="post">
                         @csrf
                         @method('put')
                         <div class="modal-body">
                             <div class="input-box col-md-12">
-                                <label for="selling_price">@lang('Cost Per Unit')</label>
+                                <label for="cost_per_unit">@lang('Cost Per Unit')</label>
                                 <div class="input-group">
                                     <input type="hidden" name="filter_item_id" class="filter_item_id" value="">
-                                    <input type="text" name="selling_price"
-                                           class="form-control selling_cost_per_unit @error('selling_price') is-invalid @enderror"
+                                    <input type="text" name="cost_per_unit"
+                                           class="form-control update_cost_per_unit @error('cost_per_unit') is-invalid @enderror"
                                            onkeyup="this.value = this.value.replace (/^\.|[^\d\.]/g, '')"
-                                           value="{{ old('selling_price') }}">
+                                           value="">
                                     <div class="input-group-append" readonly="">
                                         <div class="form-control currency_symbol append_group">
                                             {{ $basic->currency_symbol }}
                                         </div>
                                     </div>
-                                    @if($errors->has('selling_price'))
+                                    @if($errors->has('cost_per_unit'))
                                         <div
-                                            class="error text-danger">@lang($errors->first('selling_price'))
+                                            class="error text-danger">@lang($errors->first('cost_per_unit'))
                                         </div>
                                     @endif
                                 </div>
@@ -783,7 +795,6 @@
                         $('.cart-items-area').addClass('d-none')
                     }
 
-
                     let itemsData = '';
 
                     cartItems.forEach(function (cartItem) {
@@ -925,11 +936,11 @@
             updateUnitPriceModal.show();
 
             let dataRoute = $(this).data('route');
-            let dataSellingPrice = $(this).data('sellingprice');
+            let costPerUnit = $(this).data('costperunit');
             let datafilteritemid = $(this).data('filteritemid');
 
-            $('.updateItemUnitPriceRoute').attr('action', dataRoute)
-            $('.selling_cost_per_unit').val(dataSellingPrice);
+            $('.updateCostPerUnitPriceRoute').attr('action', dataRoute)
+            $('.update_cost_per_unit').val(costPerUnit);
             $('.filter_item_id').val(datafilteritemid);
 
         });

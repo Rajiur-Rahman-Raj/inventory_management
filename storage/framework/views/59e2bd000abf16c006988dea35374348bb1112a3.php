@@ -192,8 +192,8 @@ $message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?> totalItemCost"
-                                                           value="<?php echo e(old('total_unit_cost.0')); ?>">
-                                                    <div class="input-group-append" readonly="">
+                                                           value="<?php echo e(old('total_unit_cost.0')); ?>" readonly="">
+                                                    <div class="input-group-append">
                                                         <div class="form-control currency_symbol append_group">
                                                             <?php echo e($basic->currency_symbol); ?>
 
@@ -530,8 +530,8 @@ $message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?> totalItemCost"
-                                                                       value="<?php echo e(old("total_unit_cost.$i")); ?>">
-                                                                <div class="input-group-append" readonly="">
+                                                                       value="<?php echo e(old("total_unit_cost.$i")); ?>" readonly>
+                                                                <div class="input-group-append">
                                                                     <div class="form-control currency_symbol">
                                                                         <?php echo e($basic->currency_symbol); ?>
 

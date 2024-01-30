@@ -753,7 +753,7 @@ class CompanyController extends Controller
                     ->where('sales_center_id', $admin->salesCenter->id);
             })
             ->latest()
-            ->select('id', 'item_id', 'quantity', 'cost_per_unit', 'last_cost_per_unit', 'stock_date', 'last_stock_date')
+            ->select('id', 'item_id', 'quantity', 'cost_per_unit', 'last_cost_per_unit', 'stock_date', 'last_stock_date', 'selling_price')
             ->paginate(config('basic.paginate'));
 
         return view($this->theme . 'user.stock.index', $data);
@@ -1156,12 +1156,12 @@ class CompanyController extends Controller
                     ['sales_center_id', $admin->salesCenter->id],
                 ]);
             })
-            ->select('id', 'selling_price')
+            ->select('id', 'last_cost_per_unit')
             ->findOrFail($id);
 
-        $stock->selling_price = $request->selling_price;
+        $stock->last_cost_per_unit = $request->cost_per_unit;
         $stock->save();
-        return back()->with('success', 'Item Price Updated Successfully!')->with('filterItemId', $filter_item_id);
+        return back()->with('success', 'Item Cost Per Unit Update successfully!')->with('filterItemId', $filter_item_id);
     }
 
     public function getSelectedItems(Request $request)
@@ -1569,7 +1569,6 @@ class CompanyController extends Controller
 
     public function salesOrderStore(Request $request)
     {
-
         $admin = $this->user;
 
         $purifiedData = Purify::clean($request->except('_token', '_method'));
@@ -1595,9 +1594,9 @@ class CompanyController extends Controller
             $companyId = ($admin->user_type == 1) ? $admin->active_company_id : $admin->salesCenter->company_id;
             $salesCenterId = ($admin->user_type == 1) ? $request->sales_center_id : $admin->salesCenter->id;
             $salesCenter = SalesCenter::where('company_id', $companyId)->select('id', 'code')->findOrFail($salesCenterId);
+            $profit = $this->getSalesProfit($request, $admin);
 
             $sale = new Sale();
-
             $invoiceId = mt_rand(1000000, 9999999);
             $due_or_change_amount = (float)floor($request->due_or_change_amount);
 
@@ -1610,15 +1609,20 @@ class CompanyController extends Controller
             $sale->total_amount = $request->total_amount;
             $sale->customer_paid_amount = $due_or_change_amount <= 0 ? $request->total_amount : $request->customer_paid_amount;
             $sale->due_amount = $due_or_change_amount <= 0 ? 0 : $request->due_or_change_amount;
-            $sale->payment_date = $request->payment_date;
+            $sale->latest_payment_date = Carbon::parse($request->payment_date);
             $sale->payment_status = $due_or_change_amount <= 0 ? 1 : 0;
-            $sale->payment_note = $request->payment_note;
+            $sale->latest_note = $request->note;
             $sale->sales_by = ($admin->user_type == 1) ? 1 : 2;
+            $sale->profit = $profit;
             $sale->invoice_id = $salesCenter->code . '-' . $invoiceId;
 
             $items = $this->storeSalesItems($request, $sale);
+
             $sale->save();
             $this->storeSalesItemsInSalesItemModel($request, $sale);
+
+            $this->storeSalesPayments($request, $sale, $admin);
+
             $this->storeAndUpdateStocks($request, $sale, $items);
 
             CartItems::when(!isset($admin->salesCenter) && $admin->user_type == 1, function ($query) use ($companyId) {
@@ -1634,7 +1638,6 @@ class CompanyController extends Controller
 
             DB::commit();
             return redirect()->route('user.salesInvoice', $sale->id)->with('success', 'Order confirmed successfully!');
-
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Something went wrong');
@@ -1664,8 +1667,8 @@ class CompanyController extends Controller
         $admin = $this->user;
 
         $sale = Sale::when(!isset($admin->salesCenter) && $admin->user_type == 1, function ($query) use ($admin) {
-                return $query->where('company_id', $admin->active_company_id)->where('sales_by', 1);
-            })
+            return $query->where('company_id', $admin->active_company_id)->where('sales_by', 1);
+        })
             ->when(isset($admin->salesCenter) && $admin->user_type == 2, function ($query) use ($admin) {
                 return $query->where([
                     ['company_id', $admin->salesCenter->company_id],
@@ -1677,11 +1680,12 @@ class CompanyController extends Controller
 
         $sale->customer_paid_amount = $due_or_change_amount <= 0 ? $sale->total_amount : (float)$request->customer_paid_amount + (float)$sale->customer_paid_amount;
         $sale->due_amount = $due_or_change_amount <= 0 ? 0 : $request->due_or_change_amount;
-        $sale->payment_date = $request->payment_date;
+        $sale->latest_payment_date = Carbon::parse($request->payment_date);
         $sale->payment_status = $due_or_change_amount <= 0 ? 1 : 0;
-        $sale->payment_note = $request->payment_note;
-
+        $sale->latest_note = $request->note;
         $sale->save();
+
+        $this->storeSalesPayments($request, $sale, $admin);
 
         return back()->with('success', 'Due payment complete successfully');
     }
@@ -1689,6 +1693,7 @@ class CompanyController extends Controller
 
     public function purchaseRawItemDueAmountUpdate(Request $request, $id)
     {
+
         $purifiedData = Purify::clean($request->except('_token', '_method'));
         $rules = [
             'payment_date' => 'required',
@@ -1707,15 +1712,16 @@ class CompanyController extends Controller
 
         $due_or_change_amount = (float)floor($request->due_or_change_amount);
         $admin = $this->user;
-        $purchaseRawItem = RawItemPurchaseIn::where('company_id', $admin->active_company_id)->findOrFail($id);
+        $RawItemPurchaseIn = RawItemPurchaseIn::where('company_id', $admin->active_company_id)->findOrFail($id);
 
-        $purchaseRawItem->paid_amount = $due_or_change_amount <= 0 ? $purchaseRawItem->total_price : (float)$request->paid_amount + (float)$purchaseRawItem->paid_amount;
-        $purchaseRawItem->due_amount = $due_or_change_amount <= 0 ? 0 : $request->due_or_change_amount;
-        $purchaseRawItem->payment_date = $request->payment_date;
-        $purchaseRawItem->payment_status = $due_or_change_amount <= 0 ? 1 : 0;
-        $purchaseRawItem->payment_note = $request->payment_note;
+        $RawItemPurchaseIn->paid_amount = $due_or_change_amount <= 0 ? $RawItemPurchaseIn->total_price : (float)$request->paid_amount + (float)$RawItemPurchaseIn->paid_amount;
+        $RawItemPurchaseIn->due_amount = $due_or_change_amount <= 0 ? 0 : $request->due_or_change_amount;
+        $RawItemPurchaseIn->last_payment_date = Carbon::parse($request->payment_date);
+        $RawItemPurchaseIn->payment_status = $due_or_change_amount <= 0 ? 1 : 0;
+        $RawItemPurchaseIn->last_note = $request->note;
+        $RawItemPurchaseIn->save();
 
-        $purchaseRawItem->save();
+        $this->storePurchaseRawItemMakePayment($request, $RawItemPurchaseIn, $admin);
 
         return back()->with('success', 'Due payment completed successfully');
     }
@@ -1921,6 +1927,7 @@ class CompanyController extends Controller
     public function returnSalesOrder(Request $request, $id)
     {
         $admin = $this->user;
+
         $purifiedData = Purify::clean($request->except('_token', '_method'));
 
         DB::beginTransaction();
@@ -1942,6 +1949,8 @@ class CompanyController extends Controller
             }
 
             $companyId = ($admin->user_type == 1) ? $admin->active_company_id : $admin->salesCenter->company_id;
+            $profit = $this->getSalesProfit($request, $admin);
+
             $sale = Sale::with('salesItems')
                 ->when(!isset($admin->salesCenter) && $admin->user_type == 1, function ($query) use ($companyId) {
                     return $query->where('company_id', $companyId)->where('sales_by', 1);
@@ -1963,17 +1972,18 @@ class CompanyController extends Controller
             $sale->total_amount = $request->total_amount;
             $sale->customer_paid_amount = $due_or_change_amount >= 0 ? $request->total_amount : ((float)floor($request->previous_paid) + (float)floor($request->customer_paid_amount));
             $sale->due_amount = $due_or_change_amount >= 0 ? 0 : $due_or_change_amount;
-            $sale->payment_date = $request->return_date;
-            $sale->payment_note = $request->return_note;
+            $sale->latest_payment_date = $request->return_date;
+            $sale->latest_note = $request->return_note;
             $sale->payment_status = $due_or_change_amount >= 0 ? 1 : 0;
+            $sale->profit = $profit;
             $items = $this->storeSalesItems($request, $sale);
             $sale->save();
 
             $this->updateSalesItems($request, $sale);
 
             CartItems::when(!isset($admin->salesCenter) && $admin->user_type == 1, function ($query) use ($admin) {
-                    return $query->where('company_id', $admin->active_company_id)->whereNull('sales_center_id');
-                })
+                return $query->where('company_id', $admin->active_company_id)->whereNull('sales_center_id');
+            })
                 ->when(isset($admin->salesCenter) && $admin->user_type == 2, function ($query) use ($admin) {
                     return $query->where([
                         ['company_id', $admin->salesCenter->company_id],
@@ -2413,18 +2423,22 @@ class CompanyController extends Controller
             $purchaseIn->supplier_id = $request->supplier_id;
             $purchaseIn->purchase_date = $request->purchase_date;
             $purchaseIn->sub_total = $request->sub_total;
-            $purchaseIn->discount_percent = $request->discount_percentage ? $request->discount_percentage : 0;
-            $purchaseIn->discount_amount = $request->discount_percentage ? (float)$request->sub_total - (float)$request->total_price : 0;
+            $purchaseIn->discount_percent = $request->discount_percentage ?? 0;
+            $purchaseIn->discount_amount = $request->discount_percentage ? (float)$request->sub_total * $request->discount_percentage / 100 : 0;
+            $purchaseIn->vat_percent = $request->vat_percentage ?? 0;
+            $purchaseIn->vat_amount = $request->vat_percentage ? (float)$request->sub_total * $request->vat_percentage / 100 : 0;
             $purchaseIn->total_price = $request->total_price;
             $purchaseIn->paid_amount = $request->paid_amount;
             $due_or_change_amount = (float)floor($request->due_or_change_amount);
             $purchaseIn->due_amount = $due_or_change_amount <= 0 ? 0 : $request->due_or_change_amount;
-            $purchaseIn->payment_date = $request->payment_date;
+            $purchaseIn->last_payment_date = Carbon::parse($request->payment_date);
             $purchaseIn->payment_status = $due_or_change_amount <= 0 ? 1 : 0;
-            $purchaseIn->payment_note = $request->payment_note;
+            $purchaseIn->last_note = $request->note;
             $purchaseIn->save();
 
             $this->storeRawItemPurchaseInDetails($request, $purchaseIn);
+
+            $this->storePurchaseRawItemMakePayment($request, $purchaseIn, $admin);
 
             $this->storeRawItemPurchaseStock($request, $purchaseIn, $admin);
             DB::commit();

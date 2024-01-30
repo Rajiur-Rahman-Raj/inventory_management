@@ -31,7 +31,15 @@
                             <div class="card investment-details-card">
                                 <div class="card-body">
                                     <div class="d-flex justify-content-end investment__block">
-                                        <?php if(($singleSalesDetails->payment_status != 1) && (userType() == 2 && $singleSalesDetails->sales_by == 2)): ?>
+
+                                        <?php if(userType() == 1 && $singleSalesDetails->payment_status != 1 && $singleSalesDetails->sales_by == 1): ?>
+                                            <a href="javascript:void(0)"
+                                               class="btn btn-sm btn-primary text-white me-2 invest-details-back paidDueAmountBtn"
+                                               data-route="<?php echo e(route('user.salesOrderUpdate', $singleSalesDetails->id)); ?>"
+                                               data-property="<?php echo e($singleSalesDetails); ?>">
+                                                <span> <?php echo app('translator')->get('Pay Due Amount'); ?> </span>
+                                            </a>
+                                        <?php elseif(userType() == 2 && $singleSalesDetails->payment_status != 1 && $singleSalesDetails->sales_by == 2): ?>
                                             <a href="javascript:void(0)"
                                                class="btn btn-sm btn-primary text-white me-2 invest-details-back paidDueAmountBtn"
                                                data-route="<?php echo e(route('user.salesOrderUpdate', $singleSalesDetails->id)); ?>"
@@ -95,11 +103,11 @@
                                                         <?php endif; ?>
                                                     </div>
 
-                                                    <div class="investmentDate d-flex justify-content-start">
-                                                        <h6 class="font-weight-bold text-dark"> <i class="fal fa-info me-2 text-purple"></i> <?php echo app('translator')->get('Note'); ?>
-                                                            : </h6>
-                                                        <h6 class="ms-2"><?php echo e($singleSalesDetails->payment_note); ?></h6>
-                                                    </div>
+
+
+
+
+
                                                 </div>
 
                                                 <ul class="list-style-none p-0 stock_list_style">
@@ -259,13 +267,13 @@ unset($__errorArgs, $__bag); ?>
 
                                 <div class="mb-3">
                                     <label for="formFile"
-                                           class="form-label"><?php echo app('translator')->get('Payment Note'); ?>
+                                           class="form-label"><?php echo app('translator')->get('Note'); ?>
                                         <span><sup>(<?php echo app('translator')->get('optional'); ?>)</sup></span></label>
                                     <textarea class="form-control"
                                               id="exampleFormControlTextarea1"
-                                              placeholder="Write payment note"
+                                              placeholder="Write details note"
                                               rows="4"
-                                              name="payment_note"></textarea>
+                                              name="note"></textarea>
                                 </div>
                             </div>
                         </div>

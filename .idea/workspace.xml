@@ -2,30 +2,34 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f334b85a-94b1-417d-b84c-c95b51fed4db" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/assets/global/js/Chart.min.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/assets/global/js/moment.min.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Http/Controllers/User/CompanyController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/User/CompanyController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/User/HomeController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/User/HomeController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Middleware/VerifyCsrfToken.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Middleware/VerifyCsrfToken.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Requests/SalesCenterStoreRequest.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Requests/SalesCenterStoreRequest.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Traits/StockInTrait.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Traits/StockInTrait.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Models/Wastage.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Wastage.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Traits/RawItemPurchaseTrait.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Traits/RawItemPurchaseTrait.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Traits/oldStoreSalesTrait.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Traits/storeSalesTrait.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Traits/storeSalesTrait.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Models/RawItemPurchaseIn.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/RawItemPurchaseIn.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Models/Sale.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Sale.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/assets/themes/original/css/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/assets/themes/original/css/style.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/themes/original/user/dashboard.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/themes/original/user/dashboard.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/themes/original/user/manageSales/returnsalesItem.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/themes/original/user/manageSales/returnsalesItem.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/themes/original/user/manageSales/salesDetails.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/themes/original/user/manageSales/salesDetails.blade.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/views/themes/original/user/manageSales/salesItem.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/themes/original/user/manageSales/salesItem.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/themes/original/user/salesCenter/create.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/themes/original/user/salesCenter/create.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/themes/original/user/salesCenter/details.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/themes/original/user/salesCenter/details.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/themes/original/user/rawItems/purchaseRawItem.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/themes/original/user/rawItems/purchaseRawItem.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/themes/original/user/rawItems/purchaseRawItemDetails.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/themes/original/user/rawItems/purchaseRawItemDetails.blade.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/views/themes/original/user/stock/create.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/themes/original/user/stock/create.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/themes/original/user/stock/index.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/themes/original/user/stock/index.blade.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/routes/web.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/web.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/storage/framework/sessions/8agFdn6lUh9yNjJZjV0uSBV1IkUnj3ogzbwBEbm8" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/storage/framework/sessions/DpMLPyC7SGtRi6jOus9LCSvYuJVWOPVPOY65d8aq" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/storage/framework/sessions/QZH64sYFQ2WaJN4sfVxs2BtQNfOoRZ68ebpA4A1y" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/storage/framework/sessions/c2R4i7WoseDMVuH871whsdEv6QdEPo6qrd9ctAwH" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/storage/framework/sessions/qWNI6P7p6YIySYIpmPtFGk5MuoaTWkNVA5GYaZqI" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/storage/framework/sessions/vwHAwjseS2AU6PAiWQhp1QE6Gzlr3Q2kUmzuFzl6" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/framework/sessions/A6KEfeaG0aoRebovALmB3XupbGs4U6K7Euiukxpz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/framework/sessions/TBn3DkpR0QAm3qSqjvlorZiVmuCmiwaIGkHgJImz" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/framework/sessions/bMCCmyNYvRc3isZ2u9rE3MGec1Qb8gA486C2aIT8" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/framework/sessions/gI3Qiww5HgluqOYgL7AoDzRJXcbADnNKo3gk4WJ3" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/framework/sessions/vAFvWgi6ZQ3Nr0yxVoR5jlVmT9dz3v2xoSyj5nJl" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/framework/views/13b8b1e5819296f72a153ff1fba5092a4bcfb0b1.php" beforeDir="false" afterPath="$PROJECT_DIR$/storage/framework/views/13b8b1e5819296f72a153ff1fba5092a4bcfb0b1.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/framework/views/186a21a5203449128ecbd5fcf61dc83252802ce5.php" beforeDir="false" afterPath="$PROJECT_DIR$/storage/framework/views/186a21a5203449128ecbd5fcf61dc83252802ce5.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/framework/views/5071dd2d531586c9815149660298c9d3d54be63d.php" beforeDir="false" afterPath="$PROJECT_DIR$/storage/framework/views/5071dd2d531586c9815149660298c9d3d54be63d.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/storage/framework/views/59e2bd000abf16c006988dea35374348bb1112a3.php" beforeDir="false" afterPath="$PROJECT_DIR$/storage/framework/views/59e2bd000abf16c006988dea35374348bb1112a3.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/storage/framework/views/6671f93d7f9af0c91a4e5a025e354c4e12e07377.php" beforeDir="false" afterPath="$PROJECT_DIR$/storage/framework/views/6671f93d7f9af0c91a4e5a025e354c4e12e07377.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/framework/views/9215b2078e547230319ba781e439ab4dbb7d31b9.php" beforeDir="false" afterPath="$PROJECT_DIR$/storage/framework/views/9215b2078e547230319ba781e439ab4dbb7d31b9.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/storage/framework/views/b7f5452baa7a17db80874eda21553345dfb4acce.php" beforeDir="false" afterPath="$PROJECT_DIR$/storage/framework/views/b7f5452baa7a17db80874eda21553345dfb4acce.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/framework/views/e54bb4af72a7184ada559a430405a7833cd93522.php" beforeDir="false" afterPath="$PROJECT_DIR$/storage/framework/views/e54bb4af72a7184ada559a430405a7833cd93522.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/storage/logs/laravel.log" beforeDir="false" afterPath="$PROJECT_DIR$/storage/logs/laravel.log" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -190,16 +194,16 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "last_opened_file_path": "D:/xammp/htdocs/inventory_management/project/assets/global/js",
-    "nodejs_package_manager_path": "npm",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/xammp/htdocs/inventory_management/project/assets/global/js&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="D:\xammp\htdocs\inventory_management\project\assets\global\js" />
@@ -222,7 +226,8 @@
       <updated>1706329280017</updated>
       <workItem from="1706329286244" duration="20396000" />
       <workItem from="1706416270517" duration="23882000" />
-      <workItem from="1706502662527" duration="22490000" />
+      <workItem from="1706502662527" duration="22573000" />
+      <workItem from="1706589090862" duration="27246000" />
     </task>
     <servers />
   </component>

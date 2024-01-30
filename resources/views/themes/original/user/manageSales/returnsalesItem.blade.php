@@ -127,7 +127,7 @@
                                                                    class="mb-2"> {{ $sale->customer ? 'Customer' : 'Owner' }} </label>
                                                             <input type="text" class="form-control"
                                                                    name="name"
-                                                                   value="{{ $sale->customer ? optional($sale->customer)->name : optional($sale->salesCenter)->owner_name }}"
+                                                                   value="{{ $sale->customer ? optional($sale->customer)->name : optional(optional($sale->salesCenter)->user)->name }}"
                                                                    readonly>
                                                         </div>
 
@@ -141,7 +141,7 @@
                                                         <div class="input-box col-12 mt-3">
                                                     <textarea readonly class="form-control" cols="10"
                                                               rows="2"
-                                                              name="address">{{ old('customer_address', @request()->customer_address) }} {{ $sale->customer ? optional($sale->customer)->address : optional($sale->salesCenter)->address   }}</textarea>
+                                                              name="address">{{ old('customer_address', @request()->customer_address) }} {{ $sale->customer ? optional($sale->customer)->address : optional($sale->salesCenter)->center_address   }}</textarea>
                                                         </div>
                                                     </div>
 

@@ -92,6 +92,7 @@
                         <th scope="col"><?php echo app('translator')->get('Item Name'); ?></th>
                         <th scope="col"><?php echo app('translator')->get('Quantity'); ?></th>
                         <th scope="col"><?php echo app('translator')->get('Last Cost Per Unit'); ?></th>
+                        <th scope="col"><?php echo app('translator')->get('Selling Price'); ?></th>
                         <th scope="col"><?php echo app('translator')->get('Last Stock Date'); ?></th>
                         <th scope="col"><?php echo app('translator')->get('Action'); ?></th>
                     </tr>
@@ -108,6 +109,7 @@
                                     class="badge <?php echo e($stockList->quantity > 0 ? 'bg-info' : 'bg-danger'); ?>"><?php echo e($stockList->quantity); ?> </span>
                             </td>
                             <td data-label="<?php echo app('translator')->get('Last Cost Per Unit'); ?>"> <?php echo e($stockList->last_cost_per_unit); ?> <?php echo e($basic->currency_symbol); ?> </td>
+                            <td data-label="<?php echo app('translator')->get('Selling Price'); ?>"> <?php echo e($stockList->selling_price); ?> <?php echo e($basic->currency_symbol); ?> </td>
                             <td data-label="<?php echo app('translator')->get('Last Stock Date'); ?>"> <?php echo e(customDate($stockList->last_stock_date)); ?> </td>
 
                             <td data-label="Action">

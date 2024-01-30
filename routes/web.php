@@ -160,7 +160,7 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'user', 'as' => 'user.'], fu
     Route::post('sales-order-store', 'User\CompanyController@salesOrderStore')->name('salesOrderStore');
     Route::put('sales-order-update/{id}', 'User\CompanyController@salesOrderUpdate')->name('salesOrderUpdate');
 
-    Route::put('purchase-item-due-amount-update/{id}', 'User\CompanyController@purchaseRawItemDueAmountUpdate')->name('purchaseRawItemDueAmountUpdate');
+    Route::post('purchase-item-due-amount-update/{id}', 'User\CompanyController@purchaseRawItemDueAmountUpdate')->name('purchaseRawItemDueAmountUpdate');
 
 
     Route::get('sales-invoice/{id}', 'User\CompanyController@salesInvoice')->name('salesInvoice');

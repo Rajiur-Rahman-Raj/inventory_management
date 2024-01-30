@@ -283,6 +283,25 @@
                                     </div>
 
                                     <div class="d-flex justify-content-end mt-2">
+                                        <!-- Subtotal Field -->
+                                        <div class="col-md-3 d-flex justify-content-end">
+                                            <span class="fw-bold mt-2 me-3">@lang('Sub Total')</span>
+                                            <div class="input-group w-50">
+                                                <input type="number" name="sub_total"
+                                                       value="{{ old('sub_total') ?? '0' }}"
+                                                       class="form-control bg-white text-dark itemSubTotal"
+                                                       data-subtotal="{{ old('sub_total') }}"
+                                                       readonly>
+                                                <div class="input-group-append">
+                                                    <div class="form-control">
+                                                        {{ $basic->currency_symbol }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="d-flex justify-content-end mt-2">
                                         <!-- Discount Input Field -->
                                         <div class="col-md-3 d-flex justify-content-end">
                                             <span class="fw-bold mt-2 me-3">@lang('Discount')</span>
@@ -299,19 +318,16 @@
                                     </div>
 
                                     <div class="d-flex justify-content-end mt-2">
-                                        <!-- Subtotal Field -->
+                                        <!-- Discount Input Field -->
                                         <div class="col-md-3 d-flex justify-content-end">
-                                            <span class="fw-bold mt-2 me-3">@lang('Subtotal')</span>
+                                            <span class="fw-bold mt-2 me-3">@lang('Vat')</span>
                                             <div class="input-group w-50">
-                                                <input type="number" name="sub_total"
-                                                       value="{{ old('sub_total') ?? '0' }}"
-                                                       class="form-control bg-white text-dark itemSubTotal"
-                                                       data-subtotal="{{ old('sub_total') }}"
-                                                       readonly>
+                                                <input type="number" name="vat_percentage" id="vatPercentage"
+                                                       value="{{ old('vat_percentage') ?? '0' }}"
+                                                       class="form-control bg-white text-dark vatPercentage"
+                                                       data-discount="{{ old('vat_percentage') }}">
                                                 <div class="input-group-append">
-                                                    <div class="form-control">
-                                                        {{ $basic->currency_symbol }}
-                                                    </div>
+                                                    <span class="input-group-text">%</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -375,8 +391,7 @@
                                                         </div>
                                                         <div class="file">
                                                             <div class="mb-3">
-                                                                <label for="formFile" class="form-label">Payment
-                                                                    Date</label>
+                                                                <label for="formFile" class="form-label">@lang('Payment Date')</label>
 
                                                                 <div class="flatpickr">
                                                                     <div class="input-group">
@@ -388,16 +403,14 @@
                                                                                 </a>
                                                                             </div>
                                                                         </div>
-                                                                        <div class="invalid-feedback d-block">
-                                                                        </div>
+                                                                        <div class="invalid-feedback d-block"></div>
                                                                     </div>
                                                                 </div>
                                                             </div>
 
-
                                                             <div class="mb-3">
-                                                                <label for="formFile" class="form-label">Payment Note                                                                            <span><sub>(optional)</sub></span></label>
-                                                                <textarea class="form-control" id="exampleFormControlTextarea1" placeholder="Write payment note" rows="4" name="payment_note"></textarea>
+                                                                <label for="formFile" class="form-label">@lang('Note')                                                                            <span><sub>(optional)</sub></span></label>
+                                                                <textarea class="form-control" id="exampleFormControlTextarea1" placeholder="details note write here" rows="4" name="note"></textarea>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -449,10 +462,10 @@
             let selectSupplier = $('.selectSupplier').val();
             let purchaseDate = $('.purchaseDate').val();
             if(!selectSupplier){
-                Notiflix.Notify.Failure('Please Select Supplier');
+                Notiflix.Notify.failure('Please Select Supplier');
                 return false;
             }else if(purchaseDate == ''){
-                Notiflix.Notify.Failure('Please Select Purchase Date');
+                Notiflix.Notify.failure('Please Select Purchase Date');
                 return false;
             }
             return true;
@@ -581,8 +594,10 @@
             let subTotal = 0;
 
             let discount = parseFloat($('.discountPercentage').val());
+            let vat = parseFloat($('.vatPercentage').val());
 
             discount = isNaN(discount) ? 0 : discount;
+            vat = isNaN(vat) ? 0 : vat;
 
             $('.costPerUnit').each(function (key, value) {
                 let costPerUnit = parseFloat($(this).val()).toFixed(2);
@@ -595,7 +610,9 @@
             let updateSubTotal = parseFloat(subTotal).toFixed(2);
 
             let discountAmount = updateSubTotal * discount / 100;
-            let totalAmount = updateSubTotal - discountAmount;
+            let vatAmount = updateSubTotal * vat / 100;
+            let subTotalWithVat = subTotal + vatAmount;
+            let totalAmount = subTotalWithVat - discountAmount;
 
             $('.itemSubTotal').val(subTotal);
             $('.totalPrice').val(parseFloat(totalAmount).toFixed(2));
@@ -613,9 +630,21 @@
             // Recalculate total after updating the discount
             let discount = $(this).val();
             if (discount > 100) {
-                Notiflix.Notify.Warning('Discount cannot exceed 100%');
+                Notiflix.Notify.warning('Discount cannot exceed 100%');
                 $('.discountPercentage').attr('max', 100)
                 $('.discountPercentage').val(100)
+                return;
+            }
+            calculateItemTotalPrice();
+        });
+
+        $(document).on('input', '.vatPercentage', function () {
+            // Recalculate total after updating the Vat
+            let vat = $(this).val();
+            if (vat > 100) {
+                Notiflix.Notify.warning('Vat cannot exceed 100%');
+                $('.vatPercentage').attr('max', 100)
+                $('.vatPercentage').val(100)
                 return;
             }
             calculateItemTotalPrice();

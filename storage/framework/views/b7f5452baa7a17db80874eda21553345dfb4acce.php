@@ -52,6 +52,16 @@
                                                     <a href="javascript:void(0)"
                                                        class="text-danger border-danger"><?php echo app('translator')->get('out of stock'); ?></a>
                                                 <?php endif; ?>
+
+                                                    <?php if($stock->quantity > 0): ?>
+                                                        <button class="cart-btn btn btn-sm addToCartButton"
+                                                                data-property="<?php echo e($stock); ?>"><i
+                                                                class="fa fa-cart-plus"></i></button>
+                                                    <?php else: ?>
+                                                        <button class="cart-btn btn btn-sm addToCartButton opacity-0 disabled"><i
+                                                                class="fa fa-cart-plus"></i></button>
+                                                    <?php endif; ?>
+
                                             </div>
                                             <div class="product-img">
                                                 <a href="javascript:void(0)">
@@ -67,26 +77,27 @@
                                                     </h6>
 
                                                 </div>
+                                                <div class="d-flex justify-content-between">
+                                                    <p class="mb-2">
+                                                        <span><?php echo e(userType() == 1 ? 'Cost Per Unit' : 'Purchase Price'); ?></span>
+                                                    </p>
+                                                    <p class="mb-2">
+                                                        <span><?php echo app('translator')->get('Selling Price'); ?></span>
+                                                    </p>
+                                                </div>
+
                                                 <div
                                                     class="shopping-icon d-flex align-items-center justify-content-between">
                                                     <h4>
-                                                        <button class="sellingPriceButton updateUnitPrice"
-                                                                data-sellingprice="<?php echo e($stock->selling_price); ?>"
-                                                                data-route="<?php echo e(route('user.updateItemUnitPrice', $stock->id)); ?>"><?php echo e($stock->selling_price); ?> <?php echo e($basic->currency_symbol); ?></button>
+                                                        <button class="sellingPriceButton <?php echo e(userType() == 1 ? 'updateUnitPrice costPerUnitBtn' : ''); ?>"
+                                                                data-costperunit="<?php echo e($stock->last_cost_per_unit); ?>"
+                                                                data-route="<?php echo e(route('user.updateItemUnitPrice', $stock->id)); ?>"><?php echo e($stock->last_cost_per_unit); ?> <?php echo e($basic->currency_symbol); ?></button>
                                                     </h4>
-                                                    <?php if($stock->quantity > 0): ?>
-                                                        <button class="btn btn-sm addToCartButton"
-                                                                data-property="<?php echo e($stock); ?>"><i
-                                                                class="fa fa-cart-plus"></i></button>
-                                                    <?php else: ?>
-                                                        <button class="btn btn-sm addToCartButton opacity-0 disabled"><i
-                                                                class="fa fa-cart-plus"></i></button>
-                                                    <?php endif; ?>
+                                                    <h4>
+                                                        <button class="sellingPriceButton btn"><?php echo e($stock->selling_price); ?> <?php echo e($basic->currency_symbol); ?></button>
+                                                    </h4>
                                                 </div>
-                                                <p>
-                                                    <span>Purchase Price:</span> <?php echo e($stock->last_cost_per_unit); ?> <?php echo e($basic->currency_symbol); ?>
 
-                                                </p>
                                             </div>
                                         </div>
                                     </div>
@@ -418,13 +429,13 @@ unset($__errorArgs, $__bag); ?>
 
                                                                     <div class="mb-3">
                                                                         <label for="formFile"
-                                                                               class="form-label"><?php echo app('translator')->get('Payment Note'); ?>
+                                                                               class="form-label"><?php echo app('translator')->get('Note'); ?>
                                                                             <span><sub>(<?php echo app('translator')->get('optional'); ?>)</sub></span></label>
                                                                         <textarea class="form-control"
                                                                                   id="exampleFormControlTextarea1"
                                                                                   placeholder="Write payment note"
                                                                                   rows="4"
-                                                                                  name="payment_note"></textarea>
+                                                                                  name="note"></textarea>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -459,20 +470,20 @@ unset($__errorArgs, $__bag); ?>
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="cartModal">Update Unit Price</h1>
+                        <h1 class="modal-title fs-5" id="cartModal"><?php echo app('translator')->get('Update Unit Price'); ?></h1>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                                 aria-label="Close"></button>
                     </div>
-                    <form action="" class="m-0 p-0 updateItemUnitPriceRoute" method="post">
+                    <form action="" class="m-0 p-0 updateCostPerUnitPriceRoute" method="post">
                         <?php echo csrf_field(); ?>
                         <?php echo method_field('put'); ?>
                         <div class="modal-body">
                             <div class="input-box col-md-12">
-                                <label for="selling_price"><?php echo app('translator')->get('Cost Per Unit'); ?></label>
+                                <label for="cost_per_unit"><?php echo app('translator')->get('Cost Per Unit'); ?></label>
                                 <div class="input-group">
                                     <input type="hidden" name="filter_item_id" class="filter_item_id" value="">
-                                    <input type="text" name="selling_price"
-                                           class="form-control selling_cost_per_unit <?php $__errorArgs = ['selling_price'];
+                                    <input type="text" name="cost_per_unit"
+                                           class="form-control update_cost_per_unit <?php $__errorArgs = ['cost_per_unit'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
@@ -481,16 +492,16 @@ if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>"
                                            onkeyup="this.value = this.value.replace (/^\.|[^\d\.]/g, '')"
-                                           value="<?php echo e(old('selling_price')); ?>">
+                                           value="">
                                     <div class="input-group-append" readonly="">
                                         <div class="form-control currency_symbol append_group">
                                             <?php echo e($basic->currency_symbol); ?>
 
                                         </div>
                                     </div>
-                                    <?php if($errors->has('selling_price')): ?>
+                                    <?php if($errors->has('cost_per_unit')): ?>
                                         <div
-                                            class="error text-danger"><?php echo app('translator')->get($errors->first('selling_price')); ?>
+                                            class="error text-danger"><?php echo app('translator')->get($errors->first('cost_per_unit')); ?>
                                         </div>
                                     <?php endif; ?>
                                 </div>
@@ -813,7 +824,6 @@ unset($__errorArgs, $__bag); ?>"
                         $('.cart-items-area').addClass('d-none')
                     }
 
-
                     let itemsData = '';
 
                     cartItems.forEach(function (cartItem) {
@@ -955,11 +965,11 @@ unset($__errorArgs, $__bag); ?>"
             updateUnitPriceModal.show();
 
             let dataRoute = $(this).data('route');
-            let dataSellingPrice = $(this).data('sellingprice');
+            let costPerUnit = $(this).data('costperunit');
             let datafilteritemid = $(this).data('filteritemid');
 
-            $('.updateItemUnitPriceRoute').attr('action', dataRoute)
-            $('.selling_cost_per_unit').val(dataSellingPrice);
+            $('.updateCostPerUnitPriceRoute').attr('action', dataRoute)
+            $('.update_cost_per_unit').val(costPerUnit);
             $('.filter_item_id').val(datafilteritemid);
 
         });

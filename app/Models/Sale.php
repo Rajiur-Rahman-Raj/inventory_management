@@ -15,6 +15,17 @@ class Sale extends Model
         'items' => 'array',
     ];
 
+    protected static function booted(): void
+    {
+        static::creating(function (Sale $sale) {
+            $sale->created_by = auth()->id();
+        });
+
+        static::updating(function (Sale $sale){
+            $sale->updated_by = auth()->id();
+        });
+    }
+
     public function company(){
         return $this->belongsTo(Company::class, 'company_id');
     }

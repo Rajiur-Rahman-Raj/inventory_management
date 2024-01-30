@@ -4,12 +4,38 @@ namespace App\Http\Traits;
 
 
 use App\Models\SalesItem;
+use App\Models\SalesPayment;
 use App\Models\Stock;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 
 trait StoreSalesTrait
 {
+
+    public function getSalesProfit($request, $admin){
+        $totalStockPrice = 0;
+        $totalSellingPrice = $request->total_amount;
+
+        foreach ($request->item_id as $key => $itemId) {
+            $stock = Stock::with('item')
+                ->when(!isset($admin->salesCenter) && $admin->user_type == 1, function ($query) use ($admin) {
+                    return $query->where('company_id', $admin->active_company_id)->whereNull('sales_center_id');
+                })
+                ->when(isset($admin->salesCenter) && $admin->user_type == 2, function ($query) use ($admin) {
+                    return $query->where([
+                        ['company_id', $admin->salesCenter->company_id],
+                        ['sales_center_id', $admin->salesCenter->id],
+                    ]);
+                })
+                ->where('item_id', $itemId)->select('last_cost_per_unit')->first();
+
+            $totalStockPrice += $request->item_quantity[$key] * optional($stock)->last_cost_per_unit ?? 0;
+        }
+
+        $profit = $totalSellingPrice - $totalStockPrice;
+        return $profit;
+    }
+
     public function storeSalesItems($request, $sale)
     {
         $items = [];
@@ -26,14 +52,12 @@ trait StoreSalesTrait
         }
 
         $sale->items = $items;
-
         return $items;
     }
 
 
     public function storeSalesItemsInSalesItemModel($request, $sale)
     {
-
         foreach ($request->item_name as $key => $value) {
             $salesItem = new SalesItem();
             $salesItem->sales_id = $sale->id;
@@ -46,6 +70,19 @@ trait StoreSalesTrait
             $salesItem->save();
         }
     }
+
+    public function storeSalesPayments($request, $sale, $admin){
+        $due_or_change_amount = (float)floor($request->due_or_change_amount);
+
+        $salesPayment = new SalesPayment();
+        $salesPayment->sale_id = $sale->id;
+        $salesPayment->amount = $due_or_change_amount <= 0 ? $request->total_amount : $request->customer_paid_amount;
+        $salesPayment->payment_date = Carbon::parse($request->payment_date);
+        $salesPayment->note = $request->note;
+        $salesPayment->paid_by = $admin->id;
+        $salesPayment->save();
+    }
+
 
     public function updateSalesItems($request, $sale)
     {
@@ -156,7 +193,7 @@ trait StoreSalesTrait
                     $salesCenterStock->cost_per_unit = ($salesCenterStock->last_cost_per_unit) ?? $request->cost_per_unit[$key];
                     $salesCenterStock->last_cost_per_unit = $request->cost_per_unit[$key];
                     $salesCenterStock->selling_price = $request->cost_per_unit[$key];
-                    $salesCenterStock->stock_date = ($salesCenterStock->last_stock_date) ?? Carbon::now();
+                    $salesCenterStock->stock_date = (Carbon::parse($salesCenterStock->last_stock_date)) ?? Carbon::now();
                     $salesCenterStock->last_stock_date = Carbon::now();
                     $salesCenterStock->save();
 
@@ -254,7 +291,7 @@ trait StoreSalesTrait
                     $salesCenterStock->cost_per_unit = ($salesCenterStock->last_cost_per_unit) ?? $item['cost_per_unit'];
                     $salesCenterStock->last_cost_per_unit = $item['cost_per_unit'];
                     $salesCenterStock->selling_price = $item['cost_per_unit'];
-                    $salesCenterStock->stock_date = ($salesCenterStock->last_stock_date) ?? Carbon::now();
+                    $salesCenterStock->stock_date = (Carbon::parse($salesCenterStock->last_stock_date)) ?? Carbon::now();
                     $salesCenterStock->last_stock_date = Carbon::now();
                     $salesCenterStock->save();
                 }

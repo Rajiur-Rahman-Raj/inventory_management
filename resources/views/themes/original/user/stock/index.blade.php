@@ -93,6 +93,7 @@
                         <th scope="col">@lang('Item Name')</th>
                         <th scope="col">@lang('Quantity')</th>
                         <th scope="col">@lang('Last Cost Per Unit')</th>
+                        <th scope="col">@lang('Selling Price')</th>
                         <th scope="col">@lang('Last Stock Date')</th>
                         <th scope="col">@lang('Action')</th>
                     </tr>
@@ -109,6 +110,7 @@
                                     class="badge {{ $stockList->quantity > 0 ? 'bg-info' : 'bg-danger' }}">{{ $stockList->quantity }} </span>
                             </td>
                             <td data-label="@lang('Last Cost Per Unit')"> {{ $stockList->last_cost_per_unit }} {{ $basic->currency_symbol }} </td>
+                            <td data-label="@lang('Selling Price')"> {{ $stockList->selling_price }} {{ $basic->currency_symbol }} </td>
                             <td data-label="@lang('Last Stock Date')"> {{ customDate($stockList->last_stock_date) }} </td>
 
                             <td data-label="Action">

@@ -8945,6 +8945,17 @@ button.gold-btn.copyReferalLink {
     text-transform: capitalize;
 }
 
+.pos-section .product-bg .product-box .product-title button {
+    border: 1px solid var(--primary);
+    background-color: transparent;
+    padding: 3px 10px;
+    border-radius: 5px;
+    transition: 0.5s;
+}
+.pos-section .product-bg .product-box .product-title button i{
+    color: var(--primary);
+}
+
 .pos-section .product-bg .product-box .product-img {
     text-align: center;
     padding: 10px;
@@ -8977,13 +8988,16 @@ button.gold-btn.copyReferalLink {
 
 .pos-section .product-bg .product-box .product-content-box .shopping-icon button i {
     color: var(--primary);
+    /*position: absolute;*/
+    /*top:0;*/
+    /*right: 0;*/
 }
 
-.pos-section .product-bg .product-box .product-content-box .shopping-icon button:hover {
+.pos-section .product-bg .product-box .product-content-box .shopping-icon .costPerUnitBtn:hover {
     background-color: var(--primary);
 }
 
-.pos-section .product-bg .product-box .product-content-box .shopping-icon button:hover i {
+.pos-section .product-bg .product-box .product-content-box .shopping-icon .costPerUnitBtn:hover i {
     color: #fff;
 }
 

@@ -32,7 +32,15 @@
                             <div class="card investment-details-card">
                                 <div class="card-body">
                                     <div class="d-flex justify-content-end investment__block">
-                                        @if(($singleSalesDetails->payment_status != 1) && (userType() == 2 && $singleSalesDetails->sales_by == 2))
+{{--                                        @if(($singleSalesDetails->payment_status != 1) && (userType() == 2 && $singleSalesDetails->sales_by == 2))--}}
+                                        @if(userType() == 1 && $singleSalesDetails->payment_status != 1 && $singleSalesDetails->sales_by == 1)
+                                            <a href="javascript:void(0)"
+                                               class="btn btn-sm btn-primary text-white me-2 invest-details-back paidDueAmountBtn"
+                                               data-route="{{ route('user.salesOrderUpdate', $singleSalesDetails->id) }}"
+                                               data-property="{{ $singleSalesDetails }}">
+                                                <span> @lang('Pay Due Amount') </span>
+                                            </a>
+                                        @elseif(userType() == 2 && $singleSalesDetails->payment_status != 1 && $singleSalesDetails->sales_by == 2)
                                             <a href="javascript:void(0)"
                                                class="btn btn-sm btn-primary text-white me-2 invest-details-back paidDueAmountBtn"
                                                data-route="{{ route('user.salesOrderUpdate', $singleSalesDetails->id) }}"
@@ -96,11 +104,11 @@
                                                         @endif
                                                     </div>
 
-                                                    <div class="investmentDate d-flex justify-content-start">
-                                                        <h6 class="font-weight-bold text-dark"> <i class="fal fa-info me-2 text-purple"></i> @lang('Note')
-                                                            : </h6>
-                                                        <h6 class="ms-2">{{ $singleSalesDetails->payment_note }}</h6>
-                                                    </div>
+{{--                                                    <div class="investmentDate d-flex justify-content-start">--}}
+{{--                                                        <h6 class="font-weight-bold text-dark"> <i class="fal fa-info me-2 text-purple"></i> @lang('Note')--}}
+{{--                                                            : </h6>--}}
+{{--                                                        <h6 class="ms-2">{{ $singleSalesDetails->payment_note }}</h6>--}}
+{{--                                                    </div>--}}
                                                 </div>
 
                                                 <ul class="list-style-none p-0 stock_list_style">
@@ -252,13 +260,13 @@
 
                                 <div class="mb-3">
                                     <label for="formFile"
-                                           class="form-label">@lang('Payment Note')
+                                           class="form-label">@lang('Note')
                                         <span><sup>(@lang('optional'))</sup></span></label>
                                     <textarea class="form-control"
                                               id="exampleFormControlTextarea1"
-                                              placeholder="Write payment note"
+                                              placeholder="Write details note"
                                               rows="4"
-                                              name="payment_note"></textarea>
+                                              name="note"></textarea>
                                 </div>
                             </div>
                         </div>
