@@ -163,7 +163,6 @@ class HomeController extends Controller
 
     }
 
-
     public function getYearSalesTransactionChartRecords()
     {
         $admin = $this->user;
@@ -252,7 +251,6 @@ class HomeController extends Controller
 
         return response()->json(['data' => $data, 'basic' => $basic]);
     }
-
 
     public function getSalesStatRecords()
     {
@@ -406,7 +404,6 @@ class HomeController extends Controller
         $data['expenseStatRecords'] = collect(Expense::where('company_id', $admin->active_company_id)
             ->selectRaw('SUM(amount) AS totalExpenseAmount')
             ->get()->toArray())->collapse();
-
         return response()->json(['data' => $data, 'currency' => $currency]);
     }
 

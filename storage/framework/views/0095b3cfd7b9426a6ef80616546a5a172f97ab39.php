@@ -31,7 +31,7 @@
                                             <img src="<?php echo e(asset('assets/global/img/invoice.png')); ?>" alt="">
                                             <h3><?php echo app('translator')->get('Invoice'); ?> - <span><?php echo e($singleSalesDetails->invoice_id); ?></span>
                                             </h3>
-                                            <h4>Date - <span> <?php echo e(customDate($singleSalesDetails->payment_date)); ?></span>
+                                            <h4>Date - <span> <?php echo e(customDate($singleSalesDetails->latest_payment_date)); ?></span>
                                             </h4>
                                         </div>
 

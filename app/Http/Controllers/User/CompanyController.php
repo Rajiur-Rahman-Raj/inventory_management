@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\User;
 
+use App\Exports\SalesReportExport;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CompanyStoreRequest;
 use App\Http\Requests\CompanyUpdateRequest;
@@ -48,6 +49,7 @@ use Stevebauman\Purify\Facades\Purify;
 use App\Http\Traits\StockInTrait;
 use App\Http\Traits\storeSalesTrait;
 use function PHPUnit\Framework\isNull;
+use Maatwebsite\Excel\Facades\Excel;
 
 class CompanyController extends Controller
 {
@@ -1181,7 +1183,6 @@ class CompanyController extends Controller
                 ]);
             });
 
-
         if ($request->id !== "all") {
             $query->where('item_id', $request->id);
         }
@@ -1569,9 +1570,9 @@ class CompanyController extends Controller
 
     public function salesOrderStore(Request $request)
     {
-        $admin = $this->user;
 
         $purifiedData = Purify::clean($request->except('_token', '_method'));
+        $admin = $this->user;
 
         DB::beginTransaction();
         try {
@@ -1624,6 +1625,10 @@ class CompanyController extends Controller
             $this->storeSalesPayments($request, $sale, $admin);
 
             $this->storeAndUpdateStocks($request, $sale, $items);
+
+            if ($admin->user_type == 2) {
+                $this->giveAffiliateMembersCommission($request, $admin);
+            }
 
             CartItems::when(!isset($admin->salesCenter) && $admin->user_type == 1, function ($query) use ($companyId) {
                 return $query->where('company_id', $companyId)->whereNull('sales_center_id');
@@ -2688,6 +2693,110 @@ class CompanyController extends Controller
 
         $member->delete();
         return back()->with('success', 'Affiliate Member Deleted Successfully!');
+    }
+
+    public function stockExpenseSalesProfitReports(Request $request)
+    {
+        $admin = $this->user;
+        $search = $request->all();
+
+        $fromDate = Carbon::parse($request->from_date);
+        $toDate = Carbon::parse($request->to_date)->addDay();
+
+        try {
+            if (!empty($search) && $search['from_date'] || $search['to_date']) {
+                $reports = Sale::when(isset($search['from_date']), function ($query) use ($fromDate) {
+                    return $query->whereDate('created_at', '>=', $fromDate);
+                })
+                    ->when(isset($search['to_date']), function ($query) use ($fromDate, $toDate) {
+                        return $query->whereBetween('created_at', [$fromDate, $toDate]);
+                    })
+                    ->when(!isset($admin->salesCenter) && $admin->user_type == 1, function ($query) use ($admin) {
+                        return $query->where('company_id', $admin->active_company_id)->where('sales_by', 1)
+                            ->selectRaw('SUM(CASE WHEN customer_id IS NULL AND sales_by = 1 THEN total_amount END) AS soldSalesCenterAmount')
+                            ->selectRaw('SUM(CASE WHEN customer_id IS NOT NULL AND sales_by = 1 THEN total_amount END) AS soldCustomerAmount')
+                            ->selectRaw('SUM(CASE WHEN customer_id IS NULL AND sales_by = 1 AND payment_status = 0 THEN due_amount END) AS dueSalesCenterAmount')
+                            ->selectRaw('SUM(CASE WHEN customer_id IS NOT NULL AND sales_by = 1 AND payment_status = 0 THEN due_amount END) AS dueCustomerAmount')
+                            ->selectRaw('SUM(profit) AS salesProfit');
+                    })
+                    ->when(isset($admin->salesCenter) && $admin->user_type == 2, function ($query) use ($admin) {
+                        return $query->where([
+                            ['company_id', $admin->salesCenter->company_id],
+                            ['sales_center_id', $admin->salesCenter->id],
+                            ['sales_by', 2],
+                        ])->whereNotNull('customer_id')
+                            ->selectRaw('SUM(CASE WHEN customer_id IS NOT NULL AND sales_by = 2 AND payment_status = 0 THEN due_amount END) AS dueCustomerAmount');
+                    })
+                    ->selectRaw('SUM(total_amount) AS totalSalesAmount')
+                    ->get()
+                    ->toArray();
+                $data['reportRecords'] = collect($reports)->collapse();
+
+                if (userType() == 1) {
+                    $data['reportRecords']['totalStockAmount'] = StockIn::when(isset($search['from_date']), function ($query) use ($fromDate) {
+                        return $query->whereDate('stock_date', '>=', $fromDate);
+                    })
+                        ->when(isset($search['to_date']), function ($query) use ($fromDate, $toDate) {
+                            return $query->whereBetween('stock_date', [$fromDate, $toDate]);
+                        })->where('company_id', $admin->active_company_id)->sum('total_cost');
+                } else {
+                    $data['reportRecords']['totalStockAmount'] = Sale::when(isset($search['from_date']), function ($query) use ($fromDate) {
+                        return $query->whereDate('created_at', '>=', $fromDate);
+                    })
+                        ->when(isset($search['to_date']), function ($query) use ($fromDate, $toDate) {
+                            return $query->whereBetween('created_at', [$fromDate, $toDate]);
+                        })
+                        ->when(isset($admin->salesCenter) && $admin->user_type == 2, function ($query) use ($admin) {
+                            return $query->where([
+                                ['company_id', $admin->salesCenter->company_id],
+                                ['sales_center_id', $admin->salesCenter->id],
+                                ['sales_by', 1],
+                            ])->whereNull('customer_id');
+                        })
+                        ->sum('total_amount');
+                }
+
+                if (userType() == 1) {
+                    $data['reportRecords']['affiliateMemberCommission'] = AffiliateMember::when(isset($search['from_date']), function ($query) use ($fromDate) {
+                        return $query->whereDate('created_at', '>=', $fromDate);
+                    })
+                        ->when(isset($search['to_date']), function ($query) use ($fromDate, $toDate) {
+                            return $query->whereBetween('created_at', [$fromDate, $toDate]);
+                        })
+                        ->where('company_id', $admin->active_company_id)
+                        ->sum('total_commission_amount');
+
+                    $data['reportRecords']['totalExpenseAmount'] = Expense::when(isset($search['from_date']), function ($query) use ($fromDate) {
+                        return $query->whereDate('created_at', '>=', $fromDate);
+                    })
+                        ->when(isset($search['to_date']), function ($query) use ($fromDate, $toDate) {
+                            return $query->whereBetween('created_at', [$fromDate, $toDate]);
+                        })
+                        ->where('company_id', $admin->active_company_id)
+                        ->sum('amount');
+                }
+
+//                dd($data['reportRecords']);
+                if (userType() == 1){
+                    $data['reportRecords']['netProfit'] =  $data['reportRecords']['salesProfit'] - $data['reportRecords']['totalExpenseAmount'];
+                }
+
+                return view($this->theme . 'user.reports.index', $data, compact('search'));
+            } else {
+                $data['reportRecords'] = null;
+                return view($this->theme . 'user.reports.index', $data, compact('search'));
+            }
+
+
+        } catch (\Exception $exception) {
+            $data = ['error' => $exception->getMessage()];
+            return view($this->theme . 'user.reports.index', $data, compact('search'));
+        }
+    }
+
+    public function exportStockExpenseSalesProfitReports(Request $request)
+    {
+//        return Excel::download(new SalesReportExport($request), 'sales_report.xlsx');
     }
 
 }

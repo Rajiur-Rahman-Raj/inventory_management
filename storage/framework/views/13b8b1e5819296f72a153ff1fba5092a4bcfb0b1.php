@@ -139,7 +139,6 @@
                                                         </div>
 
                                                         <div class="input-box col-12 mt-3">
-
                                                     <textarea readonly class="form-control" cols="10"
                                                               rows="2"
                                                               name="address"><?php echo e(old('customer_address', @request()->customer_address)); ?> <?php echo e($sale->customer ? optional($sale->customer)->address : optional($sale->salesCenter)->center_address); ?></textarea>

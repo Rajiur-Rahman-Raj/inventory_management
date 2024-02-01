@@ -54,14 +54,14 @@
                                                        class="text-danger border-danger">@lang('out of stock')</a>
                                                 @endif
 
-                                                    @if($stock->quantity > 0)
-                                                        <button class="cart-btn btn btn-sm addToCartButton"
-                                                                data-property="{{ $stock }}"><i
-                                                                class="fa fa-cart-plus"></i></button>
-                                                    @else
-                                                        <button class="cart-btn btn btn-sm addToCartButton opacity-0 disabled"><i
-                                                                class="fa fa-cart-plus"></i></button>
-                                                    @endif
+                                                @if($stock->quantity > 0)
+                                                    <button class="cart-btn btn btn-sm addToCartButton"
+                                                            data-property="{{ $stock }}"><i
+                                                            class="fa fa-cart-plus"></i></button>
+                                                @else
+                                                    <button class="cart-btn btn btn-sm addToCartButton opacity-0 disabled"><i
+                                                            class="fa fa-cart-plus"></i></button>
+                                                @endif
 
                                             </div>
                                             <div class="product-img">
@@ -661,13 +661,11 @@
                     } else {
                         stocks.forEach(function (stock) {
                             itemsData += `
-
-
                                 <div class="col-xl-4 col-lg-6">
                         <div class="product-box shadow-sm p-3 mb-5 bg-body rounded">
-                            <div class="product-title">
+                            <div class="product-title d-flex justify-content-between">
                                 ${stock.quantity > 0 ? '<a type="button" class="btn">in stock <span class="badge bg-success">' + stock.quantity + '</span></a>' : '<a href="javascript:void(0)" class="text-danger border-danger">out of stock</a>'}
-
+                                ${stock.quantity > 0 ? `<button class="btn btn-sm addToCartButton" data-property='${JSON.stringify(stock)}'><i class="fa fa-cart-plus"></i></button>` : `<button class="btn btn-sm addToCartButton opacity-0 disabled"><i class="fa fa-cart-plus"></i></button>`}
                             </div>
 
                             <div class="product-img">
@@ -677,27 +675,34 @@
                                          alt="">
                                 </a>
                             </div>
-                            <div class="product-content-box ">
+                            <div class="product-content-box">
                                 <div class="product-content">
                                     <h6>
                                         <a href="javascript:void(0)">${stock.item.name}</a>
                                     </h6>
-
                                 </div>
-                                <div
-                                    class="shopping-icon d-flex align-items-center justify-content-between">
-                                    <h4>
-                                        <button class="sellingPriceButton updateUnitPrice"
-                                                data-filteritemid=${value}
-                                                data-sellingprice="${stock.selling_price}"
-                                                data-route="${stock.item_price_route}">${stock.selling_price} {{ $basic->currency_symbol }}</button>
-                                    </h4>
+                                <div class="d-flex justify-content-between">
+                                    <p class="mb-2">
+                                        <span>{{ userType() == 1 ? 'Cost Per Unit' : 'Purchase Price' }}</span>
+                                    </p>
+                                    <p class="mb-2">
+                                        <span>@lang('Selling Price')</span>
+                                    </p>
+                                </div>
 
-                                    ${stock.quantity > 0 ? `<button class="btn btn-sm addToCartButton" data-property='${JSON.stringify(stock)}'><i class="fa fa-cart-plus"></i></button>` : `<button class="btn btn-sm addToCartButton opacity-0 disabled"><i class="fa fa-cart-plus"></i></button>`}
-                            </div>
-                            <p>
-                                <span>Purchase Price:</span> ${stock.last_cost_per_unit} {{ $basic->currency_symbol }}
-                            </p>
+
+
+                                <div class="shopping-icon d-flex align-items-center justify-content-between">
+                                    <h4>
+                                        <button class="sellingPriceButton {{ userType() == 1 ? 'updateUnitPrice costPerUnitBtn' : '' }}"
+                                                data-filteritemid=${value}
+                                                data-costperunit="${stock.last_cost_per_unit}"
+                                                data-route="${stock.item_price_route}">${stock.last_cost_per_unit} {{ $basic->currency_symbol }}</button>
+                                    </h4>
+                                    <h4>
+                                        <button class="sellingPriceButton btn">${stock.selling_price} {{ $basic->currency_symbol }}</button>
+                                    </h4>
+                                </div>
                         </div>
                     </div>
                 </div>

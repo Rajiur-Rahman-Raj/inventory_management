@@ -32,7 +32,7 @@
                                             <img src="{{ asset('assets/global/img/invoice.png') }}" alt="">
                                             <h3>@lang('Invoice') - <span>{{ $singleSalesDetails->invoice_id }}</span>
                                             </h3>
-                                            <h4>Date - <span> {{ customDate($singleSalesDetails->payment_date) }}</span>
+                                            <h4>Date - <span> {{ customDate($singleSalesDetails->latest_payment_date) }}</span>
                                             </h4>
                                         </div>
 

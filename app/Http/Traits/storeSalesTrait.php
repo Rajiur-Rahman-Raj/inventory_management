@@ -3,6 +3,7 @@
 namespace App\Http\Traits;
 
 
+use App\Models\AffiliateMember;
 use App\Models\SalesItem;
 use App\Models\SalesPayment;
 use App\Models\Stock;
@@ -308,6 +309,34 @@ trait StoreSalesTrait
                 $companyStock->save();
             }
         }
+    }
+
+    public function giveAffiliateMembersCommission($request, $admin){
+
+        $affiliateMembers = optional($admin->salesCenter)->affiliateMembers;
+
+        if (count($affiliateMembers) > 0){
+            foreach ($affiliateMembers as $key => $member){
+                $affiliateMember = AffiliateMember::where('company_id', $admin->salesCenter->company_id)->findOrFail($member->affiliate_member_id);
+                $memberCommissionPercentage = $affiliateMember->member_commission;
+                $wifeCommissionPercentage = $affiliateMember->wife_commission;
+
+                if ($affiliateMember->date_of_death == null){
+                    $memberCommissionAmount = $request->total_amount * $memberCommissionPercentage / 100;
+                    $affiliateMember->member_commission_amount += $memberCommissionAmount;
+                    $affiliateMember->save();
+                }else{
+                    $wifeCommissionAmount = $request->total_amount * $wifeCommissionPercentage / 100;
+                    $affiliateMember->wife_commission_amount += $wifeCommissionAmount;
+                    $affiliateMember->save();
+                }
+
+                $totalCommissionAmount =  $affiliateMember->member_commission_amount + $affiliateMember->wife_commission_amount;
+                $affiliateMember->total_commission_amount = $totalCommissionAmount;
+                $affiliateMember->save();
+            }
+        }
+
     }
 
 

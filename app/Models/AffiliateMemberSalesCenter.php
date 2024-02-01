@@ -15,4 +15,8 @@ class AffiliateMemberSalesCenter extends Model
         return $this->belongsTo(SalesCenter::class, 'sales_center_id', 'id');
     }
 
+    public function affiliateMember(){
+        return $this->belongsTo(AffiliateMember::class, 'affiliate_member_id', 'id');
+    }
+
 }

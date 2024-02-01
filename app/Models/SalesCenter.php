@@ -34,4 +34,9 @@ class SalesCenter extends Model
     public function company(){
         return $this->belongsTo(Company::class, 'company_id');
     }
+
+    public function affiliateMembers(){
+        return $this->hasMany(AffiliateMemberSalesCenter::class, 'sales_center_id');
+    }
+
 }

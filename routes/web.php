@@ -116,7 +116,6 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'user', 'as' => 'user.'], fu
         Route::delete('delete/supplier/{id}', 'User\CompanyController@deleteSupplier')->name('deleteSupplier');
 
 
-
 //        Route::post('/verificationSubmit', 'User\HomeController@verificationSubmit')->name('verificationSubmit');
 //        Route::post('/addressVerification', 'User\HomeController@addressVerification')->name('addressVerification');
 
@@ -124,6 +123,10 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'user', 'as' => 'user.'], fu
         Route::get('add-stock', 'User\CompanyController@addStock')->name('addStock');
 
     });
+
+    // Reports
+    Route::get('stock/sales/reports', 'User\CompanyController@stockExpenseSalesProfitReports')->name('stockExpenseSalesProfitReports');
+    Route::get('export-stock-sales-reports', 'User\CompanyController@exportStockExpenseSalesProfitReports')->name('export.stockExpenseSalesProfitReports');
 
 
     /* ===== Company Dashbaord data fetch using ajax ===== */
@@ -138,7 +141,6 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'user', 'as' => 'user.'], fu
 
     Route::get('get-year-sales-transaction-chart-records', [HomeController::class, 'getYearSalesTransactionChartRecords'])->name('getYearSalesTransactionChartRecords');
     Route::get('get-year-sales-center-transaction-chart-records', [HomeController::class, 'getSalesCenterYearSalesTransactionChartRecords'])->name('getSalesCenterYearSalesTransactionChartRecords');
-
 
 
     // sales center stock
@@ -165,16 +167,6 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'user', 'as' => 'user.'], fu
 
     Route::get('sales-invoice/{id}', 'User\CompanyController@salesInvoice')->name('salesInvoice');
     Route::put('sales-invoice-update/{id}', 'User\CompanyController@salesInvoiceUpdate')->name('salesInvoiceUpdate');
-
-
-
-
-
-
-
-
-
-
 
 
     // Profile

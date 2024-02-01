@@ -512,12 +512,34 @@
     <script>
         'use strict'
 
+        // Get the current date
+        var currentDate = new Date();
+
+        // Calculate the minimum date based on the current day
+        var minDate;
+        if (currentDate.getDay() === 0) {
+            // If today is Sunday, set minDate to Friday
+            minDate = new Date(currentDate.getTime() - 2 * 24 * 60 * 60 * 1000);
+        } else {
+            // For other days, set minDate to yesterday
+            minDate = new Date(currentDate.getTime() - 24 * 60 * 60 * 1000);
+        }
+
         $(".flatpickr").flatpickr({
             wrap: true,
-            minDate: "today",
+            minDate: minDate,
+            maxDate: new Date(currentDate.getTime() + 24 * 60 * 60 * 1000), // Set maxDate to tomorrow
             altInput: true,
             dateFormat: "Y-m-d H:i",
         });
+
+        // $(".flatpickr").flatpickr({
+        //     wrap: true,
+        //     minDate: "today",
+        //     maxDate: new Date(new Date().getTime() + 24 * 60 * 60 * 1000), // Set maxDate to tomorrow
+        //     altInput: true,
+        //     dateFormat: "Y-m-d H:i",
+        // });
 
         $("#stockItemGenerate").on('click', function () {
             let parentLength = $('.parentItemRow').length;

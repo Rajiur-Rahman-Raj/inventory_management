@@ -53,14 +53,14 @@
                                                        class="text-danger border-danger"><?php echo app('translator')->get('out of stock'); ?></a>
                                                 <?php endif; ?>
 
-                                                    <?php if($stock->quantity > 0): ?>
-                                                        <button class="cart-btn btn btn-sm addToCartButton"
-                                                                data-property="<?php echo e($stock); ?>"><i
-                                                                class="fa fa-cart-plus"></i></button>
-                                                    <?php else: ?>
-                                                        <button class="cart-btn btn btn-sm addToCartButton opacity-0 disabled"><i
-                                                                class="fa fa-cart-plus"></i></button>
-                                                    <?php endif; ?>
+                                                <?php if($stock->quantity > 0): ?>
+                                                    <button class="cart-btn btn btn-sm addToCartButton"
+                                                            data-property="<?php echo e($stock); ?>"><i
+                                                            class="fa fa-cart-plus"></i></button>
+                                                <?php else: ?>
+                                                    <button class="cart-btn btn btn-sm addToCartButton opacity-0 disabled"><i
+                                                            class="fa fa-cart-plus"></i></button>
+                                                <?php endif; ?>
 
                                             </div>
                                             <div class="product-img">
@@ -689,13 +689,11 @@ unset($__errorArgs, $__bag); ?>"
                     } else {
                         stocks.forEach(function (stock) {
                             itemsData += `
-
-
                                 <div class="col-xl-4 col-lg-6">
                         <div class="product-box shadow-sm p-3 mb-5 bg-body rounded">
-                            <div class="product-title">
+                            <div class="product-title d-flex justify-content-between">
                                 ${stock.quantity > 0 ? '<a type="button" class="btn">in stock <span class="badge bg-success">' + stock.quantity + '</span></a>' : '<a href="javascript:void(0)" class="text-danger border-danger">out of stock</a>'}
-
+                                ${stock.quantity > 0 ? `<button class="btn btn-sm addToCartButton" data-property='${JSON.stringify(stock)}'><i class="fa fa-cart-plus"></i></button>` : `<button class="btn btn-sm addToCartButton opacity-0 disabled"><i class="fa fa-cart-plus"></i></button>`}
                             </div>
 
                             <div class="product-img">
@@ -705,28 +703,34 @@ unset($__errorArgs, $__bag); ?>"
                                          alt="">
                                 </a>
                             </div>
-                            <div class="product-content-box ">
+                            <div class="product-content-box">
                                 <div class="product-content">
                                     <h6>
                                         <a href="javascript:void(0)">${stock.item.name}</a>
                                     </h6>
-
                                 </div>
-                                <div
-                                    class="shopping-icon d-flex align-items-center justify-content-between">
+                                <div class="d-flex justify-content-between">
+                                    <p class="mb-2">
+                                        <span><?php echo e(userType() == 1 ? 'Cost Per Unit' : 'Purchase Price'); ?></span>
+                                    </p>
+                                    <p class="mb-2">
+                                        <span><?php echo app('translator')->get('Selling Price'); ?></span>
+                                    </p>
+                                </div>
+
+
+
+                                <div class="shopping-icon d-flex align-items-center justify-content-between">
                                     <h4>
-                                        <button class="sellingPriceButton updateUnitPrice"
+                                        <button class="sellingPriceButton <?php echo e(userType() == 1 ? 'updateUnitPrice costPerUnitBtn' : ''); ?>"
                                                 data-filteritemid=${value}
-                                                data-sellingprice="${stock.selling_price}"
-                                                data-route="${stock.item_price_route}">${stock.selling_price} <?php echo e($basic->currency_symbol); ?></button>
+                                                data-costperunit="${stock.last_cost_per_unit}"
+                                                data-route="${stock.item_price_route}">${stock.last_cost_per_unit} <?php echo e($basic->currency_symbol); ?></button>
                                     </h4>
-
-                                    ${stock.quantity > 0 ? `<button class="btn btn-sm addToCartButton" data-property='${JSON.stringify(stock)}'><i class="fa fa-cart-plus"></i></button>` : `<button class="btn btn-sm addToCartButton opacity-0 disabled"><i class="fa fa-cart-plus"></i></button>`}
-                            </div>
-                            <p>
-                                <span>Purchase Price:</span> ${stock.last_cost_per_unit} <?php echo e($basic->currency_symbol); ?>
-
-                            </p>
+                                    <h4>
+                                        <button class="sellingPriceButton btn">${stock.selling_price} <?php echo e($basic->currency_symbol); ?></button>
+                                    </h4>
+                                </div>
                         </div>
                     </div>
                 </div>

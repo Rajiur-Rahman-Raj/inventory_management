@@ -107,7 +107,7 @@
                             <td data-label="<?php echo app('translator')->get('Total Amount'); ?>"
                                 class="">  <?php echo e($salesList->total_amount); ?> <?php echo e($basic->currency_symbol); ?></td>
                             <td data-label="<?php echo app('translator')->get('Sales Date'); ?>"> <?php echo e(customDate($salesList->created_at)); ?> </td>
-                            <td data-label="<?php echo app('translator')->get('Last Payment Date'); ?>"> <?php echo e(customDate($salesList->payment_date)); ?> </td>
+                            <td data-label="<?php echo app('translator')->get('Last Payment Date'); ?>"> <?php echo e(customDate($salesList->latest_payment_date)); ?> </td>
                             <td data-label="<?php echo app('translator')->get('Payment Status'); ?>">
                                 <?php if($salesList->payment_status == 1): ?>
                                     <span class="badge bg-success"><?php echo app('translator')->get('Paid'); ?></span>

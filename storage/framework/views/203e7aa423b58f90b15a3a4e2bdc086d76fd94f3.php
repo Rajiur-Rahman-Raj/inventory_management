@@ -171,6 +171,8 @@
                 </div>
 
 
+
+
             </li>
         <?php endif; ?>
 
@@ -220,6 +222,41 @@
                    href="<?php echo e(route('user.affiliateMemberList')); ?>"><i class="fal fa-sitemap"></i><?php echo app('translator')->get('Affiliate'); ?></a>
             </li>
         <?php endif; ?>
+
+
+
+
+
+
+        <li>
+            <a
+                class="dropdown-toggle"
+                data-bs-toggle="collapse"
+                href="#dropdownManageReports"
+                role="button"
+                aria-expanded="false"
+                aria-controls="collapseExample">
+                <i class="fal fa-car-building"></i><?php echo app('translator')->get('Reports'); ?>
+            </a>
+            <div
+                class="collapse <?php echo e(menuActive(['user.stockExpenseSalesProfitReports'],4)); ?> dropdownManageReports"
+                id="dropdownManageReports">
+                <ul class="">
+                    <li>
+                        <a class="<?php echo e(in_array($currentRouteName, ['user.stockExpenseSalesProfitReports']) ? 'active' : ''); ?>"
+                           href="<?php echo e(route('user.stockExpenseSalesProfitReports')); ?>"><i class="fal fa-sack-dollar"></i><?php echo app('translator')->get('Stock & Sales Report'); ?>
+                        </a>
+                    </li>
+                    <?php if(userType() == 1): ?>
+                        <li>
+                            <a class="<?php echo e(in_array($currentRouteName, ['user.stockExpenseSalesProfitReports']) ? 'active' : ''); ?>"
+                               href="<?php echo e(route('user.stockExpenseSalesProfitReports')); ?>"><i class="fal fa-house-return"></i><?php echo app('translator')->get('Raw Item Report'); ?>
+                            </a>
+                        </li>
+                    <?php endif; ?>
+                </ul>
+            </div>
+        </li>
 
         <li class="d-lg-none">
             <a href="<?php echo e(route('logout')); ?>"

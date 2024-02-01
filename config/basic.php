@@ -28,6 +28,7 @@
   'secondary_color' => '#488ff9',
   'time_zone' => 'Asia/Dhaka',
   'currency' => 'BDT',
+  'currency_text' => 'TK',
   'currency_symbol' => '৳',
   'theme' => 'original',
   'fraction_number' => 0,

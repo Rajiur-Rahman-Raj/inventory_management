@@ -473,3 +473,14 @@ function updateWallet($user_id, $amount, $action = 0)
 function userType(){
     return auth()->user()->user_type;
 }
+
+
+if (!function_exists('fractionNumber')) {
+    function fractionNumber($amount, $afterComma = true)
+    {
+        if ($afterComma == false) {
+            return number_format($amount);
+        }
+        return number_format($amount, $basic->fraction_number ?? 2);
+    }
+}

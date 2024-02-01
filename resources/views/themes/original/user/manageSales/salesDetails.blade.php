@@ -86,7 +86,7 @@
                                                                 class="fa fa-bangladeshi-taka-sign me-2 text-warning">
                                                                 ৳ </i> @lang('Last Payment Date')
                                                             : </h6>
-                                                        <h6 class="ms-2">{{ customDate($singleSalesDetails->payment_date) }}</h6>
+                                                        <h6 class="ms-2">{{ customDate($singleSalesDetails->latest_payment_date) }}</h6>
                                                     </div>
                                                     <div class="investmentDate d-flex justify-content-start">
                                                         <h6 class="font-weight-bold text-dark"> @if($singleSalesDetails->payment_status == 1)

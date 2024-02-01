@@ -731,9 +731,7 @@ unset($__errorArgs, $__bag); ?>
 
             let discountAmount = updateSubTotal * discount / 100;
             let vatAmount = updateSubTotal * vat / 100;
-            console.log(vatAmount);
             let subTotalWithVat = subTotal + vatAmount;
-            console.log(subTotalWithVat);
             let totalAmount = subTotalWithVat - discountAmount;
 
             $('.itemSubTotal').val(subTotal);

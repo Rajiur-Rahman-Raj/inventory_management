@@ -171,6 +171,8 @@
                 </div>
 
 
+
+
             </li>
         @endif
 
@@ -220,6 +222,41 @@
                    href="{{ route('user.affiliateMemberList') }}"><i class="fal fa-sitemap"></i>@lang('Affiliate')</a>
             </li>
         @endif
+
+{{--        <li>--}}
+{{--            <a class="{{menuActive(['user.stockExpenseSalesProfitReports'])}}" href="{{ route('user.stockExpenseSalesProfitReports') }}"><i--}}
+{{--                    class="fal fa-sitemap"></i>@lang('Reports')</a>--}}
+{{--        </li>--}}
+
+        <li>
+            <a
+                class="dropdown-toggle"
+                data-bs-toggle="collapse"
+                href="#dropdownManageReports"
+                role="button"
+                aria-expanded="false"
+                aria-controls="collapseExample">
+                <i class="fal fa-car-building"></i>@lang('Reports')
+            </a>
+            <div
+                class="collapse {{menuActive(['user.stockExpenseSalesProfitReports'],4)}} dropdownManageReports"
+                id="dropdownManageReports">
+                <ul class="">
+                    <li>
+                        <a class="{{ in_array($currentRouteName, ['user.stockExpenseSalesProfitReports']) ? 'active' : '' }}"
+                           href="{{ route('user.stockExpenseSalesProfitReports') }}"><i class="fal fa-sack-dollar"></i>@lang('Stock & Sales Report')
+                        </a>
+                    </li>
+                    @if(userType() == 1)
+                        <li>
+                            <a class="{{ in_array($currentRouteName, ['user.stockExpenseSalesProfitReports']) ? 'active' : '' }}"
+                               href="{{ route('user.stockExpenseSalesProfitReports') }}"><i class="fal fa-house-return"></i>@lang('Raw Item Report')
+                            </a>
+                        </li>
+                    @endif
+                </ul>
+            </div>
+        </li>
 
         <li class="d-lg-none">
             <a href="{{ route('logout') }}"

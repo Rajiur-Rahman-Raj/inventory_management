@@ -108,7 +108,7 @@
                             <td data-label="@lang('Total Amount')"
                                 class="">  {{ $salesList->total_amount }} {{ $basic->currency_symbol }}</td>
                             <td data-label="@lang('Sales Date')"> {{ customDate($salesList->created_at) }} </td>
-                            <td data-label="@lang('Last Payment Date')"> {{ customDate($salesList->payment_date) }} </td>
+                            <td data-label="@lang('Last Payment Date')"> {{ customDate($salesList->latest_payment_date) }} </td>
                             <td data-label="@lang('Payment Status')">
                                 @if($salesList->payment_status == 1)
                                     <span class="badge bg-success">@lang('Paid')</span>
