@@ -239,21 +239,29 @@
                 <i class="fal fa-car-building"></i><?php echo app('translator')->get('Reports'); ?>
             </a>
             <div
-                class="collapse <?php echo e(menuActive(['user.stockExpenseSalesProfitReports'],4)); ?> dropdownManageReports"
+                class="collapse <?php echo e(menuActive(['user.purchaseReports'],4)); ?> dropdownManageReports"
                 id="dropdownManageReports">
                 <ul class="">
+
+
+
+
+
+
+
+
+
+
+
+
+
                     <li>
-                        <a class="<?php echo e(in_array($currentRouteName, ['user.stockExpenseSalesProfitReports']) ? 'active' : ''); ?>"
-                           href="<?php echo e(route('user.stockExpenseSalesProfitReports')); ?>"><i class="fal fa-sack-dollar"></i><?php echo app('translator')->get('Stock & Sales Report'); ?>
+                        <a class="<?php echo e(in_array($currentRouteName, ['user.purchaseReports']) ? 'active' : ''); ?>"
+                           href="<?php echo e(route('user.purchaseReports')); ?>"><i
+                                class="fal fa-sack-dollar"></i><?php echo app('translator')->get('Purchase Report'); ?>
                         </a>
                     </li>
-                    <?php if(userType() == 1): ?>
-                        <li>
-                            <a class="<?php echo e(in_array($currentRouteName, ['user.stockExpenseSalesProfitReports']) ? 'active' : ''); ?>"
-                               href="<?php echo e(route('user.stockExpenseSalesProfitReports')); ?>"><i class="fal fa-house-return"></i><?php echo app('translator')->get('Raw Item Report'); ?>
-                            </a>
-                        </li>
-                    <?php endif; ?>
+
                 </ul>
             </div>
         </li>

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\LocationController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\User\HomeController;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
@@ -125,6 +126,13 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'user', 'as' => 'user.'], fu
     });
 
     // Reports
+
+    // Purchase Reports
+    Route::get('purchase/reports', [ReportController::class, 'purchaseReports'])->name('purchaseReports');
+    Route::get('export/purchase/report', [ReportController::class, 'exportPurchaseReport'])->name('export.purchaseReport');
+
+
+
     Route::get('stock/sales/reports', 'User\CompanyController@stockExpenseSalesProfitReports')->name('stockExpenseSalesProfitReports');
     Route::get('export-stock-sales-reports', 'User\CompanyController@exportStockExpenseSalesProfitReports')->name('export.stockExpenseSalesProfitReports');
 

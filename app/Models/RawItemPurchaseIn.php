@@ -24,4 +24,8 @@ class RawItemPurchaseIn extends Model
     public function supplier(){
         return $this->belongsTo(Supplier::class, 'supplier_id', 'id');
     }
+
+    public function rawItemDetails(){
+        return $this->hasMany(RawItemPurchaseInDetails::class, 'raw_item_purchase_in_id');
+    }
 }

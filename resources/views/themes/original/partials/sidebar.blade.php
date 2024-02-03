@@ -239,21 +239,29 @@
                 <i class="fal fa-car-building"></i>@lang('Reports')
             </a>
             <div
-                class="collapse {{menuActive(['user.stockExpenseSalesProfitReports'],4)}} dropdownManageReports"
+                class="collapse {{menuActive(['user.purchaseReports'],4)}} dropdownManageReports"
                 id="dropdownManageReports">
                 <ul class="">
+{{--                    <li>--}}
+{{--                        <a class="{{ in_array($currentRouteName, ['user.stockExpenseSalesProfitReports']) ? 'active' : '' }}"--}}
+{{--                           href="{{ route('user.stockExpenseSalesProfitReports') }}"><i class="fal fa-sack-dollar"></i>@lang('Stock & Sales Report')--}}
+{{--                        </a>--}}
+{{--                    </li>--}}
+{{--                    @if(userType() == 1)--}}
+{{--                        <li>--}}
+{{--                            <a class="{{ in_array($currentRouteName, ['user.stockExpenseSalesProfitReports']) ? 'active' : '' }}"--}}
+{{--                               href="{{ route('user.stockExpenseSalesProfitReports') }}"><i class="fal fa-house-return"></i>@lang('Raw Item Report')--}}
+{{--                            </a>--}}
+{{--                        </li>--}}
+{{--                    @endif--}}
+
                     <li>
-                        <a class="{{ in_array($currentRouteName, ['user.stockExpenseSalesProfitReports']) ? 'active' : '' }}"
-                           href="{{ route('user.stockExpenseSalesProfitReports') }}"><i class="fal fa-sack-dollar"></i>@lang('Stock & Sales Report')
+                        <a class="{{ in_array($currentRouteName, ['user.purchaseReports']) ? 'active' : '' }}"
+                           href="{{ route('user.purchaseReports') }}"><i
+                                class="fal fa-sack-dollar"></i>@lang('Purchase Report')
                         </a>
                     </li>
-                    @if(userType() == 1)
-                        <li>
-                            <a class="{{ in_array($currentRouteName, ['user.stockExpenseSalesProfitReports']) ? 'active' : '' }}"
-                               href="{{ route('user.stockExpenseSalesProfitReports') }}"><i class="fal fa-house-return"></i>@lang('Raw Item Report')
-                            </a>
-                        </li>
-                    @endif
+
                 </ul>
             </div>
         </li>
