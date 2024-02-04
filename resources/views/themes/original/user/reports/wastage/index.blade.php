@@ -1,5 +1,5 @@
 @extends($theme.'layouts.user')
-@section('title', trans('Purchase Reports'))
+@section('title', trans('Wastage Reports'))
 @section('content')
     @push('style')
         <link href="{{ asset('assets/global/css/flatpickr.min.css') }}" rel="stylesheet">
@@ -9,12 +9,12 @@
             <div class="row mt-4 mb-2">
                 <div class="col ms-2">
                     <div class="header-text-full">
-                        <h3 class="dashboard_breadcurmb_heading mb-1">@lang('Purchase Reports')</h3>
+                        <h3 class="dashboard_breadcurmb_heading mb-1">@lang('Wastage Reports')</h3>
                         <nav aria-label="breadcrumb" class="ms-2">
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="{{ route('user.home') }}">@lang('Dashboard')</a>
                                 </li>
-                                <li class="breadcrumb-item active" aria-current="page">@lang('Purchase Reports')</li>
+                                <li class="breadcrumb-item active" aria-current="page">@lang('Wastage Reports')</li>
                             </ol>
                         </nav>
                     </div>
@@ -73,15 +73,15 @@
                             </div>
                         </div>
 
-                        <div class="input-box col-lg-3">
-                            <label for="">@lang('Supplier')</label>
 
-                            <select class="form-control js-example-basic-single" name="supplier_id"
+                        <div class="input-box col-lg-3">
+                            <label for="">@lang('Raw Item')</label>
+                            <select class="form-control js-example-basic-single" name="raw_item_id"
                                     aria-label="Default select example">
-                                <option value="">@lang('All Suppliers')</option>
-                                @foreach($suppliers as $supplier)
+                                <option value="">@lang('All Items')</option>
+                                @foreach($rawItems as $rawItem)
                                     <option
-                                        value="{{ $supplier->id }}" {{ @request()->supplier_id == $supplier->id ? 'selected' : '' }}>{{ $supplier->name }}</option>
+                                        value="{{ $rawItem->id }}" {{ @request()->raw_item_id == $rawItem->id ? 'selected' : '' }}>{{ $rawItem->name }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -93,55 +93,47 @@
                     </div>
                 </form>
             </div>
-            @if(isset($purchaseReportRecords) && count($purchaseReportRecords) > 0 && count($search) > 0)
+            @if(isset($wastageReportRecords) && count($wastageReportRecords) > 0 && count($search) > 0)
                 <div class="d-flex justify-content-end mb-4">
-                    <a href="javascript:void(0)" data-route="{{route('user.export.purchaseReports')}}"
+                    <a href="javascript:void(0)" data-route="{{route('user.export.wastageReports')}}"
                        class="btn btn-custom text-white reportsDownload downloadExcel"> <i
                             class="fa fa-download"></i> @lang('Download Excel')</a>
                 </div>
             @endif
 
-            @if(isset($purchaseReportRecords) && count($search) > 0)
+            @if(isset($wastageReportRecords) && count($search) > 0)
                 <ul class="list-style-none p-0 stock_list_style">
                     <table class="table table-bordered mt-4">
                         <thead>
                         <tr>
-                            <th scope="col">Supplier</th>
                             <th scope="col">Raw Item</th>
                             <th scope="col">Quantity</th>
-                            <th scope="col">Cost Per Unit</th>
-                            <th scope="col">Purchase Date</th>
-                            <th scope="col">Sub Total</th>
+                            <th scope="col">Date Of Wastage</th>
                         </tr>
                         </thead>
                         <tbody>
 
-                        @if(count($purchaseReportRecords) > 0)
-                            @foreach($purchaseReportRecords as $key1 => $purchaseIn)
-                                @foreach($purchaseIn->rawItemDetails as $key2 => $purchaseInDetails)
-                                    <tr>
-                                        <td data-label="Supplier">{{ $purchaseIn->supplier->name }}</td>
-                                        <td data-label="Raw Item">{{ $purchaseInDetails->rawItem->name }}</td>
-                                        <td data-label="Quantity">{{ $purchaseInDetails->quantity }}</td>
-                                        <td data-label="Cost Per Unit">{{ $purchaseInDetails->cost_per_unit }} {{ config('basic.currency_symbol') }}</td>
-                                        <td data-label="Purchase Date">{{ customDate($purchaseInDetails->purchase_date) }}</td>
-                                        <td data-label="Sub Total">{{ $purchaseInDetails->total_unit_cost }} {{ config('basic.currency_symbol') }}</td>
-                                    </tr>
-                                @endforeach
+                        @if(count($wastageReportRecords) > 0)
+                            @foreach($wastageReportRecords as $key => $wastage)
+                                <tr>
+                                    <td data-label="Raw Item">{{ $wastage->rawItem->name }}</td>
+                                    <td data-label="Quantity">{{ $wastage->quantity }}</td>
+                                    <td data-label="Date Of Wastage">{{ customDate($wastage->wastage_date) }}</td>
+                                </tr>
                             @endforeach
                         @else
                             <tr>
                                 <td class="text-center" colspan="100%">
                                     <img
-                                        src="http://127.0.0.1/inventory_management/project/assets/global/img/no_data.gif"
+                                        src="{{ asset('assets/global/img/no_data.gif') }}"
                                         class="card-img-top empty-state-img" alt="..." style="width: 300px">
                                 </td>
                             </tr>
                         @endif
-                        @if(count($purchaseReportRecords) > 0)
+                        @if(count($wastageReportRecords) > 0)
                             <tr>
-                                <td colspan="5" class="text-end">@lang('Total Price')</td>
-                                <td>= {{ $totalPrice }} {{ config('basic.currency_symbol') }}</td>
+                                <td colspan="1" class="text-end font-weight-bold">@lang('Total Wastage')  </td>
+                                <td class="font-weight-bold">{{ $totalWastage }}</td>
                             </tr>
                         @endif
                         </tbody>
@@ -150,10 +142,6 @@
             @endif
         </div>
     </section>
-
-    @push('loadModal')
-
-    @endpush
 @endsection
 
 @push('script')
@@ -161,7 +149,7 @@
 
     <script>
         'use script'
-        var serachRoute = "{{route('user.purchaseReports')}}"
+        var serachRoute = "{{route('user.wastageReports')}}"
         $(document).on("click", ".downloadExcel", function () {
             $('.searchForm').attr('action', $(this).data('route'));
             $('.searchForm').submit();

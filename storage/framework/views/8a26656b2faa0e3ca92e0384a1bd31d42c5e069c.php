@@ -1,7 +1,7 @@
 <?php $__env->startSection('title', trans('Expense List')); ?>
 <?php $__env->startSection('content'); ?>
     <?php $__env->startPush('style'); ?>
-        <link rel="stylesheet" href="<?php echo e(asset('assets/global/css/bootstrap-datepicker.css')); ?>"/>
+        <link href="<?php echo e(asset('assets/global/css/flatpickr.min.css')); ?>" rel="stylesheet">
     <?php $__env->stopPush(); ?>
     <!-- Invest history -->
     <section class="transaction-history">
@@ -86,7 +86,7 @@ unset($__errorArgs, $__bag); ?>
                         <th scope="col"><?php echo app('translator')->get('SL'); ?></th>
                         <th scope="col"><?php echo app('translator')->get('Category'); ?></th>
                         <th scope="col"><?php echo app('translator')->get('Amount'); ?></th>
-                        <th scope="col"><?php echo app('translator')->get('Date'); ?></th>
+                        <th scope="col"><?php echo app('translator')->get('Date Of Expense'); ?></th>
                         <th scope="col"><?php echo app('translator')->get('Action'); ?></th>
                     </tr>
                     </thead>
@@ -98,7 +98,7 @@ unset($__errorArgs, $__bag); ?>
 
                             <td data-label="<?php echo app('translator')->get('Category'); ?>"><?php echo e(optional($expense->expenseCategory)->name); ?></td>
                             <td data-label="<?php echo app('translator')->get('Amount'); ?>"><?php echo e($expense->amount); ?></td>
-                            <td data-label="<?php echo app('translator')->get('Date'); ?>"><?php echo e(customDate($expense->created_at)); ?></td>
+                            <td data-label="<?php echo app('translator')->get('Date'); ?>"><?php echo e(customDate($expense->expense_date)); ?></td>
 
                             <td data-label="Action">
                                 <div class="sidebar-dropdown-items">
@@ -216,6 +216,38 @@ if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>
                                         </div>
+
+                                        <div class="input-box col-12 m-0">
+                                            <label for="name"><?php echo app('translator')->get('Expense Date'); ?> </label>
+                                            <div class="flatpickr">
+                                                <div class="input-group input-box">
+                                                    <input type="date" placeholder="<?php echo app('translator')->get('Expense Date'); ?>"
+                                                           class="form-control expense_date expenseDate"
+                                                           name="expense_date"
+                                                           value="<?php echo e(old('expense_date',request()->expense_date)); ?>"
+                                                           data-input>
+                                                    <div class="input-group-append" readonly="">
+                                                        <div class="form-control">
+                                                            <a class="input-button cursor-pointer" title="clear"
+                                                               data-clear>
+                                                                <i class="fas fa-times"></i>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                    <div class="invalid-feedback d-block">
+                                                        <?php $__errorArgs = ['expense_date'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> <?php echo app('translator')->get($message); ?> <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
                                     </div>
                                 </div>
                             </div>
@@ -305,6 +337,38 @@ if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>
                                         </div>
+
+                                        <div class="input-box col-12 m-0">
+                                            <label for="name"><?php echo app('translator')->get('Expense Date'); ?> </label>
+                                            <div class="flatpickr">
+                                                <div class="input-group input-box">
+                                                    <input type="date" placeholder="<?php echo app('translator')->get('Expense Date'); ?>"
+                                                           class="form-control expense_date expenseDate"
+                                                           name="expense_date"
+                                                           value=""
+                                                           data-input>
+                                                    <div class="input-group-append" readonly="">
+                                                        <div class="form-control">
+                                                            <a class="input-button cursor-pointer" title="clear"
+                                                               data-clear>
+                                                                <i class="fas fa-times"></i>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                    <div class="invalid-feedback d-block">
+                                                        <?php $__errorArgs = ['expense_date'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> <?php echo app('translator')->get($message); ?> <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
                                     </div>
                                 </div>
                             </div>
@@ -351,15 +415,16 @@ unset($__errorArgs, $__bag); ?>
 <?php $__env->stopSection(); ?>
 
 <?php $__env->startPush('script'); ?>
-    <script src="<?php echo e(asset('assets/global/js/bootstrap-datepicker.js')); ?>"></script>
+    <script src="<?php echo e(asset('assets/global/js/flatpickr.js')); ?>"></script>
 
 
     <script>
         'use strict'
         $(document).ready(function () {
-            $(".datepicker").datepicker({
-                autoclose: true,
-                clearBtn: true
+            $(".flatpickr").flatpickr({
+                wrap: true,
+                altInput: true,
+                dateFormat: "Y-m-d H:i",
             });
 
             $('.from_date').on('change', function () {
@@ -383,6 +448,7 @@ unset($__errorArgs, $__bag); ?>
 
                 $('.expenseCategory').val(dataProperty.category_id);
                 $('.expenseAmount').val(dataProperty.amount);
+                $('.expenseDate').val(dataProperty.expense_date);
                 $('.edit-expense-form').attr('action', dataRoute);
             });
 

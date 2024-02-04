@@ -2,7 +2,7 @@
 @section('title', trans('Expense List'))
 @section('content')
     @push('style')
-        <link rel="stylesheet" href="{{ asset('assets/global/css/bootstrap-datepicker.css') }}"/>
+        <link href="{{ asset('assets/global/css/flatpickr.min.css') }}" rel="stylesheet">
     @endpush
     <!-- Invest history -->
     <section class="transaction-history">
@@ -80,7 +80,7 @@
                         <th scope="col">@lang('SL')</th>
                         <th scope="col">@lang('Category')</th>
                         <th scope="col">@lang('Amount')</th>
-                        <th scope="col">@lang('Date')</th>
+                        <th scope="col">@lang('Date Of Expense')</th>
                         <th scope="col">@lang('Action')</th>
                     </tr>
                     </thead>
@@ -92,7 +92,7 @@
 
                             <td data-label="@lang('Category')">{{ optional($expense->expenseCategory)->name }}</td>
                             <td data-label="@lang('Amount')">{{ $expense->amount }}</td>
-                            <td data-label="@lang('Date')">{{ customDate($expense->created_at) }}</td>
+                            <td data-label="@lang('Date')">{{ customDate($expense->expense_date) }}</td>
 
                             <td data-label="Action">
                                 <div class="sidebar-dropdown-items">
@@ -189,6 +189,31 @@
                                             <span class="text-danger">{{ $message }}</span>
                                             @enderror
                                         </div>
+
+                                        <div class="input-box col-12 m-0">
+                                            <label for="name">@lang('Expense Date') </label>
+                                            <div class="flatpickr">
+                                                <div class="input-group input-box">
+                                                    <input type="date" placeholder="@lang('Expense Date')"
+                                                           class="form-control expense_date expenseDate"
+                                                           name="expense_date"
+                                                           value="{{ old('expense_date',request()->expense_date) }}"
+                                                           data-input>
+                                                    <div class="input-group-append" readonly="">
+                                                        <div class="form-control">
+                                                            <a class="input-button cursor-pointer" title="clear"
+                                                               data-clear>
+                                                                <i class="fas fa-times"></i>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                    <div class="invalid-feedback d-block">
+                                                        @error('expense_date') @lang($message) @enderror
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
                                     </div>
                                 </div>
                             </div>
@@ -257,6 +282,31 @@
                                             <span class="text-danger">{{ $message }}</span>
                                             @enderror
                                         </div>
+
+                                        <div class="input-box col-12 m-0">
+                                            <label for="name">@lang('Expense Date') </label>
+                                            <div class="flatpickr">
+                                                <div class="input-group input-box">
+                                                    <input type="date" placeholder="@lang('Expense Date')"
+                                                           class="form-control expense_date expenseDate"
+                                                           name="expense_date"
+                                                           value=""
+                                                           data-input>
+                                                    <div class="input-group-append" readonly="">
+                                                        <div class="form-control">
+                                                            <a class="input-button cursor-pointer" title="clear"
+                                                               data-clear>
+                                                                <i class="fas fa-times"></i>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                    <div class="invalid-feedback d-block">
+                                                        @error('expense_date') @lang($message) @enderror
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
                                     </div>
                                 </div>
                             </div>
@@ -303,15 +353,16 @@
 @endsection
 
 @push('script')
-    <script src="{{ asset('assets/global/js/bootstrap-datepicker.js') }}"></script>
+    <script src="{{ asset('assets/global/js/flatpickr.js') }}"></script>
 
 
     <script>
         'use strict'
         $(document).ready(function () {
-            $(".datepicker").datepicker({
-                autoclose: true,
-                clearBtn: true
+            $(".flatpickr").flatpickr({
+                wrap: true,
+                altInput: true,
+                dateFormat: "Y-m-d H:i",
             });
 
             $('.from_date').on('change', function () {
@@ -335,6 +386,7 @@
 
                 $('.expenseCategory').val(dataProperty.category_id);
                 $('.expenseAmount').val(dataProperty.amount);
+                $('.expenseDate').val(dataProperty.expense_date);
                 $('.edit-expense-form').attr('action', dataRoute);
             });
 

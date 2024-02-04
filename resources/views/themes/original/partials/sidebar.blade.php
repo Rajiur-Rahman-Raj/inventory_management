@@ -25,31 +25,31 @@
                     class="fal fa-house-flood"></i>@lang('Dashboard')</a>
         </li>
 
-        @if(userType() == 1)
-            <li>
-                <a class="{{menuActive(['user.companyList', 'user.createCompany', 'user.companyEdit'])}}"
-                   href="{{ route('user.companyList') }}"><i class="fal fa-building"></i>@lang('Companies')</a>
-            </li>
-        @endif
+{{--        @if(userType() == 1)--}}
+{{--            <li>--}}
+{{--                <a class="{{menuActive(['user.companyList', 'user.createCompany', 'user.companyEdit'])}}"--}}
+{{--                   href="{{ route('user.companyList') }}"><i class="fal fa-building"></i>@lang('Companies')</a>--}}
+{{--            </li>--}}
+{{--        @endif--}}
 
-        <li>
-            <a class="{{menuActive(['user.customerList', 'user.createCustomer', 'user.customerDetails', 'user.customerEdit'])}}"
-               href="{{ route('user.customerList') }}"><i class="fal fa-users"></i> @lang('Customers')</a>
-        </li>
+{{--        <li>--}}
+{{--            <a class="{{menuActive(['user.customerList', 'user.createCustomer', 'user.customerDetails', 'user.customerEdit'])}}"--}}
+{{--               href="{{ route('user.customerList') }}"><i class="fal fa-users"></i> @lang('Customers')</a>--}}
+{{--        </li>--}}
 
-        @if(userType() == 1)
-            <li>
-                <a class="{{menuActive(['user.salesCenterList', 'user.createSalesCenter', 'user.salesCenterDetails'])}}"
-                   href="{{ route('user.salesCenterList') }}"><i class="fab fa-adversal"></i>@lang('Sales Center')</a>
-            </li>
-        @endif
+{{--        @if(userType() == 1)--}}
+{{--            <li>--}}
+{{--                <a class="{{menuActive(['user.salesCenterList', 'user.createSalesCenter', 'user.salesCenterDetails'])}}"--}}
+{{--                   href="{{ route('user.salesCenterList') }}"><i class="fab fa-adversal"></i>@lang('Sales Center')</a>--}}
+{{--            </li>--}}
+{{--        @endif--}}
 
-        @if(userType() == 1)
-            <li>
-                <a class="{{menuActive(['user.itemList'])}}" href="{{ route('user.itemList') }}"><i
-                        class="fal fa-sitemap"></i>@lang('Items')</a>
-            </li>
-        @endif
+{{--        @if(userType() == 1)--}}
+{{--            <li>--}}
+{{--                <a class="{{menuActive(['user.itemList'])}}" href="{{ route('user.itemList') }}"><i--}}
+{{--                        class="fal fa-sitemap"></i>@lang('Items')</a>--}}
+{{--            </li>--}}
+{{--        @endif--}}
 
         @php
             $currentRouteName = request()->route()->getName();
@@ -114,12 +114,12 @@
             </div>
         </li>
 
-        @if(userType() == 1)
-            <li>
-                <a class="{{menuActive(['user.suppliers'])}}"
-                   href="{{ route('user.suppliers') }}"><i class="fab fa-adversal"></i>@lang('Suppliers')</a>
-            </li>
-        @endif
+{{--        @if(userType() == 1)--}}
+{{--            <li>--}}
+{{--                <a class="{{menuActive(['user.suppliers'])}}"--}}
+{{--                   href="{{ route('user.suppliers') }}"><i class="fab fa-adversal"></i>@lang('Suppliers')</a>--}}
+{{--            </li>--}}
+{{--        @endif--}}
 
         {{--        <li>--}}
         {{--            <a class="{{menuActive(['user.raw-items'])}}"--}}
@@ -209,12 +209,12 @@
             </li>
         @endif
 
-        @if(userType() == 1)
-            <li>
-                <a class="{{menuActive(['user.wastageList'])}}" href="{{ route('user.wastageList') }}"><i
-                        class="fal fa-sitemap"></i>@lang('Wastage')</a>
-            </li>
-        @endif
+{{--        @if(userType() == 1)--}}
+{{--            <li>--}}
+{{--                <a class="{{menuActive(['user.wastageList'])}}" href="{{ route('user.wastageList') }}"><i--}}
+{{--                        class="fal fa-sitemap"></i>@lang('Wastage')</a>--}}
+{{--            </li>--}}
+{{--        @endif--}}
 
         @if(userType() == 1)
             <li>
@@ -222,11 +222,6 @@
                    href="{{ route('user.affiliateMemberList') }}"><i class="fal fa-sitemap"></i>@lang('Affiliate')</a>
             </li>
         @endif
-
-{{--        <li>--}}
-{{--            <a class="{{menuActive(['user.stockExpenseSalesProfitReports'])}}" href="{{ route('user.stockExpenseSalesProfitReports') }}"><i--}}
-{{--                    class="fal fa-sitemap"></i>@lang('Reports')</a>--}}
-{{--        </li>--}}
 
         <li>
             <a
@@ -239,26 +234,41 @@
                 <i class="fal fa-car-building"></i>@lang('Reports')
             </a>
             <div
-                class="collapse {{menuActive(['user.purchaseReports'],4)}} dropdownManageReports"
+                class="collapse {{menuActive(['user.purchaseReports', 'user.stockReports', 'user.wastageReports', 'user.expenseReports', 'user.purchasePaymentReports'],4)}} dropdownManageReports"
                 id="dropdownManageReports">
                 <ul class="">
-{{--                    <li>--}}
-{{--                        <a class="{{ in_array($currentRouteName, ['user.stockExpenseSalesProfitReports']) ? 'active' : '' }}"--}}
-{{--                           href="{{ route('user.stockExpenseSalesProfitReports') }}"><i class="fal fa-sack-dollar"></i>@lang('Stock & Sales Report')--}}
-{{--                        </a>--}}
-{{--                    </li>--}}
-{{--                    @if(userType() == 1)--}}
-{{--                        <li>--}}
-{{--                            <a class="{{ in_array($currentRouteName, ['user.stockExpenseSalesProfitReports']) ? 'active' : '' }}"--}}
-{{--                               href="{{ route('user.stockExpenseSalesProfitReports') }}"><i class="fal fa-house-return"></i>@lang('Raw Item Report')--}}
-{{--                            </a>--}}
-{{--                        </li>--}}
-{{--                    @endif--}}
-
                     <li>
                         <a class="{{ in_array($currentRouteName, ['user.purchaseReports']) ? 'active' : '' }}"
                            href="{{ route('user.purchaseReports') }}"><i
                                 class="fal fa-sack-dollar"></i>@lang('Purchase Report')
+                        </a>
+                    </li>
+
+                    <li>
+                        <a class="{{ in_array($currentRouteName, ['user.purchasePaymentReports']) ? 'active' : '' }}"
+                           href="{{ route('user.purchasePaymentReports') }}"><i
+                                class="fal fa-sack-dollar"></i>@lang('Purchase Payment')
+                        </a>
+                    </li>
+
+                    <li>
+                        <a class="{{ in_array($currentRouteName, ['user.stockReports']) ? 'active' : '' }}"
+                           href="{{ route('user.stockReports') }}"><i
+                                class="fal fa-sack-dollar"></i>@lang('Stock Report')
+                        </a>
+                    </li>
+
+                    <li>
+                        <a class="{{ in_array($currentRouteName, ['user.wastageReports']) ? 'active' : '' }}"
+                           href="{{ route('user.wastageReports') }}"><i
+                                class="fal fa-sack-dollar"></i>@lang('Wastage Report')
+                        </a>
+                    </li>
+
+                    <li>
+                        <a class="{{ in_array($currentRouteName, ['user.expenseReports']) ? 'active' : '' }}"
+                           href="{{ route('user.expenseReports') }}"><i
+                                class="fal fa-sack-dollar"></i>@lang('Expense Report')
                         </a>
                     </li>
 

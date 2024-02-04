@@ -612,10 +612,10 @@ class CompanyController extends Controller
                 });
             })
             ->when(isset($search['from_date']), function ($q2) use ($fromDate) {
-                return $q2->whereDate('created_at', '>=', $fromDate);
+                return $q2->whereDate('expense_date', '>=', $fromDate);
             })
             ->when(isset($search['to_date']), function ($q2) use ($fromDate, $toDate) {
-                return $q2->whereBetween('created_at', [$fromDate, $toDate]);
+                return $q2->whereBetween('expense_date', [$fromDate, $toDate]);
             })
             ->where('status', 1)->paginate(config('basic.paginate'));
 
@@ -633,11 +633,13 @@ class CompanyController extends Controller
             $rules = [
                 'category_id' => 'required|exists:expense_categories,id',
                 'amount' => 'required',
+                'expense_date' => 'required',
             ];
 
             $message = [
                 'category_id.required' => __('Category field is required'),
                 'amount.required' => __('Amount field is required'),
+                'expense_date.required' => __('Expense Date is required'),
             ];
 
             $validate = Validator::make($purifiedData, $rules, $message);
@@ -648,13 +650,12 @@ class CompanyController extends Controller
 
             DB::beginTransaction();
 
-            $expense = Expense::firstOrNew([
+            Expense::create([
                 'company_id' => $admin->active_company_id,
-                'category_id' => $request->category_id,
+                'category_id' =>  $request->category_id,
+                'amount' => $request->amount,
+                'expense_date' => $request->expense_date,
             ]);
-
-            $expense->amount += $request->amount; // Increment the amount
-            $expense->save();
 
             DB::commit();
             return back()->with('success', 'Expense Added Successfully');
@@ -674,11 +675,13 @@ class CompanyController extends Controller
             $rules = [
                 'category_id' => 'required|exists:expense_categories,id',
                 'amount' => 'required',
+                'expense_date' => 'required',
             ];
 
             $message = [
                 'category_id.required' => __('Category field is required'),
                 'amount.required' => __('Amount field is required'),
+                'expense_date.required' => __('Expense Date is required'),
             ];
 
             $validate = Validator::make($purifiedData, $rules, $message);
@@ -692,6 +695,7 @@ class CompanyController extends Controller
             $expense = Expense::where('company_id', $admin->active_company_id)->findOrFail($id);
             $expense->category_id = $request->category_id;
             $expense->amount = $request->amount;
+            $expense->expense_date = $request->expense_date;
             $expense->save();
 
             DB::commit();

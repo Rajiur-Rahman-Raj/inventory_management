@@ -25,31 +25,31 @@
                     class="fal fa-house-flood"></i><?php echo app('translator')->get('Dashboard'); ?></a>
         </li>
 
-        <?php if(userType() == 1): ?>
-            <li>
-                <a class="<?php echo e(menuActive(['user.companyList', 'user.createCompany', 'user.companyEdit'])); ?>"
-                   href="<?php echo e(route('user.companyList')); ?>"><i class="fal fa-building"></i><?php echo app('translator')->get('Companies'); ?></a>
-            </li>
-        <?php endif; ?>
 
-        <li>
-            <a class="<?php echo e(menuActive(['user.customerList', 'user.createCustomer', 'user.customerDetails', 'user.customerEdit'])); ?>"
-               href="<?php echo e(route('user.customerList')); ?>"><i class="fal fa-users"></i> <?php echo app('translator')->get('Customers'); ?></a>
-        </li>
 
-        <?php if(userType() == 1): ?>
-            <li>
-                <a class="<?php echo e(menuActive(['user.salesCenterList', 'user.createSalesCenter', 'user.salesCenterDetails'])); ?>"
-                   href="<?php echo e(route('user.salesCenterList')); ?>"><i class="fab fa-adversal"></i><?php echo app('translator')->get('Sales Center'); ?></a>
-            </li>
-        <?php endif; ?>
 
-        <?php if(userType() == 1): ?>
-            <li>
-                <a class="<?php echo e(menuActive(['user.itemList'])); ?>" href="<?php echo e(route('user.itemList')); ?>"><i
-                        class="fal fa-sitemap"></i><?php echo app('translator')->get('Items'); ?></a>
-            </li>
-        <?php endif; ?>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         <?php
             $currentRouteName = request()->route()->getName();
@@ -114,12 +114,12 @@
             </div>
         </li>
 
-        <?php if(userType() == 1): ?>
-            <li>
-                <a class="<?php echo e(menuActive(['user.suppliers'])); ?>"
-                   href="<?php echo e(route('user.suppliers')); ?>"><i class="fab fa-adversal"></i><?php echo app('translator')->get('Suppliers'); ?></a>
-            </li>
-        <?php endif; ?>
+
+
+
+
+
+
 
         
         
@@ -209,12 +209,12 @@
             </li>
         <?php endif; ?>
 
-        <?php if(userType() == 1): ?>
-            <li>
-                <a class="<?php echo e(menuActive(['user.wastageList'])); ?>" href="<?php echo e(route('user.wastageList')); ?>"><i
-                        class="fal fa-sitemap"></i><?php echo app('translator')->get('Wastage'); ?></a>
-            </li>
-        <?php endif; ?>
+
+
+
+
+
+
 
         <?php if(userType() == 1): ?>
             <li>
@@ -222,11 +222,6 @@
                    href="<?php echo e(route('user.affiliateMemberList')); ?>"><i class="fal fa-sitemap"></i><?php echo app('translator')->get('Affiliate'); ?></a>
             </li>
         <?php endif; ?>
-
-
-
-
-
 
         <li>
             <a
@@ -239,26 +234,41 @@
                 <i class="fal fa-car-building"></i><?php echo app('translator')->get('Reports'); ?>
             </a>
             <div
-                class="collapse <?php echo e(menuActive(['user.purchaseReports'],4)); ?> dropdownManageReports"
+                class="collapse <?php echo e(menuActive(['user.purchaseReports', 'user.stockReports', 'user.wastageReports', 'user.expenseReports'],4)); ?> dropdownManageReports"
                 id="dropdownManageReports">
                 <ul class="">
-
-
-
-
-
-
-
-
-
-
-
-
-
                     <li>
                         <a class="<?php echo e(in_array($currentRouteName, ['user.purchaseReports']) ? 'active' : ''); ?>"
                            href="<?php echo e(route('user.purchaseReports')); ?>"><i
                                 class="fal fa-sack-dollar"></i><?php echo app('translator')->get('Purchase Report'); ?>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a class="<?php echo e(in_array($currentRouteName, ['user.purchaseReports']) ? 'active' : ''); ?>"
+                           href="<?php echo e(route('user.purchaseReports')); ?>"><i
+                                class="fal fa-sack-dollar"></i><?php echo app('translator')->get('Purchase Payment'); ?>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a class="<?php echo e(in_array($currentRouteName, ['user.stockReports']) ? 'active' : ''); ?>"
+                           href="<?php echo e(route('user.stockReports')); ?>"><i
+                                class="fal fa-sack-dollar"></i><?php echo app('translator')->get('Stock Report'); ?>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a class="<?php echo e(in_array($currentRouteName, ['user.wastageReports']) ? 'active' : ''); ?>"
+                           href="<?php echo e(route('user.wastageReports')); ?>"><i
+                                class="fal fa-sack-dollar"></i><?php echo app('translator')->get('Wastage Report'); ?>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a class="<?php echo e(in_array($currentRouteName, ['user.expenseReports']) ? 'active' : ''); ?>"
+                           href="<?php echo e(route('user.expenseReports')); ?>"><i
+                                class="fal fa-sack-dollar"></i><?php echo app('translator')->get('Expense Report'); ?>
                         </a>
                     </li>
 
