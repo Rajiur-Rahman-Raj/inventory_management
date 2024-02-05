@@ -128,11 +128,14 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'user', 'as' => 'user.'], fu
     // Reports
 
     // Purchase Reports
-    Route::get('purchase/reports', [ReportController::class, 'purchaseReports'])->name('purchaseReports');
     Route::get('export/purchase/reports', [ReportController::class, 'exportPurchaseReports'])->name('export.purchaseReports');
+    Route::get('purchase/reports', [ReportController::class, 'purchaseReports'])->name('purchaseReports');
 
-    Route::get('purchase/payment/reports', [ReportController::class, 'purchasePaymentReports'])->name('user.purchasePaymentReports');
+    Route::get('purchase/payment/reports', [ReportController::class, 'purchasePaymentReports'])->name('purchasePaymentReports');
     Route::get('export/purchase/payment/reports', [ReportController::class, 'exportPurchasePaymentReports'])->name('export.purchasePaymentReports');
+
+    Route::get('sales/reports', [ReportController::class, 'salesReports'])->name('salesReports');
+    Route::get('export/sales/reports', [ReportController::class, 'exportSalesReports'])->name('export.salesReports');
 
     Route::get('stock/reports', [ReportController::class, 'stockReports'])->name('stockReports');
     Route::get('export/stock/reports', [ReportController::class, 'exportStockReports'])->name('export.stockReports');
@@ -143,10 +146,11 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'user', 'as' => 'user.'], fu
     Route::get('expense/reports', [ReportController::class, 'expenseReports'])->name('expenseReports');
     Route::get('export/expense/reports', [ReportController::class, 'exportExpenseReports'])->name('export.expenseReports');
 
+    Route::get('affiliate/reports', [ReportController::class, 'affiliateReports'])->name('affiliateReports');
+    Route::get('export/affiliate/reports', [ReportController::class, 'exportAffiliateReports'])->name('export.affiliateReports');
 
     Route::get('stock/sales/reports', 'User\CompanyController@stockExpenseSalesProfitReports')->name('stockExpenseSalesProfitReports');
     Route::get('export-stock-sales-reports', 'User\CompanyController@exportStockExpenseSalesProfitReports')->name('export.stockExpenseSalesProfitReports');
-
 
     /* ===== Company Dashbaord data fetch using ajax ===== */
     Route::get('get-sales-stat-records', [HomeController::class, 'getSalesStatRecords'])->name('getSalesStatRecords');

@@ -25,10 +25,9 @@
                 <form action="" method="get" enctype="multipart/form-data" class="searchForm">
                     <div class="row g-3 align-items-end">
                         <div class="input-box col-lg-3">
-                            <label for="from_date"><?php echo app('translator')->get('From Date'); ?></label>
                             <div class="flatpickr">
                                 <div class="input-group">
-                                    <input type="date" placeholder="<?php echo app('translator')->get('Select date'); ?>"
+                                    <input type="date" placeholder="<?php echo app('translator')->get('From Date'); ?>"
                                            class="form-control from_date"
                                            name="from_date"
                                            value="<?php echo e(old('from_date',request()->from_date)); ?>"
@@ -56,10 +55,9 @@ unset($__errorArgs, $__bag); ?>
                         </div>
 
                         <div class="input-box col-lg-3">
-                            <label for="to_date"><?php echo app('translator')->get('To Date'); ?></label>
                             <div class="flatpickr">
                                 <div class="input-group">
-                                    <input type="date" placeholder="<?php echo app('translator')->get('Select date'); ?>"
+                                    <input type="date" placeholder="<?php echo app('translator')->get('To Date'); ?>"
                                            class="form-control to_date"
                                            name="to_date"
                                            value="<?php echo e(old('to_date',request()->to_date)); ?>"
@@ -87,8 +85,6 @@ unset($__errorArgs, $__bag); ?>
                         </div>
 
                         <div class="input-box col-lg-3">
-                            <label for=""><?php echo app('translator')->get('Supplier'); ?></label>
-
                             <select class="form-control js-example-basic-single" name="supplier_id"
                                     aria-label="Default select example">
                                 <option value=""><?php echo app('translator')->get('All Suppliers'); ?></option>
@@ -106,60 +102,71 @@ unset($__errorArgs, $__bag); ?>
                     </div>
                 </form>
             </div>
-            <?php if(isset($purchaseReportRecords) && count($purchaseReportRecords) > 0 && count($search) > 0): ?>
-                <div class="d-flex justify-content-end mb-4">
-                    <a href="javascript:void(0)" data-route="<?php echo e(route('user.export.purchaseReports')); ?>"
-                       class="btn btn-custom text-white reportsDownload downloadExcel"> <i
-                            class="fa fa-download"></i> <?php echo app('translator')->get('Download Excel'); ?></a>
-                </div>
-            <?php endif; ?>
 
             <?php if(isset($purchaseReportRecords) && count($search) > 0): ?>
-                <ul class="list-style-none p-0 stock_list_style">
-                    <table class="table table-bordered mt-4">
-                        <thead>
-                        <tr>
-                            <th scope="col">Supplier</th>
-                            <th scope="col">Raw Item</th>
-                            <th scope="col">Quantity</th>
-                            <th scope="col">Cost Per Unit</th>
-                            <th scope="col">Purchase Date</th>
-                            <th scope="col">Sub Total</th>
-                        </tr>
-                        </thead>
-                        <tbody>
+                <div class="card card-table">
+                    <div
+                        class="card-header custom-card-header bg-white d-flex flex-wrap justify-content-between align-items-center">
+                        <h5 class="m-0 text-primary"><?php echo app('translator')->get('All Purchases'); ?></h5>
 
-                        <?php if(count($purchaseReportRecords) > 0): ?>
-                            <?php $__currentLoopData = $purchaseReportRecords; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key1 => $purchaseIn): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                <?php $__currentLoopData = $purchaseIn->rawItemDetails; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key2 => $purchaseInDetails): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <div class="total-price">
+                            <ul class="m-0 list-unstyled">
+                                <li class="text-uppercase color-primary font-weight-bold">
+                                    <span><?php echo app('translator')->get('Total Price'); ?> =</span>
+                                    <span><?php echo e($totalPrice); ?> <?php echo e(config('basic.currency_text')); ?> </span></li>
+                            </ul>
+
+                        </div>
+
+                        <a href="javascript:void(0)" data-route="<?php echo e(route('user.export.purchaseReports')); ?>"
+                           class="btn text-white btn-custom2 reportsDownload downloadExcel"> <i
+                                class="fa fa-download"></i> <?php echo app('translator')->get('Download Excel File'); ?></a>
+
+                    </div>
+                    <ul class="list-style-none p-0 stock_list_style">
+                        <div class="table-responsive">
+                            <table class="table custom-table table-bordered mt-4">
+                                <thead>
+                                <tr>
+                                    <th scope="col">Supplier</th>
+                                    <th scope="col">Raw Item</th>
+                                    <th scope="col">Quantity</th>
+                                    <th scope="col">Cost Per Unit</th>
+                                    <th scope="col">Purchase Date</th>
+                                    <th scope="col">Sub Total</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+
+                                <?php if(count($purchaseReportRecords) > 0): ?>
+                                    <?php $__currentLoopData = $purchaseReportRecords; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key1 => $purchaseIn): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <?php $__currentLoopData = $purchaseIn->rawItemDetails; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key2 => $purchaseInDetails): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                            <tr>
+                                                <td data-label="Supplier"><?php echo e($purchaseIn->supplier->name); ?></td>
+                                                <td data-label="Raw Item"><?php echo e($purchaseInDetails->rawItem->name); ?></td>
+                                                <td data-label="Quantity"><?php echo e($purchaseInDetails->quantity); ?></td>
+                                                <td data-label="Cost Per Unit"><?php echo e($purchaseInDetails->cost_per_unit); ?> <?php echo e(config('basic.currency_symbol')); ?></td>
+                                                <td data-label="Purchase Date"><?php echo e(customDate($purchaseInDetails->purchase_date)); ?></td>
+                                                <td data-label="Sub Total"><?php echo e($purchaseInDetails->total_unit_cost); ?> <?php echo e(config('basic.currency_symbol')); ?></td>
+                                            </tr>
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                <?php else: ?>
                                     <tr>
-                                        <td data-label="Supplier"><?php echo e($purchaseIn->supplier->name); ?></td>
-                                        <td data-label="Raw Item"><?php echo e($purchaseInDetails->rawItem->name); ?></td>
-                                        <td data-label="Quantity"><?php echo e($purchaseInDetails->quantity); ?></td>
-                                        <td data-label="Cost Per Unit"><?php echo e($purchaseInDetails->cost_per_unit); ?> <?php echo e(config('basic.currency_symbol')); ?></td>
-                                        <td data-label="Purchase Date"><?php echo e(customDate($purchaseInDetails->purchase_date)); ?></td>
-                                        <td data-label="Sub Total"><?php echo e($purchaseInDetails->total_unit_cost); ?> <?php echo e(config('basic.currency_symbol')); ?></td>
+                                        <td class="text-center" colspan="100%">
+                                            <img
+                                                src="http://127.0.0.1/inventory_management/project/assets/global/img/no_data.gif"
+                                                class="card-img-top empty-state-img" alt="..." style="width: 300px">
+                                        </td>
                                     </tr>
-                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                        <?php else: ?>
-                            <tr>
-                                <td class="text-center" colspan="100%">
-                                    <img
-                                        src="http://127.0.0.1/inventory_management/project/assets/global/img/no_data.gif"
-                                        class="card-img-top empty-state-img" alt="..." style="width: 300px">
-                                </td>
-                            </tr>
-                        <?php endif; ?>
-                        <?php if(count($purchaseReportRecords) > 0): ?>
-                            <tr>
-                                <td colspan="5" class="text-end"><?php echo app('translator')->get('Total Price'); ?></td>
-                                <td>= <?php echo e($totalPrice); ?> <?php echo e(config('basic.currency_symbol')); ?></td>
-                            </tr>
-                        <?php endif; ?>
-                        </tbody>
-                    </table>
-                </ul>
+                                <?php endif; ?>
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </ul>
+                </div>
+
             <?php endif; ?>
         </div>
     </section>

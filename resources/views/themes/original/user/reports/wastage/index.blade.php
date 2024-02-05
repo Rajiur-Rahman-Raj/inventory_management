@@ -26,10 +26,9 @@
                 <form action="" method="get" enctype="multipart/form-data" class="searchForm">
                     <div class="row g-3 align-items-end">
                         <div class="input-box col-lg-3">
-                            <label for="from_date">@lang('From Date')</label>
                             <div class="flatpickr">
                                 <div class="input-group">
-                                    <input type="date" placeholder="@lang('Select date')"
+                                    <input type="date" placeholder="@lang('From Date')"
                                            class="form-control from_date"
                                            name="from_date"
                                            value="{{ old('from_date',request()->from_date) }}"
@@ -50,10 +49,9 @@
                         </div>
 
                         <div class="input-box col-lg-3">
-                            <label for="to_date">@lang('To Date')</label>
                             <div class="flatpickr">
                                 <div class="input-group">
-                                    <input type="date" placeholder="@lang('Select date')"
+                                    <input type="date" placeholder="@lang('To Date')"
                                            class="form-control to_date"
                                            name="to_date"
                                            value="{{ old('to_date',request()->to_date) }}"
@@ -75,7 +73,6 @@
 
 
                         <div class="input-box col-lg-3">
-                            <label for="">@lang('Raw Item')</label>
                             <select class="form-control js-example-basic-single" name="raw_item_id"
                                     aria-label="Default select example">
                                 <option value="">@lang('All Items')</option>
@@ -93,52 +90,71 @@
                     </div>
                 </form>
             </div>
-            @if(isset($wastageReportRecords) && count($wastageReportRecords) > 0 && count($search) > 0)
-                <div class="d-flex justify-content-end mb-4">
-                    <a href="javascript:void(0)" data-route="{{route('user.export.wastageReports')}}"
-                       class="btn btn-custom text-white reportsDownload downloadExcel"> <i
-                            class="fa fa-download"></i> @lang('Download Excel')</a>
-                </div>
-            @endif
 
             @if(isset($wastageReportRecords) && count($search) > 0)
-                <ul class="list-style-none p-0 stock_list_style">
-                    <table class="table table-bordered mt-4">
-                        <thead>
-                        <tr>
-                            <th scope="col">Raw Item</th>
-                            <th scope="col">Quantity</th>
-                            <th scope="col">Date Of Wastage</th>
-                        </tr>
-                        </thead>
-                        <tbody>
+                <div class="card card-table">
+                    @if(count($wastageReportRecords) > 0)
+                        <div class="card-header custom-card-header bg-white d-flex flex-wrap justify-content-between align-items-center">
+                            <h5 class="m-0 text-primary">@lang('All Stocks')</h5>
 
-                        @if(count($wastageReportRecords) > 0)
-                            @foreach($wastageReportRecords as $key => $wastage)
+                            <div class="total-price">
+                                <ul class="m-0 list-unstyled">
+                                    <li class="text-uppercase  color-primary font-weight-bold mb-1">
+                                        <span>@lang('Total Quantity') = </span>
+                                        <span>{{ $totalWastage }} </span></li>
+
+                                    <li class="text-uppercase color-primary font-weight-bold">
+                                        <span>@lang('Total Amount') =</span>
+                                        <span>{{ $totalWastageAmount }} {{ config('basic.currency_text') }}</span></li>
+                                </ul>
+                            </div>
+
+                            <a href="javascript:void(0)" data-route="{{route('user.export.wastageReports')}}"
+                               class="btn text-white btn-custom2 reportsDownload downloadExcel"> <i
+                                    class="fa fa-download"></i> @lang('Download Excel File')</a>
+
+                        </div>
+                    @endif
+                    <div class="table-responsive">
+                        <ul class="list-style-none p-0 stock_list_style">
+                            <table class="table custom-table table-bordered mt-4">
+                                <thead>
                                 <tr>
-                                    <td data-label="Raw Item">{{ $wastage->rawItem->name }}</td>
-                                    <td data-label="Quantity">{{ $wastage->quantity }}</td>
-                                    <td data-label="Date Of Wastage">{{ customDate($wastage->wastage_date) }}</td>
+                                    <th scope="col">Raw Item</th>
+                                    <th scope="col">Quantity</th>
+                                    <th scope="col">Cost Per Unit</th>
+                                    <th scope="col">Sub Total</th>
+                                    <th scope="col">Date Of Wastage</th>
                                 </tr>
-                            @endforeach
-                        @else
-                            <tr>
-                                <td class="text-center" colspan="100%">
-                                    <img
-                                        src="{{ asset('assets/global/img/no_data.gif') }}"
-                                        class="card-img-top empty-state-img" alt="..." style="width: 300px">
-                                </td>
-                            </tr>
-                        @endif
-                        @if(count($wastageReportRecords) > 0)
-                            <tr>
-                                <td colspan="1" class="text-end font-weight-bold">@lang('Total Wastage')  </td>
-                                <td class="font-weight-bold">{{ $totalWastage }}</td>
-                            </tr>
-                        @endif
-                        </tbody>
-                    </table>
-                </ul>
+                                </thead>
+                                <tbody>
+
+                                @if(count($wastageReportRecords) > 0)
+                                    @foreach($wastageReportRecords as $key => $wastage)
+                                        <tr>
+                                            <td data-label="Raw Item">{{ $wastage->rawItem->name }}</td>
+                                            <td data-label="Quantity">{{ $wastage->quantity }}</td>
+                                            <td data-label="Cost Per Unit">{{ config('basic.currency_symbol') }} {{ $wastage->cost_per_unit }}</td>
+                                            <td data-label="Sub Total">{{ config('basic.currency_symbol') }} {{ $wastage->total_cost }}</td>
+                                            <td data-label="Date Of Wastage">{{ customDate($wastage->wastage_date) }}</td>
+                                        </tr>
+                                    @endforeach
+                                @else
+                                    <tr>
+                                        <td class="text-center" colspan="100%">
+                                            <img
+                                                src="{{ asset('assets/global/img/no_data.gif') }}"
+                                                class="card-img-top empty-state-img" alt="..." style="width: 300px">
+                                        </td>
+                                    </tr>
+                                @endif
+                                </tbody>
+                            </table>
+                        </ul>
+                    </div>
+
+                </div>
+
             @endif
         </div>
     </section>

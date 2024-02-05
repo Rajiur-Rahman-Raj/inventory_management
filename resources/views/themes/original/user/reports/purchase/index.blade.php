@@ -26,10 +26,9 @@
                 <form action="" method="get" enctype="multipart/form-data" class="searchForm">
                     <div class="row g-3 align-items-end">
                         <div class="input-box col-lg-3">
-                            <label for="from_date">@lang('From Date')</label>
                             <div class="flatpickr">
                                 <div class="input-group">
-                                    <input type="date" placeholder="@lang('Select date')"
+                                    <input type="date" placeholder="@lang('From Date')"
                                            class="form-control from_date"
                                            name="from_date"
                                            value="{{ old('from_date',request()->from_date) }}"
@@ -50,10 +49,9 @@
                         </div>
 
                         <div class="input-box col-lg-3">
-                            <label for="to_date">@lang('To Date')</label>
                             <div class="flatpickr">
                                 <div class="input-group">
-                                    <input type="date" placeholder="@lang('Select date')"
+                                    <input type="date" placeholder="@lang('To Date')"
                                            class="form-control to_date"
                                            name="to_date"
                                            value="{{ old('to_date',request()->to_date) }}"
@@ -74,8 +72,6 @@
                         </div>
 
                         <div class="input-box col-lg-3">
-                            <label for="">@lang('Supplier')</label>
-
                             <select class="form-control js-example-basic-single" name="supplier_id"
                                     aria-label="Default select example">
                                 <option value="">@lang('All Suppliers')</option>
@@ -93,60 +89,73 @@
                     </div>
                 </form>
             </div>
-            @if(isset($purchaseReportRecords) && count($purchaseReportRecords) > 0 && count($search) > 0)
-                <div class="d-flex justify-content-end mb-4">
-                    <a href="javascript:void(0)" data-route="{{route('user.export.purchaseReports')}}"
-                       class="btn btn-custom text-white reportsDownload downloadExcel"> <i
-                            class="fa fa-download"></i> @lang('Download Excel')</a>
-                </div>
-            @endif
 
             @if(isset($purchaseReportRecords) && count($search) > 0)
-                <ul class="list-style-none p-0 stock_list_style">
-                    <table class="table table-bordered mt-4">
-                        <thead>
-                        <tr>
-                            <th scope="col">Supplier</th>
-                            <th scope="col">Raw Item</th>
-                            <th scope="col">Quantity</th>
-                            <th scope="col">Cost Per Unit</th>
-                            <th scope="col">Purchase Date</th>
-                            <th scope="col">Sub Total</th>
-                        </tr>
-                        </thead>
-                        <tbody>
+                <div class="card card-table">
+                    @if(count($purchaseReportRecords) > 0)
+                        <div
+                            class="card-header custom-card-header bg-white d-flex flex-wrap justify-content-between align-items-center">
+                            <h5 class="m-0 text-primary">@lang('All Purchases')</h5>
 
-                        @if(count($purchaseReportRecords) > 0)
-                            @foreach($purchaseReportRecords as $key1 => $purchaseIn)
-                                @foreach($purchaseIn->rawItemDetails as $key2 => $purchaseInDetails)
+                            <div class="total-price">
+                                <ul class="m-0 list-unstyled">
+                                    <li class="text-uppercase color-primary font-weight-bold">
+                                        <span>@lang('Total Price') =</span>
+                                        <span>{{ $totalPrice }} {{ config('basic.currency_text') }} </span></li>
+                                </ul>
+
+                            </div>
+
+                            <a href="javascript:void(0)" data-route="{{route('user.export.purchaseReports')}}"
+                               class="btn text-white btn-custom2 reportsDownload downloadExcel"> <i
+                                    class="fa fa-download"></i> @lang('Download Excel File')</a>
+
+                        </div>
+                    @endif
+                    <ul class="list-style-none p-0 stock_list_style">
+                        <div class="table-responsive">
+                            <table class="table custom-table table-bordered mt-4">
+                                <thead>
+                                <tr>
+                                    <th scope="col">Supplier</th>
+                                    <th scope="col">Raw Item</th>
+                                    <th scope="col">Quantity</th>
+                                    <th scope="col">Cost Per Unit</th>
+                                    <th scope="col">Purchase Date</th>
+                                    <th scope="col">Sub Total</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+
+                                @if(count($purchaseReportRecords) > 0)
+                                    @foreach($purchaseReportRecords as $key1 => $purchaseIn)
+                                        @foreach($purchaseIn->rawItemDetails as $key2 => $purchaseInDetails)
+                                            <tr>
+                                                <td data-label="Supplier">{{ $purchaseIn->supplier->name }}</td>
+                                                <td data-label="Raw Item">{{ $purchaseInDetails->rawItem->name }}</td>
+                                                <td data-label="Quantity">{{ $purchaseInDetails->quantity }}</td>
+                                                <td data-label="Cost Per Unit">{{ $purchaseInDetails->cost_per_unit }} {{ config('basic.currency_symbol') }}</td>
+                                                <td data-label="Purchase Date">{{ customDate($purchaseInDetails->purchase_date) }}</td>
+                                                <td data-label="Sub Total">{{ $purchaseInDetails->total_unit_cost }} {{ config('basic.currency_symbol') }}</td>
+                                            </tr>
+                                        @endforeach
+                                    @endforeach
+                                @else
                                     <tr>
-                                        <td data-label="Supplier">{{ $purchaseIn->supplier->name }}</td>
-                                        <td data-label="Raw Item">{{ $purchaseInDetails->rawItem->name }}</td>
-                                        <td data-label="Quantity">{{ $purchaseInDetails->quantity }}</td>
-                                        <td data-label="Cost Per Unit">{{ $purchaseInDetails->cost_per_unit }} {{ config('basic.currency_symbol') }}</td>
-                                        <td data-label="Purchase Date">{{ customDate($purchaseInDetails->purchase_date) }}</td>
-                                        <td data-label="Sub Total">{{ $purchaseInDetails->total_unit_cost }} {{ config('basic.currency_symbol') }}</td>
+                                        <td class="text-center" colspan="100%">
+                                            <img
+                                                src="http://127.0.0.1/inventory_management/project/assets/global/img/no_data.gif"
+                                                class="card-img-top empty-state-img" alt="..." style="width: 300px">
+                                        </td>
                                     </tr>
-                                @endforeach
-                            @endforeach
-                        @else
-                            <tr>
-                                <td class="text-center" colspan="100%">
-                                    <img
-                                        src="http://127.0.0.1/inventory_management/project/assets/global/img/no_data.gif"
-                                        class="card-img-top empty-state-img" alt="..." style="width: 300px">
-                                </td>
-                            </tr>
-                        @endif
-                        @if(count($purchaseReportRecords) > 0)
-                            <tr>
-                                <td colspan="5" class="text-end">@lang('Total Price')</td>
-                                <td>= {{ $totalPrice }} {{ config('basic.currency_symbol') }}</td>
-                            </tr>
-                        @endif
-                        </tbody>
-                    </table>
-                </ul>
+                                @endif
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </ul>
+                </div>
+
             @endif
         </div>
     </section>

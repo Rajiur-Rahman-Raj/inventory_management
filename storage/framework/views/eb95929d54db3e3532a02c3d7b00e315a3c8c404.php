@@ -25,10 +25,9 @@
                 <form action="" method="get" enctype="multipart/form-data" class="searchForm">
                     <div class="row g-3 align-items-end">
                         <div class="input-box col-lg-3">
-                            <label for="from_date"><?php echo app('translator')->get('From Date'); ?></label>
                             <div class="flatpickr">
                                 <div class="input-group">
-                                    <input type="date" placeholder="<?php echo app('translator')->get('Select date'); ?>"
+                                    <input type="date" placeholder="<?php echo app('translator')->get('From Date'); ?>"
                                            class="form-control from_date"
                                            name="from_date"
                                            value="<?php echo e(old('from_date',request()->from_date)); ?>"
@@ -56,10 +55,9 @@ unset($__errorArgs, $__bag); ?>
                         </div>
 
                         <div class="input-box col-lg-3">
-                            <label for="to_date"><?php echo app('translator')->get('To Date'); ?></label>
                             <div class="flatpickr">
                                 <div class="input-group">
-                                    <input type="date" placeholder="<?php echo app('translator')->get('Select date'); ?>"
+                                    <input type="date" placeholder="<?php echo app('translator')->get('To Date'); ?>"
                                            class="form-control to_date"
                                            name="to_date"
                                            value="<?php echo e(old('to_date',request()->to_date)); ?>"
@@ -88,7 +86,6 @@ unset($__errorArgs, $__bag); ?>
 
 
                         <div class="input-box col-lg-3">
-                            <label for=""><?php echo app('translator')->get('Raw Item'); ?></label>
                             <select class="form-control js-example-basic-single" name="raw_item_id"
                                     aria-label="Default select example">
                                 <option value=""><?php echo app('translator')->get('All Items'); ?></option>
@@ -106,52 +103,73 @@ unset($__errorArgs, $__bag); ?>
                     </div>
                 </form>
             </div>
-            <?php if(isset($wastageReportRecords) && count($wastageReportRecords) > 0 && count($search) > 0): ?>
-                <div class="d-flex justify-content-end mb-4">
-                    <a href="javascript:void(0)" data-route="<?php echo e(route('user.export.wastageReports')); ?>"
-                       class="btn btn-custom text-white reportsDownload downloadExcel"> <i
-                            class="fa fa-download"></i> <?php echo app('translator')->get('Download Excel'); ?></a>
-                </div>
-            <?php endif; ?>
 
             <?php if(isset($wastageReportRecords) && count($search) > 0): ?>
-                <ul class="list-style-none p-0 stock_list_style">
-                    <table class="table table-bordered mt-4">
-                        <thead>
-                        <tr>
-                            <th scope="col">Raw Item</th>
-                            <th scope="col">Quantity</th>
-                            <th scope="col">Date Of Wastage</th>
-                        </tr>
-                        </thead>
-                        <tbody>
+                <div class="card card-table">
+                    <?php if(count($wastageReportRecords) > 0): ?>
+                        <div
+                            class="card-header custom-card-header bg-white d-flex flex-wrap justify-content-between align-items-center">
+                            <h5 class="m-0 text-primary"><?php echo app('translator')->get('All Stocks'); ?></h5>
 
-                        <?php if(count($wastageReportRecords) > 0): ?>
-                            <?php $__currentLoopData = $wastageReportRecords; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $wastage): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <div class="total-price">
+                                <ul class="m-0 list-unstyled">
+                                    <li class="text-uppercase  color-primary font-weight-bold mb-1">
+                                        <span><?php echo app('translator')->get('Total Quantity'); ?> =</span>
+                                        <span><?php echo e($totalWastage); ?> </span></li>
+
+                                    <li class="text-uppercase color-primary font-weight-bold">
+                                        <span><?php echo app('translator')->get('Total Amount'); ?> =</span>
+                                        <span><?php echo e($totalWastageAmount); ?> <?php echo e(config('basic.currency_text')); ?></span></li>
+                                </ul>
+
+                            </div>
+
+                            <a href="javascript:void(0)" data-route="<?php echo e(route('user.export.wastageReports')); ?>"
+                               class="btn text-white btn-custom2 reportsDownload downloadExcel"> <i
+                                    class="fa fa-download"></i> <?php echo app('translator')->get('Download Excel File'); ?></a>
+
+                        </div>
+                    <?php endif; ?>
+                    <div class="table-responsive">
+                        <ul class="list-style-none p-0 stock_list_style">
+                            <table class="table custom-table table-bordered mt-4">
+                                <thead>
                                 <tr>
-                                    <td data-label="Raw Item"><?php echo e($wastage->rawItem->name); ?></td>
-                                    <td data-label="Quantity"><?php echo e($wastage->quantity); ?></td>
-                                    <td data-label="Date Of Wastage"><?php echo e(customDate($wastage->wastage_date)); ?></td>
+                                    <th scope="col">Raw Item</th>
+                                    <th scope="col">Quantity</th>
+                                    <th scope="col">Cost Per Unit</th>
+                                    <th scope="col">Sub Total</th>
+                                    <th scope="col">Date Of Wastage</th>
                                 </tr>
-                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                        <?php else: ?>
-                            <tr>
-                                <td class="text-center" colspan="100%">
-                                    <img
-                                        src="<?php echo e(asset('assets/global/img/no_data.gif')); ?>"
-                                        class="card-img-top empty-state-img" alt="..." style="width: 300px">
-                                </td>
-                            </tr>
-                        <?php endif; ?>
-                        <?php if(count($wastageReportRecords) > 0): ?>
-                            <tr>
-                                <td colspan="1" class="text-end font-weight-bold"><?php echo app('translator')->get('Total Wastage'); ?>  </td>
-                                <td class="font-weight-bold"><?php echo e($totalWastage); ?></td>
-                            </tr>
-                        <?php endif; ?>
-                        </tbody>
-                    </table>
-                </ul>
+                                </thead>
+                                <tbody>
+
+                                <?php if(count($wastageReportRecords) > 0): ?>
+                                    <?php $__currentLoopData = $wastageReportRecords; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $wastage): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <tr>
+                                            <td data-label="Raw Item"><?php echo e($wastage->rawItem->name); ?></td>
+                                            <td data-label="Quantity"><?php echo e($wastage->quantity); ?></td>
+                                            <td data-label="Cost Per Unit"><?php echo e(config('basic.currency_symbol')); ?> <?php echo e($wastage->cost_per_unit); ?></td>
+                                            <td data-label="Sub Total"><?php echo e(config('basic.currency_symbol')); ?> <?php echo e($wastage->total_cost); ?></td>
+                                            <td data-label="Date Of Wastage"><?php echo e(customDate($wastage->wastage_date)); ?></td>
+                                        </tr>
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                <?php else: ?>
+                                    <tr>
+                                        <td class="text-center" colspan="100%">
+                                            <img
+                                                src="<?php echo e(asset('assets/global/img/no_data.gif')); ?>"
+                                                class="card-img-top empty-state-img" alt="..." style="width: 300px">
+                                        </td>
+                                    </tr>
+                                <?php endif; ?>
+                                </tbody>
+                            </table>
+                        </ul>
+                    </div>
+
+                </div>
+
             <?php endif; ?>
         </div>
     </section>

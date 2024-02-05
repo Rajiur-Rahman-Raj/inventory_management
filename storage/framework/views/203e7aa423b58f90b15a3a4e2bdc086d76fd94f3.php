@@ -216,12 +216,12 @@
 
 
 
-        <?php if(userType() == 1): ?>
-            <li>
-                <a class="<?php echo e(menuActive(['user.affiliateMemberList', 'user.createAffiliateMember', 'user.affiliateMemberEdit'])); ?>"
-                   href="<?php echo e(route('user.affiliateMemberList')); ?>"><i class="fal fa-sitemap"></i><?php echo app('translator')->get('Affiliate'); ?></a>
-            </li>
-        <?php endif; ?>
+
+
+
+
+
+
 
         <li>
             <a
@@ -234,7 +234,7 @@
                 <i class="fal fa-car-building"></i><?php echo app('translator')->get('Reports'); ?>
             </a>
             <div
-                class="collapse <?php echo e(menuActive(['user.purchaseReports', 'user.stockReports', 'user.wastageReports', 'user.expenseReports'],4)); ?> dropdownManageReports"
+                class="collapse <?php echo e(menuActive(['user.purchaseReports', 'user.stockReports', 'user.wastageReports', 'user.expenseReports', 'user.purchasePaymentReports', 'user.affiliateReports'],4)); ?> dropdownManageReports"
                 id="dropdownManageReports">
                 <ul class="">
                     <li>
@@ -245,8 +245,8 @@
                     </li>
 
                     <li>
-                        <a class="<?php echo e(in_array($currentRouteName, ['user.purchaseReports']) ? 'active' : ''); ?>"
-                           href="<?php echo e(route('user.purchaseReports')); ?>"><i
+                        <a class="<?php echo e(in_array($currentRouteName, ['user.purchasePaymentReports']) ? 'active' : ''); ?>"
+                           href="<?php echo e(route('user.purchasePaymentReports')); ?>"><i
                                 class="fal fa-sack-dollar"></i><?php echo app('translator')->get('Purchase Payment'); ?>
                         </a>
                     </li>
@@ -259,9 +259,23 @@
                     </li>
 
                     <li>
+                        <a class="<?php echo e(in_array($currentRouteName, ['user.salesReports']) ? 'active' : ''); ?>"
+                           href="<?php echo e(route('user.salesReports')); ?>"><i
+                                class="fal fa-sack-dollar"></i><?php echo app('translator')->get('Sales Report'); ?>
+                        </a>
+                    </li>
+
+                    <li>
                         <a class="<?php echo e(in_array($currentRouteName, ['user.wastageReports']) ? 'active' : ''); ?>"
                            href="<?php echo e(route('user.wastageReports')); ?>"><i
                                 class="fal fa-sack-dollar"></i><?php echo app('translator')->get('Wastage Report'); ?>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a class="<?php echo e(in_array($currentRouteName, ['user.affiliateReports']) ? 'active' : ''); ?>"
+                           href="<?php echo e(route('user.affiliateReports')); ?>"><i
+                                class="fal fa-sack-dollar"></i><?php echo app('translator')->get('Affiliation Report'); ?>
                         </a>
                     </li>
 

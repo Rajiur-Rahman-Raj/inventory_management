@@ -28,4 +28,8 @@ class RawItemPurchaseIn extends Model
     public function rawItemDetails(){
         return $this->hasMany(RawItemPurchaseInDetails::class, 'raw_item_purchase_in_id');
     }
+
+    public function purchasePayments(){
+        return $this->hasMany(PurchaseRawItemMakePayment::class, 'raw_item_purchase_in_id');
+    }
 }

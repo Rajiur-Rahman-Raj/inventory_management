@@ -25,10 +25,9 @@
                 <form action="" method="get" enctype="multipart/form-data" class="searchForm">
                     <div class="row g-3 align-items-end">
                         <div class="input-box col-lg-4">
-                            <label for="from_date"><?php echo app('translator')->get('From Date'); ?></label>
                             <div class="flatpickr">
                                 <div class="input-group">
-                                    <input type="date" placeholder="<?php echo app('translator')->get('Select date'); ?>"
+                                    <input type="date" placeholder="<?php echo app('translator')->get('From Date'); ?>"
                                            class="form-control from_date"
                                            name="from_date"
                                            value="<?php echo e(old('from_date',request()->from_date)); ?>"
@@ -56,10 +55,9 @@ unset($__errorArgs, $__bag); ?>
                         </div>
 
                         <div class="input-box col-lg-4">
-                            <label for="to_date"><?php echo app('translator')->get('To Date'); ?></label>
                             <div class="flatpickr">
                                 <div class="input-group">
-                                    <input type="date" placeholder="<?php echo app('translator')->get('Select date'); ?>"
+                                    <input type="date" placeholder="<?php echo app('translator')->get('To Date'); ?>"
                                            class="form-control to_date"
                                            name="to_date"
                                            value="<?php echo e(old('to_date',request()->to_date)); ?>"
@@ -93,58 +91,70 @@ unset($__errorArgs, $__bag); ?>
                     </div>
                 </form>
             </div>
-            <?php if(isset($stockReportRecords) && count($stockReportRecords) > 0 && count($search) > 0): ?>
-                <div class="d-flex justify-content-end mb-4">
-                    <a href="javascript:void(0)" data-route="<?php echo e(route('user.export.stockReports')); ?>"
-                       class="btn btn-custom text-white reportsDownload downloadExcel"> <i
-                            class="fa fa-download"></i> <?php echo app('translator')->get('Download Excel'); ?></a>
-                </div>
-            <?php endif; ?>
 
             <?php if(isset($stockReportRecords) && count($search) > 0): ?>
-                <ul class="list-style-none p-0 stock_list_style">
-                    <table class="table table-bordered mt-4">
-                        <thead>
-                        <tr>
-                            <th scope="col">Item</th>
-                            <th scope="col">Quantity</th>
-                            <th scope="col">Cost Per Unit</th>
-                            <th scope="col">Stock Date</th>
-                            <th scope="col">Sub Total</th>
-                        </tr>
-                        </thead>
-                        <tbody>
+                <div class="card card-table">
+                    <?php if(count($stockReportRecords) > 0): ?>
+                        <div
+                            class="card-header custom-card-header bg-white d-flex flex-wrap justify-content-between align-items-center">
+                            <h5 class="m-0 text-primary"><?php echo app('translator')->get('All Stocks'); ?></h5>
 
-                        <?php if(count($stockReportRecords) > 0): ?>
-                            <?php $__currentLoopData = $stockReportRecords; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key1 => $stockIn): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                <?php $__currentLoopData = $stockIn->stockInDetails; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key2 => $stockInDetail): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <div class="total-price">
+                                <ul class="m-0 list-unstyled">
+                                    <li class="text-uppercase color-primary font-weight-bold">
+                                        <span><?php echo app('translator')->get('Total'); ?> =</span>
+                                        <span><?php echo e($totalStockCost); ?> <?php echo e(config('basic.currency_text')); ?> </span></li>
+                                </ul>
+
+                            </div>
+
+                            <a href="javascript:void(0)" data-route="<?php echo e(route('user.export.stockReports')); ?>"
+                               class="btn text-white btn-custom2 reportsDownload downloadExcel"> <i
+                                    class="fa fa-download"></i> <?php echo app('translator')->get('Download Excel File'); ?></a>
+
+                        </div>
+                    <?php endif; ?>
+                    <div class="table-responsive">
+                        <ul class="list-style-none p-0 stock_list_style">
+                            <table class="table custom-table table-bordered mt-4">
+                                <thead>
+                                <tr>
+                                    <th scope="col">Item</th>
+                                    <th scope="col">Quantity</th>
+                                    <th scope="col">Cost Per Unit</th>
+                                    <th scope="col">Stock Date</th>
+                                    <th scope="col">Sub Total</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+
+                                <?php if(count($stockReportRecords) > 0): ?>
+                                    <?php $__currentLoopData = $stockReportRecords; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key1 => $stockIn): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <?php $__currentLoopData = $stockIn->stockInDetails; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key2 => $stockInDetail): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                            <tr>
+                                                <td data-label="Item"><?php echo e($stockInDetail->item->name); ?></td>
+                                                <td data-label="Quantity"><?php echo e($stockInDetail->quantity); ?></td>
+                                                <td data-label="Cost Per Unit"><?php echo e($stockInDetail->cost_per_unit); ?> <?php echo e(config('basic.currency_symbol')); ?></td>
+                                                <td data-label="Stock Date"> <?php echo e(customDate($stockInDetail->stock_date)); ?> </td>
+                                                <td data-label="Sub Total"><?php echo e($stockInDetail->total_unit_cost); ?> <?php echo e(config('basic.currency_symbol')); ?></td>
+                                            </tr>
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                <?php else: ?>
                                     <tr>
-                                        <td data-label="Item"><?php echo e($stockInDetail->item->name); ?></td>
-                                        <td data-label="Quantity"><?php echo e($stockInDetail->quantity); ?></td>
-                                        <td data-label="Cost Per Unit"><?php echo e($stockInDetail->cost_per_unit); ?> <?php echo e(config('basic.currency_symbol')); ?></td>
-                                        <td data-label="Stock Date"> <?php echo e(customDate($stockInDetail->stock_date)); ?> </td>
-                                        <td data-label="Sub Total"><?php echo e($stockInDetail->total_unit_cost); ?> <?php echo e(config('basic.currency_symbol')); ?></td>
+                                        <td class="text-center" colspan="100%">
+                                            <img
+                                                src="<?php echo e(asset('assets/global/img/no_data.gif')); ?>"
+                                                class="card-img-top empty-state-img" alt="..." style="width: 300px">
+                                        </td>
                                     </tr>
-                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                        <?php else: ?>
-                            <tr>
-                                <td class="text-center" colspan="100%">
-                                    <img
-                                        src="<?php echo e(asset('assets/global/img/no_data.gif')); ?>"
-                                        class="card-img-top empty-state-img" alt="..." style="width: 300px">
-                                </td>
-                            </tr>
-                        <?php endif; ?>
-                        <?php if(count($stockReportRecords) > 0): ?>
-                            <tr>
-                                <td colspan="4" class="text-end"><?php echo app('translator')->get('Total Cost'); ?></td>
-                                <td >= <?php echo e($totalStockCost); ?> <?php echo e(config('basic.currency_symbol')); ?></td>
-                            </tr>
-                        <?php endif; ?>
-                        </tbody>
-                    </table>
-                </ul>
+                                <?php endif; ?>
+                                </tbody>
+                            </table>
+                        </ul>
+                    </div>
+                </div>
+
             <?php endif; ?>
         </div>
     </section>

@@ -2,15 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\AffiliateReportExport;
 use App\Exports\ExpenseReportExport;
 use App\Exports\PurchaseExport;
+use App\Exports\PurchasePaymentReportExport;
+use App\Exports\SalesReportExport;
 use App\Exports\StockReportExport;
 use App\Exports\wastageReportExport;
+use App\Models\AffiliateMember;
+use App\Models\AffiliateMemberCommission;
+use App\Models\Customer;
 use App\Models\Expense;
 use App\Models\ExpenseCategory;
 use App\Models\Item;
 use App\Models\RawItem;
 use App\Models\RawItemPurchaseIn;
+use App\Models\Sale;
+use App\Models\SalesCenter;
 use App\Models\StockIn;
 use App\Models\Supplier;
 use App\Models\Wastage;
@@ -50,7 +58,7 @@ class ReportController extends Controller
                     ->when(isset($search['to_date']), function ($query) use ($fromDate, $toDate) {
                         return $query->whereBetween('purchase_date', [$fromDate, $toDate]);
                     })
-                    ->when(isset($search['supplier_id']), function ($query) use ($search) {
+                    ->when($search['supplier_id'] != null, function ($query) use ($search) {
                         return $query->where('supplier_id', $search['supplier_id']);
                     })
                     ->where('company_id', $admin->active_company_id)
@@ -139,6 +147,7 @@ class ReportController extends Controller
                     ->get();
 
                 $data['totalWastage'] = $data['wastageReportRecords']->sum('quantity');
+                $data['totalWastageAmount'] = $data['wastageReportRecords']->sum('total_cost');
 
                 return view($this->theme . 'user.reports.wastage.index', $data, compact('search'));
 
@@ -203,8 +212,6 @@ class ReportController extends Controller
         return Excel::download(new ExpenseReportExport($request, $admin), 'expenseReport.xlsx');
     }
 
-
-    // working here....
     public function purchasePaymentReports(Request $request)
     {
         $admin = $this->user;
@@ -217,38 +224,136 @@ class ReportController extends Controller
 
             if (!empty($search)) {
 
-                $data['purchaseReportRecords'] = RawItemPurchaseIn::with('supplier:id,name', 'rawItemDetails.rawItem')
+                $data['purchasePaymentReportRecords'] = RawItemPurchaseIn::with('supplier:id,name', 'purchasePayments')
                     ->when(isset($search['from_date']), function ($query) use ($fromDate) {
                         return $query->whereDate('purchase_date', '>=', $fromDate);
                     })
                     ->when(isset($search['to_date']), function ($query) use ($fromDate, $toDate) {
                         return $query->whereBetween('purchase_date', [$fromDate, $toDate]);
                     })
-                    ->when(isset($search['supplier_id']), function ($query) use ($search) {
+                    ->when($search['supplier_id'] != null, function ($query) use ($search) {
                         return $query->where('supplier_id', $search['supplier_id']);
                     })
                     ->where('company_id', $admin->active_company_id)
                     ->get();
 
+                $data['totalPaidAmount'] = $data['purchasePaymentReportRecords']->flatMap->purchasePayments->sum('amount');
+                $data['totalDueAmount'] = $data['purchasePaymentReportRecords']->flatMap->purchasePayments->sum('due');
 
-                $data['totalPrice'] = $data['purchaseReportRecords']->flatMap->rawItemDetails->sum('total_unit_cost');
-
-                return view($this->theme . 'user.reports.purchase.index', $data, compact('search'));
+                return view($this->theme . 'user.reports.purchase.payment', $data, compact('search'));
             } else {
-                $data['purchaseReportRecords'] = null;
-                return view($this->theme . 'user.reports.purchase.index', $data, compact('search'));
+                $data['purchasePaymentReportRecords'] = null;
+                return view($this->theme . 'user.reports.purchase.payment', $data, compact('search'));
             }
 
         } catch (\Exception $exception) {
             $data = ['error' => $exception->getMessage()];
-            return view($this->theme . 'user.reports.purchase.index', $data, compact('search'));
+            return view($this->theme . 'user.reports.purchase.payment', $data, compact('search'));
         }
     }
 
     public function exportPurchasePaymentReports(Request $request)
     {
         $admin = $this->user;
-        return Excel::download(new PurchaseExport($request, $admin), 'purchaseReport.xlsx');
+        return Excel::download(new PurchasePaymentReportExport($request, $admin), 'purchasePaymentReport.xlsx');
     }
+
+
+    public function affiliateReports(Request $request)
+    {
+        $admin = $this->user;
+        $search = $request->all();
+        $fromDate = Carbon::parse($request->from_date);
+        $toDate = Carbon::parse($request->to_date)->addDay();
+
+        try {
+
+            $data['affiliateMembers'] = AffiliateMember::where('company_id', $admin->active_company_id)->select('id', 'member_name')->get();
+
+            if (!empty($search)) {
+                $data['affiliateReportRecords'] = AffiliateMemberCommission::with('affiliateMember:id,member_name')
+                    ->when(isset($search['from_date']), function ($query) use ($fromDate) {
+                        return $query->whereDate('commission_date', '>=', $fromDate);
+                    })
+                    ->when(isset($search['to_date']), function ($query) use ($fromDate, $toDate) {
+                        return $query->whereBetween('commission_date', [$fromDate, $toDate]);
+                    })
+                    ->when($search['affiliate_member_id'] != null, function ($query) use ($search) {
+                        return $query->where('affiliate_member_id', $search['affiliate_member_id']);
+                    })
+                    ->where('company_id', $admin->active_company_id)
+                    ->get();
+
+                $data['totalCommission'] = $data['affiliateReportRecords']->sum('amount');
+
+                return view($this->theme . 'user.reports.affiliate.index', $data, compact('search'));
+            } else {
+                $data['affiliateReportRecords'] = null;
+                return view($this->theme . 'user.reports.affiliate.index', $data, compact('search'));
+            }
+
+        } catch (\Exception $exception) {
+            $data = ['error' => $exception->getMessage()];
+            return view($this->theme . 'user.reports.affiliate.index', $data, compact('search'));
+        }
+    }
+
+    public function exportAffiliateReports(Request $request)
+    {
+        $admin = $this->user;
+        return Excel::download(new AffiliateReportExport($request, $admin), 'affiliateReport.xlsx');
+    }
+
+    //working here
+    public function salesReports(Request $request)
+    {
+        $admin = $this->user;
+        $search = $request->all();
+        $fromDate = Carbon::parse($request->from_date);
+        $toDate = Carbon::parse($request->to_date)->addDay();
+
+        try {
+            $data['salesCenters'] = SalesCenter::where('company_id', $admin->active_company_id)->select('id', 'name')->get();
+            $data['customers'] = Customer::where('company_id', $admin->active_company_id)->select('id', 'name')->get();
+
+            if (!empty($search)) {
+                $data['salesReportRecords'] = Sale::with('salesCenter:id,name', 'customer:id,name', 'salesItems.item')
+                    ->when(isset($search['from_date']), function ($query) use ($fromDate) {
+                        return $query->whereDate('created_at', '>=', $fromDate);
+                    })
+                    ->when(isset($search['to_date']), function ($query) use ($fromDate, $toDate) {
+                        return $query->whereBetween('created_at', [$fromDate, $toDate]);
+                    })
+                    ->when($search['sales_center_id'] != null, function ($query) use ($search) {
+                        return $query->where('sales_center_id', $search['sales_center_id']);
+                    })
+//                    ->when($search['customer_id'] != null, function ($query) use ($search) {
+//                        return $query->where('customer_id', $search['customer_id']);
+//                    })
+                    ->where('company_id', $admin->active_company_id)
+                    ->where('sales_by', 1)
+                    ->get();
+
+                $data['totalSales'] = $data['salesReportRecords']->flatMap->salesItems->sum('item_price');
+
+                return view($this->theme . 'user.reports.sales.index', $data, compact('search'));
+
+            } else {
+                $data['salesReportRecords'] = null;
+                return view($this->theme . 'user.reports.sales.index', $data, compact('search'));
+            }
+
+        } catch (\Exception $exception) {
+            $data = ['error' => $exception->getMessage()];
+            return view($this->theme . 'user.reports.sales.index', $data, compact('search'));
+        }
+    }
+
+    public function exportSalesReports(Request $request)
+    {
+        $admin = $this->user;
+        return Excel::download(new SalesReportExport($request, $admin), 'salesReport.xlsx');
+    }
+
 
 }

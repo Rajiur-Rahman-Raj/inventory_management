@@ -26,7 +26,6 @@
                 <form action="" method="get" enctype="multipart/form-data" class="searchForm">
                     <div class="row g-3 align-items-end">
                         <div class="input-box col-lg-3">
-                            <label for="from_date">@lang('From Date')</label>
                             <div class="flatpickr">
                                 <div class="input-group">
                                     <input type="date" placeholder="@lang('Select date')"
@@ -50,7 +49,6 @@
                         </div>
 
                         <div class="input-box col-lg-3">
-                            <label for="to_date">@lang('To Date')</label>
                             <div class="flatpickr">
                                 <div class="input-group">
                                     <input type="date" placeholder="@lang('Select date')"
@@ -74,8 +72,6 @@
                         </div>
 
                         <div class="input-box col-lg-3">
-                            <label for="">@lang('Expense Head')</label>
-
                             <select class="form-control js-example-basic-single" name="expense_category_id"
                                     aria-label="Default select example">
                                 <option value="">@lang('All Expense')</option>
@@ -93,59 +89,63 @@
                     </div>
                 </form>
             </div>
-            @if(isset($expenseReportRecords) && count($expenseReportRecords) > 0 && count($search) > 0)
-                <div class="d-flex justify-content-end mb-4">
-                    <a href="javascript:void(0)" data-route="{{route('user.export.expenseReports')}}"
-                       class="btn btn-custom text-white reportsDownload downloadExcel"> <i
-                            class="fa fa-download"></i> @lang('Download Excel')</a>
-                </div>
-            @endif
 
             @if(isset($expenseReportRecords) && count($search) > 0)
-                <ul class="list-style-none p-0 stock_list_style">
-                    <table class="table table-bordered mt-4">
-                        <thead>
-                        <tr>
-                            <th scope="col">Expense Head</th>
-                            <th scope="col">Amount</th>
-                            <th scope="col">Date Of Expense</th>
-                        </tr>
-                        </thead>
-                        <tbody>
+                <div class="card card-table">
+                    @if(count($expenseReportRecords) > 0)
+                        <div class="card-header custom-card-header bg-white d-flex flex-wrap justify-content-between align-items-center">
+                            <h5 class="m-0 text-primary">@lang('All Expenses')</h5>
+                            <div class="total-price">
+                                <ul class="m-0 list-unstyled">
+                                    <li class="text-uppercase  color-primary font-weight-bold mb-1">
+                                        <span>@lang('Total') = </span>
+                                        <span>{{ $totalExpense }} {{ config('basic.currency_text') }}</span></li>
+                                </ul>
+                            </div>
 
-                        @if(count($expenseReportRecords) > 0)
-                            @foreach($expenseReportRecords as $key => $expense)
+                            <a href="javascript:void(0)" data-route="{{route('user.export.expenseReports')}}"
+                               class="btn text-white btn-custom2 reportsDownload downloadExcel"> <i
+                                    class="fa fa-download"></i> @lang('Download Excel File')</a>
+
+                        </div>
+                    @endif
+                    <div class="table-responsive">
+                        <ul class="list-style-none p-0 stock_list_style">
+                            <table class="table custom-table table-bordered mt-4">
+                                <thead>
                                 <tr>
-                                    <td data-label="Expense Head">{{ $expense->expenseCategory->name }}</td>
-                                    <td data-label="Amount">{{ $expense->amount }} {{ config('basic.currency_symbol') }}</td>
-                                    <td data-label="Date Of Expense">{{ customDate($expense->expense_date) }}</td>
+                                    <th scope="col">Expense</th>
+                                    <th scope="col">Amount</th>
+                                    <th scope="col">Date Of Expense</th>
                                 </tr>
-                            @endforeach
-                        @else
-                            <tr>
-                                <td class="text-center" colspan="100%">
-                                    <img
-                                        src="{{ asset('assets/global/img/no_data.gif') }}"
-                                        class="card-img-top empty-state-img" alt="..." style="width: 300px">
-                                </td>
-                            </tr>
-                        @endif
-                        @if(count($expenseReportRecords) > 0)
-                            <tr>
-                                <td colspan="1" class="text-end">@lang('Total Expense')</td>
-                                <td>= {{ $totalExpense }} {{ config('basic.currency_symbol') }}</td>
-                            </tr>
-                        @endif
-                        </tbody>
-                    </table>
-                </ul>
+                                </thead>
+                                <tbody>
+
+                                @if(count($expenseReportRecords) > 0)
+                                    @foreach($expenseReportRecords as $key => $expense)
+                                        <tr>
+                                            <td data-label="Expense">{{ $expense->expenseCategory->name }}</td>
+                                            <td data-label="Amount">{{ $expense->amount }} {{ config('basic.currency_symbol') }}</td>
+                                            <td data-label="Date Of Expense">{{ customDate($expense->expense_date) }}</td>
+                                        </tr>
+                                    @endforeach
+                                @else
+                                    <tr>
+                                        <td class="text-center" colspan="100%">
+                                            <img
+                                                src="{{ asset('assets/global/img/no_data.gif') }}"
+                                                class="card-img-top empty-state-img" alt="..." style="width: 300px">
+                                        </td>
+                                    </tr>
+                                @endif
+                                </tbody>
+                            </table>
+                        </ul>
+                    </div>
+                </div>
             @endif
         </div>
     </section>
-
-    @push('loadModal')
-
-    @endpush
 @endsection
 
 @push('script')
@@ -153,7 +153,7 @@
 
     <script>
         'use script'
-        var serachRoute = "{{route('user.purchaseReports')}}"
+        var serachRoute = "{{route('user.expenseReports')}}"
         $(document).on("click", ".downloadExcel", function () {
             $('.searchForm').attr('action', $(this).data('route'));
             $('.searchForm').submit();

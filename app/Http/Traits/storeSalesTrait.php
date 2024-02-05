@@ -4,6 +4,7 @@ namespace App\Http\Traits;
 
 
 use App\Models\AffiliateMember;
+use App\Models\AffiliateMemberCommission;
 use App\Models\SalesItem;
 use App\Models\SalesPayment;
 use App\Models\Stock;
@@ -325,10 +326,25 @@ trait StoreSalesTrait
                     $memberCommissionAmount = $request->total_amount * $memberCommissionPercentage / 100;
                     $affiliateMember->member_commission_amount += $memberCommissionAmount;
                     $affiliateMember->save();
+
+                    $affiliateMemberCommission = new AffiliateMemberCommission();
+                    $affiliateMemberCommission->company_id = $affiliateMember->company_id;
+                    $affiliateMemberCommission->affiliate_member_id = $affiliateMember->id;
+                    $affiliateMemberCommission->amount = $memberCommissionAmount;
+                    $affiliateMemberCommission->commission_date = Carbon::now();
+                    $affiliateMemberCommission->save();
                 }else{
                     $wifeCommissionAmount = $request->total_amount * $wifeCommissionPercentage / 100;
                     $affiliateMember->wife_commission_amount += $wifeCommissionAmount;
                     $affiliateMember->save();
+
+                    $affiliateMemberCommission = new AffiliateMemberCommission();
+                    $affiliateMemberCommission->company_id = $affiliateMember->company_id;
+                    $affiliateMemberCommission->affiliate_member_id = $affiliateMember->id;
+                    $affiliateMemberCommission->amount = $memberCommissionAmount;
+                    $affiliateMemberCommission->commission_date = Carbon::now();
+                    $affiliateMemberCommission->commission_by = 2;
+                    $affiliateMemberCommission->save();
                 }
 
                 $totalCommissionAmount =  $affiliateMember->member_commission_amount + $affiliateMember->wife_commission_amount;

@@ -367,21 +367,21 @@ class CompanyController extends Controller
                 return back()->withInput()->withErrors($validate);
             }
 
-            $rawItemStock = RawItemPurchaseStock::where('company_id', $admin->active_company_id)->where('raw_item_id', $request->raw_item_id)->select('id', 'quantity')->first();
+            $rawItemStock = RawItemPurchaseStock::where('company_id', $admin->active_company_id)->where('raw_item_id', $request->raw_item_id)->select('id', 'quantity', 'cost_per_unit', 'last_cost_per_unit')->first();
 
-            DB::beginTransaction();
             $wastage = new Wastage();
             if ($rawItemStock->quantity > 0) {
                 $wastage->company_id = $admin->active_company_id;
                 $wastage->raw_item_id = $request->raw_item_id;
                 $wastage->quantity = $request->quantity;
+                $wastage->cost_per_unit = $rawItemStock->last_cost_per_unit;
+                $wastage->total_cost = $request->quantity * $rawItemStock->last_cost_per_unit;
                 $wastage->wastage_date = $request->wastage_date;
                 $wastage->save();
 
                 $rawItemStock->quantity = ($rawItemStock->quantity <= 0 ? 0 : $rawItemStock->quantity - $request->quantity);
                 $rawItemStock->save();
             }
-
 
             DB::commit();
             return back()->with('success', 'Wastage added successfully');

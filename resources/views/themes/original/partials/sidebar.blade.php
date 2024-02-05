@@ -216,12 +216,12 @@
 {{--            </li>--}}
 {{--        @endif--}}
 
-        @if(userType() == 1)
-            <li>
-                <a class="{{menuActive(['user.affiliateMemberList', 'user.createAffiliateMember', 'user.affiliateMemberEdit'])}}"
-                   href="{{ route('user.affiliateMemberList') }}"><i class="fal fa-sitemap"></i>@lang('Affiliate')</a>
-            </li>
-        @endif
+{{--        @if(userType() == 1)--}}
+{{--            <li>--}}
+{{--                <a class="{{menuActive(['user.affiliateMemberList', 'user.createAffiliateMember', 'user.affiliateMemberEdit'])}}"--}}
+{{--                   href="{{ route('user.affiliateMemberList') }}"><i class="fal fa-sitemap"></i>@lang('Affiliate')</a>--}}
+{{--            </li>--}}
+{{--        @endif--}}
 
         <li>
             <a
@@ -234,7 +234,7 @@
                 <i class="fal fa-car-building"></i>@lang('Reports')
             </a>
             <div
-                class="collapse {{menuActive(['user.purchaseReports', 'user.stockReports', 'user.wastageReports', 'user.expenseReports', 'user.purchasePaymentReports'],4)}} dropdownManageReports"
+                class="collapse {{menuActive(['user.purchaseReports', 'user.stockReports', 'user.wastageReports', 'user.expenseReports', 'user.purchasePaymentReports', 'user.affiliateReports'],4)}} dropdownManageReports"
                 id="dropdownManageReports">
                 <ul class="">
                     <li>
@@ -259,9 +259,23 @@
                     </li>
 
                     <li>
+                        <a class="{{ in_array($currentRouteName, ['user.salesReports']) ? 'active' : '' }}"
+                           href="{{ route('user.salesReports') }}"><i
+                                class="fal fa-sack-dollar"></i>@lang('Sales Report')
+                        </a>
+                    </li>
+
+                    <li>
                         <a class="{{ in_array($currentRouteName, ['user.wastageReports']) ? 'active' : '' }}"
                            href="{{ route('user.wastageReports') }}"><i
                                 class="fal fa-sack-dollar"></i>@lang('Wastage Report')
+                        </a>
+                    </li>
+
+                    <li>
+                        <a class="{{ in_array($currentRouteName, ['user.affiliateReports']) ? 'active' : '' }}"
+                           href="{{ route('user.affiliateReports') }}"><i
+                                class="fal fa-sack-dollar"></i>@lang('Affiliation Report')
                         </a>
                     </li>
 

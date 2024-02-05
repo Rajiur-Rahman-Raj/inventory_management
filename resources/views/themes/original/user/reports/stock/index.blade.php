@@ -26,10 +26,9 @@
                 <form action="" method="get" enctype="multipart/form-data" class="searchForm">
                     <div class="row g-3 align-items-end">
                         <div class="input-box col-lg-4">
-                            <label for="from_date">@lang('From Date')</label>
                             <div class="flatpickr">
                                 <div class="input-group">
-                                    <input type="date" placeholder="@lang('Select date')"
+                                    <input type="date" placeholder="@lang('From Date')"
                                            class="form-control from_date"
                                            name="from_date"
                                            value="{{ old('from_date',request()->from_date) }}"
@@ -50,10 +49,9 @@
                         </div>
 
                         <div class="input-box col-lg-4">
-                            <label for="to_date">@lang('To Date')</label>
                             <div class="flatpickr">
                                 <div class="input-group">
-                                    <input type="date" placeholder="@lang('Select date')"
+                                    <input type="date" placeholder="@lang('To Date')"
                                            class="form-control to_date"
                                            name="to_date"
                                            value="{{ old('to_date',request()->to_date) }}"
@@ -80,58 +78,70 @@
                     </div>
                 </form>
             </div>
-            @if(isset($stockReportRecords) && count($stockReportRecords) > 0 && count($search) > 0)
-                <div class="d-flex justify-content-end mb-4">
-                    <a href="javascript:void(0)" data-route="{{route('user.export.stockReports')}}"
-                       class="btn btn-custom text-white reportsDownload downloadExcel"> <i
-                            class="fa fa-download"></i> @lang('Download Excel')</a>
-                </div>
-            @endif
 
             @if(isset($stockReportRecords) && count($search) > 0)
-                <ul class="list-style-none p-0 stock_list_style">
-                    <table class="table table-bordered mt-4">
-                        <thead>
-                        <tr>
-                            <th scope="col">Item</th>
-                            <th scope="col">Quantity</th>
-                            <th scope="col">Cost Per Unit</th>
-                            <th scope="col">Stock Date</th>
-                            <th scope="col">Sub Total</th>
-                        </tr>
-                        </thead>
-                        <tbody>
+                <div class="card card-table">
+                    @if(count($stockReportRecords) > 0)
+                        <div
+                            class="card-header custom-card-header bg-white d-flex flex-wrap justify-content-between align-items-center">
+                            <h5 class="m-0 text-primary">@lang('All Stocks')</h5>
 
-                        @if(count($stockReportRecords) > 0)
-                            @foreach($stockReportRecords as $key1 => $stockIn)
-                                @foreach($stockIn->stockInDetails as $key2 => $stockInDetail)
+                            <div class="total-price">
+                                <ul class="m-0 list-unstyled">
+                                    <li class="text-uppercase color-primary font-weight-bold">
+                                        <span>@lang('Total') =</span>
+                                        <span>{{ $totalStockCost }} {{ config('basic.currency_text') }} </span></li>
+                                </ul>
+
+                            </div>
+
+                            <a href="javascript:void(0)" data-route="{{route('user.export.stockReports')}}"
+                               class="btn text-white btn-custom2 reportsDownload downloadExcel"> <i
+                                    class="fa fa-download"></i> @lang('Download Excel File')</a>
+
+                        </div>
+                    @endif
+                    <div class="table-responsive">
+                        <ul class="list-style-none p-0 stock_list_style">
+                            <table class="table custom-table table-bordered mt-4">
+                                <thead>
+                                <tr>
+                                    <th scope="col">Item</th>
+                                    <th scope="col">Quantity</th>
+                                    <th scope="col">Cost Per Unit</th>
+                                    <th scope="col">Stock Date</th>
+                                    <th scope="col">Sub Total</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+
+                                @if(count($stockReportRecords) > 0)
+                                    @foreach($stockReportRecords as $key1 => $stockIn)
+                                        @foreach($stockIn->stockInDetails as $key2 => $stockInDetail)
+                                            <tr>
+                                                <td data-label="Item">{{ $stockInDetail->item->name }}</td>
+                                                <td data-label="Quantity">{{ $stockInDetail->quantity }}</td>
+                                                <td data-label="Cost Per Unit">{{ $stockInDetail->cost_per_unit }} {{ config('basic.currency_symbol') }}</td>
+                                                <td data-label="Stock Date"> {{ customDate($stockInDetail->stock_date) }} </td>
+                                                <td data-label="Sub Total">{{ $stockInDetail->total_unit_cost }} {{ config('basic.currency_symbol') }}</td>
+                                            </tr>
+                                        @endforeach
+                                    @endforeach
+                                @else
                                     <tr>
-                                        <td data-label="Item">{{ $stockInDetail->item->name }}</td>
-                                        <td data-label="Quantity">{{ $stockInDetail->quantity }}</td>
-                                        <td data-label="Cost Per Unit">{{ $stockInDetail->cost_per_unit }} {{ config('basic.currency_symbol') }}</td>
-                                        <td data-label="Stock Date"> {{ customDate($stockInDetail->stock_date) }} </td>
-                                        <td data-label="Sub Total">{{ $stockInDetail->total_unit_cost }} {{ config('basic.currency_symbol') }}</td>
+                                        <td class="text-center" colspan="100%">
+                                            <img
+                                                src="{{ asset('assets/global/img/no_data.gif') }}"
+                                                class="card-img-top empty-state-img" alt="..." style="width: 300px">
+                                        </td>
                                     </tr>
-                                @endforeach
-                            @endforeach
-                        @else
-                            <tr>
-                                <td class="text-center" colspan="100%">
-                                    <img
-                                        src="{{ asset('assets/global/img/no_data.gif') }}"
-                                        class="card-img-top empty-state-img" alt="..." style="width: 300px">
-                                </td>
-                            </tr>
-                        @endif
-                        @if(count($stockReportRecords) > 0)
-                            <tr>
-                                <td colspan="4" class="text-end">@lang('Total Cost')</td>
-                                <td >= {{ $totalStockCost }} {{ config('basic.currency_symbol') }}</td>
-                            </tr>
-                        @endif
-                        </tbody>
-                    </table>
-                </ul>
+                                @endif
+                                </tbody>
+                            </table>
+                        </ul>
+                    </div>
+                </div>
+
             @endif
         </div>
     </section>
