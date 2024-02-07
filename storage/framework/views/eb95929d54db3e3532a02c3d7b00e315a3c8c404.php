@@ -107,21 +107,19 @@ unset($__errorArgs, $__bag); ?>
             <?php if(isset($wastageReportRecords) && count($search) > 0): ?>
                 <div class="card card-table">
                     <?php if(count($wastageReportRecords) > 0): ?>
-                        <div
-                            class="card-header custom-card-header bg-white d-flex flex-wrap justify-content-between align-items-center">
+                        <div class="card-header custom-card-header bg-white d-flex flex-wrap justify-content-between align-items-center">
                             <h5 class="m-0 text-primary"><?php echo app('translator')->get('All Stocks'); ?></h5>
 
                             <div class="total-price">
                                 <ul class="m-0 list-unstyled">
                                     <li class="text-uppercase  color-primary font-weight-bold mb-1">
-                                        <span><?php echo app('translator')->get('Total Quantity'); ?> =</span>
+                                        <span><?php echo app('translator')->get('Total Quantity'); ?> = </span>
                                         <span><?php echo e($totalWastage); ?> </span></li>
 
                                     <li class="text-uppercase color-primary font-weight-bold">
                                         <span><?php echo app('translator')->get('Total Amount'); ?> =</span>
                                         <span><?php echo e($totalWastageAmount); ?> <?php echo e(config('basic.currency_text')); ?></span></li>
                                 </ul>
-
                             </div>
 
                             <a href="javascript:void(0)" data-route="<?php echo e(route('user.export.wastageReports')); ?>"

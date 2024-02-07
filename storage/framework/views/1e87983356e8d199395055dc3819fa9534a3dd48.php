@@ -105,24 +105,26 @@ unset($__errorArgs, $__bag); ?>
 
             <?php if(isset($purchaseReportRecords) && count($search) > 0): ?>
                 <div class="card card-table">
-                    <div
-                        class="card-header custom-card-header bg-white d-flex flex-wrap justify-content-between align-items-center">
-                        <h5 class="m-0 text-primary"><?php echo app('translator')->get('All Purchases'); ?></h5>
+                    <?php if(count($purchaseReportRecords) > 0): ?>
+                        <div
+                            class="card-header custom-card-header bg-white d-flex flex-wrap justify-content-between align-items-center">
+                            <h5 class="m-0 text-primary"><?php echo app('translator')->get('All Purchases'); ?></h5>
 
-                        <div class="total-price">
-                            <ul class="m-0 list-unstyled">
-                                <li class="text-uppercase color-primary font-weight-bold">
-                                    <span><?php echo app('translator')->get('Total Price'); ?> =</span>
-                                    <span><?php echo e($totalPrice); ?> <?php echo e(config('basic.currency_text')); ?> </span></li>
-                            </ul>
+                            <div class="total-price">
+                                <ul class="m-0 list-unstyled">
+                                    <li class="text-uppercase color-primary font-weight-bold">
+                                        <span><?php echo app('translator')->get('Total Price'); ?> =</span>
+                                        <span><?php echo e($totalPrice); ?> <?php echo e(config('basic.currency_text')); ?> </span></li>
+                                </ul>
+
+                            </div>
+
+                            <a href="javascript:void(0)" data-route="<?php echo e(route('user.export.purchaseReports')); ?>"
+                               class="btn text-white btn-custom2 reportsDownload downloadExcel"> <i
+                                    class="fa fa-download"></i> <?php echo app('translator')->get('Download Excel File'); ?></a>
 
                         </div>
-
-                        <a href="javascript:void(0)" data-route="<?php echo e(route('user.export.purchaseReports')); ?>"
-                           class="btn text-white btn-custom2 reportsDownload downloadExcel"> <i
-                                class="fa fa-download"></i> <?php echo app('translator')->get('Download Excel File'); ?></a>
-
-                    </div>
+                    <?php endif; ?>
                     <ul class="list-style-none p-0 stock_list_style">
                         <div class="table-responsive">
                             <table class="table custom-table table-bordered mt-4">

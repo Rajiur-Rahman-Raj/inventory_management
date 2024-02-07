@@ -355,5 +355,57 @@ class ReportController extends Controller
         return Excel::download(new SalesReportExport($request, $admin), 'salesReport.xlsx');
     }
 
+    //working here
+    public function salesPaymentReports(Request $request)
+    {
+        $admin = $this->user;
+        $search = $request->all();
+        $fromDate = Carbon::parse($request->from_date);
+        $toDate = Carbon::parse($request->to_date)->addDay();
+
+        try {
+
+            $data['salesCenters'] = SalesCenter::where('company_id', $admin->active_company_id)->select('id', 'name')->get();
+            $data['customers'] = Customer::where('company_id', $admin->active_company_id)->select('id', 'name')->get();
+
+            if (!empty($search)) {
+                $data['salesPaymentReportRecords'] = Sale::with('salesCenter:id,name', 'customer:id,name', 'salesPayments')
+                    ->when(isset($search['from_date']), function ($query) use ($fromDate) {
+                        return $query->whereDate('created_at', '>=', $fromDate);
+                    })
+                    ->when(isset($search['to_date']), function ($query) use ($fromDate, $toDate) {
+                        return $query->whereBetween('created_at', [$fromDate, $toDate]);
+                    })
+                    ->when($search['sales_center_id'] != null, function ($query) use ($search) {
+                        return $query->where('sales_center_id', $search['sales_center_id']);
+                    })
+//                    ->when($search['customer_id'] != null, function ($query) use ($search) {
+//                        return $query->where('customer_id', $search['customer_id']);
+//                    })
+                    ->where('company_id', $admin->active_company_id)
+                    ->where('sales_by', 1)
+                    ->get();
+
+                $data['totalPaidAmount'] = $data['salesPaymentReportRecords']->flatMap->salesPayments->sum('amount');
+                $data['totalDueAmount'] = $data['salesPaymentReportRecords']->flatMap->salesPayments->sum('due');
+
+                return view($this->theme . 'user.reports.sales.payment', $data, compact('search'));
+            } else {
+                $data['salesPaymentReportRecords'] = null;
+                return view($this->theme . 'user.reports.sales.payment', $data, compact('search'));
+            }
+
+        } catch (\Exception $exception) {
+            $data = ['error' => $exception->getMessage()];
+            return view($this->theme . 'user.reports.sales.payment', $data, compact('search'));
+        }
+    }
+
+    public function exportSalesPaymentReports(Request $request)
+    {
+        $admin = $this->user;
+        return Excel::download(new PurchasePaymentReportExport($request, $admin), 'salesPaymentReport.xlsx');
+    }
+
 
 }

@@ -234,7 +234,7 @@
                 <i class="fal fa-car-building"></i><?php echo app('translator')->get('Reports'); ?>
             </a>
             <div
-                class="collapse <?php echo e(menuActive(['user.purchaseReports', 'user.stockReports', 'user.wastageReports', 'user.expenseReports', 'user.purchasePaymentReports', 'user.affiliateReports'],4)); ?> dropdownManageReports"
+                class="collapse <?php echo e(menuActive(['user.purchaseReports', 'user.stockReports', 'user.wastageReports', 'user.expenseReports', 'user.purchasePaymentReports', 'user.affiliateReports', 'user.salesReports', 'user.salesPaymentReports'],4)); ?> dropdownManageReports"
                 id="dropdownManageReports">
                 <ul class="">
                     <li>
@@ -262,6 +262,13 @@
                         <a class="<?php echo e(in_array($currentRouteName, ['user.salesReports']) ? 'active' : ''); ?>"
                            href="<?php echo e(route('user.salesReports')); ?>"><i
                                 class="fal fa-sack-dollar"></i><?php echo app('translator')->get('Sales Report'); ?>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a class="<?php echo e(in_array($currentRouteName, ['user.salesPaymentReports']) ? 'active' : ''); ?>"
+                           href="<?php echo e(route('user.salesPaymentReports')); ?>"><i
+                                class="fal fa-sack-dollar"></i><?php echo app('translator')->get('Sales Payment'); ?>
                         </a>
                     </li>
 

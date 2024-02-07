@@ -79,6 +79,7 @@ trait StoreSalesTrait
         $salesPayment = new SalesPayment();
         $salesPayment->sale_id = $sale->id;
         $salesPayment->amount = $due_or_change_amount <= 0 ? $request->total_amount : $request->customer_paid_amount;
+        $salesPayment->due = $due_or_change_amount <= 0 ? 0 : $request->due_or_change_amount;
         $salesPayment->payment_date = Carbon::parse($request->payment_date);
         $salesPayment->note = $request->note;
         $salesPayment->paid_by = $admin->id;

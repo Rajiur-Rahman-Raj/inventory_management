@@ -234,7 +234,7 @@
                 <i class="fal fa-car-building"></i>@lang('Reports')
             </a>
             <div
-                class="collapse {{menuActive(['user.purchaseReports', 'user.stockReports', 'user.wastageReports', 'user.expenseReports', 'user.purchasePaymentReports', 'user.affiliateReports'],4)}} dropdownManageReports"
+                class="collapse {{menuActive(['user.purchaseReports', 'user.stockReports', 'user.wastageReports', 'user.expenseReports', 'user.purchasePaymentReports', 'user.affiliateReports', 'user.salesReports', 'user.salesPaymentReports'],4)}} dropdownManageReports"
                 id="dropdownManageReports">
                 <ul class="">
                     <li>
@@ -262,6 +262,13 @@
                         <a class="{{ in_array($currentRouteName, ['user.salesReports']) ? 'active' : '' }}"
                            href="{{ route('user.salesReports') }}"><i
                                 class="fal fa-sack-dollar"></i>@lang('Sales Report')
+                        </a>
+                    </li>
+
+                    <li>
+                        <a class="{{ in_array($currentRouteName, ['user.salesPaymentReports']) ? 'active' : '' }}"
+                           href="{{ route('user.salesPaymentReports') }}"><i
+                                class="fal fa-sack-dollar"></i>@lang('Sales Payment')
                         </a>
                     </li>
 

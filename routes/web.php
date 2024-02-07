@@ -134,21 +134,30 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'user', 'as' => 'user.'], fu
     Route::get('purchase/payment/reports', [ReportController::class, 'purchasePaymentReports'])->name('purchasePaymentReports');
     Route::get('export/purchase/payment/reports', [ReportController::class, 'exportPurchasePaymentReports'])->name('export.purchasePaymentReports');
 
+    // Sales Report
     Route::get('sales/reports', [ReportController::class, 'salesReports'])->name('salesReports');
     Route::get('export/sales/reports', [ReportController::class, 'exportSalesReports'])->name('export.salesReports');
 
+    Route::get('sales/payment/reports', [ReportController::class, 'salesPaymentReports'])->name('salesPaymentReports');
+    Route::get('export/sales/payment/reports', [ReportController::class, 'exportSalesPaymentReports'])->name('export.salesPaymentReports');
+
+    //Stock Report
     Route::get('stock/reports', [ReportController::class, 'stockReports'])->name('stockReports');
     Route::get('export/stock/reports', [ReportController::class, 'exportStockReports'])->name('export.stockReports');
 
+    //Wastage Report
     Route::get('wastage/reports', [ReportController::class, 'wastageReports'])->name('wastageReports');
     Route::get('export/wastage/reports', [ReportController::class, 'exportWastageReports'])->name('export.wastageReports');
 
+    //Expense Report
     Route::get('expense/reports', [ReportController::class, 'expenseReports'])->name('expenseReports');
     Route::get('export/expense/reports', [ReportController::class, 'exportExpenseReports'])->name('export.expenseReports');
 
+    //Affiliation Report
     Route::get('affiliate/reports', [ReportController::class, 'affiliateReports'])->name('affiliateReports');
     Route::get('export/affiliate/reports', [ReportController::class, 'exportAffiliateReports'])->name('export.affiliateReports');
 
+    // old report
     Route::get('stock/sales/reports', 'User\CompanyController@stockExpenseSalesProfitReports')->name('stockExpenseSalesProfitReports');
     Route::get('export-stock-sales-reports', 'User\CompanyController@exportStockExpenseSalesProfitReports')->name('export.stockExpenseSalesProfitReports');
 
