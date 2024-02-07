@@ -15,6 +15,8 @@ class Sale extends Model
         'items' => 'array',
     ];
 
+//    protected $appends = ['item_price'];
+
     protected static function booted(): void
     {
         static::creating(function (Sale $sale) {
@@ -41,6 +43,10 @@ class Sale extends Model
     public function salesItems(){
         return $this->hasMany(SalesItem::class, 'sales_id');
     }
+
+//    public function getItemPriceAttribute(){
+//        return $this->salesItems->sum('item_price');
+//    }
 
     public function salesPayments(){
         return $this->hasMany(SalesPayment::class, 'sale_id');

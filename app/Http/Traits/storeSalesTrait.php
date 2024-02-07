@@ -69,6 +69,8 @@ trait StoreSalesTrait
             $salesItem->item_quantity = $request->item_quantity[$key];
             $salesItem->cost_per_unit = $request->cost_per_unit[$key];
             $salesItem->item_price = $request->item_price[$key];
+            $salesItem->stock_per_unit = $request->stock_per_unit[$key];
+            $salesItem->stock_item_price = $request->stock_item_price[$key];
             $salesItem->save();
         }
     }

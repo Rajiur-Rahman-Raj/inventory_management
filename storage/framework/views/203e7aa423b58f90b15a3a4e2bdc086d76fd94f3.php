@@ -234,7 +234,7 @@
                 <i class="fal fa-car-building"></i><?php echo app('translator')->get('Reports'); ?>
             </a>
             <div
-                class="collapse <?php echo e(menuActive(['user.purchaseReports', 'user.stockReports', 'user.wastageReports', 'user.expenseReports', 'user.purchasePaymentReports', 'user.affiliateReports', 'user.salesReports', 'user.salesPaymentReports'],4)); ?> dropdownManageReports"
+                class="collapse <?php echo e(menuActive(['user.purchaseReports', 'user.stockReports', 'user.wastageReports', 'user.expenseReports', 'user.purchasePaymentReports', 'user.affiliateReports', 'user.salesReports', 'user.salesPaymentReports', 'user.profitLossReports'],4)); ?> dropdownManageReports"
                 id="dropdownManageReports">
                 <ul class="">
                     <li>
@@ -290,6 +290,13 @@
                         <a class="<?php echo e(in_array($currentRouteName, ['user.expenseReports']) ? 'active' : ''); ?>"
                            href="<?php echo e(route('user.expenseReports')); ?>"><i
                                 class="fal fa-sack-dollar"></i><?php echo app('translator')->get('Expense Report'); ?>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a class="<?php echo e(in_array($currentRouteName, ['user.profitLossReports']) ? 'active' : ''); ?>"
+                           href="<?php echo e(route('user.profitLossReports')); ?>"><i
+                                class="fal fa-sack-dollar"></i><?php echo app('translator')->get('Profit & Loss Report'); ?>
                         </a>
                     </li>
 

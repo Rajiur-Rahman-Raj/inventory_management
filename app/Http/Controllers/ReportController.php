@@ -6,6 +6,7 @@ use App\Exports\AffiliateReportExport;
 use App\Exports\ExpenseReportExport;
 use App\Exports\PurchaseExport;
 use App\Exports\PurchasePaymentReportExport;
+use App\Exports\SalesPaymentReportExport;
 use App\Exports\SalesReportExport;
 use App\Exports\StockReportExport;
 use App\Exports\wastageReportExport;
@@ -82,7 +83,7 @@ class ReportController extends Controller
     public function exportPurchaseReports(Request $request)
     {
         $admin = $this->user;
-       return Excel::download(new PurchaseExport($request, $admin), 'purchaseReport.xlsx');
+        return Excel::download(new PurchaseExport($request, $admin), 'purchaseReport.xlsx');
     }
 
 
@@ -168,7 +169,6 @@ class ReportController extends Controller
         $admin = $this->user;
         return Excel::download(new wastageReportExport($request, $admin), 'wastageReport.xlsx');
     }
-
 
 
     public function expenseReports(Request $request)
@@ -364,7 +364,6 @@ class ReportController extends Controller
         $toDate = Carbon::parse($request->to_date)->addDay();
 
         try {
-
             $data['salesCenters'] = SalesCenter::where('company_id', $admin->active_company_id)->select('id', 'name')->get();
             $data['customers'] = Customer::where('company_id', $admin->active_company_id)->select('id', 'name')->get();
 
@@ -404,8 +403,77 @@ class ReportController extends Controller
     public function exportSalesPaymentReports(Request $request)
     {
         $admin = $this->user;
-        return Excel::download(new PurchasePaymentReportExport($request, $admin), 'salesPaymentReport.xlsx');
+        return Excel::download(new SalesPaymentReportExport($request, $admin), 'salesPaymentReportExport.xlsx');
     }
 
+    public function profitLossReports(Request $request)
+    {
+        $admin = $this->user;
+        $search = $request->all();
+        $fromDate = Carbon::parse($request->from_date);
+        $toDate = Carbon::parse($request->to_date)->addDay();
+
+        try {
+            if (!empty($search)) {
+                $profitLossReports = Sale::when(isset($search['from_date']), function ($query) use ($fromDate) {
+                    return $query->whereDate('created_at', '>=', $fromDate);
+                })
+                    ->when(isset($search['to_date']), function ($query) use ($fromDate, $toDate) {
+                        return $query->whereBetween('created_at', [$fromDate, $toDate]);
+                    })
+                    ->where('company_id', $admin->active_company_id)->where('sales_by', 1)
+                    ->selectRaw('SUM(total_amount) AS totalSales')
+                    ->selectRaw('SUM(due_amount) AS totalSalesDue')
+                    ->get()
+                    ->toArray();
+
+
+//                dd($profitLossReports);
+
+                $data['profitLossReportRecords'] = collect($profitLossReports)->collapse();
+
+                $data['purchase'] = RawItemPurchaseIn::when(isset($search['from_date']), fn($query) => $query->whereDate('purchase_date', '>=', $fromDate))
+                    ->when(isset($search['to_date']), fn($query) => $query->whereBetween('purchase_date', [$fromDate, $toDate]))
+                    ->where('company_id', $admin->active_company_id)->get();
+
+                $data['profitLossReportRecords']['totalPurchase'] = $data['purchase']->sum('total_price');
+                $data['profitLossReportRecords']['totalPurchaseDue'] = $data['purchase']->sum('due_amount');
+
+                $data['profitLossReportRecords']['totalStocks'] = StockIn::when(isset($search['from_date']), fn($query) => $query->whereDate('stock_date', '>=', $fromDate))
+                    ->when(isset($search['to_date']), fn($query) => $query->whereBetween('stock_date', [$fromDate, $toDate]))
+                    ->where('company_id', $admin->active_company_id)->sum('total_cost');
+
+                $data['profitLossReportRecords']['totalWastage'] = Wastage::when(isset($search['from_date']), fn($query) => $query->whereDate('wastage_date', '>=', $fromDate))
+                    ->when(isset($search['to_date']), fn($query) => $query->whereBetween('wastage_date', [$fromDate, $toDate]))
+                    ->where('company_id', $admin->active_company_id)->sum('total_cost');
+
+                $data['profitLossReportRecords']['totalAffiliateCommission'] = AffiliateMemberCommission::when(isset($search['from_date']), fn($query) => $query->whereDate('commission_date', '>=', $fromDate))
+                    ->when(isset($search['to_date']), fn($query) => $query->whereBetween('commission_date', [$fromDate, $toDate]))
+                    ->where('company_id', $admin->active_company_id)->sum('amount');
+
+
+                $data['profitLossReportRecords']['totalExpense'] = Expense::when(isset($search['from_date']), fn($query) => $query->whereDate('expense_date', '>=', $fromDate))
+                    ->when(isset($search['to_date']), fn($query) => $query->whereBetween('expense_date', [$fromDate, $toDate]))
+                    ->where('company_id', $admin->active_company_id)->sum('amount');
+
+
+
+                return view($this->theme . 'user.reports.profitLoss.index', $data, compact('search'));
+            } else {
+                $data['profitLossReportRecords'] = null;
+                return view($this->theme . 'user.reports.index', $data, compact('search'));
+            }
+
+
+        } catch (\Exception $exception) {
+            $data = ['error' => $exception->getMessage()];
+            return view($this->theme . 'user.reports.index', $data, compact('search'));
+        }
+    }
+
+    public function exportProfitLossReports()
+    {
+
+    }
 
 }

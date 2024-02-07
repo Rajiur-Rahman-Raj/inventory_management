@@ -1261,7 +1261,9 @@ class CompanyController extends Controller
                     [
                         'cost_per_unit' => $stock['selling_price'],
                         'quantity' => DB::raw('quantity + 1'),
-                        'cost' => DB::raw('quantity * cost_per_unit'),
+                        'cost' => DB::raw('quantity * selling_price'),
+                        'stock_per_unit' => $stock['last_cost_per_unit'],
+                        'stock_item_price' => DB::raw('quantity * last_cost_per_unit'),
                         'created_at' => $cartItem ? $cartItem->created_at : Carbon::now(),
                         'updated_at' => Carbon::now()
                     ]
@@ -1277,61 +1279,14 @@ class CompanyController extends Controller
                     [
                         'cost_per_unit' => $stock['selling_price'],
                         'quantity' => DB::raw('quantity + 1'),
-                        'cost' => DB::raw('quantity * cost_per_unit'),
+                        'cost' => DB::raw('quantity * selling_price'),
+                        'stock_per_unit' => $stock['last_cost_per_unit'],
+                        'stock_item_price' => DB::raw('quantity * last_cost_per_unit'),
                         'created_at' => $cartItem ? $cartItem->created_at : Carbon::now(),
                         'updated_at' => Carbon::now()
                     ]
                 );
             });
-
-//            updateOrInsert(
-//                [
-//                    'company_id' => $admin->active_company_id,
-//                    'sales_center_id' => $admin->salesCenter->id,
-//                    'stock_id' => $stock['id'],
-//                    'item_id' => $stock['item_id'],
-//                ],
-//                [
-//                    'cost_per_unit' => $stock['selling_price'],
-//                    'quantity' => DB::raw('quantity + 1'),
-//                    'cost' => DB::raw('quantity * cost_per_unit'),
-//                    'created_at' => $cartItem ? $cartItem->created_at : Carbon::now(),
-//                    'updated_at' => Carbon::now()
-//                ]
-//            );
-
-//            CartItems::updateOrInsert(
-//                [
-//                    'company_id' => $admin->active_company_id,
-//                    'sales_center_id' => $admin->salesCenter->id,
-//                    'stock_id' => $stock['id'],
-//                    'item_id' => $stock['item_id'],
-//                ],
-//                function ($query) use ($stock, $cartItem, $admin) {
-//                    $query->when(
-//                        (!isset($admin->salesCenter) && $admin->user_type == 1),
-//                        function ($query) use ($admin) {
-//                            return $query->where('company_id', $admin->active_company_id)->whereNull('sales_center_id');
-//                        }
-//                    )->when(
-//                        (isset($admin->salesCenter) && $admin->user_type == 2),
-//                        function ($query) use ($admin) {
-//                            return $query->where([
-//                                ['company_id', $admin->salesCenter->company_id],
-//                                ['sales_center_id', $admin->salesCenter->id],
-//                            ]);
-//                        }
-//                    );
-//                    $query->update([
-//                        'cost_per_unit' => $stock['selling_price'],
-//                        'quantity' => DB::raw('quantity + 1'),
-//                        'cost' => DB::raw('quantity * cost_per_unit'),
-//                        'created_at' => $cartItem ? $cartItem->created_at : Carbon::now(),
-//                        'updated_at' => Carbon::now(),
-//                    ]);
-//                }
-//            );
-
 
             $status = true;
             $message = "Cart item added successfully";
@@ -1407,7 +1362,6 @@ class CompanyController extends Controller
                     ['sales_center_id', $admin->salesCenter->id],
                 ]);
             })
-            ->select('id', 'quantity')
             ->findOrFail($request->stockId);
 
 //        $oldPlusNewQuantity = $request->cartQuantity + $stock->quantity;
@@ -1439,7 +1393,7 @@ class CompanyController extends Controller
                 $message = "This item is out of stock";
                 $stockQuantity = $stock->quantity;
             } else {
-                CartItems::when(!isset($admin->salesCenter) && $admin->user_type == 1, function ($query) use ($admin, $request) {
+                CartItems::when(!isset($admin->salesCenter) && $admin->user_type == 1, function ($query) use ($admin, $request, $stock) {
                     return $query->updateOrInsert(
                         [
                             'company_id' => $admin->active_company_id,
@@ -1448,13 +1402,16 @@ class CompanyController extends Controller
                             'item_id' => $request->itemId,
                         ],
                         [
+                            'cost_per_unit' => $stock->selling_price,
                             'quantity' => $request->cartQuantity,
-                            'cost' => DB::raw('quantity * cost_per_unit'),
+                            'cost' => DB::raw('quantity * selling_price'),
+                            'stock_per_unit' => $stock->last_cost_per_unit,
+                            'stock_item_price' => DB::raw('quantity * last_cost_per_unit'),
                             'updated_at' => Carbon::now()
                         ]
                     );
                 })
-                    ->when(isset($admin->salesCenter) && $admin->user_type == 2, function ($query) use ($admin, $request) {
+                    ->when(isset($admin->salesCenter) && $admin->user_type == 2, function ($query) use ($admin, $request, $stock) {
                         return $query->updateOrInsert(
                             [
                                 'company_id' => $admin->salesCenter->company_id,
@@ -1463,8 +1420,11 @@ class CompanyController extends Controller
                                 'item_id' => $request->itemId,
                             ],
                             [
+                                'cost_per_unit' => $stock->selling_price,
                                 'quantity' => $request->cartQuantity,
-                                'cost' => DB::raw('quantity * cost_per_unit'),
+                                'cost' => DB::raw('quantity * selling_price'),
+                                'stock_per_unit' => $stock->last_cost_per_unit,
+                                'stock_item_price' => DB::raw('quantity * last_cost_per_unit'),
                                 'updated_at' => Carbon::now()
                             ]
                         );
@@ -1695,7 +1655,6 @@ class CompanyController extends Controller
         $sale->save();
 
         $this->storeSalesPayments($request, $sale, $admin);
-
         return back()->with('success', 'Due payment complete successfully');
     }
 

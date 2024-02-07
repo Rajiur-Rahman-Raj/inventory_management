@@ -132,7 +132,7 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'user', 'as' => 'user.'], fu
     Route::get('purchase/reports', [ReportController::class, 'purchaseReports'])->name('purchaseReports');
 
     Route::get('purchase/payment/reports', [ReportController::class, 'purchasePaymentReports'])->name('purchasePaymentReports');
-    Route::get('export/purchase/payment/reports', [ReportController::class, 'exportPurchasePaymentReports'])->name('export.purchasePaymentReports');
+    Route::get('export/purchase/payment/reports', [ReportController::class, 'exportPurchasePaymentReports'])->name('export.profitLossReports');
 
     // Sales Report
     Route::get('sales/reports', [ReportController::class, 'salesReports'])->name('salesReports');
@@ -140,6 +140,11 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'user', 'as' => 'user.'], fu
 
     Route::get('sales/payment/reports', [ReportController::class, 'salesPaymentReports'])->name('salesPaymentReports');
     Route::get('export/sales/payment/reports', [ReportController::class, 'exportSalesPaymentReports'])->name('export.salesPaymentReports');
+
+    // Profit & Loss Report
+    Route::get('profit/loss/reports', [ReportController::class, 'profitLossReports'])->name('profitLossReports');
+    Route::get('export/profit/loss/reports', [ReportController::class, 'exportProfitLossReports'])->name('export.profitLossReports');
+
 
     //Stock Report
     Route::get('stock/reports', [ReportController::class, 'stockReports'])->name('stockReports');
