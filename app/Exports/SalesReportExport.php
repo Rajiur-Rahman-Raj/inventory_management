@@ -66,7 +66,6 @@ class SalesReportExport implements FromCollection, WithHeadings, ShouldAutoSize,
             });
         });
 
-
         $salesReportData->push([
             'Sl' => '',
             'Sales Center' => '',
@@ -76,7 +75,6 @@ class SalesReportExport implements FromCollection, WithHeadings, ShouldAutoSize,
             'Total Sales' => 'Total',
             'Amount' => $totalSales.' '.config('basic.currency_text'),
         ]);
-
         return $salesReportData;
     }
 

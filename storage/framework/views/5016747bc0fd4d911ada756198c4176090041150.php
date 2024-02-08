@@ -105,13 +105,14 @@ unset($__errorArgs, $__bag); ?>
                 </div>
             <?php endif; ?>
 
-            
             <?php if(isset($profitLossReportRecords) && count($search) > 0): ?>
                 <div class="report-box">
                     <table class="table table-responsive">
                         <thead>
                         <tr>
-                            <th class="bg-white"><?php echo app('translator')->get('Reports Summery'); ?></th>
+                            <th class="bg-white">
+                                <h5 class="text-primary"><?php echo app('translator')->get('Reports Summery'); ?></h5>
+                            </th>
                         </tr>
                         </thead>
                         <tbody>
@@ -145,6 +146,19 @@ unset($__errorArgs, $__bag); ?>
                         <tr>
                             <td><?php echo app('translator')->get('Total Expense'); ?></td>
                             <td> <?php echo e(config('basic.currency_text')); ?> <?php echo e(fractionNumber($profitLossReportRecords['totalExpense'], false)); ?> </td>
+                        </tr>
+
+                        <tr>
+                            <td><?php echo app('translator')->get('Revenue'); ?></td>
+                            <td> <?php echo e(config('basic.currency_text')); ?> <?php echo e(fractionNumber($profitLossReportRecords['revenue'], false)); ?> </td>
+                        </tr>
+
+                        <tr>
+                            <td><?php echo app('translator')->get('Net Profit'); ?></td>
+                            <td class="<?php echo e($profitLossReportRecords['netProfit'] < 0 ? 'text-danger' : 'text-success'); ?>">
+                                <?php echo e(config('basic.currency_text')); ?> <?php echo e(fractionNumber($profitLossReportRecords['netProfit'], false)); ?>
+
+                            </td>
                         </tr>
 
 

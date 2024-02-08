@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\RolesPermissionController;
 use App\Http\Controllers\User\HomeController;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
@@ -93,6 +94,10 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'user', 'as' => 'user.'], fu
         Route::get('suppliers', 'User\CompanyController@suppliers')->name('suppliers');
         Route::get('supplier/create', 'User\CompanyController@createSupplier')->name('createSupplier');
         Route::post('store/supplier', 'User\CompanyController@supplierStore')->name('supplierStore');
+        Route::get('supplier-edit/{id}', 'User\CompanyController@supplierEdit')->name('supplierEdit');
+        Route::post('supplier-update/{id}', 'User\CompanyController@supplierUpdate')->name('supplierUpdate');
+        Route::get('supplier-details/{id}', 'User\CompanyController@supplierDetails')->name('supplierDetails');
+        Route::delete('delete/supplier/{id}', 'User\CompanyController@deleteSupplier')->name('deleteSupplier');
 
         // Raw Items
         Route::get('raw-item-list', 'User\CompanyController@rawItemList')->name('rawItemList');
@@ -111,10 +116,7 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'user', 'as' => 'user.'], fu
         Route::delete('delete/purchase/raw/item/{id}', 'User\CompanyController@deletePurchaseRawItem')->name('deletePurchaseRawItem');
         Route::post('selected-raw-item-unit', 'User\CompanyController@getSelectedRawItemUnit')->name('getSelectedRawItemUnit');
 
-        Route::get('supplier-details/{id}', 'User\CompanyController@supplierDetails')->name('supplierDetails');
-        Route::get('supplier-edit/{id}', 'User\CompanyController@supplierEdit')->name('supplierEdit');
-        Route::post('supplier-update/{id}', 'User\CompanyController@supplierUpdate')->name('supplierUpdate');
-        Route::delete('delete/supplier/{id}', 'User\CompanyController@deleteSupplier')->name('deleteSupplier');
+
 
 
 //        Route::post('/verificationSubmit', 'User\HomeController@verificationSubmit')->name('verificationSubmit');
@@ -132,7 +134,8 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'user', 'as' => 'user.'], fu
     Route::get('purchase/reports', [ReportController::class, 'purchaseReports'])->name('purchaseReports');
 
     Route::get('purchase/payment/reports', [ReportController::class, 'purchasePaymentReports'])->name('purchasePaymentReports');
-    Route::get('export/purchase/payment/reports', [ReportController::class, 'exportPurchasePaymentReports'])->name('export.profitLossReports');
+    Route::get('export/purchase/payment/reports', [ReportController::class, 'exportPurchasePaymentReports'])->name('export.purchasePaymentReports');
+
 
     // Sales Report
     Route::get('sales/reports', [ReportController::class, 'salesReports'])->name('salesReports');
@@ -144,6 +147,14 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'user', 'as' => 'user.'], fu
     // Profit & Loss Report
     Route::get('profit/loss/reports', [ReportController::class, 'profitLossReports'])->name('profitLossReports');
     Route::get('export/profit/loss/reports', [ReportController::class, 'exportProfitLossReports'])->name('export.profitLossReports');
+
+    // Roles And Permission
+    Route::get('role/list', [RolesPermissionController::class, 'roleList'])->name('role');
+    Route::get('create/role', [RolesPermissionController::class, 'createRole'])->name('createRole');
+    Route::post('role/store', [RolesPermissionController::class, 'roleStore'])->name('roleStore');
+    Route::get('edit/role/{id}', [RolesPermissionController::class, 'editRole'])->name('editRole');
+    Route::post('role/update/{id}', [RolesPermissionController::class, 'roleUpdate'])->name('roleUpdate');
+    Route::delete('delete/role/{id}', [RolesPermissionController::class, 'deleteRole'])->name('deleteRole');
 
 
     //Stock Report
@@ -221,7 +232,6 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'user', 'as' => 'user.'], fu
     Route::get('customer-edit/{id}', 'User\CompanyController@customerEdit')->name('customerEdit');
     Route::post('customer-update/{id}', 'User\CompanyController@customerUpdate')->name('customerUpdate');
     Route::delete('delete/customer/{id}', 'User\CompanyController@deleteCustomer')->name('deleteCustomer');
-
 
     // Stock In
     Route::get('stock-list', 'User\CompanyController@stockList')->name('stockList');

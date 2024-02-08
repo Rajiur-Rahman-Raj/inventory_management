@@ -92,13 +92,14 @@
                 </div>
             @endif
 
-            {{-- @dd($profitLossReportRecords) --}}
             @if(isset($profitLossReportRecords) && count($search) > 0)
                 <div class="report-box">
                     <table class="table table-responsive">
                         <thead>
                         <tr>
-                            <th class="bg-white">@lang('Reports Summery')</th>
+                            <th class="bg-white">
+                                <h5 class="text-primary">@lang('Reports Summery')</h5>
+                            </th>
                         </tr>
                         </thead>
                         <tbody>
@@ -132,6 +133,18 @@
                         <tr>
                             <td>@lang('Total Expense')</td>
                             <td> {{ config('basic.currency_text') }} {{ fractionNumber($profitLossReportRecords['totalExpense'], false) }} </td>
+                        </tr>
+
+                        <tr>
+                            <td>@lang('Revenue')</td>
+                            <td> {{ config('basic.currency_text') }} {{ fractionNumber($profitLossReportRecords['revenue'], false) }} </td>
+                        </tr>
+
+                        <tr>
+                            <td>@lang('Net Profit')</td>
+                            <td class="{{ $profitLossReportRecords['netProfit'] < 0 ? 'text-danger' : 'text-success' }}">
+                                {{ config('basic.currency_text') }} {{ fractionNumber($profitLossReportRecords['netProfit'], false) }}
+                            </td>
                         </tr>
 
 

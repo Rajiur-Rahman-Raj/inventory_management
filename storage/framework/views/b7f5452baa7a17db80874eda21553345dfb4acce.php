@@ -286,20 +286,24 @@ unset($__errorArgs, $__bag); ?>
                                                            data-stockid="<?php echo e($cartItem->stock_id); ?>"
                                                            data-itemid="<?php echo e($cartItem->item_id); ?>"
                                                            data-cartitem="<?php echo e($cartItem->cost_per_unit); ?>"
+                                                           data-stockperunit="<?php echo e($cartItem->stock_per_unit); ?>"
                                                            min="1">
                                                 </div>
                                                 <input type="hidden" name="cost_per_unit[]"
                                                        value="<?php echo e($cartItem->cost_per_unit); ?>">
+                                                <input type="hidden" name="stock_per_unit[]"
+                                                       value="<?php echo e($cartItem->stock_per_unit); ?>">
                                                 <div class="prize">
                                                     <h6 class="cart-item-cost"><?php echo e($cartItem->cost); ?> <?php echo e($basic->currency_symbol); ?></h6>
-                                                    <input type="hidden" name="item_price[]"
-                                                           value="<?php echo e($cartItem->cost); ?>" class="item_price_input">
+                                                    <input type="hidden" name="item_price[]" value="<?php echo e($cartItem->cost); ?>" class="item_price_input">
+                                                    <input type="hidden" name="stock_item_price[]" value="<?php echo e($cartItem->stock_item_price); ?>" class="stock_item_price_input">
                                                 </div>
+
                                                 <div class="remove">
-                                                    <a href="javascript:void(0)" class="clearSingleCartItem"
-                                                       data-id="<?php echo e($cartItem->id); ?>">
+                                                    <a href="javascript:void(0)" class="clearSingleCartItem" data-id="<?php echo e($cartItem->id); ?>">
                                                         <i class="fa fa-times"></i></a>
                                                 </div>
+
                                             </div>
                                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                     </div>
@@ -838,14 +842,16 @@ unset($__errorArgs, $__bag); ?>"
                         <input type="hidden" name="item_name[]" value="${cartItem.item.name}">
                         <div class="quantity">
                             <input type="number" name="item_quantity[]" value="${cartItem.quantity}"
-                                   class="itemQuantityInput" data-cartitem="${cartItem.cost_per_unit}" data-stockid="${cartItem.stock_id}"
+                                   class="itemQuantityInput" data-cartitem="${cartItem.cost_per_unit}" data-stockperunit="${cartItem.stock_per_unit}" data-stockid="${cartItem.stock_id}"
                                                            data-itemid="${cartItem.item_id}" min="1">
                         </div>
                         <input type="hidden" name="cost_per_unit[]"
                                                        value="${cartItem.cost_per_unit}">
+                        <input type="hidden" name="stock_per_unit[]" value="${cartItem.stock_per_unit}">
                         <div class="prize">
                             <h6 class="cart-item-cost">${cartItem.cost} <?php echo e($basic->currency_symbol); ?></h6>
                             <input type="hidden" name="item_price[]" value="${cartItem.cost}" class="item_price_input">
+                            <input type="hidden" name="stock_item_price[]" value="${cartItem.stock_item_price}" class="stock_item_price_input">
                         </div>
 
                         <div class="remove">
@@ -1016,13 +1022,15 @@ unset($__errorArgs, $__bag); ?>"
                         <input type="hidden" name="item_name[]" value="${cartItem.item.name}">
                         <div class="quantity">
                             <input type="number" name="item_quantity[]" value="${cartItem.quantity}"
-                                   class="itemQuantityInput" data-cartitem="${cartItem.cost_per_unit}" min="1">
+                                   class="itemQuantityInput" data-cartitem="${cartItem.cost_per_unit}" data-stockperunit="${cartItem.stock_per_unit}" min="1">
                         </div>
                         <input type="hidden" name="cost_per_unit[]"
                                                        value="${cartItem.cost_per_unit}">
+                        <input type="hidden" name="stock_per_unit[]" value="${cartItem.stock_per_unit}">
                         <div class="prize">
                             <h6 class="cart-item-cost">${cartItem.cost} <?php echo e($basic->currency_symbol); ?></h6>
                             <input type="hidden" name="item_price[]" value="${cartItem.cost}" class="item_price_input">
+                            <input type="hidden" name="stock_item_price[]" value="${cartItem.stock_item_price}" class="stock_item_price_input">
                         </div>
                         <div class="remove">
                             <a href="javascript:void(0)" class="clearSingleCartItem" data-id="${cartItem.id}"
@@ -1092,9 +1100,12 @@ unset($__errorArgs, $__bag); ?>"
                 let thisClass = $(this);
                 let cartQuantity = isNaN(parseFloat($(this).val())) ? 0 : parseFloat($(this).val());
                 let costPerUnit = parseFloat($(this).data('cartitem')).toFixed(2);
+                let stockPerUnit = parseFloat($(this).data('stockperunit')).toFixed(2);
                 let singleCartItemCost = cartQuantity * costPerUnit;
+                let singleCartItemStockCost = cartQuantity * stockPerUnit;
                 $(this).parent().siblings('.prize').find('.cart-item-cost').text(`${singleCartItemCost.toFixed(2)} <?php echo e($basic->currency_symbol); ?>`);
                 $(this).parent().siblings('.prize').find('.item_price_input').val(`${singleCartItemCost.toFixed(2)}`);
+                $(this).parent().siblings('.prize').find('.stock_item_price_input').val(`${singleCartItemStockCost.toFixed(2)}`);
 
                 // Recalculate subtotal and total
                 updateSubtotal();
@@ -1114,9 +1125,12 @@ unset($__errorArgs, $__bag); ?>"
                     let thisClass = $(this);
                     let cartQuantity = isNaN(parseFloat($(this).val())) ? 0 : parseFloat($(this).val());
                     let costPerUnit = parseFloat($(this).data('cartitem')).toFixed(2);
+                    let stockPerUnit = parseFloat($(this).data('stockperunit')).toFixed(2);
                     let singleCartItemCost = cartQuantity * costPerUnit;
+                    let singleCartItemStockCost = cartQuantity * stockPerUnit;
                     $(this).parent().siblings('.prize').find('.cart-item-cost').text(`${singleCartItemCost.toFixed(2)} <?php echo e($basic->currency_symbol); ?>`);
                     $(this).parent().siblings('.prize').find('.item_price_input').val(`${singleCartItemCost.toFixed(2)}`);
+                    $(this).parent().siblings('.prize').find('.stock_item_price_input').val(`${singleCartItemStockCost.toFixed(2)}`);
                     // Recalculate subtotal and total
                     updateSubtotal();
                     updateTotal();

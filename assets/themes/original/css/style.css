@@ -9630,3 +9630,40 @@ costPerUnitBtn:hover i {
 .custom-table{
     box-shadow: none !important;
 }
+
+/*role css */
+.accessibility{
+    margin: 0;
+    font-weight: bold;
+    font-size: 20px;
+    padding: 5px;
+}
+.permission-group{
+    background: #f2f5fa;
+}
+table tr {
+    border: 1px solid #dddddd;
+    padding: 8px 15px;
+    align-content: center;
+}
+
+/*TODO*/
+.child-table{
+    width: 100%;
+}
+.child-table tr{
+    border-right: none;
+}
+.child-table tr:first-child{
+    border-top: none;
+}
+.child-table tr:last-child{
+    border-bottom: none;
+}
+.list-unstyled {
+    padding-left: 0;
+    list-style: none;
+}
+.border-left {
+    border-left: 1px solid #dee2e6!important;
+}

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exports\AffiliateReportExport;
 use App\Exports\ExpenseReportExport;
+use App\Exports\ProfitLossReport;
 use App\Exports\PurchaseExport;
 use App\Exports\PurchasePaymentReportExport;
 use App\Exports\SalesPaymentReportExport;
@@ -427,10 +428,25 @@ class ReportController extends Controller
                     ->get()
                     ->toArray();
 
-
-//                dd($profitLossReports);
-
                 $data['profitLossReportRecords'] = collect($profitLossReports)->collapse();
+
+                $sales = Sale::with('salesItems')->
+                    when(isset($search['from_date']), function ($query) use ($fromDate) {
+                        return $query->whereDate('created_at', '>=', $fromDate);
+                    })
+                        ->when(isset($search['to_date']), function ($query) use ($fromDate, $toDate) {
+                            return $query->whereBetween('created_at', [$fromDate, $toDate]);
+                        })
+                    ->where('company_id', $admin->active_company_id)->where('sales_by', 1)
+                    ->get();
+
+                $salesStockPrice = $sales->flatMap->salesItems->sum('stock_item_price');
+
+                $data['profitLossReportRecords']['totalStockCost'] = $salesStockPrice;
+
+                $data['profitLossReportRecords']['revenue'] = $data['profitLossReportRecords']['totalSales'] - $data['profitLossReportRecords']['totalStockCost'];
+
+
 
                 $data['purchase'] = RawItemPurchaseIn::when(isset($search['from_date']), fn($query) => $query->whereDate('purchase_date', '>=', $fromDate))
                     ->when(isset($search['to_date']), fn($query) => $query->whereBetween('purchase_date', [$fromDate, $toDate]))
@@ -456,6 +472,7 @@ class ReportController extends Controller
                     ->when(isset($search['to_date']), fn($query) => $query->whereBetween('expense_date', [$fromDate, $toDate]))
                     ->where('company_id', $admin->active_company_id)->sum('amount');
 
+                $data['profitLossReportRecords']['netProfit'] = $data['profitLossReportRecords']['revenue'] - $data['profitLossReportRecords']['totalAffiliateCommission'] - $data['profitLossReportRecords']['totalExpense'];
 
 
                 return view($this->theme . 'user.reports.profitLoss.index', $data, compact('search'));
@@ -471,9 +488,11 @@ class ReportController extends Controller
         }
     }
 
-    public function exportProfitLossReports()
+    public function exportProfitLossReports(Request $request)
     {
-
+        $admin = $this->user;
+        return Excel::download(new ProfitLossReport($request, $admin), 'profitLossReport.xlsx');
     }
+
 
 }
