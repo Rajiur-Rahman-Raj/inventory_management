@@ -45,6 +45,12 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $dates = ['sent_at'];
 
 
+
+    public function role()
+    {
+        return $this->belongsTo(Role::class, 'role_id', 'id')->where('status', 1);
+    }
+
     public function activeCompany()
     {
         return $this->hasOne(Company::class, 'id', 'active_company_id');

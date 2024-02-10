@@ -75,9 +75,9 @@ unset($__errorArgs, $__bag); ?>
                                             <select class="form-control js-example-basic-single" name="status"
                                                     aria-label="Default select example">
                                                 <option
-                                                    value="1" <?php echo e(@request()->status == 1 ? 'selected' : ''); ?>><?php echo app('translator')->get('Active'); ?></option>
+                                                    value="1" <?php echo e(old('status') == 1 ? 'selected' : ''); ?>><?php echo app('translator')->get('Active'); ?></option>
                                                 <option
-                                                    value="0" <?php echo e(@request()->deactive == 0 ? 'selected' : ''); ?>><?php echo app('translator')->get('Deactive'); ?></option>
+                                                    value="0" <?php echo e(old('status') == 0 ? 'selected' : ''); ?>><?php echo app('translator')->get('Deactive'); ?></option>
                                             </select>
                                         </div>
                                     </div>

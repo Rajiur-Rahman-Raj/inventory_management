@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Admin;
 use App\Models\Role;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Stevebauman\Purify\Facades\Purify;
 
@@ -20,7 +23,8 @@ class RolesPermissionController extends Controller
         $this->theme = template();
     }
 
-    public function roleList(Request $request){
+    public function roleList(Request $request)
+    {
         $admin = $this->user;
         $search = $request->all();
 
@@ -37,15 +41,17 @@ class RolesPermissionController extends Controller
             ->when(isset($search['status']) && $search['status'] == 'deactive', function ($q2) use ($search) {
                 return $q2->where('status', 0);
             })
-        ->orderBy('id', 'asc')->paginate(config('basic.paginate'));
+            ->orderBy('id', 'asc')->paginate(config('basic.paginate'));
         return view($this->theme . 'user.role_permission.roleList', $data);
     }
 
-    public function createRole(){
+    public function createRole()
+    {
         return view($this->theme . 'user.role_permission.createRole');
     }
 
-    public function roleStore(Request $request){
+    public function roleStore(Request $request)
+    {
 
         $admin = $this->user;
         $purifiedData = Purify::clean($request->except('_token', '_method'));
@@ -72,12 +78,14 @@ class RolesPermissionController extends Controller
         $role->name = $request->name;
         $role->permission = (isset($request->permissions)) ? explode(',', join(',', $request->permissions)) : [];
         $role->status = $request->status;
+        $role->user_type = 1;
         $role->save();
 
         return back()->with('success', 'New role created successfully!');
     }
 
-    public function editRole($id){
+    public function editRole($id)
+    {
         $admin = $this->user;
         $data['singleRole'] = Role::where('company_id', $admin->active_company_id)->findOrFail($id);
         return view($this->theme . 'user.role_permission.editRole', $data);
@@ -109,6 +117,7 @@ class RolesPermissionController extends Controller
         $role->name = $request->name;
         $role->permission = (isset($request->permissions)) ? explode(',', join(',', $request->permissions)) : [];
         $role->status = $request->status;
+        $role->user_type = 1;
         $role->save();
 
         return back()->with('success', 'Role updated successfully!');
@@ -122,6 +131,78 @@ class RolesPermissionController extends Controller
         }
         $role->delete();
         return back()->with('success', 'Delete successfully');
+    }
+
+
+    public function staffList()
+    {
+        $data['roleUsers'] = User::with('role')->whereNotNull('role_id')->where('role_id', '!=', 0)->orderBy('role_id', 'asc')->paginate(config('basic.paginate'));
+        $data['roles'] = Role::where('status', 1)->orderBy('name', 'asc')->get();
+        return view($this->theme . 'user.role_permission.staffList', $data);
+    }
+
+    public function staffCreate(Request $request)
+    {
+        $data['roles'] = Role::where('status', 1)->orderBy('name', 'asc')->get();
+        return view($this->theme . 'user.role_permission.staffCreate', $data);
+    }
+
+    public function staffStore(Request $request)
+    {
+
+        $validator = Validator::make($request->all(), [
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
+            'username' => ['required', 'string', 'max:50', 'unique:users,username'],
+            'password' => ['required', 'string', 'min:6'],
+            'role_id' => ['required'],
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->messages()], 422);
+        }
+
+        $user = new User();
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->phone = $request->phone;
+        $user->username = $request->username;
+        $user->password = Hash::make($request->password);
+        $user->role_id = $request->role_id;
+        $user->status = $request->status;
+
+        $user->save();
+        return back()->with('success', 'Staff Created Successfully!');
+    }
+
+    public function staffEdit($id){
+        $data['singleStaff'] = User::findOrFail($id);
+        $data['roles'] = Role::where('status', 1)->orderBy('name', 'asc')->get();
+        return view($this->theme . 'user.role_permission.staffEdit', $data);
+    }
+
+    public function staffUpdate(Request $request, $id){
+        $validator = Validator::make($request->all(), [
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255'],
+            'username' => ['required', 'string', 'max:50'],
+            'role_id' => ['required'],
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->messages()], 422);
+        }
+
+        $user = User::findOrFail($id);
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->phone = $request->phone;
+        $user->username = $request->username;
+        $user->role_id = $request->role_id;
+        $user->status = $request->status;
+
+        $user->save();
+        return back()->with('success', 'Staff Updated Successfully!');
     }
 
 }

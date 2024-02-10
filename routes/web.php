@@ -156,6 +156,12 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'user', 'as' => 'user.'], fu
     Route::post('role/update/{id}', [RolesPermissionController::class, 'roleUpdate'])->name('roleUpdate');
     Route::delete('delete/role/{id}', [RolesPermissionController::class, 'deleteRole'])->name('deleteRole');
 
+    Route::get('manage/staffs', [RolesPermissionController::class, 'staffList'])->name('role.staff');
+    Route::get('manage/staffs/create', [RolesPermissionController::class, 'staffCreate'])->name('role.staffCreate');
+    Route::post('manage/staffs/store', [RolesPermissionController::class, 'staffStore'])->name('role.staffStore');
+    Route::get('manage/staffs/edit/{id?}', [RolesPermissionController::class, 'staffEdit'])->name('role.staffEdit');
+    Route::post('manage/staffs/update/{id}', [RolesPermissionController::class, 'staffUpdate'])->name('role.staffUpdate');
+
 
     //Stock Report
     Route::get('stock/reports', [ReportController::class, 'stockReports'])->name('stockReports');

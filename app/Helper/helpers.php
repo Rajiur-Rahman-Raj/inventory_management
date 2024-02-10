@@ -370,7 +370,7 @@ function in_array_any($needles, $haystack)
 }
 
 
-function adminAccessRoute($search)
+function adminAccessRoute1($search)
 {
 
     $list = collect(config('role'))->pluck('access')->flatten()->intersect(auth()->guard('admin')->user()->admin_access);
@@ -393,6 +393,24 @@ function adminAccessRoute($search)
     }
 }
 
+function adminAccessRoute($search)
+{
+    $user = auth()->user();
+
+    if (isset($user) && $user->role_id == null || $user->role_id == 0) {
+        return true;
+    }
+
+    if (isset($user)) {
+        foreach (optional($user->role)->permission as $permission) {
+            if (in_array($permission, $search)) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
 
 function hex2rgba($color, $opacity = false)
 {
