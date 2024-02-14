@@ -51,17 +51,17 @@
 <header id="header-section">
     <div class="overlay">
         <!-- TOPBAR -->
-        <?php echo $__env->make($theme.'partials.topbar', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+
         <!-- /TOPBAR -->
     </div>
 </header>
 
 
-<?php echo $__env->make($theme.'partials.banner', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+
 
 <?php echo $__env->yieldContent('content'); ?>
 
-<?php echo $__env->make($theme.'partials.footer', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+
 
 <?php echo $__env->yieldPushContent('extra-content'); ?>
 

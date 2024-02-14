@@ -8680,11 +8680,11 @@ button.gold-btn.copyReferalLink {
 /*sidebar bottom css*/
 
 #sidebar .sidebar-bottom {
-    padding: 30px;
-    padding-top: 15px;
-    position: absolute;
-    width: 100%;
+    padding: 15px 30px;
+    position: fixed;
+    width: 300px;
     bottom: 0;
+    background: var(--white);
 }
 
 #sidebar .sidebar-bottom .btn-group {

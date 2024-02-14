@@ -51,17 +51,17 @@
 <header id="header-section">
     <div class="overlay">
         <!-- TOPBAR -->
-        @include($theme.'partials.topbar')
+{{--        @include($theme.'partials.topbar')--}}
         <!-- /TOPBAR -->
     </div>
 </header>
 
 
-@include($theme.'partials.banner')
+{{--@include($theme.'partials.banner')--}}
 
 @yield('content')
 
-@include($theme.'partials.footer')
+{{--@include($theme.'partials.footer')--}}
 
 @stack('extra-content')
 

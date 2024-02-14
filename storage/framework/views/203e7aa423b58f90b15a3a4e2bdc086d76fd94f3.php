@@ -280,55 +280,60 @@
                             </li>
                         <?php endif; ?>
 
-                        <?php if(adminAccessRoute(config('permissionList.Manage_Reports.Purchase_Payment_Report.permission.view'))): ?>
+                        <?php if(adminAccessRoute(config('permissionList.Manage_Reports.Stock_Report.permission.view'))): ?>
                             <li>
                                 <a class="<?php echo e(in_array($currentRouteName, ['user.stockReports']) ? 'active' : ''); ?>"
                                    href="<?php echo e(route('user.stockReports')); ?>"><i
                                         class="fal fa-sack-dollar"></i><?php echo app('translator')->get('Stock Report'); ?>
                                 </a>
                             </li>
+                        <?php endif; ?>
 
+                        <?php if(adminAccessRoute(config('permissionList.Manage_Reports.Sales_Report.permission.view'))): ?>
                             <li>
                                 <a class="<?php echo e(in_array($currentRouteName, ['user.salesReports']) ? 'active' : ''); ?>"
                                    href="<?php echo e(route('user.salesReports')); ?>"><i
                                         class="fal fa-sack-dollar"></i><?php echo app('translator')->get('Sales Report'); ?>
                                 </a>
                             </li>
+                        <?php endif; ?>
 
+                        <?php if(adminAccessRoute(config('permissionList.Manage_Reports.Sales_Payment_Report.permission.view'))): ?>
                             <li>
                                 <a class="<?php echo e(in_array($currentRouteName, ['user.salesPaymentReports']) ? 'active' : ''); ?>"
                                    href="<?php echo e(route('user.salesPaymentReports')); ?>"><i
                                         class="fal fa-sack-dollar"></i><?php echo app('translator')->get('Sales Payment'); ?>
                                 </a>
                             </li>
+                        <?php endif; ?>
 
-                            <li>
-                                <a class="<?php echo e(in_array($currentRouteName, ['user.wastageReports']) ? 'active' : ''); ?>"
-                                   href="<?php echo e(route('user.wastageReports')); ?>"><i
-                                        class="fal fa-sack-dollar"></i><?php echo app('translator')->get('Wastage Report'); ?>
-                                </a>
-                            </li>
+                        <li>
+                            <a class="<?php echo e(in_array($currentRouteName, ['user.wastageReports']) ? 'active' : ''); ?>"
+                               href="<?php echo e(route('user.wastageReports')); ?>"><i
+                                    class="fal fa-sack-dollar"></i><?php echo app('translator')->get('Wastage Report'); ?>
+                            </a>
+                        </li>
 
-                            <li>
-                                <a class="<?php echo e(in_array($currentRouteName, ['user.affiliateReports']) ? 'active' : ''); ?>"
-                                   href="<?php echo e(route('user.affiliateReports')); ?>"><i
-                                        class="fal fa-sack-dollar"></i><?php echo app('translator')->get('Affiliation Report'); ?>
-                                </a>
-                            </li>
+                        <li>
+                            <a class="<?php echo e(in_array($currentRouteName, ['user.affiliateReports']) ? 'active' : ''); ?>"
+                               href="<?php echo e(route('user.affiliateReports')); ?>"><i
+                                    class="fal fa-sack-dollar"></i><?php echo app('translator')->get('Affiliation Report'); ?>
+                            </a>
+                        </li>
 
-                            <li>
-                                <a class="<?php echo e(in_array($currentRouteName, ['user.expenseReports']) ? 'active' : ''); ?>"
-                                   href="<?php echo e(route('user.expenseReports')); ?>"><i
-                                        class="fal fa-sack-dollar"></i><?php echo app('translator')->get('Expense Report'); ?>
-                                </a>
-                            </li>
+                        <li>
+                            <a class="<?php echo e(in_array($currentRouteName, ['user.expenseReports']) ? 'active' : ''); ?>"
+                               href="<?php echo e(route('user.expenseReports')); ?>"><i
+                                    class="fal fa-sack-dollar"></i><?php echo app('translator')->get('Expense Report'); ?>
+                            </a>
+                        </li>
 
-                            <li>
-                                <a class="<?php echo e(in_array($currentRouteName, ['user.profitLossReports']) ? 'active' : ''); ?>"
-                                   href="<?php echo e(route('user.profitLossReports')); ?>"><i
-                                        class="fal fa-sack-dollar"></i><?php echo app('translator')->get('Profit & Loss Report'); ?>
-                                </a>
-                            </li>
+                        <li>
+                            <a class="<?php echo e(in_array($currentRouteName, ['user.profitLossReports']) ? 'active' : ''); ?>"
+                               href="<?php echo e(route('user.profitLossReports')); ?>"><i
+                                    class="fal fa-sack-dollar"></i><?php echo app('translator')->get('Profit & Loss Report'); ?>
+                            </a>
+                        </li>
 
                     </ul>
                 </div>

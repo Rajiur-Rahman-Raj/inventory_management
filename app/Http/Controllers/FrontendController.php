@@ -38,7 +38,7 @@ class FrontendController extends Controller
 
     public function index()
     {
-
+        return redirect()->route('login');
         MainCron::handle();
 
         $templateSection = ['hero', 'about-us', 'why-chose-us', 'how-it-work', 'how-we-work', 'know-more-us', 'deposit-withdraw', 'news-letter', 'news-letter-referral', 'testimonial', 'request-a-call', 'investor', 'blog', 'faq', 'we-accept', 'plan', 'property', 'coin', 'latest-property', 'statistics', 'referral'];
