@@ -26,4 +26,8 @@ class Stock extends Model
     {
         return route('user.updateSellingPrice', $this->id);
     }
+
+    public function salesCenter(){
+        return $this->belongsTo(SalesCenter::class, 'sales_center_id');
+    }
 }

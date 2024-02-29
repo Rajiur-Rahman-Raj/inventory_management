@@ -762,6 +762,55 @@ class CompanyController extends Controller
         return back()->with('success', 'Expense Deleted Successfully!');
     }
 
+
+    public function addStock()
+    {
+        $admin = $this->user;
+        $data['items'] = Item::where('company_id', $admin->active_company_id)->get();
+        $data['rawItems'] = RawItem::where('company_id', $admin->active_company_id)->get();
+        return view($this->theme . 'user.stock.create', $data);
+    }
+
+    public function stockStore(Request $request)
+    {
+
+        $admin = $this->user;
+        $purifiedData = Purify::clean($request->except('_token', '_method'));
+
+        $rules = [
+            'stock_date' => 'required',
+        ];
+
+        $message = [
+            'stock_date.required' => __('stock date is required'),
+        ];
+
+        $validate = Validator::make($purifiedData, $rules, $message);
+
+        if ($validate->fails()) {
+            return back()->withInput()->withErrors($validate);
+        }
+
+        try {
+            DB::beginTransaction();
+            $stockIn = new StockIn();
+            $stockIn->company_id = $admin->active_company_id;
+            $stockIn->stock_date = $request->stock_date;
+            $stockIn->total_cost = $request->sub_total;
+            $stockIn->save();
+
+            $this->storeStockInDetails($request, $stockIn);
+            $this->storeStocks($request, $admin);
+
+            DB::commit();
+            return back()->with('success', 'Item stock added successfully');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', $e->getMessage());
+        }
+    }
+
     public function stockList(Request $request)
     {
         $admin = $this->user;
@@ -812,57 +861,22 @@ class CompanyController extends Controller
         return view($this->theme . 'user.stock.index', $data);
     }
 
-    public function addStock()
+    public function stockDetails($item = null, $id = null)
     {
-        $admin = $this->user;
-        $data['items'] = Item::where('company_id', $admin->active_company_id)->get();
-        $data['rawItems'] = RawItem::where('company_id', $admin->active_company_id)->get();
-        return view($this->theme . 'user.stock.create', $data);
-    }
+        $data['stock'] = Stock::select('id', 'item_id', 'last_stock_date')->findOrFail($id);
 
-    public function stockStore(Request $request)
-    {
-        $admin = $this->user;
-        $purifiedData = Purify::clean($request->except('_token', '_method'));
+        $data['singleStockDetails'] = StockInDetails::with('item')->where('item_id', $data['stock']->item_id)->latest()->get();
 
-        $rules = [
-            'stock_date' => 'required',
-        ];
+        $data['totalItemCost'] = $data['singleStockDetails']->sum('total_unit_cost');
 
-        $message = [
-            'stock_date.required' => __('stock date is required'),
-        ];
-
-        $validate = Validator::make($purifiedData, $rules, $message);
-
-        if ($validate->fails()) {
-            return back()->withInput()->withErrors($validate);
-        }
-
-        try {
-            DB::beginTransaction();
-            $stockIn = new StockIn();
-            $stockIn->company_id = $admin->active_company_id;
-            $stockIn->stock_date = $request->stock_date;
-            $stockIn->total_cost = $request->sub_total;
-            $stockIn->save();
-
-            $this->storeStockInDetails($request, $stockIn);
-            $this->storeStocks($request, $admin);
-
-            DB::commit();
-
-            return back()->with('success', 'Item stock added successfully');
-        } catch (\Exception $e) {
-            return back()->with('error', $e->getMessage());
-        }
+        return view($this->theme . 'user.stock.details', $data, compact('item'));
     }
 
     public function stockTransfer()
     {
         $admin = $this->user;
         $data['salesCenters'] = SalesCenter::where('company_id', $admin->active_company_id)->get();
-        $data['items'] = Item::where('company_id', $admin->active_company_id)->get();
+        $data['stocks'] = Stock::with('item')->where('company_id', $admin->active_company_id)->whereNull('sales_center_id')->get();
         return view($this->theme . 'user.stock.transfer', $data);
     }
 
@@ -909,9 +923,12 @@ class CompanyController extends Controller
                 $stockInDetails->stock_date = Carbon::parse($request->transfer_date);
                 $stockInDetails->save();
 
-                // optional prothom e ei table ta banai felsi, here stockIn and stockInDetails table same data store, so no need StockTransferDetails. tarpor eu data rekhe dilam..
+
                 $stockTransferDetails = new StockTransferDetails();
                 $stockTransferDetails->stock_id = $salesCenterStock->id;
+                $stockTransferDetails->item_id = $item;
+                $stockTransferDetails->quantity = $request['item_quantity'][$key];
+                $stockTransferDetails->cost_per_unit = $request['cost_per_unit'][$key];
                 $stockTransferDetails->amount = $request['total_unit_cost'][$key];
                 $stockTransferDetails->transfer_date = Carbon::parse($request->transfer_date);
                 $stockTransferDetails->save();
@@ -930,17 +947,65 @@ class CompanyController extends Controller
         return back()->with('success', 'Stock Successfully Transferred');
     }
 
+    public function stockTransferList(Request $request)
+    {
+        $admin = $this->user;
 
-    public function stockDetails($item = null, $id = null)
+        $search = $request->all();
+
+        $fromDate = Carbon::parse($request->from_date);
+        $toDate = Carbon::parse($request->to_date)->addDay();
+
+        $data['allItems'] = Item::where('status', 1)
+            ->when(!isset($admin->salesCenter) && $admin->user_type == 1, function ($q2) use ($admin) {
+                $q2->where('company_id', $admin->active_company_id);
+            })->when(isset($admin->salesCenter) && $admin->user_type == 2, function ($q2) use ($admin) {
+                $q2->where('company_id', $admin->salesCenter->company_id);
+            })->where('status', 1)->get();
+
+
+        $data['stockLists'] = Stock::with('item:id,name', 'salesCenter:id,name')
+            ->when(isset($search['item_id']), function ($query) use ($search) {
+                return $query->whereHas('item', function ($q) use ($search) {
+                    $q->where('id', $search['item_id']);
+                });
+            })
+            ->when(isset($search['from_date']), function ($q2) use ($fromDate) {
+                return $q2->whereDate('last_stock_date', '>=', $fromDate);
+            })
+            ->when(isset($search['to_date']), function ($q2) use ($fromDate, $toDate) {
+                return $q2->whereBetween('last_stock_date', [$fromDate, $toDate]);
+            })
+            ->when(isset($admin->salesCenter) && $admin->user_type == 2, function ($q2) use ($admin) {
+                $q2->where('company_id', $admin->salesCenter->company_id)
+                    ->where('sales_center_id', $admin->salesCenter->id);
+            })
+            ->where('company_id', $admin->active_company_id)
+            ->whereNotNull('sales_center_id')
+            ->latest()
+//            ->select('id', 'item_id', 'quantity', 'cost_per_unit', 'last_cost_per_unit', 'stock_date', 'last_stock_date', 'selling_price')
+            ->paginate(config('basic.paginate'));
+
+
+        return view($this->theme . 'user.stock.transferList', $data);
+    }
+
+
+    public function stockTransferDetails($item = null, $id = null)
     {
         $data['stock'] = Stock::select('id', 'item_id', 'last_stock_date')->findOrFail($id);
+        $data['stockTransferDetails'] = StockTransferDetails::with('stocks', 'item')->where('stock_id', $id)->get();
+        $data['totalItemCost'] = $data['stockTransferDetails']->sum('amount');
 
-        $data['singleStockDetails'] = StockInDetails::with('item')->where('item_id', $data['stock']->item_id)->latest()->get();
-
-        $data['totalItemCost'] = $data['singleStockDetails']->sum('total_unit_cost');
-
-        return view($this->theme . 'user.stock.details', $data, compact('item'));
+        return view($this->theme . 'user.stock.transferDetails', $data, compact('item'));
     }
+
+
+
+
+
+
+
 
     public function salesCenterStockDetails($item = null, $id = null)
     {
@@ -1846,6 +1911,7 @@ class CompanyController extends Controller
         $RawItemPurchaseIn->due_amount = $due_or_change_amount <= 0 ? 0 : $request->due_or_change_amount;
         $RawItemPurchaseIn->last_payment_date = Carbon::parse($request->payment_date);
         $RawItemPurchaseIn->payment_status = $due_or_change_amount <= 0 ? 1 : 0;
+        $RawItemPurchaseIn->discount_amount += $request->discount_amount;
         $RawItemPurchaseIn->last_note = $request->note;
         $RawItemPurchaseIn->save();
 
@@ -2487,7 +2553,6 @@ class CompanyController extends Controller
             ->where('company_id', $admin->active_company_id)
             ->latest()
             ->paginate(config('basic.paginate'));
-
 
         return view($this->theme . 'user.rawItems.purchaseRawItemList', $data);
     }

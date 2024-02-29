@@ -15,4 +15,8 @@ class StockTransferDetails extends Model
         return $this->belongsTo(Stock::class, 'stock_id', 'id');
     }
 
+    public function item(){
+        return $this->belongsTo(Item::class, 'item_id', 'id');
+    }
+
 }

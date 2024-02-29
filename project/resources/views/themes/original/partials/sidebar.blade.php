@@ -54,7 +54,7 @@
             </li>
         @endif
 
-        @if(userType() == 2 || adminAccessRoute(array_merge(config('permissionList.Manage_Customers.Customers.permission.view'))))
+        @if(userType() == 2)
             <li>
                 <a class="{{menuActive(['user.customerList', 'user.createCustomer', 'user.customerDetails', 'user.customerEdit'])}}"
                    href="{{ route('user.customerList') }}"><i class="fal fa-users"></i> @lang('Customers')</a>
@@ -135,7 +135,7 @@
                     <i class="fal fa-car-building"></i>@lang('Stocks')
                 </a>
                 <div
-                    class="collapse {{menuActive(['user.stockList', 'user.addStock', 'user.stockDetails', 'user.stockTransfer'],4)}} dropdownManageStocks"
+                    class="collapse {{menuActive(['user.stockList', 'user.addStock', 'user.stockDetails', 'user.stockTransfer', 'user.stockTransferList'],4)}} dropdownManageStocks"
                     id="dropdownManageStocks">
                     <ul class="">
                         <li>
@@ -156,13 +156,19 @@
                                         class="fal fa-house-return"></i>@lang('Stock Transfer')
                                 </a>
                             </li>
+
+                            <li>
+                                <a class="{{ in_array($currentRouteName, ['user.stockTransferList']) ? 'active' : '' }}" href="{{ route('user.stockTransferList') }}"><i
+                                        class="fal fa-house-return"></i>@lang('Stock Transfer List')
+                                </a>
+                            </li>
                         @endif
                     </ul>
                 </div>
             </li>
         @endif
 
-        @if(userType() == 2)
+        @if(userType() == 2 || (userType() == 1 && adminAccessRoute(array_merge(config('permissionList.Manage_Sales.Sales_List.permission.view')))))
             <li>
                 <a
                     class="dropdown-toggle"
@@ -173,9 +179,7 @@
                     aria-controls="collapseExample">
                     <i class="fal fa-car-building"></i>@lang('Sales')
                 </a>
-                <div
-                    class="collapse {{menuActive(['user.salesItem', 'user.salesList', 'user.salesDetails', 'user.salesInvoice', 'user.returnSales'],4)}} dropdownManageSales"
-                    id="dropdownManageSales">
+                <div class="collapse {{menuActive(['user.salesItem', 'user.salesList', 'user.salesDetails', 'user.salesInvoice', 'user.returnSales'],4)}} dropdownManageSales" id="dropdownManageSales">
                     <ul class="">
                         @if(adminAccessRoute(config('permissionList.Manage_Sales.Sales_List.permission.view')))
                             <li>
@@ -186,7 +190,7 @@
                             </li>
                         @endif
 
-                        @if(adminAccessRoute(config('permissionList.Manage_Sales.Sales_Item.permission.view')))
+                        @if(userType() == 2)
                             <li>
                                 <a class="{{ in_array($currentRouteName, ['user.salesItem']) ? 'active' : '' }}"
                                    href="{{ route('user.salesItem') }}"><i

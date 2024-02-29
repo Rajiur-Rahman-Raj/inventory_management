@@ -111,9 +111,9 @@
                                                     name="item_id[]"
                                                     aria-label="Default select example">
                                                     <option value="" selected disabled>@lang('Select Item')</option>
-                                                    @foreach($items as $key => $item)
+                                                    @foreach($stocks as $key => $stock)
                                                         <option
-                                                            value="{{ $item->id }}" {{ old('item_id.0') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
+                                                            value="{{ $stock->item->id }}" {{ old('item_id.0') == $stock->item->id ? 'selected' : '' }}>{{ $stock->item->name }}</option>
                                                     @endforeach
                                                 </select>
 
@@ -208,9 +208,8 @@
                                                             aria-label="Default select example">
                                                             <option value="" selected
                                                                     disabled>@lang('Select Item')</option>
-                                                            @foreach($items as $key => $item)
-                                                                <option
-                                                                    value="{{ $item->id }}" {{ old("item_id.$i") == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
+                                                            @foreach($stocks as $key => $stock)
+                                                                <option value="{{ $stock->item->id }}" {{ old("item_id.$i") == $stock->item->id ? 'selected' : '' }}>{{ $stock->item->name }}</option>
                                                             @endforeach
                                                         </select>
 
@@ -351,8 +350,8 @@
                                         name="item_id[]"
                                         aria-label="Default select example">
                                         <option value="" selected disabled>@lang('Select Item')</option>
-                                           @foreach($items as $key => $item)
-            <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                           @foreach($stocks as $key => $stock)
+            <option value="{{ $stock->item->id }}">{{ $stock->item->name }}</option>
                                            @endforeach
             </select>
         </div>

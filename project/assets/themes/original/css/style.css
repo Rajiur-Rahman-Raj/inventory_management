@@ -9305,7 +9305,7 @@ costPerUnitBtn:hover i {
 }
 
 .procced-modal .modal .modal-content .modal-body .enter-amount {
-    padding: 20px 5px;
+    padding: 10px 5px;
 }
 
 .procced-modal .modal .modal-content .modal-body .enter-amount h6 {
@@ -9313,10 +9313,12 @@ costPerUnitBtn:hover i {
     color: #767878;
 }
 
-.procced-modal .modal .modal-content .modal-body .enter-amount input {
-    width: 100px;
+.procced-modal .modal .modal-content .modal-body .enter-amount .input-group {
+    width: 40% !important;
 }
-
+.procced-modal .modal .modal-content .modal-body .enter-amount input{
+    background-color: transparent !important;
+}
 .procced-modal .modal .modal-content .modal-body .enter-amount input:focus {
     outline: 0;
     box-shadow: 0 0 0.25rem rgba(13, 110, 253, 0);

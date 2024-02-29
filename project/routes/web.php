@@ -126,6 +126,8 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'user', 'as' => 'user.'], fu
         Route::get('add-stock', 'User\CompanyController@addStock')->name('addStock');
         Route::get('stock-transfer', 'User\CompanyController@stockTransfer')->name('stockTransfer');
         Route::post('store/stock-transfer', 'User\CompanyController@storeStockTransfer')->name('storeStockTransfer');
+        Route::get('stock/transfer/list', 'User\CompanyController@stockTransferList')->name('stockTransferList');
+        Route::get('stock/transfer/details/{item}/{id}', 'User\CompanyController@stockTransferDetails')->name('stockTransferDetails');
 
     });
 

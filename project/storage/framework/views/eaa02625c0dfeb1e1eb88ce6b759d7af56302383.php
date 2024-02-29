@@ -131,9 +131,9 @@ unset($__errorArgs, $__bag); ?>"
                                                     name="item_id[]"
                                                     aria-label="Default select example">
                                                     <option value="" selected disabled><?php echo app('translator')->get('Select Item'); ?></option>
-                                                    <?php $__currentLoopData = $items; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                    <?php $__currentLoopData = $stocks; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $stock): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                         <option
-                                                            value="<?php echo e($item->id); ?>" <?php echo e(old('item_id.0') == $item->id ? 'selected' : ''); ?>><?php echo e($item->name); ?></option>
+                                                            value="<?php echo e($stock->item->id); ?>" <?php echo e(old('item_id.0') == $stock->item->id ? 'selected' : ''); ?>><?php echo e($stock->item->name); ?></option>
                                                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                                 </select>
 
@@ -279,9 +279,8 @@ unset($__errorArgs, $__bag); ?>"
                                                             aria-label="Default select example">
                                                             <option value="" selected
                                                                     disabled><?php echo app('translator')->get('Select Item'); ?></option>
-                                                            <?php $__currentLoopData = $items; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                                <option
-                                                                    value="<?php echo e($item->id); ?>" <?php echo e(old("item_id.$i") == $item->id ? 'selected' : ''); ?>><?php echo e($item->name); ?></option>
+                                                            <?php $__currentLoopData = $stocks; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $stock): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                                <option value="<?php echo e($stock->item->id); ?>" <?php echo e(old("item_id.$i") == $stock->item->id ? 'selected' : ''); ?>><?php echo e($stock->item->name); ?></option>
                                                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                                         </select>
 
@@ -467,8 +466,8 @@ unset($__errorArgs, $__bag); ?>
                                         name="item_id[]"
                                         aria-label="Default select example">
                                         <option value="" selected disabled><?php echo app('translator')->get('Select Item'); ?></option>
-                                           <?php $__currentLoopData = $items; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-            <option value="<?php echo e($item->id); ?>"><?php echo e($item->name); ?></option>
+                                           <?php $__currentLoopData = $stocks; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $stock): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+            <option value="<?php echo e($stock->item->id); ?>"><?php echo e($stock->item->name); ?></option>
                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </select>
         </div>

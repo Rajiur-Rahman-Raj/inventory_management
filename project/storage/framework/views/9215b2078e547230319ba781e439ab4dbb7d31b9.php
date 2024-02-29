@@ -1,9 +1,8 @@
-@extends($theme.'layouts.user')
-@section('title',trans('Purchased Raw Item Details'))
-@section('content')
-    @push('style')
-        <link href="{{ asset('assets/global/css/flatpickr.min.css') }}" rel="stylesheet">
-    @endpush
+<?php $__env->startSection('title',trans('Purchased Raw Item Details')); ?>
+<?php $__env->startSection('content'); ?>
+    <?php $__env->startPush('style'); ?>
+        <link href="<?php echo e(asset('assets/global/css/flatpickr.min.css')); ?>" rel="stylesheet">
+    <?php $__env->stopPush(); ?>
     <!-- main -->
     <div class="container-fluid">
         <div class="row mt-4 mb-2">
@@ -11,11 +10,11 @@
                 <div class="header-text-full">
                     <nav aria-label="breadcrumb" class="ms-2">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="{{ route('user.home') }}">@lang('Dashboard')</a></li>
+                            <li class="breadcrumb-item"><a href="<?php echo e(route('user.home')); ?>"><?php echo app('translator')->get('Dashboard'); ?></a></li>
                             <li class="breadcrumb-item"><a
-                                    href="{{ route('user.purchaseRawItemList') }}">@lang('Purchase List')</a>
+                                    href="<?php echo e(route('user.purchaseRawItemList')); ?>"><?php echo app('translator')->get('Purchase List'); ?></a>
                             </li>
-                            <li class="breadcrumb-item active" aria-current="page">@lang('Details')</li>
+                            <li class="breadcrumb-item active" aria-current="page"><?php echo app('translator')->get('Details'); ?></li>
                         </ol>
                     </nav>
                 </div>
@@ -30,17 +29,17 @@
                             <div class="card investment-details-card">
                                 <div class="card-body">
                                     <div class="d-flex justify-content-end investment__block">
-                                        @if($singlePurchaseItem->payment_status != 1)
+                                        <?php if($singlePurchaseItem->payment_status != 1): ?>
                                             <a href="javascript:void(0)"
                                                class="btn btn-sm btn-primary text-white me-2 invest-details-back paidDueAmountBtn"
-                                               data-route="{{ route('user.purchaseRawItemDueAmountUpdate', $singlePurchaseItem->id) }}"
-                                               data-property="{{ $singlePurchaseItem }}">
-                                                <span> @lang('Pay Due Amount') </span>
+                                               data-route="<?php echo e(route('user.purchaseRawItemDueAmountUpdate', $singlePurchaseItem->id)); ?>"
+                                               data-property="<?php echo e($singlePurchaseItem); ?>">
+                                                <span> <?php echo app('translator')->get('Pay Due Amount'); ?> </span>
                                             </a>
-                                        @endif
-                                        <a href="{{ route('user.purchaseRawItemList') }}"
+                                        <?php endif; ?>
+                                        <a href="<?php echo e(route('user.purchaseRawItemList')); ?>"
                                            class="btn btn-sm bgPrimary text-white mr-2 invest-details-back">
-                                            <span><i class="fas fa-arrow-left"></i> @lang('Back') </span>
+                                            <span><i class="fas fa-arrow-left"></i> <?php echo app('translator')->get('Back'); ?> </span>
                                         </a>
                                     </div>
 
@@ -50,68 +49,68 @@
                                                 <div class="border-bottom">
                                                     <div class="investmentDate d-flex justify-content-start">
                                                         <h6 class="font-weight-bold text-dark"><i
-                                                                class="fal fa-user me-2 text-info"></i> @lang('Purchased From: ')
+                                                                class="fal fa-user me-2 text-info"></i> <?php echo app('translator')->get('Purchased From: '); ?>
                                                         </h6>
-                                                        <h6 class="ms-2">{{ optional($singlePurchaseItem->supplier)->name }}</h6>
+                                                        <h6 class="ms-2"><?php echo e(optional($singlePurchaseItem->supplier)->name); ?></h6>
                                                     </div>
 
                                                     <div class="investmentDate d-flex justify-content-start">
                                                         <h6 class="font-weight-bold text-dark"><i
-                                                                class="far fa-calendar-check me-2 text-primary"></i> @lang('Purchased Date: ')
+                                                                class="far fa-calendar-check me-2 text-primary"></i> <?php echo app('translator')->get('Purchased Date: '); ?>
                                                         </h6>
-                                                        <h6 class="ms-2">{{ dateTime(customDate($singlePurchaseItem->purchase_date)) }}</h6>
+                                                        <h6 class="ms-2"><?php echo e(dateTime(customDate($singlePurchaseItem->purchase_date))); ?></h6>
                                                     </div>
 
                                                     <div class="investmentDate d-flex justify-content-start">
-                                                        <h6 class="font-weight-bold text-dark"> @if($singlePurchaseItem->payment_status == 1)
+                                                        <h6 class="font-weight-bold text-dark"> <?php if($singlePurchaseItem->payment_status == 1): ?>
                                                                 <i class="fal fa-check-double me-2 text-success"></i>
-                                                            @else
+                                                            <?php else: ?>
                                                                 <i class="fal fa-money-check-alt text-success"></i>
-                                                            @endif  @lang('Payment Status')
+                                                            <?php endif; ?>  <?php echo app('translator')->get('Payment Status'); ?>
                                                             : </h6>
-                                                        @if($singlePurchaseItem->payment_status == 1)
+                                                        <?php if($singlePurchaseItem->payment_status == 1): ?>
                                                             <h6 class="ms-2"><span
-                                                                    class="badge bg-success">@lang('Paid')</span></h6>
-                                                        @else
+                                                                    class="badge bg-success"><?php echo app('translator')->get('Paid'); ?></span></h6>
+                                                        <?php else: ?>
                                                             <h6 class="ms-2"><span
-                                                                    class="badge bg-warning">@lang('Due')</span></h6>
-                                                        @endif
+                                                                    class="badge bg-warning"><?php echo app('translator')->get('Due'); ?></span></h6>
+                                                        <?php endif; ?>
                                                     </div>
 
                                                 </div>
 
-                                                @if(count($singlePurchaseItemDetails) > 0)
+                                                <?php if(count($singlePurchaseItemDetails) > 0): ?>
                                                     <ul class="list-style-none p-0 stock_list_style">
                                                         <table class="table table-bordered">
                                                             <thead>
                                                             <tr>
-                                                                <th scope="col">@lang('Item')</th>
-                                                                <th scope="col">@lang('Quantity')</th>
-                                                                <th scope="col">@lang('Cost Per Unit')</th>
-                                                                <th scope="col">@lang('Total Unit Cost')</th>
+                                                                <th scope="col"><?php echo app('translator')->get('Item'); ?></th>
+                                                                <th scope="col"><?php echo app('translator')->get('Quantity'); ?></th>
+                                                                <th scope="col"><?php echo app('translator')->get('Cost Per Unit'); ?></th>
+                                                                <th scope="col"><?php echo app('translator')->get('Total Unit Cost'); ?></th>
                                                             </tr>
                                                             </thead>
                                                             <tbody>
 
-                                                            @foreach($singlePurchaseItemDetails as $key => $purchaseInDetail)
+                                                            <?php $__currentLoopData = $singlePurchaseItemDetails; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $purchaseInDetail): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                                 <tr>
-                                                                    <td data-label="Quantity">{{ optional($purchaseInDetail->rawItem)->name }}</td>
-                                                                    <td data-label="Quantity">{{ $purchaseInDetail->quantity }}</td>
-                                                                    <td data-label="Cost Per Unit">{{ $purchaseInDetail->cost_per_unit }} {{ $basic->currency_symbol }}</td>
-                                                                    <td data-label="Total Unit Cost">{{ $purchaseInDetail->total_unit_cost }} {{ $basic->currency_symbol }}</td>
+                                                                    <td data-label="Quantity"><?php echo e(optional($purchaseInDetail->rawItem)->name); ?></td>
+                                                                    <td data-label="Quantity"><?php echo e($purchaseInDetail->quantity); ?></td>
+                                                                    <td data-label="Cost Per Unit"><?php echo e($purchaseInDetail->cost_per_unit); ?> <?php echo e($basic->currency_symbol); ?></td>
+                                                                    <td data-label="Total Unit Cost"><?php echo e($purchaseInDetail->total_unit_cost); ?> <?php echo e($basic->currency_symbol); ?></td>
                                                                 </tr>
-                                                            @endforeach
+                                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
                                                             <tr>
                                                                 <td colspan="3"
-                                                                    class="text-right">@lang('Total Price')</td>
+                                                                    class="text-right"><?php echo app('translator')->get('Total Price'); ?></td>
                                                                 <td>
-                                                                    = {{ $totalItemCost }} {{ $basic->currency_symbol }}</td>
+                                                                    = <?php echo e($totalItemCost); ?> <?php echo e($basic->currency_symbol); ?></td>
                                                             </tr>
                                                             </tbody>
                                                         </table>
                                                     </ul>
-                                                @endif
+                                                <?php endif; ?>
                                             </div>
                                         </div>
                                     </div>
@@ -130,27 +129,27 @@
              aria-hidden="true">
             <div class="modal-dialog ">
                 <form action="" method="post" class="paidDueAmountRoute">
-                    @csrf
+                    <?php echo csrf_field(); ?>
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="exampleModalLabel">@lang('Make Payment')</h1>
+                            <h1 class="modal-title fs-5" id="exampleModalLabel"><?php echo app('translator')->get('Make Payment'); ?></h1>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
                             <div class="total-amount d-flex align-items-center justify-content-between">
-                                <h5>@lang('Total Due Amount')</h5>
+                                <h5><?php echo app('translator')->get('Total Due Amount'); ?></h5>
                                 <h6 class="total-due-amount"></h6>
                             </div>
 
                             <div class="enter-amount d-flex justify-content-between align-items-center">
-                                <h6>@lang('Discount Amount')</h6>
+                                <h6><?php echo app('translator')->get('Discount Amount'); ?></h6>
                                 <div class="input-group d-flex ">
                                     <input type="text" name="discount_amount" value="0" min="0" max="100" class="form-control bg-white text-dark discount-amount" onkeyup="this.value = this.value.replace (/^\.|[^\d\.]/g, '')">
                                 </div>
                             </div>
 
                             <div class="enter-amount d-flex justify-content-between align-items-center">
-                                <h6>@lang('Paid Amount')</h6>
+                                <h6><?php echo app('translator')->get('Paid Amount'); ?></h6>
                                 <div class="input-group d-flex ">
                                     <input type="text" class="form-control paid-amount" value="0" min="0"
                                            onkeyup="this.value = this.value.replace (/^\.|[^\d\.]/g, '')"
@@ -194,7 +193,7 @@
                                 </div>
 
                                 <div class="mb-3">
-                                    <label for="formFile" class="form-label">@lang('Note')
+                                    <label for="formFile" class="form-label"><?php echo app('translator')->get('Note'); ?>
                                         <span><sub>(optional)</sub></span></label>
                                     <textarea class="form-control" id="exampleFormControlTextarea1"
                                               placeholder="Details note write here" rows="4" name="note"></textarea>
@@ -212,13 +211,13 @@
         </div>
     </div>
 
-@endsection
+<?php $__env->stopSection(); ?>
 
 
-@push('script')
-    <script src="{{ asset('assets/global/js/flatpickr.js') }}"></script>
+<?php $__env->startPush('script'); ?>
+    <script src="<?php echo e(asset('assets/global/js/flatpickr.js')); ?>"></script>
 
-    @if($errors->has('payment_date'))
+    <?php if($errors->has('payment_date')): ?>
         <script>
             var myModal = new bootstrap.Modal(document.getElementById("paidDueAmountModal"), {});
             document.onreadystatechange = function () {
@@ -227,7 +226,7 @@
             };
 
         </script>
-    @endif
+    <?php endif; ?>
 
     <script>
         'use strict'
@@ -251,11 +250,11 @@
             $('.paidDueAmountRoute').attr('action', dataRoute)
 
             let dataProperty = $('.paidDueAmountBtn').data('property');
-            $('.total-due-amount').text(`${dataProperty.due_amount} {{ $basic->currency_symbol }}`);
+            $('.total-due-amount').text(`${dataProperty.due_amount} <?php echo e($basic->currency_symbol); ?>`);
 
             $('.due-or-change-text').text('Due Amount');
-            $('.due-or-change-amount').text(`${dataProperty.due_amount} {{ $basic->currency_symbol }}`)
-            $('.total-payable-amount').text(`${dataProperty.due_amount} {{ $basic->currency_symbol }}`)
+            $('.due-or-change-amount').text(`${dataProperty.due_amount} <?php echo e($basic->currency_symbol); ?>`)
+            $('.total-payable-amount').text(`${dataProperty.due_amount} <?php echo e($basic->currency_symbol); ?>`)
 
             $('.due_or_change_amount_input').val(`${dataProperty.due_amount}`)
             $('.total_payable_amount_input').val(`${dataProperty.due_amount}`)
@@ -283,16 +282,16 @@
 
             if (dueOrChangeAmount >= 0) {
                 $('.due-or-change-text').text('Due Amount')
-                $('.due-or-change-amount').text(`${dueOrChangeAmount.toFixed(2)} {{ $basic->currency_symbol }}`)
-                $('.total-payable-amount').text(`${customerPaidAmount.toFixed(2)} {{ $basic->currency_symbol }}`)
+                $('.due-or-change-amount').text(`${dueOrChangeAmount.toFixed(2)} <?php echo e($basic->currency_symbol); ?>`)
+                $('.total-payable-amount').text(`${customerPaidAmount.toFixed(2)} <?php echo e($basic->currency_symbol); ?>`)
 
                 $('.due_or_change_amount_input').val(`${dueOrChangeAmount.toFixed(2)}`)
                 $('.total_payable_amount_input').val(`${customerPaidAmount.toFixed(2)}`)
 
             } else {
                 $('.due-or-change-text').text('Change Amount')
-                $('.due-or-change-amount').text(`${Math.abs(dueOrChangeAmount).toFixed(2)} {{ $basic->currency_symbol }}`)
-                $('.total-payable-amount').text(`${newTotalAmount.toFixed(2)} {{ $basic->currency_symbol }}`)
+                $('.due-or-change-amount').text(`${Math.abs(dueOrChangeAmount).toFixed(2)} <?php echo e($basic->currency_symbol); ?>`)
+                $('.total-payable-amount').text(`${newTotalAmount.toFixed(2)} <?php echo e($basic->currency_symbol); ?>`)
 
                 $('.due_or_change_amount_input').val(`${dueOrChangeAmount.toFixed(2)}`)
                 $('.total_payable_amount_input').val(`${newTotalAmount.toFixed(2)}`)
@@ -307,4 +306,6 @@
 
     </script>
 
-@endpush
+<?php $__env->stopPush(); ?>
+
+<?php echo $__env->make($theme.'layouts.user', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH D:\xammp\htdocs\inventory_management\project\resources\views/themes/original/user/rawItems/purchaseRawItemDetails.blade.php ENDPATH**/ ?>

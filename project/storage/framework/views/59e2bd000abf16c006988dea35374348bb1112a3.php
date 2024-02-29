@@ -730,19 +730,12 @@ unset($__errorArgs, $__bag); ?>
 
         $(".flatpickr").flatpickr({
             wrap: true,
-            minDate: minDate,
-            maxDate: new Date(currentDate.getTime() + 24 * 60 * 60 * 1000), // Set maxDate to tomorrow
+            // minDate: minDate,
+            // maxDate: new Date(currentDate.getTime() + 24 * 60 * 60 * 1000), // Set maxDate to tomorrow
             altInput: true,
             dateFormat: "Y-m-d H:i",
         });
 
-        // $(".flatpickr").flatpickr({
-        //     wrap: true,
-        //     minDate: "today",
-        //     maxDate: new Date(new Date().getTime() + 24 * 60 * 60 * 1000), // Set maxDate to tomorrow
-        //     altInput: true,
-        //     dateFormat: "Y-m-d H:i",
-        // });
 
         $("#stockItemGenerate").on('click', function () {
             let parentLength = $('.parentItemRow').length;

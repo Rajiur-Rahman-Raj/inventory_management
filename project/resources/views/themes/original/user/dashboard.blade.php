@@ -3,19 +3,12 @@
 @section('content')
     @push('style')
         <style>
-            {{--.balance-box {--}}
-            {{--    --}}{{--background: linear-gradient(to right,{{hex2rgba(config('basic.base_color'))}},{{hex2rgba(config('basic.secondary_color'))}});--}}
-            {{--   --}}
-            {{--}--}}
              .balance-box {
                 background: linear-gradient(to right, rgb(73 159 233), rgb(207 115 223));
             }
         </style>
     @endpush
 
-    {{--    @dd(optional(auth()->user()->role)->company)--}}
-    {{-- @dd(auth()->user()->role->company)--}}
-    <!-- Balance Box -->
     <div class="container-fluid">
         <div class="main row">
 
@@ -59,8 +52,8 @@
                             <div class="row g-3">
                                 <div class="col-lg-12 col-6 sales-statistics">
                                     <div class="dashboard-box gr-bg-1">
-                                        <h5 class="text-white">@lang('Sold To Sales Centers')</h5>
-                                        <h3 class="text-white sold_to_sales_centers infoShowHide"></span>
+                                        <h5 class="text-white">@lang('Total Raw Item Purchase')</h5>
+                                        <h3 class="text-white rawItemPurchaseAmount infoShowHide"></span>
                                         </h3>
                                         <i class="fal fa-usd-circle text-white" aria-hidden="true"></i>
                                     </div>
@@ -68,12 +61,13 @@
 
                                 <div class="col-lg-12 col-6 sales-statistics">
                                     <div class="dashboard-box gr-bg-2">
-                                        <h5 class="text-white">@lang('Sold To Customers')</h5>
-                                        <h3 class="text-white sold_to_customers infoShowHide"></span>
+                                        <h5 class="text-white">@lang('Total Stock Transfer')</h5>
+                                        <h3 class="text-white total_stock_transfer infoShowHide"></span>
                                         </h3>
                                         <i class="fal fa-usd-circle text-white"></i>
                                     </div>
                                 </div>
+
                             </div>
                         </div>
 
@@ -105,16 +99,16 @@
                             @if(userType() == 1)
                                 <div class="col-xl-12 col-6 sales-statistics">
                                     <div class="dashboard-box gr-bg-3">
-                                        <h5 class="text-white">@lang('Sales Centers Due Amount')</h5>
-                                        <h3 class="text-white sales_center_due_amount infoShowHide"></span>
+                                        <h5 class="text-white">@lang('Affiliate Member Commission')</h5>
+                                        <h3 class="text-white affiliateMemberCommission infoShowHide"></span>
                                         </h3>
                                         <i class="fal fa-hand-holding-usd text-white"></i>
                                     </div>
                                 </div>
                                 <div class="col-xl-12 col-6 box customer-statistics">
                                     <div class="dashboard-box gr-bg-4">
-                                        <h5 class="text-white">@lang('Customer Due Amount')</h5>
-                                        <h3 class="text-white customer_due_amount infoShowHide"></span>
+                                        <h5 class="text-white">@lang('Total Expense')</h5>
+                                        <h3 class="text-white totalExpenseAmount infoShowHide"></span>
                                         </h3>
                                         <i class="fal fa-hand-holding-usd text-white" aria-hidden="true"></i>
                                     </div>
@@ -170,30 +164,30 @@
                                 </div>
                             </div>
 
-                            <div class="col-xl-3 col-md-6 box customer-statistics">
-                                <div class="dashboard-box">
-                                    <h5>@lang('Total Customers')</h5>
-                                    <h3 class="totalCustomers infoShowHide"></h3>
-                                    <i class="fal fa-users" aria-hidden="true"></i>
-                                </div>
-                            </div>
+{{--                            <div class="col-xl-3 col-md-6 box customer-statistics">--}}
+{{--                                <div class="dashboard-box">--}}
+{{--                                    <h5>@lang('Total Customers')</h5>--}}
+{{--                                    <h3 class="totalCustomers infoShowHide"></h3>--}}
+{{--                                    <i class="fal fa-users" aria-hidden="true"></i>--}}
+{{--                                </div>--}}
+{{--                            </div>--}}
 
-                            <div class="col-xl-3 col-md-6 box expense-statistics">
-                                <div class="dashboard-box">
-                                    <h5>@lang('Total Expense')</h5>
-                                    <h3 class="totalExpenseAmount infoShowHide"></h3>
-                                    <i class="fal fa-lightbulb-dollar"></i>
-                                </div>
-                            </div>
+{{--                            <div class="col-xl-3 col-md-6 box expense-statistics">--}}
+{{--                                <div class="dashboard-box">--}}
+{{--                                    <h5>@lang('Total Expense')</h5>--}}
+{{--                                    <h3 class="totalExpenseAmount infoShowHide"></h3>--}}
+{{--                                    <i class="fal fa-lightbulb-dollar"></i>--}}
+{{--                                </div>--}}
+{{--                            </div>--}}
 
-                            <div class="col-xl-3 col-md-6 box raw-item-statistics">
-                                <div class="dashboard-box">
-                                    <h5>@lang('Raw Item Purchase')</h5>
-                                    <h3 class="rawItemPurchaseAmount infoShowHide"></h3>
-                                    {{--                                    <i class="fal fa-lightbulb-dollar"></i>--}}
-                                    <i class="fal fa-usd-circle" aria-hidden="true"></i>
-                                </div>
-                            </div>
+{{--                            <div class="col-xl-3 col-md-6 box raw-item-statistics">--}}
+{{--                                <div class="dashboard-box">--}}
+{{--                                    <h5>@lang('Raw Item Purchase')</h5>--}}
+{{--                                    <h3 class="rawItemPurchaseAmount infoShowHide"></h3>--}}
+{{--                                    --}}{{--                                    <i class="fal fa-lightbulb-dollar"></i>--}}
+{{--                                    <i class="fal fa-usd-circle" aria-hidden="true"></i>--}}
+{{--                                </div>--}}
+{{--                            </div>--}}
 
                             <div class="col-xl-3 col-md-6 box raw-item-statistics">
                                 <div class="dashboard-box">
@@ -246,14 +240,14 @@
                                 </div>
                             </div>
 
-                            <div class="col-xl-3 col-md-6 box affiliate-member-statistics">
-                                <div class="dashboard-box">
-                                    <h5>@lang('Affiliate Member Commission')</h5>
-                                    <h3 class="affiliateMemberCommission infoShowHide"></h3>
-                                    <i class="fal fa-usd-circle" aria-hidden="true"></i>
+{{--                            <div class="col-xl-3 col-md-6 box affiliate-member-statistics">--}}
+{{--                                <div class="dashboard-box">--}}
+{{--                                    <h5>@lang('Affiliate Member Commission')</h5>--}}
+{{--                                    <h3 class="affiliateMemberCommission infoShowHide"></h3>--}}
+{{--                                    <i class="fal fa-usd-circle" aria-hidden="true"></i>--}}
 
-                                </div>
-                            </div>
+{{--                                </div>--}}
+{{--                            </div>--}}
                         </div>
                     @endif
                 </div>
@@ -696,7 +690,6 @@
                     method: 'GET',
                     success: function (response) {
                         removeProcess('sales-statistics');
-                        console.log(response);
                         let salesStatRecords = response.data.salesStatRecords;
                         let currency = response.currency;
                         salesStatistics(salesStatRecords, currency);
@@ -715,6 +708,7 @@
             $('.sales_center_due_amount').text(`${salesStatRecords.dueSalesCenterAmount ? parseFloat(salesStatRecords.dueSalesCenterAmount).toFixed(2) : 0} ${currency}`);
             $('.customer_due_amount').text(`${salesStatRecords.dueCustomerAmount ? parseFloat(salesStatRecords.dueCustomerAmount).toFixed(2) : 0} ${currency}`);
             $('.total_stock_amount').text(`${salesStatRecords.totalStockAmount ? parseFloat(salesStatRecords.totalStockAmount).toFixed(2) : 0} ${currency}`);
+            $('.total_stock_transfer').text(`${salesStatRecords.totalStockTransfer ? parseFloat(salesStatRecords.totalStockTransfer).toFixed(2) : 0} ${currency}`);
         }
 
         function itemRecords() {
