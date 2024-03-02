@@ -160,12 +160,12 @@
                                         </div>
 
                                         <div class="input-box col-12 m-0 mt-3">
-                                            <label for="">@lang('Unit')</label>
+                                            <label for="">@lang('Unit') (Kg)</label>
                                             <div class="input-group">
                                                 <input
                                                     type="text" class="form-control @error('unit') is-invalid @enderror"
                                                     name="unit"
-                                                    value="{{old('unit')}}"
+                                                    value="{{old('unit', 'kg')}}"
                                                     placeholder="@lang('Item Unit')" required>
                                             </div>
                                             @error('unit')
@@ -241,13 +241,13 @@
                                         </div>
 
                                         <div class="input-box col-12 m-0">
-                                            <label for="">@lang('Unit')</label>
+                                            <label for="">@lang('Unit') (Kg)</label>
                                             <div class="input-group">
                                                 <input
                                                     type="text"
                                                     class="form-control @error('unit') is-invalid @enderror item-unit"
                                                     name="unit"
-                                                    value="{{old('unit')}}"
+                                                    value="{{old('unit', 'kg')}}"
                                                     placeholder="@lang('Item Unit')" required>
                                             </div>
                                             @error('unit')

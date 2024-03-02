@@ -262,7 +262,6 @@ class HomeController extends Controller
                 ->selectRaw('SUM(CASE WHEN customer_id IS NOT NULL AND sales_by = 1 THEN total_amount END) AS soldCustomerAmount')
                 ->selectRaw('SUM(CASE WHEN customer_id IS NULL AND sales_by = 1 AND payment_status = 0 THEN due_amount END) AS dueSalesCenterAmount')
                 ->selectRaw('SUM(CASE WHEN customer_id IS NOT NULL AND sales_by = 1 AND payment_status = 0 THEN due_amount END) AS dueCustomerAmount');
-
         })
             ->when(isset($admin->salesCenter) && $admin->user_type == 2, function ($query) use ($admin) {
                 return $query->where([
@@ -275,17 +274,11 @@ class HomeController extends Controller
             ->selectRaw('SUM(total_amount) AS totalSalesAmount')
             ->get()->makeHidden('nextPayment')->toArray())->collapse();
 
-        if (userType() == 1){
-            $data['salesStatRecords']['totalStockAmount'] = StockIn::where('company_id', $admin->active_company_id)->sum('total_cost');
-        }else{
-            $data['salesStatRecords']['totalStockAmount'] = Sale::when(isset($admin->salesCenter) && $admin->user_type == 2, function ($query) use ($admin) {
-                return $query->where([
-                    ['company_id', $admin->salesCenter->company_id],
-                    ['sales_center_id', $admin->salesCenter->id],
-                    ['sales_by', 1],
-                ])->whereNull('customer_id')
-                    ->sum('total_amount');
-            });
+        if (userType() == 1) {
+            $data['salesStatRecords']['totalStockAmount'] = StockIn::where('company_id', $admin->active_company_id)->whereNull('sales_center_id')->sum('total_cost');
+            $data['salesStatRecords']['totalStockTransfer'] = StockIn::where('company_id', $admin->active_company_id)->whereNotNull('sales_center_id')->sum('total_cost');
+        } else {
+            $data['salesStatRecords']['totalStockAmount'] = StockIn::where('company_id', $admin->salesCenter->company_id)->where('sales_center_id', $admin->salesCenter->id)->sum('total_cost');
         }
 
         return response()->json(['data' => $data, 'currency' => $currency]);

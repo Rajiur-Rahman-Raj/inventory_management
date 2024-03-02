@@ -13,6 +13,10 @@ return [
         'path' => 'assets/uploads/users/',
         'size' => '200x200'
     ],
+    'customer' => [
+        'path' => 'assets/uploads/customers/',
+        'size' => '200x200'
+    ],
     'category' => [
         'path' => 'assets/uploads/categories/',
         'size' => '250x250'

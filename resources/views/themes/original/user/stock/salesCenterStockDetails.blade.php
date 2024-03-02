@@ -52,18 +52,18 @@
                                                             <tr>
                                                                 <th scope="col">Quantity</th>
                                                                 <th scope="col">Cost Per Unit</th>
-                                                                <th scope="col">Total Price</th>
+                                                                <th scope="col">Total Unit Price</th>
                                                                 <th scope="col">Stock Date</th>
                                                             </tr>
                                                             </thead>
                                                             <tbody>
 
-                                                            @foreach($singleStockDetails as $key => $salesItemDetail)
+                                                            @foreach($singleStockDetails as $key => $stockDetail)
                                                                 <tr>
-                                                                    <td data-label="Quantity">{{ $salesItemDetail->item_quantity }}</td>
-                                                                    <td data-label="Cost Per Unit">{{ $salesItemDetail->cost_per_unit }} {{ $basic->currency_symbol }}</td>
-                                                                    <td data-label="Total Unit Cost">{{ $salesItemDetail->item_price }} {{ $basic->currency_symbol }}</td>
-                                                                    <td data-label="Stock Date">{{ customDate($salesItemDetail->created_at) }}</td>
+                                                                    <td data-label="Quantity">{{ $stockDetail->quantity }}</td>
+                                                                    <td data-label="Cost Per Unit">{{ $stockDetail->cost_per_unit }} {{ $basic->currency_symbol }}</td>
+                                                                    <td data-label="Total Unit Cost">{{ $stockDetail->amount }} {{ $basic->currency_symbol }}</td>
+                                                                    <td data-label="Stock Date">{{ customDate($stockDetail->transfer_date) }}</td>
                                                                 </tr>
                                                             @endforeach
                                                             <tr>

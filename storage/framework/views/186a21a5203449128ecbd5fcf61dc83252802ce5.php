@@ -201,7 +201,7 @@ unset($__errorArgs, $__bag); ?> costPerUnit"
                                                 </div>
 
                                                 <div class="invalid-feedback">
-                                                    <?php $__errorArgs = ['item_quantity.0'];
+                                                    <?php $__errorArgs = ['cost_per_unit.0'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
@@ -496,7 +496,9 @@ unset($__errorArgs, $__bag); ?>
                                                         </div>
                                                         <div class="enter-amount d-flex justify-content-between align-items-center">
                                                             <h6>Paid Amount</h6>
-                                                            <input type="text" class="form-control customer-paid-amount" value="0" min="0" onkeyup="this.value = this.value.replace (/^\.|[^\d\.]/g, '')" id="exampleFormControlInput1" name="paid_amount">
+                                                            <div class="input-group">
+                                                                <input type="text" class="form-control customer-paid-amount" value="0" min="0" onkeyup="this.value = this.value.replace (/^\.|[^\d\.]/g, '')" id="exampleFormControlInput1" name="paid_amount">
+                                                            </div>
                                                         </div>
                                                         <div class="change-amount d-flex align-items-center justify-content-between">
                                                             <h4 class="m-2 due-or-change-text"></h4>  <span class="due-or-change-amount"></span>

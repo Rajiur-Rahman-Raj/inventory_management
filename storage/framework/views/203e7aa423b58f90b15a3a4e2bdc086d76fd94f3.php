@@ -9,11 +9,11 @@
 
 <div id="sidebar" class="">
     <div class="sidebar-top">
-        <?php if(userType() == 1): ?>
+        <?php if(userType() == 1 && optional(auth()->user()->role)->company == null): ?>
             <a class="navbar-brand d-none d-lg-block" href="<?php echo e(url('/')); ?>"> <img
                     src="<?php echo e(getFile(config('location.companyLogo.path').optional($user->activeCompany)->logo)); ?>"
                     alt="<?php echo e(config('basic.site_title')); ?>"/></a>
-        <?php else: ?>
+        <?php elseif(userType() == 2): ?>
             <a class="navbar-brand d-none d-lg-block" href="<?php echo e(url('/')); ?>"> <img
                     src="<?php echo e(getFile(config('location.companyLogo.path'). optional(optional($user->salesCenter)->company)->logo)); ?>"
                     alt="<?php echo e(config('basic.site_title')); ?>"/></a>
@@ -54,7 +54,7 @@
             </li>
         <?php endif; ?>
 
-        <?php if(userType() == 2 || adminAccessRoute(array_merge(config('permissionList.Manage_Customers.Customers.permission.view')))): ?>
+        <?php if(userType() == 2): ?>
             <li>
                 <a class="<?php echo e(menuActive(['user.customerList', 'user.createCustomer', 'user.customerDetails', 'user.customerEdit'])); ?>"
                    href="<?php echo e(route('user.customerList')); ?>"><i class="fal fa-users"></i> <?php echo app('translator')->get('Customers'); ?></a>
@@ -135,7 +135,7 @@
                     <i class="fal fa-car-building"></i><?php echo app('translator')->get('Stocks'); ?>
                 </a>
                 <div
-                    class="collapse <?php echo e(menuActive(['user.stockList', 'user.addStock', 'user.stockDetails'],4)); ?> dropdownManageStocks"
+                    class="collapse <?php echo e(menuActive(['user.stockList', 'user.addStock', 'user.stockDetails', 'user.stockTransfer', 'user.stockTransferList', 'user.stockTransferDetails'],4)); ?> dropdownManageStocks"
                     id="dropdownManageStocks">
                     <ul class="">
                         <li>
@@ -147,17 +147,29 @@
                         <?php if(userType() == 1): ?>
                             <li>
                                 <a class="<?php echo e(in_array($currentRouteName, ['user.addStock']) ? 'active' : ''); ?>"
-                                   href="<?php echo e(route('user.addStock')); ?>"><i
-                                        class="fal fa-house-return"></i><?php echo app('translator')->get('Stock In'); ?>
+                                   href="<?php echo e(route('user.addStock')); ?>"><i class="fal fa-house-return"></i><?php echo app('translator')->get('Stock In'); ?>
                                 </a>
                             </li>
+
+                            <li>
+                                <a class="<?php echo e(in_array($currentRouteName, ['user.stockTransfer']) ? 'active' : ''); ?>" href="<?php echo e(route('user.stockTransfer')); ?>"><i
+                                        class="fal fa-house-return"></i><?php echo app('translator')->get('Stock Transfer'); ?>
+                                </a>
+                            </li>
+
+                            <li>
+                                <a class="<?php echo e(in_array($currentRouteName, ['user.stockTransferList', 'user.stockTransferDetails']) ? 'active' : ''); ?>" href="<?php echo e(route('user.stockTransferList')); ?>"><i
+                                        class="fal fa-house-return"></i><?php echo app('translator')->get('Stock Transfer List'); ?>
+                                </a>
+                            </li>
+
                         <?php endif; ?>
                     </ul>
                 </div>
             </li>
         <?php endif; ?>
 
-        <?php if(userType() == 2 || (userType() == 1 && adminAccessRoute(array_merge(config('permissionList.Manage_Sales.Sales_List.permission.view'), config('permissionList.Manage_Sales.Sales_Item.permission.view'))))): ?>
+        <?php if(userType() == 2 || (userType() == 1 && adminAccessRoute(array_merge(config('permissionList.Manage_Sales.Sales_List.permission.view'))))): ?>
             <li>
                 <a
                     class="dropdown-toggle"
@@ -168,9 +180,7 @@
                     aria-controls="collapseExample">
                     <i class="fal fa-car-building"></i><?php echo app('translator')->get('Sales'); ?>
                 </a>
-                <div
-                    class="collapse <?php echo e(menuActive(['user.salesItem', 'user.salesList', 'user.salesDetails', 'user.salesInvoice', 'user.returnSales'],4)); ?> dropdownManageSales"
-                    id="dropdownManageSales">
+                <div class="collapse <?php echo e(menuActive(['user.salesItem', 'user.salesList', 'user.salesDetails', 'user.salesInvoice', 'user.returnSales'],4)); ?> dropdownManageSales" id="dropdownManageSales">
                     <ul class="">
                         <?php if(adminAccessRoute(config('permissionList.Manage_Sales.Sales_List.permission.view'))): ?>
                             <li>
@@ -181,7 +191,7 @@
                             </li>
                         <?php endif; ?>
 
-                        <?php if(adminAccessRoute(config('permissionList.Manage_Sales.Sales_Item.permission.view'))): ?>
+                        <?php if(userType() == 2): ?>
                             <li>
                                 <a class="<?php echo e(in_array($currentRouteName, ['user.salesItem']) ? 'active' : ''); ?>"
                                    href="<?php echo e(route('user.salesItem')); ?>"><i

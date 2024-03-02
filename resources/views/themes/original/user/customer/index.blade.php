@@ -100,18 +100,23 @@
                     </tr>
                     </thead>
                     <tbody>
+
                     @forelse($customers as $key => $customer)
                         <tr>
                             <td data-label="@lang('SL')">{{loopIndex($customers) + $key}}</td>
 
                             <td class="company-logo" data-label="@lang('Name')">
                                 <div>
-                                    <a href=""
-                                       target="_blank">{{ $customer->name }}</a>
+                                    <a href="" target="_blank">
+                                        <img src="{{ getFile(config('location.customer.path').$customer->image) }}">
+                                    </a>
+                                </div>
+                                <div>
+                                    <a href="" target="_blank">{{ $customer->name }}</a>
                                     <br>
-                                    @if($customer->email)
+                                    @if($customer->phone)
                                         <span class="text-muted font-14">
-                                        <span>{{ $customer->email }}</span>
+                                        <span>{{ $customer->phone }}</span>
                                     </span>
                                     @endif
                                 </div>
@@ -140,7 +145,8 @@
                                         </li>
 
                                         <li>
-                                            <a class="dropdown-item btn" href="{{ route('user.customerEdit', $customer->id) }}">
+                                            <a class="dropdown-item btn"
+                                               href="{{ route('user.customerEdit', $customer->id) }}">
                                                 <i class="fas fa-edit"></i> @lang('Edit')
                                             </a>
                                         </li>

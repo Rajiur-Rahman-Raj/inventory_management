@@ -93,7 +93,7 @@
                     <span class="navbar-text" id="pushNotificationArea">
                             <!-- notification panel -->
                             @if(config('basic.push_notification') == 1)
-                            @include($theme.'partials.pushNotify')
+{{--                            @include($theme.'partials.pushNotify')--}}
                         @endif
                         <!-- User panel -->
                         @include($theme.'partials.userDropdown')

@@ -19,6 +19,7 @@ use App\Models\Customer;
 use App\Models\District;
 use App\Models\Division;
 use App\Models\Expense;
+use App\Models\StockTransferDetails;
 use Exception;
 use App\Models\ExpenseCategory;
 use App\Models\Item;
@@ -283,6 +284,59 @@ class CompanyController extends Controller
         }
     }
 
+    public function salesCenterEdit($id)
+    {
+        $admin = $this->user;
+        $data['allDivisions'] = Division::where('status', 1)->get();
+        $data['salesCenter'] = SalesCenter::with('user', 'division', 'district', 'upazila', 'union')->where('company_id', $admin->active_company_id)->findOrFail($id);
+        return view($this->theme . 'user.salesCenter.edit', $data);
+    }
+
+    public function updateSalesCenter(Request $request, $id)
+    {
+        $admin = $this->user;
+        DB::beginTransaction();
+
+        $salesCenter = SalesCenter::where('company_id', $admin->active_company_id)->findOrFail($id);
+
+        try {
+            $user = User::findOrFail($salesCenter->user_id);
+            $user->name = $request->owner_name;
+            $user->phone = $request->phone;
+            $user->email = $request->email;
+            $user->username = $request->username;
+            $user->address = $request->owner_address;
+
+            if ($request->hasFile('image')) {
+                try {
+                    $user->image = $this->uploadImage($request->image, config('location.user.path'), config('location.user.size'));
+                } catch (\Exception $exp) {
+                    return back()->with('error', 'Logo could not be uploaded.');
+                }
+            }
+
+            $user->save();
+
+            $salesCenter->name = $request->name;
+            $salesCenter->code = $request->code;
+            $salesCenter->national_id = $request->national_id;
+            $salesCenter->trade_id = $request->trade_id;
+            $salesCenter->division_id = $request->division_id;
+            $salesCenter->district_id = $request->district_id;
+            $salesCenter->upazila_id = $request->upazila_id;
+            $salesCenter->union_id = $request->union_id;
+            $salesCenter->center_address = $request->center_address;
+
+            $salesCenter->save();
+            DB::commit();
+
+            return back()->with('success', 'Sales Center Updated Successfully');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Something went wrong');
+        }
+    }
+
     public function salesCenterDetails($id)
     {
         $data['salesCenter'] = SalesCenter::with('user', 'division', 'district', 'upazila', 'union')->findOrFail($id);
@@ -294,16 +348,9 @@ class CompanyController extends Controller
         $salesCenter = SalesCenter::with('user')->findOrFail($id);
         optional($salesCenter->user)->delete();
         $salesCenter->delete();
-
         return back()->with('success', 'Sales Center Deleted Successfully!');
-
     }
 
-    public function salesCenterEdit($id)
-    {
-        $data['singleSalesCenter '] = SalesCenter::with('user', 'division', 'district', 'upazila', 'union')->findOrFail($id);
-        return view($this->theme . 'user.salesCenter.edit', $data);
-    }
 
     public function itemList(Request $request)
     {
@@ -652,7 +699,7 @@ class CompanyController extends Controller
 
             Expense::create([
                 'company_id' => $admin->active_company_id,
-                'category_id' =>  $request->category_id,
+                'category_id' => $request->category_id,
                 'amount' => $request->amount,
                 'expense_date' => $request->expense_date,
             ]);
@@ -715,6 +762,55 @@ class CompanyController extends Controller
         return back()->with('success', 'Expense Deleted Successfully!');
     }
 
+
+    public function addStock()
+    {
+        $admin = $this->user;
+        $data['items'] = Item::where('company_id', $admin->active_company_id)->get();
+        $data['rawItems'] = RawItem::where('company_id', $admin->active_company_id)->get();
+        return view($this->theme . 'user.stock.create', $data);
+    }
+
+    public function stockStore(Request $request)
+    {
+
+        $admin = $this->user;
+        $purifiedData = Purify::clean($request->except('_token', '_method'));
+
+        $rules = [
+            'stock_date' => 'required',
+        ];
+
+        $message = [
+            'stock_date.required' => __('stock date is required'),
+        ];
+
+        $validate = Validator::make($purifiedData, $rules, $message);
+
+        if ($validate->fails()) {
+            return back()->withInput()->withErrors($validate);
+        }
+
+        try {
+            DB::beginTransaction();
+            $stockIn = new StockIn();
+            $stockIn->company_id = $admin->active_company_id;
+            $stockIn->stock_date = $request->stock_date;
+            $stockIn->total_cost = $request->sub_total;
+            $stockIn->save();
+
+            $this->storeStockInDetails($request, $stockIn);
+            $this->storeStocks($request, $admin);
+
+            DB::commit();
+            return back()->with('success', 'Item stock added successfully');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', $e->getMessage());
+        }
+    }
+
     public function stockList(Request $request)
     {
         $admin = $this->user;
@@ -765,68 +861,148 @@ class CompanyController extends Controller
         return view($this->theme . 'user.stock.index', $data);
     }
 
-    public function addStock()
-    {
-        $admin = $this->user;
-        $data['items'] = Item::where('company_id', $admin->active_company_id)->get();
-        $data['rawItems'] = RawItem::where('company_id', $admin->active_company_id)->get();
-        return view($this->theme . 'user.stock.create', $data);
-    }
-
-    public function stockStore(Request $request)
-    {
-        $admin = $this->user;
-        $purifiedData = Purify::clean($request->except('_token', '_method'));
-
-        $rules = [
-            'stock_date' => 'required',
-        ];
-
-        $message = [
-            'stock_date.required' => __('stock date is required'),
-        ];
-
-        $validate = Validator::make($purifiedData, $rules, $message);
-
-        if ($validate->fails()) {
-            return back()->withInput()->withErrors($validate);
-        }
-
-        try {
-            DB::beginTransaction();
-            $stockIn = new StockIn();
-            $stockIn->company_id = $admin->active_company_id;
-            $stockIn->stock_date = $request->stock_date;
-            $stockIn->total_cost = $request->sub_total;
-            $stockIn->save();
-
-            $this->storeStockInDetails($request, $stockIn);
-            $this->storeStocks($request, $admin);
-
-            DB::commit();
-
-            return back()->with('success', 'Item stock added successfully');
-        } catch (\Exception $e) {
-            return back()->with('error', $e->getMessage());
-        }
-    }
-
     public function stockDetails($item = null, $id = null)
     {
-        $data['stock'] = Stock::select('id', 'item_id', 'last_stock_date')->findOrFail($id);
-
+        $data['stock'] = Stock::with('salesCenter:id,name')->select('id', 'sales_center_id', 'item_id', 'last_stock_date')->findOrFail($id);
         $data['singleStockDetails'] = StockInDetails::with('item')->where('item_id', $data['stock']->item_id)->latest()->get();
 
         $data['totalItemCost'] = $data['singleStockDetails']->sum('total_unit_cost');
-
         return view($this->theme . 'user.stock.details', $data, compact('item'));
     }
 
+    public function stockTransfer()
+    {
+        $admin = $this->user;
+        $data['salesCenters'] = SalesCenter::where('company_id', $admin->active_company_id)->get();
+        $data['stocks'] = Stock::with('item')->where('company_id', $admin->active_company_id)->whereNull('sales_center_id')->get();
+        return view($this->theme . 'user.stock.transfer', $data);
+    }
+
+    public function storeStockTransfer(Request $request)
+    {
+        $admin = $this->user;
+        $companyId = $admin->active_company_id;
+
+        try {
+            DB::beginTransaction();
+
+            $stockIn = new StockIn();
+            $stockIn->company_id = $admin->active_company_id;
+            $stockIn->sales_center_id = $request->sales_center_id;
+            $stockIn->stock_date = Carbon::parse($request->transfer_date);
+            $stockIn->total_cost = $request->sub_total;
+            $stockIn->save();
+
+            foreach ($request->item_id as $key => $item) {
+                $salesCenterStock = Stock::firstOrNew([
+                    'company_id' => $companyId,
+                    'item_id' => $item,
+                    'sales_center_id' => $request->sales_center_id,
+                ]);
+
+                $salesCenterStock->company_id = $companyId;
+                $salesCenterStock->sales_center_id = $request->sales_center_id;
+                $salesCenterStock->item_id = $item;
+                $salesCenterStock->quantity += (int)$request['item_quantity'][$key];
+                $salesCenterStock->cost_per_unit = ($salesCenterStock->last_cost_per_unit) ?? $request['cost_per_unit'][$key];
+                $salesCenterStock->last_cost_per_unit = $request['cost_per_unit'][$key];
+                $salesCenterStock->selling_price = $request['cost_per_unit'][$key];
+                $salesCenterStock->stock_date = (Carbon::parse($salesCenterStock->last_stock_date)) ?? Carbon::parse($request->transfer_date);
+                $salesCenterStock->last_stock_date = Carbon::parse($request->transfer_date);
+                $salesCenterStock->save();
+
+
+                $stockInDetails = new StockInDetails();
+                $stockInDetails->stock_in_id = $stockIn->id;
+                $stockInDetails->item_id = $item;
+                $stockInDetails->quantity = $request['item_quantity'][$key];
+                $stockInDetails->cost_per_unit = $request['cost_per_unit'][$key];
+                $stockInDetails->total_unit_cost = $request['total_unit_cost'][$key];
+                $stockInDetails->stock_date = Carbon::parse($request->transfer_date);
+                $stockInDetails->save();
+
+
+                $stockTransferDetails = new StockTransferDetails();
+                $stockTransferDetails->stock_id = $salesCenterStock->id;
+                $stockTransferDetails->item_id = $item;
+                $stockTransferDetails->quantity = $request['item_quantity'][$key];
+                $stockTransferDetails->cost_per_unit = $request['cost_per_unit'][$key];
+                $stockTransferDetails->amount = $request['total_unit_cost'][$key];
+                $stockTransferDetails->transfer_date = Carbon::parse($request->transfer_date);
+                $stockTransferDetails->save();
+
+                $companyStock = Stock::where('company_id', $companyId)->whereNull('sales_center_id')->where('item_id', $item)->first();
+                $companyStock->quantity -= (int)$request['item_quantity'][$key];
+                $companyStock->save();
+
+                DB::commit();
+            }
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Something went wrong');
+        }
+
+        return back()->with('success', 'Stock Successfully Transferred');
+    }
+
+    public function stockTransferList(Request $request)
+    {
+        $admin = $this->user;
+
+        $search = $request->all();
+
+        $fromDate = Carbon::parse($request->from_date);
+        $toDate = Carbon::parse($request->to_date)->addDay();
+
+        $data['allItems'] = Item::where('status', 1)
+            ->when(!isset($admin->salesCenter) && $admin->user_type == 1, function ($q2) use ($admin) {
+                $q2->where('company_id', $admin->active_company_id);
+            })->when(isset($admin->salesCenter) && $admin->user_type == 2, function ($q2) use ($admin) {
+                $q2->where('company_id', $admin->salesCenter->company_id);
+            })->where('status', 1)->get();
+
+
+        $data['stockLists'] = Stock::with('item:id,name', 'salesCenter:id,name')
+            ->when(isset($search['item_id']), function ($query) use ($search) {
+                return $query->whereHas('item', function ($q) use ($search) {
+                    $q->where('id', $search['item_id']);
+                });
+            })
+            ->when(isset($search['from_date']), function ($q2) use ($fromDate) {
+                return $q2->whereDate('last_stock_date', '>=', $fromDate);
+            })
+            ->when(isset($search['to_date']), function ($q2) use ($fromDate, $toDate) {
+                return $q2->whereBetween('last_stock_date', [$fromDate, $toDate]);
+            })
+            ->when(isset($admin->salesCenter) && $admin->user_type == 2, function ($q2) use ($admin) {
+                $q2->where('company_id', $admin->salesCenter->company_id)
+                    ->where('sales_center_id', $admin->salesCenter->id);
+            })
+            ->where('company_id', $admin->active_company_id)
+            ->whereNotNull('sales_center_id')
+            ->latest()
+            ->paginate(config('basic.paginate'));
+
+        return view($this->theme . 'user.stock.transferList', $data);
+    }
+
+
+    public function stockTransferDetails($item = null, $id = null)
+    {
+        $data['stock'] = Stock::with('salesCenter:id,name')->select('id', 'sales_center_id', 'item_id', 'last_stock_date')->findOrFail($id);
+        $data['stockTransferDetails'] = StockTransferDetails::with('stocks', 'item')->where('stock_id', $id)->get();
+        $data['totalItemCost'] = $data['stockTransferDetails']->sum('amount');
+
+        return view($this->theme . 'user.stock.transferDetails', $data, compact('item'));
+    }
+
+
     public function salesCenterStockDetails($item = null, $id = null)
     {
-        $data['stock'] = Stock::select('id', 'item_id', 'last_stock_date')->findOrFail($id);
-        $data['singleStockDetails'] = SalesItem::with('item')->where('item_id', $data['stock']->item_id)->latest()->get();
-        $data['totalItemCost'] = $data['singleStockDetails']->sum('item_price');
+        $data['stock'] = Stock::with('salesCenter:id,name')->select('id', 'sales_center_id', 'item_id', 'last_stock_date')->findOrFail($id);
+        $data['singleStockDetails'] = StockTransferDetails::with('stocks', 'item')->where('stock_id', $id)->get();
+        $data['totalItemCost'] = $data['singleStockDetails']->sum('amount');
+
         return view($this->theme . 'user.stock.salesCenterStockDetails', $data, compact('item'));
     }
 
@@ -862,7 +1038,6 @@ class CompanyController extends Controller
             ->when(isset($search['to_date']), function ($q2) use ($fromDate, $toDate) {
                 return $q2->whereBetween('created_at', [$fromDate, $toDate]);
             })
-            ->select('id', 'division_id', 'district_id', 'upazila_id', 'union_id', 'name', 'email', 'phone', 'national_id', 'address', 'created_at')
             ->when(!isset($admin->salesCenter) && $admin->user_type == 1, function ($query) use ($admin) {
                 return $query->where('company_id', $admin->active_company_id)->whereNull('sales_center_id');
             })
@@ -885,6 +1060,7 @@ class CompanyController extends Controller
 
     public function customerStore(Request $request)
     {
+
         $admin = $this->user;
         $purifiedData = Purify::clean($request->except('_token', '_method'));
 
@@ -921,11 +1097,19 @@ class CompanyController extends Controller
 
         DB::beginTransaction();
         try {
-
             $customer = new Customer();
             $customer->company_id = ($admin->user_type == 2) ? optional($admin->salesCenter)->company_id : $admin->active_company_id;
             $customer->sales_center_id = ($admin->user_type == 2) ? optional($admin->salesCenter)->id : null;
-            $customer->fill($request->only(['name', 'email', 'phone', 'national_id', 'division_id', 'district_id', 'upazila_id', 'union_id', 'address']));
+            $customer->fill($request->only(['name', 'owner_name', 'email', 'phone', 'trade_id', 'national_id', 'check_no', 'branch_name', 'division_id', 'district_id', 'upazila_id', 'union_id', 'address']));
+
+            if ($request->hasFile('image')) {
+                try {
+                    $customer->image = $this->uploadImage($request->image, config('location.customer.path'), config('location.customer.size'));
+                } catch (\Exception $exp) {
+                    return back()->with('error', 'Logo could not be uploaded.');
+                }
+            }
+
             $customer->save();
             DB::commit();
 
@@ -977,6 +1161,7 @@ class CompanyController extends Controller
 
     public function customerUpdate(Request $request, $id)
     {
+
         $purifiedData = Purify::clean($request->except('_token', '_method'));
 
         $rules = [
@@ -1014,14 +1199,27 @@ class CompanyController extends Controller
             $customer = Customer::findOrFail($id);
 
             $customer->name = $request->name;
+            $customer->owner_name = $request->owner_name;
             $customer->email = $request->email;
             $customer->phone = $request->phone;
+            $customer->trade_id = $request->trade_id;
             $customer->national_id = $request->national_id;
+            $customer->check_no = $request->check_no;
+            $customer->branch_name = $request->branch_name;
             $customer->division_id = $request->division_id;
             $customer->district_id = $request->district_id;
             $customer->upazila_id = $request->upazila_id;
             $customer->union_id = $request->union_id;
             $customer->address = $request->address;
+
+            if ($request->hasFile('image')) {
+                try {
+                    $customer->image = $this->uploadImage($request->image, config('location.customer.path'), config('location.customer.size'));
+                } catch (\Exception $exp) {
+                    return back()->with('error', 'Logo could not be uploaded.');
+                }
+            }
+
             $customer->save();
 
             DB::commit();
@@ -1170,6 +1368,24 @@ class CompanyController extends Controller
         return back()->with('success', 'Item Cost Per Unit Update successfully!')->with('filterItemId', $filter_item_id);
     }
 
+    public function updateSellingPrice(Request $request, $id)
+    {
+        $admin = $this->user;
+        $filter_item_id = $request->filter_item_id;
+        $stock = Stock::when(isset($admin->salesCenter) && $admin->user_type == 2, function ($query) use ($admin) {
+            return $query->where([
+                ['company_id', $admin->salesCenter->company_id],
+                ['sales_center_id', $admin->salesCenter->id],
+            ]);
+        })
+            ->select('id', 'selling_price')
+            ->findOrFail($id);
+
+        $stock->selling_price = $request->selling_price;
+        $stock->save();
+        return back()->with('success', 'Item Selling Price Update successfully!')->with('filterItemId', $filter_item_id);
+    }
+
     public function getSelectedItems(Request $request)
     {
         $admin = $this->user;
@@ -1233,15 +1449,10 @@ class CompanyController extends Controller
         $admin = $this->user;
         $stock = $request->data;
 
-        $cartItem = CartItems::when(!isset($admin->salesCenter) && $admin->user_type == 1, function ($query) use ($admin) {
-            return $query->where('company_id', $admin->active_company_id)->whereNull('sales_center_id');
-        })
-            ->when(isset($admin->salesCenter) && $admin->user_type == 2, function ($query) use ($admin) {
-                return $query->where([
-                    ['company_id', $admin->salesCenter->company_id],
-                    ['sales_center_id', $admin->salesCenter->id],
-                ]);
-            })
+        $cartItem = CartItems::where([
+            ['company_id', $admin->salesCenter->company_id],
+            ['sales_center_id', $admin->salesCenter->id],
+        ])
             ->where('stock_id', $stock['id'])
             ->where('item_id', $stock['item_id'])
             ->first();
@@ -1250,59 +1461,34 @@ class CompanyController extends Controller
             $status = false;
             $message = "This item is out of stock";
         } else {
-            CartItems::when(!isset($admin->salesCenter) && $admin->user_type == 1, function ($query) use ($admin, $stock, $cartItem) {
-                return $query->updateOrInsert(
-                    [
-                        'company_id' => $admin->active_company_id,
-                        'sales_center_id' => null,
-                        'stock_id' => $stock['id'],
-                        'item_id' => $stock['item_id'],
-                    ],
-                    [
-                        'cost_per_unit' => $stock['selling_price'],
-                        'quantity' => DB::raw('quantity + 1'),
-                        'cost' => DB::raw('quantity * selling_price'),
-                        'stock_per_unit' => $stock['last_cost_per_unit'],
-                        'stock_item_price' => DB::raw('quantity * last_cost_per_unit'),
-                        'created_at' => $cartItem ? $cartItem->created_at : Carbon::now(),
-                        'updated_at' => Carbon::now()
-                    ]
-                );
-            })->when(isset($admin->salesCenter) && $admin->user_type == 2, function ($query) use ($admin, $stock, $cartItem) {
-                return $query->updateOrInsert(
-                    [
-                        'company_id' => $admin->salesCenter->company_id,
-                        'sales_center_id' => $admin->salesCenter->id,
-                        'stock_id' => $stock['id'],
-                        'item_id' => $stock['item_id'],
-                    ],
-                    [
-                        'cost_per_unit' => $stock['selling_price'],
-                        'quantity' => DB::raw('quantity + 1'),
-                        'cost' => DB::raw('quantity * selling_price'),
-                        'stock_per_unit' => $stock['last_cost_per_unit'],
-                        'stock_item_price' => DB::raw('quantity * last_cost_per_unit'),
-                        'created_at' => $cartItem ? $cartItem->created_at : Carbon::now(),
-                        'updated_at' => Carbon::now()
-                    ]
-                );
-            });
+            CartItems::updateOrInsert(
+                [
+                    'company_id' => $admin->salesCenter->company_id,
+                    'sales_center_id' => $admin->salesCenter->id,
+                    'stock_id' => $stock['id'],
+                    'item_id' => $stock['item_id'],
+                ],
+                [
+                    'quantity' => DB::raw('quantity + 1'),
+                    'cost_per_unit' => $stock['selling_price'],
+                    'cost' => DB::raw('quantity * cost_per_unit'),
+                    'stock_per_unit' => $stock['last_cost_per_unit'],
+                    'stock_item_price' => DB::raw('quantity * stock_per_unit'),
+                    'created_at' => $cartItem ? $cartItem->created_at : Carbon::now(),
+                    'updated_at' => Carbon::now()
+                ]
+            );
 
             $status = true;
             $message = "Cart item added successfully";
         }
 
         $cartItems = CartItems::with('item', 'sale')
-            ->when(!isset($admin->salesCenter) && $admin->user_type == 1, function ($query) use ($admin) {
-                return $query->where('company_id', $admin->active_company_id)->whereNull('sales_center_id');
-            })
-            ->when(isset($admin->salesCenter) && $admin->user_type == 2, function ($query) use ($admin) {
-                return $query->where([
-                    ['company_id', $admin->salesCenter->company_id],
-                    ['sales_center_id', $admin->salesCenter->id],
-                ]);
-            })
-            ->get();
+        ->where([
+            ['company_id', $admin->salesCenter->company_id],
+            ['sales_center_id', $admin->salesCenter->id],
+        ])
+        ->get();
 
         return response()->json([
             'cartItems' => $cartItems,
@@ -1534,6 +1720,7 @@ class CompanyController extends Controller
 
     public function salesOrderStore(Request $request)
     {
+        dd('i am here work 3/2/2024');
 
         $purifiedData = Purify::clean($request->except('_token', '_method'));
         $admin = $this->user;
@@ -1686,6 +1873,7 @@ class CompanyController extends Controller
         $RawItemPurchaseIn->due_amount = $due_or_change_amount <= 0 ? 0 : $request->due_or_change_amount;
         $RawItemPurchaseIn->last_payment_date = Carbon::parse($request->payment_date);
         $RawItemPurchaseIn->payment_status = $due_or_change_amount <= 0 ? 1 : 0;
+        $RawItemPurchaseIn->discount_amount += $request->discount_amount;
         $RawItemPurchaseIn->last_note = $request->note;
         $RawItemPurchaseIn->save();
 
@@ -2328,7 +2516,6 @@ class CompanyController extends Controller
             ->latest()
             ->paginate(config('basic.paginate'));
 
-
         return view($this->theme . 'user.rawItems.purchaseRawItemList', $data);
     }
 
@@ -2740,8 +2927,8 @@ class CompanyController extends Controller
                 }
 
 //                dd($data['reportRecords']);
-                if (userType() == 1){
-                    $data['reportRecords']['netProfit'] =  $data['reportRecords']['salesProfit'] - $data['reportRecords']['totalExpenseAmount'];
+                if (userType() == 1) {
+                    $data['reportRecords']['netProfit'] = $data['reportRecords']['salesProfit'] - $data['reportRecords']['totalExpenseAmount'];
                 }
 
                 return view($this->theme . 'user.reports.index', $data, compact('search'));

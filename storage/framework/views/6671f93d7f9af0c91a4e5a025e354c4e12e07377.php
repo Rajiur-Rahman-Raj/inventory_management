@@ -2,19 +2,22 @@
 <?php $__env->startSection('content'); ?>
     <?php $__env->startPush('style'); ?>
         <style>
-            
-            
-            
-            
              .balance-box {
                 background: linear-gradient(to right, rgb(73 159 233), rgb(207 115 223));
             }
         </style>
     <?php $__env->stopPush(); ?>
-    <!-- Balance Box -->
+
     <div class="container-fluid">
         <div class="main row">
+
             <div class="col-12">
+                <div class="row">
+                    <div class="col-12 d-flex justify-content-end mb-3">
+                        <a href="#" class="show-hide  me-3" data-info="1"> <i
+                                class="fal fa-eye showHideEye"></i></a>
+                    </div>
+                </div>
                 <div class="row g-3">
                     <div class="col-xl-4 col-lg-6">
                         <div class="card-box balance-box p-0 h-100 sales-statistics">
@@ -25,7 +28,7 @@
                                         <?php echo app('translator')->get('Total Sales Amount'); ?>
                                     </h5>
                                     <h3>
-                                        <span class="text-white total_sales_amount"></span>
+                                        <span class="text-white total_sales_amount infoShowHide"></span>
                                     </h3>
                                 </div>
 
@@ -33,10 +36,12 @@
                                     <h5 class="text-white mb-2">
                                         <?php echo app('translator')->get('Total Stock Amount'); ?>
                                     </h5>
-                                    <h3 class="total_stock_amount text-white"></h3>
+                                    <h3 class="total_stock_amount text-white infoShowHide"></h3>
                                 </div>
                                 <a href="#" class="cash-in"> <i
                                         class="fal fa-shopping-cart me-1"></i> <?php echo app('translator')->get('Sales Item'); ?></a>
+
+
                             </div>
                         </div>
                     </div>
@@ -46,8 +51,8 @@
                             <div class="row g-3">
                                 <div class="col-lg-12 col-6 sales-statistics">
                                     <div class="dashboard-box gr-bg-1">
-                                        <h5 class="text-white"><?php echo app('translator')->get('Sold To Sales Centers'); ?></h5>
-                                        <h3 class="text-white sold_to_sales_centers"></span>
+                                        <h5 class="text-white"><?php echo app('translator')->get('Total Raw Item Purchase'); ?></h5>
+                                        <h3 class="text-white rawItemPurchaseAmount infoShowHide"></span>
                                         </h3>
                                         <i class="fal fa-usd-circle text-white" aria-hidden="true"></i>
                                     </div>
@@ -55,12 +60,13 @@
 
                                 <div class="col-lg-12 col-6 sales-statistics">
                                     <div class="dashboard-box gr-bg-2">
-                                        <h5 class="text-white"><?php echo app('translator')->get('Sold To Customers'); ?></h5>
-                                        <h3 class="text-white sold_to_customers"></span>
+                                        <h5 class="text-white"><?php echo app('translator')->get('Total Stock Transfer'); ?></h5>
+                                        <h3 class="text-white total_stock_transfer infoShowHide"></span>
                                         </h3>
                                         <i class="fal fa-usd-circle text-white"></i>
                                     </div>
                                 </div>
+
                             </div>
                         </div>
 
@@ -70,7 +76,7 @@
                                 <div class="col-lg-12 col-6 customer-statistics">
                                     <div class="dashboard-box gr-bg-1">
                                         <h5 class="text-white"><?php echo app('translator')->get('Total Customers'); ?></h5>
-                                        <h3 class="text-white totalCustomers"></h3>
+                                        <h3 class="text-white totalCustomers infoShowHide"></h3>
                                         <i class="fal fa-users text-white"></i>
                                     </div>
                                 </div>
@@ -78,7 +84,7 @@
                                 <div class="col-lg-12 col-6 sales-statistics">
                                     <div class="dashboard-box gr-bg-2">
                                         <h5 class="text-white"><?php echo app('translator')->get('Due Amount'); ?></h5>
-                                        <h3 class="text-white customer_due_amount"></span>
+                                        <h3 class="text-white customer_due_amount infoShowHide"></span>
                                         </h3>
                                         <i class="fal fa-usd-circle text-white"></i>
                                     </div>
@@ -92,16 +98,16 @@
                             <?php if(userType() == 1): ?>
                                 <div class="col-xl-12 col-6 sales-statistics">
                                     <div class="dashboard-box gr-bg-3">
-                                        <h5 class="text-white"><?php echo app('translator')->get('Sales Centers Due Amount'); ?></h5>
-                                        <h3 class="text-white sales_center_due_amount"></span>
+                                        <h5 class="text-white"><?php echo app('translator')->get('Affiliate Member Commission'); ?></h5>
+                                        <h3 class="text-white affiliateMemberCommission infoShowHide"></span>
                                         </h3>
                                         <i class="fal fa-hand-holding-usd text-white"></i>
                                     </div>
                                 </div>
                                 <div class="col-xl-12 col-6 box customer-statistics">
                                     <div class="dashboard-box gr-bg-4">
-                                        <h5 class="text-white"><?php echo app('translator')->get('Customer Due Amount'); ?></h5>
-                                        <h3 class="text-white customer_due_amount"></span>
+                                        <h5 class="text-white"><?php echo app('translator')->get('Total Expense'); ?></h5>
+                                        <h3 class="text-white totalExpenseAmount infoShowHide"></span>
                                         </h3>
                                         <i class="fal fa-hand-holding-usd text-white" aria-hidden="true"></i>
                                     </div>
@@ -110,7 +116,7 @@
                                 <div class="col-xl-12 col-6 item-statistics">
                                     <div class="dashboard-box gr-bg-3">
                                         <h5 class="text-white"><?php echo app('translator')->get('Total Items'); ?></h5>
-                                        <h3 class="text-white totalItems"></h3>
+                                        <h3 class="text-white totalItems infoShowHide"></h3>
                                         
                                         <i class="far fa-network-wired text-white"></i>
                                     </div>
@@ -118,7 +124,7 @@
                                 <div class="col-xl-12 col-6 box item-statistics">
                                     <div class="dashboard-box gr-bg-4">
                                         <h5 class="text-white"><?php echo app('translator')->get('Stock Out Items'); ?></h5>
-                                        <h3 class="text-white stockOutItems"></span>
+                                        <h3 class="text-white stockOutItems infoShowHide"></span>
                                         </h3>
                                         
                                         <i class="far fa-times-circle text-white"></i>
@@ -143,7 +149,7 @@
                             <div class="col-xl-3 col-md-6 box item-statistics">
                                 <div class="dashboard-box">
                                     <h5><?php echo app('translator')->get('Total Items'); ?></h5>
-                                    <h3 class="totalItems"></h3>
+                                    <h3 class="totalItems infoShowHide"></h3>
                                     
                                     <i class="far fa-network-wired" aria-hidden="true"></i>
                                 </div>
@@ -152,40 +158,40 @@
                             <div class="col-xl-3 col-md-6 box item-statistics">
                                 <div class="dashboard-box">
                                     <h5><?php echo app('translator')->get('Stock Out Items'); ?></h5>
-                                    <h3 class="stockOutItems"></h3>
+                                    <h3 class="stockOutItems infoShowHide"></h3>
                                     <i class="far fa-times-circle" aria-hidden="true"></i>
                                 </div>
                             </div>
 
-                            <div class="col-xl-3 col-md-6 box customer-statistics">
-                                <div class="dashboard-box">
-                                    <h5><?php echo app('translator')->get('Total Customers'); ?></h5>
-                                    <h3 class="totalCustomers"></h3>
-                                    <i class="fal fa-users" aria-hidden="true"></i>
-                                </div>
-                            </div>
 
-                            <div class="col-xl-3 col-md-6 box expense-statistics">
-                                <div class="dashboard-box">
-                                    <h5><?php echo app('translator')->get('Total Expense'); ?></h5>
-                                    <h3 class="totalExpenseAmount"></h3>
-                                    <i class="fal fa-lightbulb-dollar"></i>
-                                </div>
-                            </div>
 
-                            <div class="col-xl-3 col-md-6 box raw-item-statistics">
-                                <div class="dashboard-box">
-                                    <h5><?php echo app('translator')->get('Raw Item Purchase'); ?></h5>
-                                    <h3 class="rawItemPurchaseAmount"></h3>
-                                    
-                                    <i class="fal fa-usd-circle" aria-hidden="true"></i>
-                                </div>
-                            </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
                             <div class="col-xl-3 col-md-6 box raw-item-statistics">
                                 <div class="dashboard-box">
                                     <h5><?php echo app('translator')->get('Raw Item Due'); ?></h5>
-                                    <h3 class="rawItemDueAmount"></h3>
+                                    <h3 class="rawItemDueAmount infoShowHide"></h3>
                                     <i class="far fa-hand-holding-usd"></i>
                                 </div>
                             </div>
@@ -193,7 +199,7 @@
                             <div class="col-xl-3 col-md-6 box raw-item-statistics">
                                 <div class="dashboard-box">
                                     <h5><?php echo app('translator')->get('Wastage Raw Items'); ?></h5>
-                                    <h3 class="wastageRawItemsAmount"></h3>
+                                    <h3 class="wastageRawItemsAmount infoShowHide"></h3>
                                     <i class="far fa-badge-dollar"></i>
                                 </div>
                             </div>
@@ -201,7 +207,7 @@
                             <div class="col-xl-3 col-md-6 box raw-item-statistics">
                                 <div class="dashboard-box">
                                     <h5><?php echo app('translator')->get('Stock Out Raw Items'); ?></h5>
-                                    <h3 class="outOfStockRawItems"></h3>
+                                    <h3 class="outOfStockRawItems infoShowHide"></h3>
                                     <i class="far fa-times-circle" aria-hidden="true"></i>
                                     
                                 </div>
@@ -210,7 +216,7 @@
                             <div class="col-xl-3 col-md-6 box sales-center-statistics">
                                 <div class="dashboard-box">
                                     <h5><?php echo app('translator')->get('Total Sales Center'); ?></h5>
-                                    <h3 class="totalSalesCenter"></h3>
+                                    <h3 class="totalSalesCenter infoShowHide"></h3>
                                     
                                     <i class="fal fa-shopping-cart"></i>
                                 </div>
@@ -219,7 +225,7 @@
                             <div class="col-xl-3 col-md-6 box supplier-statistics">
                                 <div class="dashboard-box">
                                     <h5><?php echo app('translator')->get('Total Suppliers'); ?></h5>
-                                    <h3 class="totalSuppliers"></h3>
+                                    <h3 class="totalSuppliers infoShowHide"></h3>
                                     <i class="fal fa-shopping-cart" aria-hidden="true"></i>
                                 </div>
                             </div>
@@ -227,20 +233,20 @@
                             <div class="col-xl-3 col-md-6 box ">
                                 <div class="dashboard-box affiliate-member-statistics">
                                     <h5><?php echo app('translator')->get('Total Affiliate Member'); ?></h5>
-                                    <h3 class="totalAffiliateMember"></h3>
+                                    <h3 class="totalAffiliateMember infoShowHide"></h3>
                                     
                                     <i class="far fa-network-wired" aria-hidden="true"></i>
                                 </div>
                             </div>
 
-                            <div class="col-xl-3 col-md-6 box affiliate-member-statistics">
-                                <div class="dashboard-box">
-                                    <h5><?php echo app('translator')->get('Affiliate Member Commission'); ?></h5>
-                                    <h3 class="affiliateMemberCommission"></h3>
-                                    <i class="fal fa-usd-circle" aria-hidden="true"></i>
 
-                                </div>
-                            </div>
+
+
+
+
+
+
+
                         </div>
                     <?php endif; ?>
                 </div>
@@ -248,7 +254,7 @@
                     <div class="card-box-wrapper owl-carousel card-boxes">
                         <div class="dashboard-box gr-bg-1">
                             <h5 class="text-white"><?php echo app('translator')->get('Total Sales Amount'); ?></h5>
-                            <h3 class="text-white">
+                            <h3 class="text-white infoShowHide">
                                 <small><sup><?php echo e(trans(config('basic.currency_symbol'))); ?></sup></small><?php echo e(getAmount($walletBalance, config('basic.fraction_number'))); ?>
 
                             </h3>
@@ -256,7 +262,7 @@
                         </div>
                         <div class="dashboard-box gr-bg-2">
                             <h5 class="text-white"><?php echo app('translator')->get('Interest Balance'); ?></h5>
-                            <h3 class="text-white">
+                            <h3 class="text-white infoShowHide">
                                 <small><sup><?php echo e(trans(config('basic.currency_symbol'))); ?></sup></small><?php echo e(getAmount($interestBalance, config('basic.fraction_number'))); ?>
 
                             </h3>
@@ -264,7 +270,7 @@
                         </div>
                         <div class="dashboard-box gr-bg-3">
                             <h5 class="text-white"><?php echo app('translator')->get('Total Deposit'); ?></h5>
-                            <h3 class="text-white">
+                            <h3 class="text-white infoShowHide">
                                 <small><sup><?php echo e(trans(config('basic.currency_symbol'))); ?></sup></small><?php echo e(getAmount($totalDeposit, config('basic.fraction_number'))); ?>
 
                             </h3>
@@ -272,7 +278,7 @@
                         </div>
                         <div class="dashboard-box gr-bg-5">
                             <h5 class="text-white"><?php echo app('translator')->get('Total Invest'); ?></h5>
-                            <h3 class="text-white">
+                            <h3 class="text-white infoShowHide">
                                 <small><sup><?php echo e(trans(config('basic.currency_symbol'))); ?></sup></small><?php echo e(getAmount($investment['totalInvestAmount'])); ?>
 
                             </h3>
@@ -280,7 +286,7 @@
                         </div>
                         <div class="dashboard-box gr-bg-5">
                             <h5 class="text-white"><?php echo app('translator')->get('Running Invest'); ?></h5>
-                            <h3 class="text-white">
+                            <h3 class="text-white infoShowHide">
                                 <small><sup><?php echo e(trans(config('basic.currency_symbol'))); ?></sup></small><?php echo e(getAmount($investment['runningInvestAmount'])); ?>
 
                             </h3>
@@ -288,7 +294,7 @@
                         </div>
                         <div class="dashboard-box gr-bg-4">
                             <h5 class="text-white"><?php echo app('translator')->get('Total Earn'); ?></h5>
-                            <h3 class="text-white">
+                            <h3 class="text-white infoShowHide">
                                 <small><sup><?php echo e(trans(config('basic.currency_symbol'))); ?></sup></small><?php echo e(getAmount($totalInterestProfit, config('basic.fraction_number'))); ?>
 
                             </h3>
@@ -296,7 +302,7 @@
                         </div>
                         <div class="dashboard-box gr-bg-6">
                             <h5 class="text-white"><?php echo app('translator')->get('Total Payout'); ?></h5>
-                            <h3 class="text-white">
+                            <h3 class="text-white infoShowHide">
                                 <small><sup><?php echo e(trans(config('basic.currency_symbol'))); ?></sup></small><?php echo e(getAmount($totalPayout)); ?>
 
                             </h3>
@@ -332,7 +338,7 @@
 
         <div class="main row">
             <div class="col-md-12">
-                <div class="card year-transaction  shadow-sm YearlySalesTransactions">
+                <div class="card year-transaction  shadow-sm YearlySalesTransactions infoShowHide">
                     <?php if(userType() == 1): ?>
                         <div class="card-body">
                             <h5 class="card-title"><?php echo app('translator')->get('Yearly Sales Transactions'); ?></h5>
@@ -365,6 +371,20 @@
 
         document.addEventListener('DOMContentLoaded', onDocumentLoad);
 
+        $(document).on('click', '.show-hide', function () {
+            let data = $(this).data('info'); // Change $('.show-hide') to $(this) to refer to the clicked element
+
+            if (data == 1) {
+                $('.infoShowHide').addClass('d-none');
+                $(this).find('.showHideEye').removeClass('fal fa-eye').addClass('fal fa-eye-slash'); // Use find() to target elements within $(this)
+                $(this).data('info', 0); // Use $(this) to set data-info attribute of the clicked element
+            } else {
+                $('.infoShowHide').removeClass('d-none');
+                $(this).find('.showHideEye').removeClass('fal fa-eye-slash').addClass('fal fa-eye'); // Use find() to target elements within $(this)
+                $(this).data('info', 1); // Use $(this) to set data-info attribute of the clicked element
+            }
+        });
+
 
         const userType = "<?php echo e(userType()); ?>";
 
@@ -394,7 +414,7 @@
             userType == 1 ? getYearSalesTransactionChartRecords() : getSalesCenterYearSalesTransactionChartRecords();
         }
 
-        function getSalesCenterYearSalesTransactionChartRecords(){
+        function getSalesCenterYearSalesTransactionChartRecords() {
             delayProcess('sales-center-yearly-sales-transaction-statistics', '#000000');
             setTimeout(function () {
                 $.ajax({
@@ -413,7 +433,7 @@
             }, 1000)
         }
 
-        function currentYearSalesCenterSalesTransactionChart(yearSalesCenterSalesTransactionChartRecords){
+        function currentYearSalesCenterSalesTransactionChart(yearSalesCenterSalesTransactionChartRecords) {
             new Chart(document.getElementById("sales-center-yearly-sales-transaction-statistics"), {
                 type: 'bar',
                 data: {
@@ -453,13 +473,6 @@
         }
 
 
-
-
-
-
-
-
-
         function getYearSalesTransactionChartRecords() {
             delayProcess('yearly-sales-transaction-statistics', '#000000');
             setTimeout(function () {
@@ -478,6 +491,7 @@
                 });
             }, 1000)
         }
+
         function currentYearSalesTransactionChart(yearSalesTransactionChartRecords) {
             new Chart(document.getElementById("sales-transaction-current-year"), {
                 type: 'bar',
@@ -702,6 +716,7 @@
             $('.sales_center_due_amount').text(`${salesStatRecords.dueSalesCenterAmount ? parseFloat(salesStatRecords.dueSalesCenterAmount).toFixed(2) : 0} ${currency}`);
             $('.customer_due_amount').text(`${salesStatRecords.dueCustomerAmount ? parseFloat(salesStatRecords.dueCustomerAmount).toFixed(2) : 0} ${currency}`);
             $('.total_stock_amount').text(`${salesStatRecords.totalStockAmount ? parseFloat(salesStatRecords.totalStockAmount).toFixed(2) : 0} ${currency}`);
+            $('.total_stock_transfer').text(`${salesStatRecords.totalStockTransfer ? parseFloat(salesStatRecords.totalStockTransfer).toFixed(2) : 0} ${currency}`);
         }
 
         function itemRecords() {
@@ -730,146 +745,140 @@
 
     </script>
 
-    <script>
-        "use strict";
-        var options = {
-            theme: {
-                mode: "light",
-            },
-
-            series: [
-                {
-                    name: "<?php echo e(trans('Deposit')); ?>",
-                    color: 'rgba(255, 72, 0, 1)',
-                    data: <?php echo $monthly['funding']->flatten(); ?>
-
-                },
-                {
-                    name: "<?php echo e(trans('Deposit Bonus')); ?>",
-                    color: 'rgba(39, 144, 195, 1)',
-                    data: <?php echo $monthly['referralFundBonus']->flatten(); ?>
-
-                },
-                {
-                    name: "<?php echo e(trans('Investment')); ?>",
-                    color: 'rgba(247, 147, 26, 1)',
-                    data: <?php echo $monthly['investment']->flatten(); ?>
-
-                },
-                {
-                    name: "<?php echo e(trans('Investment Bonus')); ?>",
-                    color: 'rgba(136, 203, 245, 1)',
-                    data: <?php echo $monthly['referralInvestBonus']->flatten(); ?>
-
-                },
-                {
-                    name: "<?php echo e(trans('Profit')); ?>",
-                    color: 'rgba(247, 147, 26, 1)',
-                    data: <?php echo $monthly['monthlyGaveProfit']->flatten(); ?>
-
-                },
-                {
-                    name: "<?php echo e(trans('Payout')); ?>",
-                    color: 'rgba(240, 16, 16, 1)',
-                    data: <?php echo $monthly['payout']->flatten(); ?>
-
-                },
-            ],
-            chart: {
-                type: 'bar',
-                height: 350,
-                background: '#fff',
-                toolbar: {
-                    show: false
-                }
-
-            },
-            plotOptions: {
-                bar: {
-                    horizontal: false,
-                    columnWidth: '55%',
-                    endingShape: 'rounded'
-                },
-            },
-            dataLabels: {
-                enabled: false
-            },
-            stroke: {
-                show: true,
-                width: 2,
-                colors: ['transparent']
-            },
-            xaxis: {
-                categories: <?php echo $monthly['investment']->keys(); ?>,
-
-            },
-            yaxis: {
-                title: {
-                    text: ""
-                }
-            },
-            fill: {
-                opacity: 1
-            },
-            tooltip: {
-                colors: ['#000'],
-                y: {
-                    formatter: function (val) {
-                        return "<?php echo e(trans($basic->currency_symbol)); ?>" + val + ""
-                    }
-                }
-            }
-        };
-
-        var chart = new ApexCharts(document.querySelector("#container"), options);
-        chart.render();
-
-        $(document).on('click', '#details', function () {
-            var title = $(this).data('servicetitle');
-            var description = $(this).data('description');
-            $('#title').text(title);
-            $('#servicedescription').text(description);
-        });
-
-        $(document).ready(function () {
-            let isActiveCronNotification = '<?php echo e($basic->is_active_cron_notification); ?>';
-            if (isActiveCronNotification == 1)
-                $('#cron-info').modal('show');
-            $(document).on('click', '.copy-btn', function () {
-                var _this = $(this)[0];
-                var copyText = $(this).parents('.input-group-append').siblings('input');
-                $(copyText).prop('disabled', false);
-                copyText.select();
-                document.execCommand("copy");
-                $(copyText).prop('disabled', true);
-                $(this).text('Coppied');
-                setTimeout(function () {
-                    $(_this).text('');
-                    $(_this).html('<i class="fas fa-copy"></i>');
-                }, 500)
-            });
 
 
-            $(document).on('click', '.loginAccount', function () {
-                var route = $(this).data('route');
-                $('.loginAccountAction').attr('action', route)
-            });
 
-            $(document).on('click', '.copyReferalLink', function () {
-                var _this = $(this)[0];
-                var copyText = $(this).siblings('input');
-                $(copyText).prop('disabled', false);
-                copyText.select();
-                document.execCommand("copy");
-                $(copyText).prop('disabled', true);
-                $(this).text('Copied');
-                setTimeout(function () {
-                    $(_this).text('');
-                    $(_this).html('<i class="fal fa-copy"></i>');
-                }, 500)
-            });
-        })
-    </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 <?php $__env->stopPush(); ?>
 

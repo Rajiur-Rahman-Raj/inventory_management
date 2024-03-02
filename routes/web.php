@@ -57,6 +57,8 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'user', 'as' => 'user.'], fu
         Route::get('sales-center-create', 'User\CompanyController@createSalesCenter')->name('createSalesCenter');
         Route::post('store-sales-center', 'User\CompanyController@storeSalesCenter')->name('storeSalesCenter');
         Route::get('sales-center-details/{id}', 'User\CompanyController@salesCenterDetails')->name('salesCenterDetails');
+        Route::get('sales-center-edit/{id}', 'User\CompanyController@salesCenterEdit')->name('salesCenterEdit');
+        Route::post('sales-center-update/{id}', 'User\CompanyController@updateSalesCenter')->name('updateSalesCenter');
         Route::delete('delete/center/{id}', 'User\CompanyController@deleteSalesCenter')->name('deleteSalesCenter');
 
         // Item List
@@ -117,14 +119,15 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'user', 'as' => 'user.'], fu
         Route::post('selected-raw-item-unit', 'User\CompanyController@getSelectedRawItemUnit')->name('getSelectedRawItemUnit');
 
 
-
-
 //        Route::post('/verificationSubmit', 'User\HomeController@verificationSubmit')->name('verificationSubmit');
 //        Route::post('/addressVerification', 'User\HomeController@addressVerification')->name('addressVerification');
 
         // Stock In
         Route::get('add-stock', 'User\CompanyController@addStock')->name('addStock');
-
+        Route::get('stock-transfer', 'User\CompanyController@stockTransfer')->name('stockTransfer');
+        Route::post('store/stock-transfer', 'User\CompanyController@storeStockTransfer')->name('storeStockTransfer');
+        Route::get('stock/transfer/list', 'User\CompanyController@stockTransferList')->name('stockTransferList');
+        Route::get('stock/transfer/details/{item}/{id}', 'User\CompanyController@stockTransferDetails')->name('stockTransferDetails');
     });
 
     // Reports
@@ -161,7 +164,6 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'user', 'as' => 'user.'], fu
     Route::post('manage/staffs/store', [RolesPermissionController::class, 'staffStore'])->name('role.staffStore');
     Route::get('manage/staffs/edit/{id?}', [RolesPermissionController::class, 'staffEdit'])->name('role.staffEdit');
     Route::post('manage/staffs/update/{id}', [RolesPermissionController::class, 'staffUpdate'])->name('role.staffUpdate');
-
 
     //Stock Report
     Route::get('stock/reports', [ReportController::class, 'stockReports'])->name('stockReports');
@@ -201,6 +203,7 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'user', 'as' => 'user.'], fu
     Route::get('sales/center/stock/details/{item?}/{id?}', 'User\CompanyController@salesCenterStockDetails')->name('salesCenterStockDetails');
 
     Route::put('update-item-unit-price/{id}', 'User\CompanyController@updateItemUnitPrice')->name('updateItemUnitPrice');
+    Route::put('update-selling-price/{id}', 'User\CompanyController@updateSellingPrice')->name('updateSellingPrice');
 
     Route::post('store-cart-items', 'User\CompanyController@storeCartItems')->name('storeCartItems');
     Route::post('update-cart-items', 'User\CompanyController@updateCartItems')->name('updateCartItems');
@@ -244,7 +247,7 @@ Route::group(['middleware' => ['auth'], 'prefix' => 'user', 'as' => 'user.'], fu
     Route::post('stock-store', 'User\CompanyController@stockStore')->name('stockStore');
     Route::put('update-stock/{id}', 'User\CompanyController@updateStock')->name('updateStock');
     Route::delete('delete/stock/{id}', 'User\CompanyController@deleteStock')->name('deleteStock');
-    Route::get('stock-details/{id}', 'User\CompanyController@stockDetails')->name('stockDetails');
+//    Route::get('stock-details/{id}', 'User\CompanyController@stockDetails')->name('stockDetails');
     Route::get('stock-details/{item?}/{id?}', 'User\CompanyController@stockDetails')->name('stockDetails');
     Route::post('selected-item-unit', 'User\CompanyController@getSelectedItemUnit')->name('getSelectedItemUnit');
 

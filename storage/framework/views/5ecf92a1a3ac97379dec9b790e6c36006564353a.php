@@ -15,12 +15,11 @@
                                             href="<?php echo e(route('user.home')); ?>"><?php echo app('translator')->get('Dashboard'); ?></a>
                                     </li>
 
-                                    <li class="breadcrumb-item"><a
-                                            href="<?php echo e(route('user.customerList')); ?>"><?php echo app('translator')->get('Customer List'); ?></a>
+                                    <li class="breadcrumb-item">
+                                        <a href="<?php echo e(route('user.customerList')); ?>"><?php echo app('translator')->get('Customer List'); ?></a>
                                     </li>
 
-                                    <li class="breadcrumb-item active"
-                                        aria-current="page"><?php echo app('translator')->get('Add Customer'); ?></li>
+                                    <li class="breadcrumb-item active" aria-current="page"><?php echo app('translator')->get('Add Customer'); ?></li>
                                 </ol>
                             </nav>
                         </div>
@@ -56,6 +55,18 @@
                                         </div>
 
                                         <div class="input-box col-md-6">
+                                            <label for="owner_name"><?php echo app('translator')->get('Owner Name'); ?> <sub>(optional)</sub></label>
+                                            <input type="text"
+                                                   class="form-control"
+                                                   name="owner_name"
+                                                   placeholder="<?php echo app('translator')->get('Owner Name'); ?>"
+                                                   value="<?php echo e(old('owner_name')); ?>"/>
+                                            <?php if($errors->has('owner_name')): ?>
+                                                <div class="error text-danger"><?php echo app('translator')->get($errors->first('owner_name')); ?></div>
+                                            <?php endif; ?>
+                                        </div>
+
+                                        <div class="input-box col-md-6">
                                             <label for="email"><?php echo app('translator')->get('Email'); ?> <span><sub>(optional)</sub></span></label>
                                             <input type="email"
                                                    class="form-control"
@@ -80,9 +91,21 @@
                                         </div>
 
                                         <div class="input-box col-md-6">
+                                            <label for="trade_id"><?php echo app('translator')->get('Trade License'); ?> <sub>(optional)</sub></label>
+                                            <input type="text"
+                                                   name="trade_id"
+                                                   placeholder="<?php echo app('translator')->get('Trade License Id Number'); ?>"
+                                                   class="form-control"
+                                                   value="<?php echo e(old('trade_id')); ?>"/>
+                                            <?php if($errors->has('trade_id')): ?>
+                                                <div class="error text-danger"><?php echo app('translator')->get($errors->first('trade_id')); ?></div>
+                                            <?php endif; ?>
+                                        </div>
+
+                                        <div class="input-box col-md-6">
                                             <label for="national_id"><?php echo app('translator')->get('National Id'); ?> <span
                                                     class="text-dark"> <sub>(optional)</sub></span></label>
-                                            <input type="text" name="national_id" placeholder="<?php echo app('translator')->get('National Id'); ?>"
+                                            <input type="text" name="national_id" placeholder="<?php echo app('translator')->get('National Id Number'); ?>"
                                                    class="form-control" value="<?php echo e(old('national_id')); ?>"/>
                                             <?php if($errors->has('national_id')): ?>
                                                 <div class="error text-danger"><?php echo app('translator')->get($errors->first('national_id')); ?>
@@ -90,6 +113,29 @@
                                             <?php endif; ?>
                                         </div>
 
+                                        <div class="input-box col-md-6">
+                                            <label for="check_no"><?php echo app('translator')->get('Check No'); ?> <sub>(optional)</sub></label>
+                                            <input type="text"
+                                                   name="check_no"
+                                                   placeholder="<?php echo app('translator')->get('Check Number'); ?>"
+                                                   class="form-control"
+                                                   value="<?php echo e(old('check_no')); ?>"/>
+                                            <?php if($errors->has('check_no')): ?>
+                                                <div class="error text-danger"><?php echo app('translator')->get($errors->first('check_no')); ?></div>
+                                            <?php endif; ?>
+                                        </div>
+
+                                        <div class="input-box col-md-6">
+                                            <label for="branch_name"><?php echo app('translator')->get('Branch/Bank Name'); ?> <sub>(optional)</sub></label>
+                                            <input type="text"
+                                                   name="branch_name"
+                                                   placeholder="<?php echo app('translator')->get('Branch or Bank Name'); ?>"
+                                                   class="form-control"
+                                                   value="<?php echo e(old('branch_name')); ?>"/>
+                                            <?php if($errors->has('branch_name')): ?>
+                                                <div class="error text-danger"><?php echo app('translator')->get($errors->first('branch_name')); ?></div>
+                                            <?php endif; ?>
+                                        </div>
 
                                         <div class="input-box col-md-6">
                                             <label for="division_id"><?php echo app('translator')->get('Division'); ?> </label>
@@ -168,6 +214,26 @@ unset($__errorArgs, $__bag); ?>"
                                                 <div class="error text-danger"><?php echo app('translator')->get($errors->first('address')); ?>
                                                 </div>
                                             <?php endif; ?>
+                                        </div>
+
+                                        <div class="col-md-12 mb-4 input-box">
+                                            <label for="" class="golden-text"><?php echo app('translator')->get('Customer Photo'); ?> <span class="text-muted"> <sub>(optional)</sub></span> </label>
+                                            <div class="attach-file">
+                                               <span class="prev">
+                                                  <?php echo app('translator')->get('Upload Logo'); ?>
+                                               </span>
+                                                <input type="file" name="image" class="form-control"/>
+                                            </div>
+                                            <?php $__errorArgs = ['image'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                            <span class="text-danger"><?php echo e(trans($message)); ?></span>
+                                            <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                                         </div>
 
                                         <div class="input-box col-12">

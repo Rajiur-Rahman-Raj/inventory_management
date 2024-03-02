@@ -54,15 +54,6 @@
                                                        class="text-danger border-danger">@lang('out of stock')</a>
                                                 @endif
 
-                                                @if($stock->quantity > 0)
-                                                    <button class="cart-btn btn btn-sm addToCartButton"
-                                                            data-property="{{ $stock }}"><i
-                                                            class="fa fa-cart-plus"></i></button>
-                                                @else
-                                                    <button class="cart-btn btn btn-sm addToCartButton opacity-0 disabled"><i
-                                                            class="fa fa-cart-plus"></i></button>
-                                                @endif
-
                                             </div>
                                             <div class="product-img">
                                                 <a href="javascript:void(0)">
@@ -80,22 +71,23 @@
                                                 </div>
                                                 <div class="d-flex justify-content-between">
                                                     <p class="mb-2">
-                                                        <span>{{ userType() == 1 ? 'Cost Per Unit' : 'Purchase Price' }}</span>
-                                                    </p>
-                                                    <p class="mb-2">
                                                         <span>@lang('Selling Price')</span>
                                                     </p>
                                                 </div>
 
-                                                <div
-                                                    class="shopping-icon d-flex align-items-center justify-content-between">
+                                                <div class="shopping-icon d-flex align-items-center justify-content-between">
                                                     <h4>
-                                                        <button class="sellingPriceButton {{ userType() == 1 ? 'updateUnitPrice costPerUnitBtn' : '' }}"
-                                                                data-costperunit="{{ $stock->last_cost_per_unit }}"
-                                                                data-route="{{ route('user.updateItemUnitPrice', $stock->id) }}">{{ $stock->last_cost_per_unit }} {{ $basic->currency_symbol }}</button>
+                                                        <button class="sellingPriceButton updateSellingPrice btn" data-sellingprice="{{ $stock->selling_price }}" data-route="{{ route('user.updateSellingPrice', $stock->id) }}">{{ $stock->selling_price }} {{ $basic->currency_symbol }}</button>
                                                     </h4>
                                                     <h4>
-                                                        <button class="sellingPriceButton btn">{{ $stock->selling_price }} {{ $basic->currency_symbol }}</button>
+                                                        @if($stock->quantity > 0)
+                                                            <button class="cart-btn btn btn-sm addToCartButton"
+                                                                    data-property="{{ $stock }}"><i
+                                                                    class="fa fa-cart-plus"></i></button>
+                                                        @else
+                                                            <button class="cart-btn btn btn-sm addToCartButton disabled"><i
+                                                                    class="fa fa-cart-plus"></i></button>
+                                                        @endif
                                                     </h4>
                                                 </div>
 
@@ -360,7 +352,7 @@
                                                                     class="enter-amount d-flex justify-content-between align-items-center">
                                                                     <h6>Customer Paid Amount</h6>
                                                                     <input type="text"
-                                                                           class="form-control customer-paid-amount"
+                                                                           class="form-control customer-paid-amount w-25"
                                                                            value="0" min="0"
                                                                            onkeyup="this.value = this.value.replace (/^\.|[^\d\.]/g, '')"
                                                                            id="exampleFormControlInput1"
@@ -446,6 +438,56 @@
             </div>
         </div>
     </section>
+
+
+    <div class="clear-cart profile-setting">
+        <div class="modal fade" id="updateSellingPriceModal" tabindex="-1" aria-labelledby="cartModal"
+             aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="cartModal">@lang('Update Selling Price')</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                    </div>
+                    <form action="" class="m-0 p-0 updateSellingPriceRoute" method="post">
+                        @csrf
+                        @method('put')
+                        <div class="modal-body">
+                            <div class="input-box col-md-12">
+                                <label for="cost_per_unit">@lang('Selling Price')</label>
+                                <div class="input-group">
+                                    <input type="hidden" name="filter_item_id" class="filter_item_id" value="">
+                                    <input type="text" name="selling_price"
+                                           class="form-control update_selling_price @error('selling_price') is-invalid @enderror"
+                                           onkeyup="this.value = this.value.replace (/^\.|[^\d\.]/g, '')"
+                                           value="">
+                                    <div class="input-group-append" readonly="">
+                                        <div class="form-control currency_symbol append_group">
+                                            {{ $basic->currency_symbol }}
+                                        </div>
+                                    </div>
+                                    @if($errors->has('selling_price'))
+                                        <div
+                                            class="error text-danger">@lang($errors->first('selling_price'))
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
+                                Cancel
+                            </button>
+                            <button type="submit" class="btn btn-primary">Update</button>
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
     <div class="clear-cart profile-setting">
@@ -588,9 +630,6 @@
         </div>
     </div>
 
-    <div class="clear-cart profile-setting">
-
-    </div>
 
 @endsection
 
@@ -654,7 +693,6 @@
                     id: value,
                 },
                 success: function (response) {
-                    console.log(response);
                     let stocks = response.stocks;
                     let itemsData = '';
 
@@ -669,7 +707,6 @@
                         <div class="product-box shadow-sm p-3 mb-5 bg-body rounded">
                             <div class="product-title d-flex justify-content-between">
                                 ${stock.quantity > 0 ? '<a type="button" class="btn">in stock <span class="badge bg-success">' + stock.quantity + '</span></a>' : '<a href="javascript:void(0)" class="text-danger border-danger">out of stock</a>'}
-                                ${stock.quantity > 0 ? `<button class="btn btn-sm addToCartButton" data-property='${JSON.stringify(stock)}'><i class="fa fa-cart-plus"></i></button>` : `<button class="btn btn-sm addToCartButton opacity-0 disabled"><i class="fa fa-cart-plus"></i></button>`}
                             </div>
 
                             <div class="product-img">
@@ -679,16 +716,16 @@
                                          alt="">
                                 </a>
                             </div>
-                            <div class="product-content-box">
+                             <div class="product-content-box">
                                 <div class="product-content">
                                     <h6>
                                         <a href="javascript:void(0)">${stock.item.name}</a>
                                     </h6>
                                 </div>
                                 <div class="d-flex justify-content-between">
-                                    <p class="mb-2">
-                                        <span>{{ userType() == 1 ? 'Cost Per Unit' : 'Purchase Price' }}</span>
-                                    </p>
+                                    {{--<p class="mb-2">--}}
+                                    {{--    <span>{{ userType() == 1 ? 'Cost Per Unit' : 'Purchase Price' }}</span>--}}
+                                    {{--</p>--}}
                                     <p class="mb-2">
                                         <span>@lang('Selling Price')</span>
                                     </p>
@@ -697,14 +734,20 @@
 
 
                                 <div class="shopping-icon d-flex align-items-center justify-content-between">
+                                    {{--<h4>--}}
+                                    {{--    <button class="sellingPriceButton {{ userType() == 1 ? 'updateUnitPrice costPerUnitBtn' : '' }}"--}}
+                                    {{--            data-filteritemid=${value}--}}
+                                    {{--            data-costperunit="${stock.last_cost_per_unit}"--}}
+                                    {{--            data-route="${stock.item_price_route}">${stock.last_cost_per_unit} {{ $basic->currency_symbol }}</button>--}}
+                                    {{--</h4>--}}
                                     <h4>
-                                        <button class="sellingPriceButton {{ userType() == 1 ? 'updateUnitPrice costPerUnitBtn' : '' }}"
-                                                data-filteritemid=${value}
-                                                data-costperunit="${stock.last_cost_per_unit}"
-                                                data-route="${stock.item_price_route}">${stock.last_cost_per_unit} {{ $basic->currency_symbol }}</button>
+                                        <button class="sellingPriceButton updateSellingPrice btn" data-filteritemid=${value}
+                                                data-sellingprice="${stock.selling_price}"
+                                                data-route="${stock.update_selling_price_route}">${stock.selling_price} {{ $basic->currency_symbol }}</button>
+
                                     </h4>
                                     <h4>
-                                        <button class="sellingPriceButton btn">${stock.selling_price} {{ $basic->currency_symbol }}</button>
+                                        ${stock.quantity > 0 ? `<button class="btn btn-sm addToCartButton" data-property='${JSON.stringify(stock)}'><i class="fa fa-cart-plus"></i></button>` : `<button class="btn btn-sm addToCartButton opacity-0 disabled"><i class="fa fa-cart-plus"></i></button>`}
                                     </h4>
                                 </div>
                         </div>
@@ -798,6 +841,7 @@
                     }
 
                     let cartItems = response.cartItems;
+
                     if (cartItems.length > 0) {
                         $('.cart-items-area').removeClass('d-none')
                     } else {
@@ -942,6 +986,20 @@
         });
 
 
+        $(document).on('click', '.updateSellingPrice', function () {
+            var updateSellingPriceModal = new bootstrap.Modal(document.getElementById('updateSellingPriceModal'))
+            updateSellingPriceModal.show();
+
+            let dataRoute = $(this).data('route');
+            let sellingPrice = $(this).data('sellingprice');
+            let datafilteritemid = $(this).data('filteritemid');
+
+            $('.updateSellingPriceRoute').attr('action', dataRoute)
+            $('.update_selling_price').val(sellingPrice);
+            $('.filter_item_id').val(datafilteritemid);
+        });
+
+
         $(document).on('click', '.updateUnitPrice', function () {
             var updateUnitPriceModal = new bootstrap.Modal(document.getElementById('updateUnitPriceModal'))
             updateUnitPriceModal.show();
@@ -953,7 +1011,6 @@
             $('.updateCostPerUnitPriceRoute').attr('action', dataRoute)
             $('.update_cost_per_unit').val(costPerUnit);
             $('.filter_item_id').val(datafilteritemid);
-
         });
 
         $(document).on('click', '.clearCart', function () {
@@ -1068,7 +1125,6 @@
 
 
         $('.itemQuantityInput').each(function (index, element) {
-            $(document).on('input', `.${element.className}`, function () {
                 let thisClass = $(this);
                 let cartQuantity = isNaN(parseFloat($(this).val())) ? 0 : parseFloat($(this).val());
                 let costPerUnit = parseFloat($(this).data('cartitem')).toFixed(2);
@@ -1082,13 +1138,10 @@
                 // Recalculate subtotal and total
                 updateSubtotal();
                 updateTotal();
-
                 let stockId = $(this).data('stockid');
                 let itemId = $(this).data('itemid');
                 // update quantity and cost also cartItems table
                 updateCartItem(stockId, itemId, cartQuantity, costPerUnit, singleCartItemCost, thisClass);
-
-            })
         });
 
         $(document).on('input', '.itemQuantityInput', function () {

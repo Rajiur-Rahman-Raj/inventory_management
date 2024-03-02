@@ -51,18 +51,18 @@
                                                             <tr>
                                                                 <th scope="col">Quantity</th>
                                                                 <th scope="col">Cost Per Unit</th>
-                                                                <th scope="col">Total Price</th>
+                                                                <th scope="col">Total Unit Price</th>
                                                                 <th scope="col">Stock Date</th>
                                                             </tr>
                                                             </thead>
                                                             <tbody>
 
-                                                            <?php $__currentLoopData = $singleStockDetails; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $salesItemDetail): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                            <?php $__currentLoopData = $singleStockDetails; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $stockDetail): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                                                 <tr>
-                                                                    <td data-label="Quantity"><?php echo e($salesItemDetail->item_quantity); ?></td>
-                                                                    <td data-label="Cost Per Unit"><?php echo e($salesItemDetail->cost_per_unit); ?> <?php echo e($basic->currency_symbol); ?></td>
-                                                                    <td data-label="Total Unit Cost"><?php echo e($salesItemDetail->item_price); ?> <?php echo e($basic->currency_symbol); ?></td>
-                                                                    <td data-label="Stock Date"><?php echo e(customDate($salesItemDetail->created_at)); ?></td>
+                                                                    <td data-label="Quantity"><?php echo e($stockDetail->quantity); ?></td>
+                                                                    <td data-label="Cost Per Unit"><?php echo e($stockDetail->cost_per_unit); ?> <?php echo e($basic->currency_symbol); ?></td>
+                                                                    <td data-label="Total Unit Cost"><?php echo e($stockDetail->amount); ?> <?php echo e($basic->currency_symbol); ?></td>
+                                                                    <td data-label="Stock Date"><?php echo e(customDate($stockDetail->transfer_date)); ?></td>
                                                                 </tr>
                                                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                                             <tr>

@@ -173,7 +173,7 @@ unset($__errorArgs, $__bag); ?>
                                         </div>
 
                                         <div class="input-box col-12 m-0 mt-3">
-                                            <label for=""><?php echo app('translator')->get('Unit'); ?></label>
+                                            <label for=""><?php echo app('translator')->get('Unit'); ?> (Kg)</label>
                                             <div class="input-group">
                                                 <input
                                                     type="text" class="form-control <?php $__errorArgs = ['unit'];
@@ -185,7 +185,7 @@ if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>"
                                                     name="unit"
-                                                    value="<?php echo e(old('unit')); ?>"
+                                                    value="<?php echo e(old('unit', 'kg')); ?>"
                                                     placeholder="<?php echo app('translator')->get('Item Unit'); ?>" required>
                                             </div>
                                             <?php $__errorArgs = ['unit'];
@@ -289,7 +289,7 @@ unset($__errorArgs, $__bag); ?>
                                         </div>
 
                                         <div class="input-box col-12 m-0">
-                                            <label for=""><?php echo app('translator')->get('Unit'); ?></label>
+                                            <label for=""><?php echo app('translator')->get('Unit'); ?> (Kg)</label>
                                             <div class="input-group">
                                                 <input
                                                     type="text"
@@ -302,7 +302,7 @@ if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?> item-unit"
                                                     name="unit"
-                                                    value="<?php echo e(old('unit')); ?>"
+                                                    value="<?php echo e(old('unit', 'kg')); ?>"
                                                     placeholder="<?php echo app('translator')->get('Item Unit'); ?>" required>
                                             </div>
                                             <?php $__errorArgs = ['unit'];

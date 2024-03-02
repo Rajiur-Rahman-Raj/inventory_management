@@ -99,18 +99,23 @@
                     </tr>
                     </thead>
                     <tbody>
+
                     <?php $__empty_1 = true; $__currentLoopData = $customers; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $customer): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                         <tr>
                             <td data-label="<?php echo app('translator')->get('SL'); ?>"><?php echo e(loopIndex($customers) + $key); ?></td>
 
                             <td class="company-logo" data-label="<?php echo app('translator')->get('Name'); ?>">
                                 <div>
-                                    <a href=""
-                                       target="_blank"><?php echo e($customer->name); ?></a>
+                                    <a href="" target="_blank">
+                                        <img src="<?php echo e(getFile(config('location.customer.path').$customer->image)); ?>">
+                                    </a>
+                                </div>
+                                <div>
+                                    <a href="" target="_blank"><?php echo e($customer->name); ?></a>
                                     <br>
-                                    <?php if($customer->email): ?>
+                                    <?php if($customer->phone): ?>
                                         <span class="text-muted font-14">
-                                        <span><?php echo e($customer->email); ?></span>
+                                        <span><?php echo e($customer->phone); ?></span>
                                     </span>
                                     <?php endif; ?>
                                 </div>
@@ -139,7 +144,8 @@
                                         </li>
 
                                         <li>
-                                            <a class="dropdown-item btn" href="<?php echo e(route('user.customerEdit', $customer->id)); ?>">
+                                            <a class="dropdown-item btn"
+                                               href="<?php echo e(route('user.customerEdit', $customer->id)); ?>">
                                                 <i class="fas fa-edit"></i> <?php echo app('translator')->get('Edit'); ?>
                                             </a>
                                         </li>

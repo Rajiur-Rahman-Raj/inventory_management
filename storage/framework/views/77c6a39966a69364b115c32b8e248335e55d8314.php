@@ -8,6 +8,7 @@
 
 
     function getSelectedItemUnit(_this){
+
         let selectedItemId = _this.val();
         $.ajaxSetup({
             headers: {
@@ -22,6 +23,7 @@
                 itemId: selectedItemId,
             },
             success: function (response) {
+                console.log(response);
                 _this.parents('.parentItemRow').find('.item_unit').text(response.unit);
             },
             error: function (xhr, status, error) {

@@ -16,12 +16,11 @@
                                             href="{{ route('user.home') }}">@lang('Dashboard')</a>
                                     </li>
 
-                                    <li class="breadcrumb-item"><a
-                                            href="{{ route('user.customerList') }}">@lang('Customer List')</a>
+                                    <li class="breadcrumb-item">
+                                        <a href="{{ route('user.customerList') }}">@lang('Customer List')</a>
                                     </li>
 
-                                    <li class="breadcrumb-item active"
-                                        aria-current="page">@lang('Add Customer')</li>
+                                    <li class="breadcrumb-item active" aria-current="page">@lang('Add Customer')</li>
                                 </ol>
                             </nav>
                         </div>
@@ -57,6 +56,18 @@
                                         </div>
 
                                         <div class="input-box col-md-6">
+                                            <label for="owner_name">@lang('Owner Name') <sub>(optional)</sub></label>
+                                            <input type="text"
+                                                   class="form-control"
+                                                   name="owner_name"
+                                                   placeholder="@lang('Owner Name')"
+                                                   value="{{ old('owner_name') }}"/>
+                                            @if($errors->has('owner_name'))
+                                                <div class="error text-danger">@lang($errors->first('owner_name'))</div>
+                                            @endif
+                                        </div>
+
+                                        <div class="input-box col-md-6">
                                             <label for="email">@lang('Email') <span><sub>(optional)</sub></span></label>
                                             <input type="email"
                                                    class="form-control"
@@ -81,9 +92,21 @@
                                         </div>
 
                                         <div class="input-box col-md-6">
+                                            <label for="trade_id">@lang('Trade License') <sub>(optional)</sub></label>
+                                            <input type="text"
+                                                   name="trade_id"
+                                                   placeholder="@lang('Trade License Id Number')"
+                                                   class="form-control"
+                                                   value="{{ old('trade_id') }}"/>
+                                            @if($errors->has('trade_id'))
+                                                <div class="error text-danger">@lang($errors->first('trade_id'))</div>
+                                            @endif
+                                        </div>
+
+                                        <div class="input-box col-md-6">
                                             <label for="national_id">@lang('National Id') <span
                                                     class="text-dark"> <sub>(optional)</sub></span></label>
-                                            <input type="text" name="national_id" placeholder="@lang('National Id')"
+                                            <input type="text" name="national_id" placeholder="@lang('National Id Number')"
                                                    class="form-control" value="{{ old('national_id') }}"/>
                                             @if($errors->has('national_id'))
                                                 <div class="error text-danger">@lang($errors->first('national_id'))
@@ -91,6 +114,29 @@
                                             @endif
                                         </div>
 
+                                        <div class="input-box col-md-6">
+                                            <label for="check_no">@lang('Check No') <sub>(optional)</sub></label>
+                                            <input type="text"
+                                                   name="check_no"
+                                                   placeholder="@lang('Check Number')"
+                                                   class="form-control"
+                                                   value="{{ old('check_no') }}"/>
+                                            @if($errors->has('check_no'))
+                                                <div class="error text-danger">@lang($errors->first('check_no'))</div>
+                                            @endif
+                                        </div>
+
+                                        <div class="input-box col-md-6">
+                                            <label for="branch_name">@lang('Branch/Bank Name') <sub>(optional)</sub></label>
+                                            <input type="text"
+                                                   name="branch_name"
+                                                   placeholder="@lang('Branch or Bank Name')"
+                                                   class="form-control"
+                                                   value="{{ old('branch_name') }}"/>
+                                            @if($errors->has('branch_name'))
+                                                <div class="error text-danger">@lang($errors->first('branch_name'))</div>
+                                            @endif
+                                        </div>
 
                                         <div class="input-box col-md-6">
                                             <label for="division_id">@lang('Division') </label>
@@ -162,6 +208,19 @@
                                                 <div class="error text-danger">@lang($errors->first('address'))
                                                 </div>
                                             @endif
+                                        </div>
+
+                                        <div class="col-md-12 mb-4 input-box">
+                                            <label for="" class="golden-text">@lang('Customer Photo') <span class="text-muted"> <sub>(optional)</sub></span> </label>
+                                            <div class="attach-file">
+                                               <span class="prev">
+                                                  @lang('Upload Logo')
+                                               </span>
+                                                <input type="file" name="image" class="form-control"/>
+                                            </div>
+                                            @error('image')
+                                            <span class="text-danger">{{trans($message)}}</span>
+                                            @enderror
                                         </div>
 
                                         <div class="input-box col-12">

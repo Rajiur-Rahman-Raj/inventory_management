@@ -69,9 +69,11 @@
                                                             <?php endif; ?>  <?php echo app('translator')->get('Payment Status'); ?>
                                                             : </h6>
                                                         <?php if($singlePurchaseItem->payment_status == 1): ?>
-                                                            <h6 class="ms-2"><span class="badge bg-success"><?php echo app('translator')->get('Paid'); ?></span></h6>
+                                                            <h6 class="ms-2"><span
+                                                                    class="badge bg-success"><?php echo app('translator')->get('Paid'); ?></span></h6>
                                                         <?php else: ?>
-                                                            <h6 class="ms-2"><span class="badge bg-warning"><?php echo app('translator')->get('Due'); ?></span></h6>
+                                                            <h6 class="ms-2"><span
+                                                                    class="badge bg-warning"><?php echo app('translator')->get('Due'); ?></span></h6>
                                                         <?php endif; ?>
                                                     </div>
 
@@ -81,12 +83,12 @@
                                                     <ul class="list-style-none p-0 stock_list_style">
                                                         <table class="table table-bordered">
                                                             <thead>
-                                                                <tr>
-                                                                    <th scope="col"><?php echo app('translator')->get('Item'); ?></th>
-                                                                    <th scope="col"><?php echo app('translator')->get('Quantity'); ?></th>
-                                                                    <th scope="col"><?php echo app('translator')->get('Cost Per Unit'); ?></th>
-                                                                    <th scope="col"><?php echo app('translator')->get('Total Unit Cost'); ?></th>
-                                                                </tr>
+                                                            <tr>
+                                                                <th scope="col"><?php echo app('translator')->get('Item'); ?></th>
+                                                                <th scope="col"><?php echo app('translator')->get('Quantity'); ?></th>
+                                                                <th scope="col"><?php echo app('translator')->get('Cost Per Unit'); ?></th>
+                                                                <th scope="col"><?php echo app('translator')->get('Total Unit Cost'); ?></th>
+                                                            </tr>
                                                             </thead>
                                                             <tbody>
 
@@ -138,12 +140,24 @@
                                 <h5><?php echo app('translator')->get('Total Due Amount'); ?></h5>
                                 <h6 class="total-due-amount"></h6>
                             </div>
+
+                            <div class="enter-amount d-flex justify-content-between align-items-center">
+                                <h6><?php echo app('translator')->get('Discount Amount'); ?></h6>
+                                <div class="input-group d-flex ">
+                                    <input type="text" name="discount_amount" value="0" min="0" max="100" class="form-control bg-white text-dark discount-amount" onkeyup="this.value = this.value.replace (/^\.|[^\d\.]/g, '')">
+                                </div>
+                            </div>
+
                             <div class="enter-amount d-flex justify-content-between align-items-center">
                                 <h6><?php echo app('translator')->get('Paid Amount'); ?></h6>
-                                <input type="text" class="form-control paid-amount" value="0" min="0"
-                                       onkeyup="this.value = this.value.replace (/^\.|[^\d\.]/g, '')"
-                                       id="exampleFormControlInput1" name="paid_amount">
+                                <div class="input-group d-flex ">
+                                    <input type="text" class="form-control paid-amount" value="0" min="0"
+                                           onkeyup="this.value = this.value.replace (/^\.|[^\d\.]/g, '')"
+                                           id="exampleFormControlInput1" name="paid_amount">
+                                </div>
+
                             </div>
+
                             <div class="change-amount d-flex align-items-center justify-content-between">
                                 <h4 class="m-2 due-or-change-text">Due Amount</h4>  <span
                                     class="due-or-change-amount"></span>
@@ -248,10 +262,23 @@
 
 
         $(document).on('keyup', '.paid-amount', function () {
-            var totalAmount = parseFloat($('.total-due-amount').text().match(/[\d.]+/)[0]);
-            let customerPaidAmount = isNaN(parseFloat($(this).val())) ? 0 : parseFloat($(this).val());
+            makeDuePaymentCal();
+        });
 
-            let dueOrChangeAmount = totalAmount - customerPaidAmount;
+        function makeDuePaymentCal(_this){
+            let totalAmount = parseFloat($('.total-due-amount').text().match(/[\d.]+/)[0]);
+            var discountAmount = isNaN(parseFloat($('.discount-amount').val())) ? 0 : parseFloat($('.discount-amount').val());
+            let customerPaidAmount = isNaN(parseFloat($('.paid-amount').val())) ? 0 : parseFloat($('.paid-amount').val());
+
+
+            if(discountAmount > totalAmount){
+                Notiflix.Notify.warning('Discount amount can not exceed the total due amount');
+                $(this).val(totalAmount);
+            }
+
+            let newTotalAmount = totalAmount - discountAmount;
+
+            let dueOrChangeAmount = newTotalAmount - customerPaidAmount;
 
             if (dueOrChangeAmount >= 0) {
                 $('.due-or-change-text').text('Due Amount')
@@ -264,12 +291,18 @@
             } else {
                 $('.due-or-change-text').text('Change Amount')
                 $('.due-or-change-amount').text(`${Math.abs(dueOrChangeAmount).toFixed(2)} <?php echo e($basic->currency_symbol); ?>`)
-                $('.total-payable-amount').text(`${totalAmount.toFixed(2)} <?php echo e($basic->currency_symbol); ?>`)
+                $('.total-payable-amount').text(`${newTotalAmount.toFixed(2)} <?php echo e($basic->currency_symbol); ?>`)
 
                 $('.due_or_change_amount_input').val(`${dueOrChangeAmount.toFixed(2)}`)
-                $('.total_payable_amount_input').val(`${totalAmount.toFixed(2)}`)
+                $('.total_payable_amount_input').val(`${newTotalAmount.toFixed(2)}`)
             }
+        }
+
+
+        $(document).on('keyup', '.discount-amount', function (){
+            makeDuePaymentCal();
         });
+
 
     </script>
 

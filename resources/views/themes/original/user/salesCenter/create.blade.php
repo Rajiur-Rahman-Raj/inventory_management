@@ -39,7 +39,7 @@
                                       enctype="multipart/form-data">
                                     @csrf
                                     <div class="row g-4">
-                                        <div class="input-box col-md-4">
+                                        <div class="input-box col-md-6">
                                             <label for="name">@lang('Center Name') </label>
                                             <input type="text"
                                                    class="form-control"
@@ -51,28 +51,28 @@
                                             @endif
                                         </div>
 
-                                        <div class="input-box col-md-4">
-                                            <label for="name">@lang('Code') </label>
+                                        <div class="input-box col-md-6">
+                                            <label for="code">@lang('Code') </label>
                                             <input type="text"
                                                    class="form-control"
                                                    name="code"
                                                    placeholder="@lang('Sales Center code')"
                                                    value="{{ old('code') }}"/>
-                                            @if($errors->has('name'))
-                                                <div class="error text-danger">@lang($errors->first('name'))</div>
+                                            @if($errors->has('code'))
+                                                <div class="error text-danger">@lang($errors->first('code'))</div>
                                             @endif
                                         </div>
 
-                                        <div class="input-box col-md-4">
-                                            <label for="name">@lang('Discount') </label>
-                                            <div class="input-group mb-3">
-                                                <input type="number" class="form-control" aria-label="" name="discount_percent" placeholder="discount" value="5">
-                                                <span class="input-group-text">%</span>
-                                                @if($errors->has('discount_percent'))
-                                                    <div class="error text-danger">@lang($errors->first('discount_percent'))</div>
-                                                @endif
-                                            </div>
-                                        </div>
+{{--                                        <div class="input-box col-md-4">--}}
+{{--                                            <label for="name">@lang('Discount') </label>--}}
+{{--                                            <div class="input-group mb-3">--}}
+{{--                                                <input type="number" class="form-control" aria-label="" name="discount_percent" placeholder="discount" value="5">--}}
+{{--                                                <span class="input-group-text">%</span>--}}
+{{--                                                @if($errors->has('discount_percent'))--}}
+{{--                                                    <div class="error text-danger">@lang($errors->first('discount_percent'))</div>--}}
+{{--                                                @endif--}}
+{{--                                            </div>--}}
+{{--                                        </div>--}}
 
                                         <div class="input-box col-12">
                                             <label for="center_address">@lang('Center Location') </label>

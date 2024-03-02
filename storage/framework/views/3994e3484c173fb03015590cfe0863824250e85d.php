@@ -84,8 +84,7 @@
                             <td class="company-logo" data-label="<?php echo app('translator')->get('Owner'); ?>">
                                 <div>
                                     <a href="" target="_blank">
-                                        <img
-                                            src="<?php echo e(getFile(config('location.user.path').optional($centerList->user)->image)); ?>">
+                                        <img src="<?php echo e(getFile(config('location.user.path').optional($centerList->user)->image)); ?>">
                                     </a>
                                 </div>
                                 <div>
@@ -117,12 +116,12 @@
                                                class="dropdown-item"> <i class="fal fa-eye"></i> <?php echo app('translator')->get('Details'); ?> </a>
                                         </li>
 
-
-
-
-
-
-
+                                        <li>
+                                            <a class="dropdown-item btn"
+                                               href="<?php echo e(route('user.salesCenterEdit', $centerList->id)); ?>">
+                                                <i class="fas fa-edit"></i> <?php echo app('translator')->get('Edit'); ?>
+                                            </a>
+                                        </li>
 
                                         <li>
                                             <a class="dropdown-item btn deleteCenter"

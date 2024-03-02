@@ -28,7 +28,7 @@ trait RawItemPurchaseTrait
     public function storePurchaseRawItemMakePayment($request, $purchaseIn, $admin){
         $purchaseRawItemMakePayment = new PurchaseRawItemMakePayment();
         $purchaseRawItemMakePayment->raw_item_purchase_in_id = $purchaseIn->id;
-        $purchaseRawItemMakePayment->amount = $request->paid_amount;
+        $purchaseRawItemMakePayment->amount = $request->total_payable_amount;
         $purchaseRawItemMakePayment->payment_date = Carbon::parse($request->payment_date);
         $purchaseRawItemMakePayment->due = $purchaseIn->due_amount;
         $purchaseRawItemMakePayment->note = $request->note;

@@ -85,8 +85,7 @@
                             <td class="company-logo" data-label="@lang('Owner')">
                                 <div>
                                     <a href="" target="_blank">
-                                        <img
-                                            src="{{ getFile(config('location.user.path').optional($centerList->user)->image) }}">
+                                        <img src="{{ getFile(config('location.user.path').optional($centerList->user)->image) }}">
                                     </a>
                                 </div>
                                 <div>
@@ -118,12 +117,12 @@
                                                class="dropdown-item"> <i class="fal fa-eye"></i> @lang('Details') </a>
                                         </li>
 
-{{--                                        <li>--}}
-{{--                                            <a class="dropdown-item btn"--}}
-{{--                                               href="{{ route('user.salesCenterEdit', $centerList->id) }}">--}}
-{{--                                                <i class="fas fa-edit"></i> @lang('Edit')--}}
-{{--                                            </a>--}}
-{{--                                        </li>--}}
+                                        <li>
+                                            <a class="dropdown-item btn"
+                                               href="{{ route('user.salesCenterEdit', $centerList->id) }}">
+                                                <i class="fas fa-edit"></i> @lang('Edit')
+                                            </a>
+                                        </li>
 
                                         <li>
                                             <a class="dropdown-item btn deleteCenter"

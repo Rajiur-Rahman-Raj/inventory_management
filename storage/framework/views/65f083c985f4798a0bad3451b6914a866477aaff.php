@@ -38,7 +38,7 @@
                                       enctype="multipart/form-data">
                                     <?php echo csrf_field(); ?>
                                     <div class="row g-4">
-                                        <div class="input-box col-md-4">
+                                        <div class="input-box col-md-6">
                                             <label for="name"><?php echo app('translator')->get('Center Name'); ?> </label>
                                             <input type="text"
                                                    class="form-control"
@@ -50,28 +50,28 @@
                                             <?php endif; ?>
                                         </div>
 
-                                        <div class="input-box col-md-4">
-                                            <label for="name"><?php echo app('translator')->get('Code'); ?> </label>
+                                        <div class="input-box col-md-6">
+                                            <label for="code"><?php echo app('translator')->get('Code'); ?> </label>
                                             <input type="text"
                                                    class="form-control"
                                                    name="code"
                                                    placeholder="<?php echo app('translator')->get('Sales Center code'); ?>"
                                                    value="<?php echo e(old('code')); ?>"/>
-                                            <?php if($errors->has('name')): ?>
-                                                <div class="error text-danger"><?php echo app('translator')->get($errors->first('name')); ?></div>
+                                            <?php if($errors->has('code')): ?>
+                                                <div class="error text-danger"><?php echo app('translator')->get($errors->first('code')); ?></div>
                                             <?php endif; ?>
                                         </div>
 
-                                        <div class="input-box col-md-4">
-                                            <label for="name"><?php echo app('translator')->get('Discount'); ?> </label>
-                                            <div class="input-group mb-3">
-                                                <input type="number" class="form-control" aria-label="" name="discount_percent" placeholder="discount" value="5">
-                                                <span class="input-group-text">%</span>
-                                                <?php if($errors->has('discount_percent')): ?>
-                                                    <div class="error text-danger"><?php echo app('translator')->get($errors->first('discount_percent')); ?></div>
-                                                <?php endif; ?>
-                                            </div>
-                                        </div>
+
+
+
+
+
+
+
+
+
+
 
                                         <div class="input-box col-12">
                                             <label for="center_address"><?php echo app('translator')->get('Center Location'); ?> </label>

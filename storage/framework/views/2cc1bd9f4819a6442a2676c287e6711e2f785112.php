@@ -93,7 +93,7 @@
                     <span class="navbar-text" id="pushNotificationArea">
                             <!-- notification panel -->
                             <?php if(config('basic.push_notification') == 1): ?>
-                            <?php echo $__env->make($theme.'partials.pushNotify', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+
                         <?php endif; ?>
                         <!-- User panel -->
                         <?php echo $__env->make($theme.'partials.userDropdown', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>

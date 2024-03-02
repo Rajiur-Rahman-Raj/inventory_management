@@ -13,7 +13,6 @@ use Illuminate\Support\Facades\Auth;
 
 trait StoreSalesTrait
 {
-
     public function getSalesProfit($request, $admin){
         $totalStockPrice = 0;
         $totalSellingPrice = $request->total_amount;
