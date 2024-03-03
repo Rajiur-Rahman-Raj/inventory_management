@@ -3,7 +3,7 @@
 @section('content')
     @push('style')
         <style>
-             .balance-box {
+            .balance-box {
                 background: linear-gradient(to right, rgb(73 159 233), rgb(207 115 223));
             }
         </style>
@@ -24,14 +24,26 @@
                         <div class="card-box balance-box p-0 h-100 sales-statistics">
                             <div class="user-account-number h-100">
                                 <i class="account-wallet far fa-wallet"></i>
-                                <div class="mb-4">
-                                    <h5 class="text-white mb-2">
-                                        @lang('Total Sales Amount')
-                                    </h5>
-                                    <h3>
-                                        <span class="text-white total_sales_amount infoShowHide"></span>
-                                    </h3>
-                                </div>
+                                @if(userType() == 1)
+                                    <div class="mb-4">
+                                        <h5 class="text-white mb-2">
+                                            @lang('Total Stock Transfer')
+                                        </h5>
+                                        <h3>
+                                            <span class="text-white total_stock_transfer infoShowHide"></span>
+                                        </h3>
+                                    </div>
+                                @else
+                                    <div class="mb-4">
+                                        <h5 class="text-white mb-2">
+                                            @lang('Total Sales Amount')
+                                        </h5>
+                                        <h3>
+                                            <span class="text-white total_sales_amount infoShowHide"></span>
+                                        </h3>
+                                    </div>
+                                @endif
+
 
                                 <div class="">
                                     <h5 class="text-white mb-2">
@@ -39,8 +51,13 @@
                                     </h5>
                                     <h3 class="total_stock_amount text-white infoShowHide"></h3>
                                 </div>
-                                <a href="#" class="cash-in"> <i
-                                        class="fal fa-shopping-cart me-1"></i> @lang('Sales Item')</a>
+                                @if(userType() == 1)
+                                    <a href="{{ route('user.stockTransfer') }}" class="cash-in"> <i
+                                            class="fal fa-paper-plane me-1"></i> @lang('Transfer Stock')</a>
+                                @else
+                                    <a href="{{ route('user.salesItem') }}" class="cash-in"> <i
+                                            class="fal fa-shopping-cart me-1"></i> @lang('Sales Item')</a>
+                                @endif
 
 
                             </div>
@@ -61,8 +78,8 @@
 
                                 <div class="col-lg-12 col-6 sales-statistics">
                                     <div class="dashboard-box gr-bg-2">
-                                        <h5 class="text-white">@lang('Total Stock Transfer')</h5>
-                                        <h3 class="text-white total_stock_transfer infoShowHide"></span>
+                                        <h5 class="text-white">@lang('Total Sales Amount')</h5>
+                                        <h3 class="text-white total_sales_amount infoShowHide"></span>
                                         </h3>
                                         <i class="fal fa-usd-circle text-white"></i>
                                     </div>
@@ -70,7 +87,6 @@
 
                             </div>
                         </div>
-
                     @else
                         <div class="col-xl-4 col-lg-6 d-sm-block d-none">
                             <div class="row g-3">
@@ -97,18 +113,38 @@
                     <div class="col-xl-4 d-sm-block d-none">
                         <div class="row g-3">
                             @if(userType() == 1)
-                                <div class="col-xl-12 col-6 sales-statistics">
+
+                                {{--                                <div class="col-xl-12 col-6 sales-statistics">--}}
+                                {{--                                    <div class="dashboard-box gr-bg-3">--}}
+                                {{--                                        <h5 class="text-white">@lang('Affiliate Member Commission')</h5>--}}
+                                {{--                                        <h3 class="text-white affiliateMemberCommission infoShowHide"></span>--}}
+                                {{--                                        </h3>--}}
+                                {{--                                        <i class="fal fa-hand-holding-usd text-white"></i>--}}
+                                {{--                                    </div>--}}
+                                {{--                                </div>--}}
+
+                                <div class="col-xl-12 col-6 raw-item-statistics">
                                     <div class="dashboard-box gr-bg-3">
-                                        <h5 class="text-white">@lang('Affiliate Member Commission')</h5>
-                                        <h3 class="text-white affiliateMemberCommission infoShowHide"></span>
+                                        <h5 class="text-white">@lang('Raw Item Due')</h5>
+                                        <h3 class="text-white rawItemDueAmount infoShowHide"></span>
                                         </h3>
                                         <i class="fal fa-hand-holding-usd text-white"></i>
                                     </div>
                                 </div>
+
+{{--                                <div class="col-xl-12 col-6 box customer-statistics">--}}
+{{--                                    <div class="dashboard-box gr-bg-4">--}}
+{{--                                        <h5 class="text-white">@lang('Total Expense')</h5>--}}
+{{--                                        <h3 class="text-white totalExpenseAmount infoShowHide"></span>--}}
+{{--                                        </h3>--}}
+{{--                                        <i class="fal fa-hand-holding-usd text-white" aria-hidden="true"></i>--}}
+{{--                                    </div>--}}
+{{--                                </div>--}}
+
                                 <div class="col-xl-12 col-6 box customer-statistics">
                                     <div class="dashboard-box gr-bg-4">
-                                        <h5 class="text-white">@lang('Total Expense')</h5>
-                                        <h3 class="text-white totalExpenseAmount infoShowHide"></span>
+                                        <h5 class="text-white">@lang('Sales Due Amount')</h5>
+                                        <h3 class="text-white customer_due_amount infoShowHide"></span>
                                         </h3>
                                         <i class="fal fa-hand-holding-usd text-white" aria-hidden="true"></i>
                                     </div>
@@ -147,6 +183,50 @@
                 <div class="dashboard-box-wrapper d-none d-lg-block">
                     @if(userType() == 1)
                         <div class="row g-3 mb-4">
+
+                            <div class="col-xl-3 col-md-6 box supplier-statistics">
+                                <div class="dashboard-box">
+                                    <h5>@lang('Total Suppliers')</h5>
+                                    <h3 class="totalSuppliers infoShowHide"></h3>
+                                    <i class="fal fa-shopping-cart" aria-hidden="true"></i>
+                                </div>
+                            </div>
+
+                            <div class="col-xl-3 col-md-6 box raw-item-statistics">
+                                <div class="dashboard-box">
+                                    <h5>@lang('Total Raw Items')</h5>
+                                    <h3 class="totalRawItems infoShowHide"></h3>
+                                    {{--                                    <i class="fal fa-lightbulb-dollar"></i>--}}
+                                    <i class="far fa-network-wired" aria-hidden="true"></i>
+                                </div>
+                            </div>
+
+                            <div class="col-xl-3 col-md-6 box raw-item-statistics">
+                                <div class="dashboard-box">
+                                    <h5>@lang('Stock Out Raw Items')</h5>
+                                    <h3 class="outOfStockRawItems infoShowHide"></h3>
+                                    <i class="far fa-times-circle" aria-hidden="true"></i>
+                                    {{--                                    <i class="far fa-badge-dollar"></i>--}}
+                                </div>
+                            </div>
+
+                            <div class="col-xl-3 col-md-6 box raw-item-statistics">
+                                <div class="dashboard-box">
+                                    <h5>@lang('Wastage Raw Items')</h5>
+                                    <h3 class="wastageRawItemsAmount infoShowHide"></h3>
+                                    <i class="far fa-badge-dollar"></i>
+                                </div>
+                            </div>
+
+                            <div class="col-xl-3 col-md-6 box sales-center-statistics">
+                                <div class="dashboard-box">
+                                    <h5>@lang('Total Sales Center')</h5>
+                                    <h3 class="totalSalesCenter infoShowHide"></h3>
+                                    {{--                                    <i class="fal fa-users" aria-hidden="true"></i>--}}
+                                    <i class="fal fa-shopping-cart"></i>
+                                </div>
+                            </div>
+
                             <div class="col-xl-3 col-md-6 box item-statistics">
                                 <div class="dashboard-box">
                                     <h5>@lang('Total Items')</h5>
@@ -164,72 +244,32 @@
                                 </div>
                             </div>
 
-{{--                            <div class="col-xl-3 col-md-6 box customer-statistics">--}}
-{{--                                <div class="dashboard-box">--}}
-{{--                                    <h5>@lang('Total Customers')</h5>--}}
-{{--                                    <h3 class="totalCustomers infoShowHide"></h3>--}}
-{{--                                    <i class="fal fa-users" aria-hidden="true"></i>--}}
-{{--                                </div>--}}
-{{--                            </div>--}}
+                            {{--                            <div class="col-xl-3 col-md-6 box customer-statistics">--}}
+                            {{--                                <div class="dashboard-box">--}}
+                            {{--                                    <h5>@lang('Total Customers')</h5>--}}
+                            {{--                                    <h3 class="totalCustomers infoShowHide"></h3>--}}
+                            {{--                                    <i class="fal fa-users" aria-hidden="true"></i>--}}
+                            {{--                                </div>--}}
+                            {{--                            </div>--}}
 
-{{--                            <div class="col-xl-3 col-md-6 box expense-statistics">--}}
-{{--                                <div class="dashboard-box">--}}
-{{--                                    <h5>@lang('Total Expense')</h5>--}}
-{{--                                    <h3 class="totalExpenseAmount infoShowHide"></h3>--}}
-{{--                                    <i class="fal fa-lightbulb-dollar"></i>--}}
-{{--                                </div>--}}
-{{--                            </div>--}}
+                            {{--                            <div class="col-xl-3 col-md-6 box expense-statistics">--}}
+                            {{--                                <div class="dashboard-box">--}}
+                            {{--                                    <h5>@lang('Total Expense')</h5>--}}
+                            {{--                                    <h3 class="totalExpenseAmount infoShowHide"></h3>--}}
+                            {{--                                    <i class="fal fa-lightbulb-dollar"></i>--}}
+                            {{--                                </div>--}}
+                            {{--                            </div>--}}
 
-{{--                            <div class="col-xl-3 col-md-6 box raw-item-statistics">--}}
-{{--                                <div class="dashboard-box">--}}
-{{--                                    <h5>@lang('Raw Item Purchase')</h5>--}}
-{{--                                    <h3 class="rawItemPurchaseAmount infoShowHide"></h3>--}}
-{{--                                    --}}{{--                                    <i class="fal fa-lightbulb-dollar"></i>--}}
-{{--                                    <i class="fal fa-usd-circle" aria-hidden="true"></i>--}}
-{{--                                </div>--}}
-{{--                            </div>--}}
+                            {{--                            <div class="col-xl-3 col-md-6 box raw-item-statistics">--}}
+                            {{--                                <div class="dashboard-box">--}}
+                            {{--                                    <h5>@lang('Raw Item Purchase')</h5>--}}
+                            {{--                                    <h3 class="rawItemPurchaseAmount infoShowHide"></h3>--}}
+                            {{--                                    --}}{{--                                    <i class="fal fa-lightbulb-dollar"></i>--}}
+                            {{--                                    <i class="fal fa-usd-circle" aria-hidden="true"></i>--}}
+                            {{--                                </div>--}}
+                            {{--                            </div>--}}
 
-                            <div class="col-xl-3 col-md-6 box raw-item-statistics">
-                                <div class="dashboard-box">
-                                    <h5>@lang('Raw Item Due')</h5>
-                                    <h3 class="rawItemDueAmount infoShowHide"></h3>
-                                    <i class="far fa-hand-holding-usd"></i>
-                                </div>
-                            </div>
 
-                            <div class="col-xl-3 col-md-6 box raw-item-statistics">
-                                <div class="dashboard-box">
-                                    <h5>@lang('Wastage Raw Items')</h5>
-                                    <h3 class="wastageRawItemsAmount infoShowHide"></h3>
-                                    <i class="far fa-badge-dollar"></i>
-                                </div>
-                            </div>
-
-                            <div class="col-xl-3 col-md-6 box raw-item-statistics">
-                                <div class="dashboard-box">
-                                    <h5>@lang('Stock Out Raw Items')</h5>
-                                    <h3 class="outOfStockRawItems infoShowHide"></h3>
-                                    <i class="far fa-times-circle" aria-hidden="true"></i>
-                                    {{--                                    <i class="far fa-badge-dollar"></i>--}}
-                                </div>
-                            </div>
-
-                            <div class="col-xl-3 col-md-6 box sales-center-statistics">
-                                <div class="dashboard-box">
-                                    <h5>@lang('Total Sales Center')</h5>
-                                    <h3 class="totalSalesCenter infoShowHide"></h3>
-                                    {{--                                    <i class="fal fa-users" aria-hidden="true"></i>--}}
-                                    <i class="fal fa-shopping-cart"></i>
-                                </div>
-                            </div>
-
-                            <div class="col-xl-3 col-md-6 box supplier-statistics">
-                                <div class="dashboard-box">
-                                    <h5>@lang('Total Suppliers')</h5>
-                                    <h3 class="totalSuppliers infoShowHide"></h3>
-                                    <i class="fal fa-shopping-cart" aria-hidden="true"></i>
-                                </div>
-                            </div>
 
                             <div class="col-xl-3 col-md-6 box ">
                                 <div class="dashboard-box affiliate-member-statistics">
@@ -240,14 +280,50 @@
                                 </div>
                             </div>
 
-{{--                            <div class="col-xl-3 col-md-6 box affiliate-member-statistics">--}}
-{{--                                <div class="dashboard-box">--}}
-{{--                                    <h5>@lang('Affiliate Member Commission')</h5>--}}
-{{--                                    <h3 class="affiliateMemberCommission infoShowHide"></h3>--}}
-{{--                                    <i class="fal fa-usd-circle" aria-hidden="true"></i>--}}
+                            <div class="col-xl-3 col-md-6 box ">
+                                <div class="dashboard-box affiliate-member-statistics">
+                                    <h5>@lang('Affiliate Member Commission')</h5>
+                                    <h3 class="affiliateMemberCommission infoShowHide"></h3>
+                                    {{--                                    <i class="fal fa-ticket"></i>--}}
+                                    <i class="far fa-network-wired" aria-hidden="true"></i>
+                                </div>
+                            </div>
 
-{{--                                </div>--}}
-{{--                            </div>--}}
+                            <div class="col-xl-3 col-md-6 box ">
+                                <div class="dashboard-box affiliate-member-statistics">
+                                    <h5>@lang('Central Promoter Commission')</h5>
+                                    <h3 class="centralPromoterCommission infoShowHide"></h3>
+                                    {{--                                    <i class="fal fa-ticket"></i>--}}
+                                    <i class="far fa-network-wired" aria-hidden="true"></i>
+                                </div>
+                            </div>
+
+                            <div class="col-xl-3 col-md-6 box ">
+                                <div class="dashboard-box affiliate-member-statistics">
+                                    <h5>@lang('Total Affiliate Commission')</h5>
+                                    <h3 class="totalAffiliateCommission infoShowHide"></h3>
+                                    {{--                                    <i class="fal fa-ticket"></i>--}}
+                                    <i class="far fa-network-wired" aria-hidden="true"></i>
+                                </div>
+                            </div>
+
+                            <div class="col-xl-3 col-md-6 box ">
+                                <div class="dashboard-box affiliate-member-statistics">
+                                    <h5>@lang('Total Expense')</h5>
+                                    <h3 class="totalExpenseAmount infoShowHide"></h3>
+                                    {{--                                    <i class="fal fa-ticket"></i>--}}
+                                    <i class="far fa-network-wired" aria-hidden="true"></i>
+                                </div>
+                            </div>
+
+                            {{--                            <div class="col-xl-3 col-md-6 box affiliate-member-statistics">--}}
+                            {{--                                <div class="dashboard-box">--}}
+                            {{--                                    <h5>@lang('Affiliate Member Commission')</h5>--}}
+                            {{--                                    <h3 class="affiliateMemberCommission infoShowHide"></h3>--}}
+                            {{--                                    <i class="fal fa-usd-circle" aria-hidden="true"></i>--}}
+
+                            {{--                                </div>--}}
+                            {{--                            </div>--}}
                         </div>
                     @endif
                 </div>
@@ -333,14 +409,14 @@
                 <div class="card year-transaction  shadow-sm YearlySalesTransactions infoShowHide">
                     @if(userType() == 1)
                         <div class="card-body">
-                            <h5 class="card-title">@lang('Yearly Sales Transactions')</h5>
+                            <h5 class="card-title">@lang('Yearly Stock & Sales Transactions')</h5>
                             <div class="yearly-sales-transaction-statistics">
                                 <canvas id="sales-transaction-current-year"></canvas>
                             </div>
                         </div>
                     @else
                         <div class="card-body">
-                            <h5 class="card-title">@lang('Yearly Sales Transactions')</h5>
+                            <h5 class="card-title">@lang('Yearly Stock & Sales Transactions')</h5>
                             <div class="sales-center-yearly-sales-transaction-statistics">
                                 <canvas id="sales-center-yearly-sales-transaction-statistics"></canvas>
                             </div>
@@ -472,6 +548,7 @@
                     url: "{{ route('user.getYearSalesTransactionChartRecords') }}",
                     method: 'GET',
                     success: function (response) {
+                        console.log(response);
                         Notiflix.Block.remove('.yearly-sales-transaction-statistics');
                         let basic = response.basic;
                         let yearSalesTransactionChartRecords = response.data.yearSalesTransactionChartRecords;
@@ -497,32 +574,38 @@
                             backgroundColor: "#65B741",
                         },
                         {
+                            data: yearSalesTransactionChartRecords.yearTotalStockTransfer,
+                            label: "Transfer Stocks",
+                            borderColor: "#0C359E",
+                            backgroundColor: "#0C359E",
+                        },
+                        {
                             data: yearSalesTransactionChartRecords.yearTotalSalesAmount,
                             label: "Total Sales",
                             borderColor: "#CE5A67",
                             backgroundColor: "#CE5A67",
                         },
-                        {
-                            data: yearSalesTransactionChartRecords.yearTotalSoldSalesCenterAmount,
-                            label: "Sold To Sales Centers",
-                            borderColor: "#163020",
-                            backgroundColor: "#163020",
-                        },
-                        {
-                            data: yearSalesTransactionChartRecords.yearTotalSoldCustomerAmount,
-                            label: "Sold To Customers",
-                            borderColor: "#37B5B6",
-                            backgroundColor: "#37B5B6",
-                        },
-                        {
-                            data: yearSalesTransactionChartRecords.yearTotalDueSalesCenterAmount,
-                            label: "Sales Center Due",
-                            borderColor: "#FDC72E",
-                            backgroundColor: "#FDC72E",
-                        },
+                        // {
+                        //     data: yearSalesTransactionChartRecords.yearTotalSoldSalesCenterAmount,
+                        //     label: "Sold To Sales Centers",
+                        //     borderColor: "#163020",
+                        //     backgroundColor: "#163020",
+                        // },
+                        // {
+                        //     data: yearSalesTransactionChartRecords.yearTotalSoldCustomerAmount,
+                        //     label: "Sold To Customers",
+                        //     borderColor: "#37B5B6",
+                        //     backgroundColor: "#37B5B6",
+                        // },
+                        // {
+                        //     data: yearSalesTransactionChartRecords.yearTotalDueSalesCenterAmount,
+                        //     label: "Sales Center Due",
+                        //     borderColor: "#FDC72E",
+                        //     backgroundColor: "#FDC72E",
+                        // },
                         {
                             data: yearSalesTransactionChartRecords.yearTotalDueCustomerAmount,
-                            label: "Customers Due",
+                            label: "Sales Due",
                             borderColor: "#D63484",
                             backgroundColor: "#D63484",
                         },
@@ -632,6 +715,8 @@
         function affiliateMemberStatistics(affiliateMemberStatRecords, currency) {
             $('.totalAffiliateMember').text(`${affiliateMemberStatRecords.totalAffiliateMembers ? affiliateMemberStatRecords.totalAffiliateMembers : 0}`);
             $('.affiliateMemberCommission').text(`${affiliateMemberStatRecords.totalAffiliateMemberCommission ? parseFloat(affiliateMemberStatRecords.totalAffiliateMemberCommission).toFixed(2) : 0} ${currency}`);
+            $('.centralPromoterCommission').text(`${affiliateMemberStatRecords.centralPromoterCommission ? parseFloat(affiliateMemberStatRecords.centralPromoterCommission).toFixed(2) : 0} ${currency}`);
+            $('.totalAffiliateCommission').text(`${affiliateMemberStatRecords.totalAffiliateCommission ? parseFloat(affiliateMemberStatRecords.totalAffiliateCommission).toFixed(2) : 0} ${currency}`);
         }
 
         function rawItemRecords() {
@@ -658,6 +743,7 @@
             $('.rawItemDueAmount').text(`${rawItemStatRecords.totalRawItemDueAmount ? parseFloat(rawItemStatRecords.totalRawItemDueAmount).toFixed(2) : 0} ${currency}`);
             $('.wastageRawItemsAmount').text(`${rawItemStatRecords.totalRawItemWastageAmount ? parseFloat(rawItemStatRecords.totalRawItemWastageAmount).toFixed(2) : 0} ${currency}`);
             $('.outOfStockRawItems').text(`${rawItemStatRecords.totalOutOfStockRawItems ? rawItemStatRecords.totalOutOfStockRawItems : 0}`);
+            $('.totalRawItems').text(`${rawItemStatRecords.totalRawItems ? rawItemStatRecords.totalRawItems : 0}`);
         }
 
         function totalCustomerRecords() {
@@ -737,139 +823,139 @@
 
     </script>
 
-{{--    <script>--}}
-{{--        "use strict";--}}
-{{--        var options = {--}}
-{{--            theme: {--}}
-{{--                mode: "light",--}}
-{{--            },--}}
+    {{--    <script>--}}
+    {{--        "use strict";--}}
+    {{--        var options = {--}}
+    {{--            theme: {--}}
+    {{--                mode: "light",--}}
+    {{--            },--}}
 
-{{--            series: [--}}
-{{--                {--}}
-{{--                    name: "{{trans('Deposit')}}",--}}
-{{--                    color: 'rgba(255, 72, 0, 1)',--}}
-{{--                    data: {!! $monthly['funding']->flatten() !!}--}}
-{{--                },--}}
-{{--                {--}}
-{{--                    name: "{{trans('Deposit Bonus')}}",--}}
-{{--                    color: 'rgba(39, 144, 195, 1)',--}}
-{{--                    data: {!! $monthly['referralFundBonus']->flatten() !!}--}}
-{{--                },--}}
-{{--                {--}}
-{{--                    name: "{{trans('Investment')}}",--}}
-{{--                    color: 'rgba(247, 147, 26, 1)',--}}
-{{--                    data: {!! $monthly['investment']->flatten() !!}--}}
-{{--                },--}}
-{{--                {--}}
-{{--                    name: "{{trans('Investment Bonus')}}",--}}
-{{--                    color: 'rgba(136, 203, 245, 1)',--}}
-{{--                    data: {!! $monthly['referralInvestBonus']->flatten() !!}--}}
-{{--                },--}}
-{{--                {--}}
-{{--                    name: "{{trans('Profit')}}",--}}
-{{--                    color: 'rgba(247, 147, 26, 1)',--}}
-{{--                    data: {!! $monthly['monthlyGaveProfit']->flatten() !!}--}}
-{{--                },--}}
-{{--                {--}}
-{{--                    name: "{{trans('Payout')}}",--}}
-{{--                    color: 'rgba(240, 16, 16, 1)',--}}
-{{--                    data: {!! $monthly['payout']->flatten() !!}--}}
-{{--                },--}}
-{{--            ],--}}
-{{--            chart: {--}}
-{{--                type: 'bar',--}}
-{{--                height: 350,--}}
-{{--                background: '#fff',--}}
-{{--                toolbar: {--}}
-{{--                    show: false--}}
-{{--                }--}}
+    {{--            series: [--}}
+    {{--                {--}}
+    {{--                    name: "{{trans('Deposit')}}",--}}
+    {{--                    color: 'rgba(255, 72, 0, 1)',--}}
+    {{--                    data: {!! $monthly['funding']->flatten() !!}--}}
+    {{--                },--}}
+    {{--                {--}}
+    {{--                    name: "{{trans('Deposit Bonus')}}",--}}
+    {{--                    color: 'rgba(39, 144, 195, 1)',--}}
+    {{--                    data: {!! $monthly['referralFundBonus']->flatten() !!}--}}
+    {{--                },--}}
+    {{--                {--}}
+    {{--                    name: "{{trans('Investment')}}",--}}
+    {{--                    color: 'rgba(247, 147, 26, 1)',--}}
+    {{--                    data: {!! $monthly['investment']->flatten() !!}--}}
+    {{--                },--}}
+    {{--                {--}}
+    {{--                    name: "{{trans('Investment Bonus')}}",--}}
+    {{--                    color: 'rgba(136, 203, 245, 1)',--}}
+    {{--                    data: {!! $monthly['referralInvestBonus']->flatten() !!}--}}
+    {{--                },--}}
+    {{--                {--}}
+    {{--                    name: "{{trans('Profit')}}",--}}
+    {{--                    color: 'rgba(247, 147, 26, 1)',--}}
+    {{--                    data: {!! $monthly['monthlyGaveProfit']->flatten() !!}--}}
+    {{--                },--}}
+    {{--                {--}}
+    {{--                    name: "{{trans('Payout')}}",--}}
+    {{--                    color: 'rgba(240, 16, 16, 1)',--}}
+    {{--                    data: {!! $monthly['payout']->flatten() !!}--}}
+    {{--                },--}}
+    {{--            ],--}}
+    {{--            chart: {--}}
+    {{--                type: 'bar',--}}
+    {{--                height: 350,--}}
+    {{--                background: '#fff',--}}
+    {{--                toolbar: {--}}
+    {{--                    show: false--}}
+    {{--                }--}}
 
-{{--            },--}}
-{{--            plotOptions: {--}}
-{{--                bar: {--}}
-{{--                    horizontal: false,--}}
-{{--                    columnWidth: '55%',--}}
-{{--                    endingShape: 'rounded'--}}
-{{--                },--}}
-{{--            },--}}
-{{--            dataLabels: {--}}
-{{--                enabled: false--}}
-{{--            },--}}
-{{--            stroke: {--}}
-{{--                show: true,--}}
-{{--                width: 2,--}}
-{{--                colors: ['transparent']--}}
-{{--            },--}}
-{{--            xaxis: {--}}
-{{--                categories: {!! $monthly['investment']->keys() !!},--}}
+    {{--            },--}}
+    {{--            plotOptions: {--}}
+    {{--                bar: {--}}
+    {{--                    horizontal: false,--}}
+    {{--                    columnWidth: '55%',--}}
+    {{--                    endingShape: 'rounded'--}}
+    {{--                },--}}
+    {{--            },--}}
+    {{--            dataLabels: {--}}
+    {{--                enabled: false--}}
+    {{--            },--}}
+    {{--            stroke: {--}}
+    {{--                show: true,--}}
+    {{--                width: 2,--}}
+    {{--                colors: ['transparent']--}}
+    {{--            },--}}
+    {{--            xaxis: {--}}
+    {{--                categories: {!! $monthly['investment']->keys() !!},--}}
 
-{{--            },--}}
-{{--            yaxis: {--}}
-{{--                title: {--}}
-{{--                    text: ""--}}
-{{--                }--}}
-{{--            },--}}
-{{--            fill: {--}}
-{{--                opacity: 1--}}
-{{--            },--}}
-{{--            tooltip: {--}}
-{{--                colors: ['#000'],--}}
-{{--                y: {--}}
-{{--                    formatter: function (val) {--}}
-{{--                        return "{{trans($basic->currency_symbol)}}" + val + ""--}}
-{{--                    }--}}
-{{--                }--}}
-{{--            }--}}
-{{--        };--}}
+    {{--            },--}}
+    {{--            yaxis: {--}}
+    {{--                title: {--}}
+    {{--                    text: ""--}}
+    {{--                }--}}
+    {{--            },--}}
+    {{--            fill: {--}}
+    {{--                opacity: 1--}}
+    {{--            },--}}
+    {{--            tooltip: {--}}
+    {{--                colors: ['#000'],--}}
+    {{--                y: {--}}
+    {{--                    formatter: function (val) {--}}
+    {{--                        return "{{trans($basic->currency_symbol)}}" + val + ""--}}
+    {{--                    }--}}
+    {{--                }--}}
+    {{--            }--}}
+    {{--        };--}}
 
-{{--        var chart = new ApexCharts(document.querySelector("#container"), options);--}}
-{{--        chart.render();--}}
+    {{--        var chart = new ApexCharts(document.querySelector("#container"), options);--}}
+    {{--        chart.render();--}}
 
-{{--        $(document).on('click', '#details', function () {--}}
-{{--            var title = $(this).data('servicetitle');--}}
-{{--            var description = $(this).data('description');--}}
-{{--            $('#title').text(title);--}}
-{{--            $('#servicedescription').text(description);--}}
-{{--        });--}}
+    {{--        $(document).on('click', '#details', function () {--}}
+    {{--            var title = $(this).data('servicetitle');--}}
+    {{--            var description = $(this).data('description');--}}
+    {{--            $('#title').text(title);--}}
+    {{--            $('#servicedescription').text(description);--}}
+    {{--        });--}}
 
-{{--        $(document).ready(function () {--}}
-{{--            let isActiveCronNotification = '{{ $basic->is_active_cron_notification }}';--}}
-{{--            if (isActiveCronNotification == 1)--}}
-{{--                $('#cron-info').modal('show');--}}
-{{--            $(document).on('click', '.copy-btn', function () {--}}
-{{--                var _this = $(this)[0];--}}
-{{--                var copyText = $(this).parents('.input-group-append').siblings('input');--}}
-{{--                $(copyText).prop('disabled', false);--}}
-{{--                copyText.select();--}}
-{{--                document.execCommand("copy");--}}
-{{--                $(copyText).prop('disabled', true);--}}
-{{--                $(this).text('Coppied');--}}
-{{--                setTimeout(function () {--}}
-{{--                    $(_this).text('');--}}
-{{--                    $(_this).html('<i class="fas fa-copy"></i>');--}}
-{{--                }, 500)--}}
-{{--            });--}}
+    {{--        $(document).ready(function () {--}}
+    {{--            let isActiveCronNotification = '{{ $basic->is_active_cron_notification }}';--}}
+    {{--            if (isActiveCronNotification == 1)--}}
+    {{--                $('#cron-info').modal('show');--}}
+    {{--            $(document).on('click', '.copy-btn', function () {--}}
+    {{--                var _this = $(this)[0];--}}
+    {{--                var copyText = $(this).parents('.input-group-append').siblings('input');--}}
+    {{--                $(copyText).prop('disabled', false);--}}
+    {{--                copyText.select();--}}
+    {{--                document.execCommand("copy");--}}
+    {{--                $(copyText).prop('disabled', true);--}}
+    {{--                $(this).text('Coppied');--}}
+    {{--                setTimeout(function () {--}}
+    {{--                    $(_this).text('');--}}
+    {{--                    $(_this).html('<i class="fas fa-copy"></i>');--}}
+    {{--                }, 500)--}}
+    {{--            });--}}
 
 
-{{--            $(document).on('click', '.loginAccount', function () {--}}
-{{--                var route = $(this).data('route');--}}
-{{--                $('.loginAccountAction').attr('action', route)--}}
-{{--            });--}}
+    {{--            $(document).on('click', '.loginAccount', function () {--}}
+    {{--                var route = $(this).data('route');--}}
+    {{--                $('.loginAccountAction').attr('action', route)--}}
+    {{--            });--}}
 
-{{--            $(document).on('click', '.copyReferalLink', function () {--}}
-{{--                var _this = $(this)[0];--}}
-{{--                var copyText = $(this).siblings('input');--}}
-{{--                $(copyText).prop('disabled', false);--}}
-{{--                copyText.select();--}}
-{{--                document.execCommand("copy");--}}
-{{--                $(copyText).prop('disabled', true);--}}
-{{--                $(this).text('Copied');--}}
-{{--                setTimeout(function () {--}}
-{{--                    $(_this).text('');--}}
-{{--                    $(_this).html('<i class="fal fa-copy"></i>');--}}
-{{--                }, 500)--}}
-{{--            });--}}
-{{--        })--}}
-{{--    </script>--}}
+    {{--            $(document).on('click', '.copyReferalLink', function () {--}}
+    {{--                var _this = $(this)[0];--}}
+    {{--                var copyText = $(this).siblings('input');--}}
+    {{--                $(copyText).prop('disabled', false);--}}
+    {{--                copyText.select();--}}
+    {{--                document.execCommand("copy");--}}
+    {{--                $(copyText).prop('disabled', true);--}}
+    {{--                $(this).text('Copied');--}}
+    {{--                setTimeout(function () {--}}
+    {{--                    $(_this).text('');--}}
+    {{--                    $(_this).html('<i class="fal fa-copy"></i>');--}}
+    {{--                }, 500)--}}
+    {{--            });--}}
+    {{--        })--}}
+    {{--    </script>--}}
 
 @endpush

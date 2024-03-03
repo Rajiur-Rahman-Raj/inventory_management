@@ -131,7 +131,7 @@
                                     <th scope="col">Quantity</th>
                                     <th scope="col">Cost Per Unit</th>
                                     <th scope="col">Sub Total</th>
-                                    <th scope="col">Purchase Date</th>
+                                    <th scope="col">Sales Date</th>
                                 </tr>
                                 </thead>
                                 <tbody>

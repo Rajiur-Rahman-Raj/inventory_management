@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateAffiliateMemberCommissionsTable extends Migration
+class CreateCentralPromoterCommissionsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,12 @@ class CreateAffiliateMemberCommissionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('affiliate_member_commissions', function (Blueprint $table) {
+        Schema::create('central_promoter_commissions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('company_id')->index()->nullable();
-            $table->foreignId('affiliate_member_id')->index()->nullable();
+            $table->foreignId('central_promoter_id')->index()->nullable();
             $table->foreignId('sale_id')->index()->nullable();
-            $table->decimal('amount')->index()->nullable();
+            $table->decimal('amount', 11,2)->nullable();
             $table->timestamp('commission_date')->nullable();
-            $table->integer('commission_by')->default(1)->comment('1 => member, 2=> member_wife');
             $table->timestamps();
         });
     }
@@ -32,6 +30,6 @@ class CreateAffiliateMemberCommissionsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('affiliate_member_commissions');
+        Schema::dropIfExists('central_promoter_commissions');
     }
 }

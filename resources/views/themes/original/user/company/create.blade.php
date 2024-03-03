@@ -109,10 +109,88 @@
                                             @enderror
                                         </div>
 
+
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="form-check mt-3 centralPromoterCheckBox">
+                                                    <input class="form-check-input" type="checkbox" name="promoter_check_box" id="checkCentralPromoter">
+                                                    <label class="form-check-label" for="checkCentralPromoter">
+                                                        Add Central Promoter
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row centralPromoterForm d-none">
+                                            <div class="input-box col-md-6 mt-4 mb-4">
+                                                <label for="placeholder">@lang('Promoter Name') </label>
+                                                <input type="text"
+                                                       class="form-control"
+                                                       name="promoter_name"
+                                                       placeholder="@lang('Central Promoter Name')"
+                                                       value="{{ old('promoter_name') }}"/>
+                                                @if($errors->has('promoter_name'))
+                                                    <div
+                                                        class="error text-danger">@lang($errors->first('promoter_name'))</div>
+                                                @endif
+                                            </div>
+
+                                            <div class="input-box col-md-6 mt-4 mb-4">
+                                                <label for="promoter_email">@lang('Email') </label>
+                                                <input type="text"
+                                                       class="form-control"
+                                                       name="promoter_email"
+                                                       placeholder="@lang('Promoter Email')"
+                                                       value="{{ old('promoter_email') }}"/>
+                                                @if($errors->has('promoter_email'))
+                                                    <div
+                                                        class="error text-danger">@lang($errors->first('promoter_email'))</div>
+                                                @endif
+                                            </div>
+
+                                            <div class="input-box col-md-6 mb-4">
+                                                <label for="promoter_phone">@lang('Phone Number') </label>
+                                                <input type="text"
+                                                       class="form-control"
+                                                       name="promoter_phone"
+                                                       placeholder="@lang('Promoter Phone Number')"
+                                                       value="{{ old('promoter_phone') }}"/>
+                                                @if($errors->has('promoter_email'))
+                                                    <div
+                                                        class="error text-danger">@lang($errors->first('promoter_phone'))</div>
+                                                @endif
+                                            </div>
+
+                                            <div class="input-box col-md-6">
+                                                <label for="promoter_commission">@lang('Promoter Commission') (%)</label>
+                                                <input type="text"
+                                                       class="form-control"
+                                                       name="promoter_commission"
+                                                       placeholder="@lang('Promoter Commission')"
+                                                       value="1"/>
+                                                @if($errors->has('promoter_commission'))
+                                                    <div
+                                                        class="error text-danger">@lang($errors->first('promoter_commission'))</div>
+                                                @endif
+                                            </div>
+
+                                            <div class="input-box col-12  mb-4">
+                                                <label for="promoter_address">@lang('Address') </label>
+                                                <textarea
+                                                    class="form-control @error('promoter_address') is-invalid @enderror"
+                                                    cols="30" rows="3" placeholder="@lang('Promoter Address')"
+                                                    name="promoter_address">{{ old('promoter_address') }}</textarea>
+                                                @if($errors->has('promoter_address'))
+                                                    <div class="error text-danger">@lang($errors->first('promoter_address'))</div>
+                                                @endif
+                                            </div>
+                                        </div>
+
                                         <div class="input-box col-12">
                                             <button class="btn-custom w-100"
                                                     type="submit">@lang('Create Company')</button>
                                         </div>
+
                                     </div>
                                 </form>
                             </div>
@@ -123,4 +201,22 @@
         </div>
     </div>
 @endsection
+
+@push('script')
+    <script>
+        // Get the checkbox element
+        var checkbox = document.getElementById("checkCentralPromoter");
+
+        // Add event listener to the checkbox
+        checkbox.addEventListener('change', function() {
+            // Check if the checkbox is checked
+            if (this.checked) {
+                $('.centralPromoterForm').removeClass('d-none')
+            } else {
+                // If unchecked, apply condition 2
+                $('.centralPromoterForm').addClass('d-none')
+            }
+        });
+    </script>
+@endpush
 

@@ -47,7 +47,6 @@ class SalesReportExport implements FromCollection, WithHeadings, ShouldAutoSize,
 //                        return $query->where('customer_id', $search['customer_id']);
 //                    })
             ->where('company_id', $admin->active_company_id)
-            ->where('sales_by', 1)
             ->get();
 
         $totalSales = $salesReportRecords->flatMap->salesItems->sum('item_price');

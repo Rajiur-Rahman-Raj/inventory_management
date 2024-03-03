@@ -73,6 +73,17 @@
                         </div>
 
                         <div class="input-box col-lg-3">
+                            <select class="form-control js-example-basic-single" name="central_promoter_id"
+                                    aria-label="Default select example">
+                                <option selected disabled>@lang('Select Central Promoter')</option>
+                                @foreach($centralPromoter as $promoter)
+                                    <option
+                                        value="{{ $promoter->id }}" {{ @request()->central_promoter_id == $promoter->id ? 'selected' : '' }}>{{ kebab2Title($promoter->name) }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="input-box col-lg-3">
                             <select class="form-control js-example-basic-single" name="affiliate_member_id"
                                     aria-label="Default select example">
                                 <option value="">@lang('All Members')</option>
@@ -83,7 +94,7 @@
                             </select>
                         </div>
 
-                        <div class="input-box col-lg-3">
+                        <div class="input-box col-lg-12">
                             <button class="btn-custom w-100" type="submit"><i class="fal fa-search"></i>@lang('Search')
                             </button>
                         </div>

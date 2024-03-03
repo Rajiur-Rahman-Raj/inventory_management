@@ -5,6 +5,8 @@ namespace App\Http\Traits;
 
 use App\Models\AffiliateMember;
 use App\Models\AffiliateMemberCommission;
+use App\Models\CentralPromoter;
+use App\Models\CentralPromoterCommission;
 use App\Models\SalesItem;
 use App\Models\SalesPayment;
 use App\Models\Stock;
@@ -13,7 +15,8 @@ use Illuminate\Support\Facades\Auth;
 
 trait StoreSalesTrait
 {
-    public function getSalesProfit($request, $admin){
+    public function getSalesProfit($request, $admin)
+    {
         $totalStockPrice = 0;
         $totalSellingPrice = $request->total_amount;
 
@@ -74,7 +77,8 @@ trait StoreSalesTrait
         }
     }
 
-    public function storeSalesPayments($request, $sale, $admin){
+    public function storeSalesPayments($request, $sale, $admin)
+    {
         $due_or_change_amount = (float)floor($request->due_or_change_amount);
 
         $salesPayment = new SalesPayment();
@@ -112,7 +116,7 @@ trait StoreSalesTrait
                 ->first();
 
             if ($salesItem) {
-                if (($sale->company_id && $sale->sales_center_id) && ($sale->customer_id == null)){
+                if (($sale->company_id && $sale->sales_center_id) && ($sale->customer_id == null)) {
                     // sales center item return to company
                     if ($salesItem->item_quantity > (int)$request->item_quantity[$key]) {
                         // company stock (+) and sales center stock (-)
@@ -132,9 +136,9 @@ trait StoreSalesTrait
                         $salesCenterStock->quantity += $updateStockQuantity;
                         $salesCenterStock->save();
                     }
-                }else{
+                } else {
                     // customer item return to sales center + company
-                    if ($admin->user_type == 1){
+                    if ($admin->user_type == 1) {
                         // customer return items to direct company
                         if ($salesItem->item_quantity > (int)$request->item_quantity[$key]) {
                             // company stock (+)
@@ -148,7 +152,7 @@ trait StoreSalesTrait
                             $companyStock->quantity -= $updateStockQuantity;
                             $companyStock->save();
                         }
-                    }else{
+                    } else {
                         // customer return items to sales center
                         if ($salesItem->item_quantity > (int)$request->item_quantity[$key]) {
                             // sales center stock (+)
@@ -188,7 +192,7 @@ trait StoreSalesTrait
 //                    'sales_center_id' => $sale->sales_center_id,
 //                ]);
 
-                if (($sale->company_id && $sale->sales_center_id) && ($sale->customer_id == null)){
+                if (($sale->company_id && $sale->sales_center_id) && ($sale->customer_id == null)) {
                     // sales center purchase new item, so sales center stock (+) and company stock (-)
                     $salesCenterStock->company_id = $companyId;
                     $salesCenterStock->sales_center_id = $salesCenterId;
@@ -203,18 +207,17 @@ trait StoreSalesTrait
 
                     $companyStock->quantity -= (int)$request->item_quantity[$key];
                     $companyStock->save();
-                }else{
+                } else {
                     // customer purchase new item so company stock (-) or sales center stock (-)
-                    if ($admin->user_type == 1){
+                    if ($admin->user_type == 1) {
                         // company stock (-)
                         $companyStock->quantity -= (int)$request->item_quantity[$key];
                         $companyStock->save();
-                    }else{
+                    } else {
                         $salesCenterStock->quantity -= (int)$request->item_quantity[$key];
                         $salesCenterStock->save();
                     }
                 }
-
 
 
 //
@@ -274,7 +277,8 @@ trait StoreSalesTrait
     }
 
 
-    public function storeAndUpdateStocks($request, $sale, $items){
+    public function storeAndUpdateStocks($request, $sale, $items)
+    {
         $admin = $this->user;
         $companyId = ($admin->user_type == 1) ? $admin->active_company_id : $admin->salesCenter->company_id;
         $salesCenterId = ($admin->user_type == 1) ? $request->sales_center_id : $admin->salesCenter->id;
@@ -282,12 +286,12 @@ trait StoreSalesTrait
         foreach ($items as $item) {
             $salesCenterStock = Stock::firstOrNew([
                 'company_id' => $companyId,
-                'item_id' => $item['item_id'],
                 'sales_center_id' => $salesCenterId,
+                'item_id' => $item['item_id'],
             ]);
 
-            if ($admin->user_type == 1){
-                if (($sale->company_id && $sale->sales_center_id) && ($sale->customer_id == null)){
+            if ($admin->user_type == 1) {
+                if (($sale->company_id && $sale->sales_center_id) && ($sale->customer_id == null)) {
                     $salesCenterStock->company_id = $companyId;
                     $salesCenterStock->sales_center_id = $salesCenterId;
                     $salesCenterStock->item_id = $item['item_id'];
@@ -301,12 +305,13 @@ trait StoreSalesTrait
                 }
             }
 
-            if ($admin->user_type == 2){
+            //*** stock (-) for sales center. when sales center sale to customer
+            if ($admin->user_type == 2) {
                 $salesCenterStock->quantity -= (int)$item['item_quantity'];
                 $salesCenterStock->save();
             }
 
-            if ($admin->user_type == 1){
+            if ($admin->user_type == 1) {
                 $companyStock = Stock::where('company_id', $admin->active_company_id)->whereNull('sales_center_id')->where('item_id', $item['item_id'])->first();
                 $companyStock->quantity -= (int)$item['item_quantity'];
                 $companyStock->save();
@@ -314,17 +319,18 @@ trait StoreSalesTrait
         }
     }
 
-    public function giveAffiliateMembersCommission($request, $admin){
+    public function giveAffiliateMembersCommission($request, $sale, $admin)
+    {
 
         $affiliateMembers = optional($admin->salesCenter)->affiliateMembers;
 
-        if (count($affiliateMembers) > 0){
-            foreach ($affiliateMembers as $key => $member){
+        if (count($affiliateMembers) > 0) {
+            foreach ($affiliateMembers as $key => $member) {
                 $affiliateMember = AffiliateMember::where('company_id', $admin->salesCenter->company_id)->findOrFail($member->affiliate_member_id);
                 $memberCommissionPercentage = $affiliateMember->member_commission;
                 $wifeCommissionPercentage = $affiliateMember->wife_commission;
 
-                if ($affiliateMember->date_of_death == null){
+                if ($affiliateMember->date_of_death == null) {
                     $memberCommissionAmount = $request->total_amount * $memberCommissionPercentage / 100;
                     $affiliateMember->member_commission_amount += $memberCommissionAmount;
                     $affiliateMember->save();
@@ -332,10 +338,11 @@ trait StoreSalesTrait
                     $affiliateMemberCommission = new AffiliateMemberCommission();
                     $affiliateMemberCommission->company_id = $affiliateMember->company_id;
                     $affiliateMemberCommission->affiliate_member_id = $affiliateMember->id;
+                    $affiliateMemberCommission->sale_id = $sale->id;
                     $affiliateMemberCommission->amount = $memberCommissionAmount;
                     $affiliateMemberCommission->commission_date = Carbon::now();
                     $affiliateMemberCommission->save();
-                }else{
+                } else {
                     $wifeCommissionAmount = $request->total_amount * $wifeCommissionPercentage / 100;
                     $affiliateMember->wife_commission_amount += $wifeCommissionAmount;
                     $affiliateMember->save();
@@ -343,18 +350,34 @@ trait StoreSalesTrait
                     $affiliateMemberCommission = new AffiliateMemberCommission();
                     $affiliateMemberCommission->company_id = $affiliateMember->company_id;
                     $affiliateMemberCommission->affiliate_member_id = $affiliateMember->id;
-                    $affiliateMemberCommission->amount = $memberCommissionAmount;
+                    $affiliateMemberCommission->sale_id = $sale->id;
+                    $affiliateMemberCommission->amount = $wifeCommissionAmount;
                     $affiliateMemberCommission->commission_date = Carbon::now();
                     $affiliateMemberCommission->commission_by = 2;
                     $affiliateMemberCommission->save();
                 }
 
-                $totalCommissionAmount =  $affiliateMember->member_commission_amount + $affiliateMember->wife_commission_amount;
+                $totalCommissionAmount = $affiliateMember->member_commission_amount + $affiliateMember->wife_commission_amount;
                 $affiliateMember->total_commission_amount = $totalCommissionAmount;
                 $affiliateMember->save();
             }
         }
+    }
 
+    public function centralPromoterCommission($request, $sale, $admin)
+    {
+        $centralPromoter = CentralPromoter::where('company_id', $admin->salesCenter->company_id)->first();
+
+        $commissionAmount = $request->total_amount * $centralPromoter->promoter_commission / 100;
+        $centralPromoter->total_commission_amount += $commissionAmount;
+        $centralPromoter->save();
+
+        $centralPromoterCommission = new CentralPromoterCommission();
+        $centralPromoterCommission->central_promoter_id = $centralPromoter->id;
+        $centralPromoterCommission->sale_id = $sale->id;
+        $centralPromoterCommission->amount = $commissionAmount;
+        $centralPromoterCommission->commission_date = Carbon::now();
+        $centralPromoterCommission->save();
     }
 
 

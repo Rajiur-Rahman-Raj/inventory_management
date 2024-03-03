@@ -13,6 +13,8 @@ use App\Exports\StockReportExport;
 use App\Exports\wastageReportExport;
 use App\Models\AffiliateMember;
 use App\Models\AffiliateMemberCommission;
+use App\Models\CentralPromoter;
+use App\Models\CentralPromoterCommission;
 use App\Models\Customer;
 use App\Models\Expense;
 use App\Models\ExpenseCategory;
@@ -43,6 +45,7 @@ class ReportController extends Controller
 
     public function purchaseReports(Request $request)
     {
+
         $admin = $this->user;
         $search = $request->all();
         $fromDate = Carbon::parse($request->from_date);
@@ -104,6 +107,7 @@ class ReportController extends Controller
                     ->when(isset($search['from_date']), fn($query) => $query->whereDate('stock_date', '>=', $fromDate))
                     ->when(isset($search['to_date']), fn($query) => $query->whereBetween('stock_date', [$fromDate, $toDate]))
                     ->where('company_id', $admin->active_company_id)
+                    ->whereNull('sales_center_id')
                     ->get();
 
                 $data['totalStockCost'] = $data['stockReportRecords']->flatMap->stockInDetails->sum('total_unit_cost');
@@ -239,7 +243,7 @@ class ReportController extends Controller
                     ->get();
 
                 $data['totalPaidAmount'] = $data['purchasePaymentReportRecords']->flatMap->purchasePayments->sum('amount');
-                $data['totalDueAmount'] = $data['purchasePaymentReportRecords']->flatMap->purchasePayments->sum('due');
+                $data['totalDueAmount'] = $data['purchasePaymentReportRecords']->sum('due_amount');
 
                 return view($this->theme . 'user.reports.purchase.payment', $data, compact('search'));
             } else {
@@ -270,6 +274,7 @@ class ReportController extends Controller
         try {
 
             $data['affiliateMembers'] = AffiliateMember::where('company_id', $admin->active_company_id)->select('id', 'member_name')->get();
+            $data['centralPromoter'] = CentralPromoter::where('company_id', $admin->active_company_id)->select('id', 'name')->get();
 
             if (!empty($search)) {
                 $data['affiliateReportRecords'] = AffiliateMemberCommission::with('affiliateMember:id,member_name')
@@ -284,6 +289,21 @@ class ReportController extends Controller
                     })
                     ->where('company_id', $admin->active_company_id)
                     ->get();
+
+//                $data['centralPromoterReportRecords'] = CentralPromoterCommission::where('central_promoter_id', $data['centralPromoter'][0]->id)
+//                    ->when(isset($search['from_date']), function ($query) use ($fromDate) {
+//                        return $query->whereDate('commission_date', '>=', $fromDate);
+//                    })
+//                    ->when(isset($search['to_date']), function ($query) use ($fromDate, $toDate) {
+//                        return $query->whereBetween('commission_date', [$fromDate, $toDate]);
+//                    })
+//                    ->when($search['central_promoter_id'] != null, function ($query) use ($search) {
+//                        return $query->where('central_promoter_id', $search['central_promoter_id']);
+//                    })
+//                    ->where('company_id', $admin->active_company_id)
+//                    ->get();
+
+
 
                 $data['totalCommission'] = $data['affiliateReportRecords']->sum('amount');
 
@@ -332,7 +352,6 @@ class ReportController extends Controller
 //                        return $query->where('customer_id', $search['customer_id']);
 //                    })
                     ->where('company_id', $admin->active_company_id)
-                    ->where('sales_by', 1)
                     ->get();
 
                 $data['totalSales'] = $data['salesReportRecords']->flatMap->salesItems->sum('item_price');
@@ -383,11 +402,10 @@ class ReportController extends Controller
 //                        return $query->where('customer_id', $search['customer_id']);
 //                    })
                     ->where('company_id', $admin->active_company_id)
-                    ->where('sales_by', 1)
                     ->get();
 
                 $data['totalPaidAmount'] = $data['salesPaymentReportRecords']->flatMap->salesPayments->sum('amount');
-                $data['totalDueAmount'] = $data['salesPaymentReportRecords']->flatMap->salesPayments->sum('due');
+                $data['totalDueAmount'] = $data['salesPaymentReportRecords']->sum('due_amount');
 
                 return view($this->theme . 'user.reports.sales.payment', $data, compact('search'));
             } else {
@@ -422,7 +440,7 @@ class ReportController extends Controller
                     ->when(isset($search['to_date']), function ($query) use ($fromDate, $toDate) {
                         return $query->whereBetween('created_at', [$fromDate, $toDate]);
                     })
-                    ->where('company_id', $admin->active_company_id)->where('sales_by', 1)
+                    ->where('company_id', $admin->active_company_id)
                     ->selectRaw('SUM(total_amount) AS totalSales')
                     ->selectRaw('SUM(due_amount) AS totalSalesDue')
                     ->get()
@@ -437,7 +455,7 @@ class ReportController extends Controller
                         ->when(isset($search['to_date']), function ($query) use ($fromDate, $toDate) {
                             return $query->whereBetween('created_at', [$fromDate, $toDate]);
                         })
-                    ->where('company_id', $admin->active_company_id)->where('sales_by', 1)
+                    ->where('company_id', $admin->active_company_id)
                     ->get();
 
                 $salesStockPrice = $sales->flatMap->salesItems->sum('stock_item_price');
@@ -445,7 +463,6 @@ class ReportController extends Controller
                 $data['profitLossReportRecords']['totalStockCost'] = $salesStockPrice;
 
                 $data['profitLossReportRecords']['revenue'] = $data['profitLossReportRecords']['totalSales'] - $data['profitLossReportRecords']['totalStockCost'];
-
 
 
                 $data['purchase'] = RawItemPurchaseIn::when(isset($search['from_date']), fn($query) => $query->whereDate('purchase_date', '>=', $fromDate))

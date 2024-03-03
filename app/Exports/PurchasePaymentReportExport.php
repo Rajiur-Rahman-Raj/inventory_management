@@ -49,7 +49,7 @@ class PurchasePaymentReportExport implements FromCollection, WithHeadings, Shoul
             ->get();
 
         $totalPaidAmount = $purchasePaymentReportRecords->flatMap->purchasePayments->sum('amount');
-        $totalDueAmount  = $purchasePaymentReportRecords->flatMap->purchasePayments->sum('due');
+        $totalDueAmount = $purchasePaymentReportRecords->sum('due_amount');
 
         $purchasePaymentReportData = $purchasePaymentReportRecords->flatMap(function ($purchaseIn) use (&$SL, $currencySymbol, $currencyText) {
             return $purchaseIn->purchasePayments->map(function ($purchasePayment) use (&$SL, $currencySymbol, $currencyText,$purchaseIn) {

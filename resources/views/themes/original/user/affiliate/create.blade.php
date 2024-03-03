@@ -261,19 +261,6 @@
                                             @endif
                                         </div>
 
-                                        <div class="col-md-12 mb-4 input-box">
-                                            <label for="" class="golden-text">@lang('Upload Document') <span class="text-muted"> <sub>(optional)</sub></span> </label>
-                                            <div class="attach-file">
-                                               <span class="prev">
-                                                  @lang('document')
-                                               </span>
-                                                <input type="file" name="document" class="form-control"/>
-                                            </div>
-                                            @error('document')
-                                            <span class="text-danger">{{trans($message)}}</span>
-                                            @enderror
-                                        </div>
-
                                         <div class="input-box col-12">
                                             <button class="btn-custom w-100"
                                                     type="submit">@lang('Add Member')</button>

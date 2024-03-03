@@ -49,11 +49,10 @@ class SalesPaymentReportExport implements FromCollection, WithHeadings, ShouldAu
 //                        return $query->where('customer_id', $search['customer_id']);
 //                    })
             ->where('company_id', $admin->active_company_id)
-            ->where('sales_by', 1)
             ->get();
 
         $totalPaidAmount = $salesPaymentReportRecords->flatMap->salesPayments->sum('amount');
-        $totalDueAmount = $salesPaymentReportRecords->flatMap->salesPayments->sum('due');
+        $totalDueAmount = $salesPaymentReportRecords->sum('due_amount');
 
         $salesPaymentReportData = $salesPaymentReportRecords->flatMap(function ($sale) use (&$SL) {
             return $sale->salesPayments->map(function ($saleDetails) use (&$SL, $sale) {

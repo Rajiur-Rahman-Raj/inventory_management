@@ -14,4 +14,8 @@ class Company extends Model
     public function salesCenter(){
         return $this->hasMany(SalesCenter::class, 'company_id', 'id');
     }
+
+    public function centralPromoter(){
+        return $this->hasOne(CentralPromoter::class, 'company_id', 'id');
+    }
 }

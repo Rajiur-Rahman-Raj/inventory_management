@@ -36,6 +36,7 @@ class StockReportExport implements FromCollection, WithHeadings, ShouldAutoSize,
             ->when(isset($search['from_date']), fn($query) => $query->whereDate('stock_date', '>=', $fromDate))
             ->when(isset($search['to_date']), fn($query) => $query->whereBetween('stock_date', [$fromDate, $toDate]))
             ->where('company_id', $admin->active_company_id)
+            ->whereNull('sales_center_id')
             ->get();
 
         $totalStockCost = $stockReportRecords->flatMap->stockInDetails->sum('total_unit_cost');

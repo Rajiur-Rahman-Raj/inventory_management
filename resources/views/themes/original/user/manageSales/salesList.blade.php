@@ -27,14 +27,6 @@
                 <form action="" method="get" enctype="multipart/form-data">
                     <div class="row g-3 align-items-end">
 
-                        <div class="input-box col-lg-2">
-                            <label for="invoice_id">@lang('Invoice Id')</label>
-                            <input
-                                type="text" class="form-control" name="invoice_id"
-                                value="{{ old('invoice_id',request()->invoice_id) }}" placeholder="@lang('Invoice Id')"
-                                autocomplete="off"/>
-                        </div>
-
                         @if(userType() == 1)
                             <div class="input-box col-lg-3">
                                 <label for="">@lang('Sales Center')</label>
@@ -52,10 +44,27 @@
                         @endif
 
                         <div class="input-box col-lg-2">
-                            <label for="sales_date">@lang('Sales Date')</label>
+                            <label for="invoice_id">@lang('Invoice Id')</label>
                             <input
-                                type="text" class="form-control datepicker" name="sales_date"
-                                value="{{ old('sales_date',request()->sales_date) }}" placeholder="@lang('sales date')"
+                                type="text" class="form-control" name="invoice_id"
+                                value="{{ old('invoice_id',request()->invoice_id) }}" placeholder="@lang('Invoice Id')"
+                                autocomplete="off"/>
+                        </div>
+
+                        <div class="input-box col-lg-2">
+                            <label for="sales_from_date">@lang('Sales From Date')</label>
+                            <input
+                                type="text" class="form-control datepicker" name="sales_from_date"
+                                value="{{ old('sales_from_date',request()->sales_date) }}"
+                                placeholder="@lang('From Date')"
+                                autocomplete="off" readonly/>
+                        </div>
+
+                        <div class="input-box col-lg-2">
+                            <label for="sales_to_date">@lang('Sales To Date')</label>
+                            <input
+                                type="text" class="form-control datepicker" name="sales_to_date"
+                                value="{{ old('sales_to_date',request()->sales_date) }}" placeholder="@lang('To Date')"
                                 autocomplete="off" readonly/>
                         </div>
 
@@ -73,7 +82,7 @@
                                 </option>
                             </select>
                         </div>
-                        <div class="input-box col-lg-2">
+                        <div class="input-box {{ userType() == 1 ? 'col-lg-12' : 'col-lg-3' }}">
                             <button class="btn-custom w-100" type="submit"><i class="fal fa-search"></i>@lang('Search')
                             </button>
                         </div>
@@ -86,7 +95,11 @@
                     <thead>
                     <tr>
                         <th scope="col">@lang('SL')</th>
-                        <th scope="col">@lang('Sales Center')</th>
+                        @if(userType() == 1)
+                            <th scope="col">@lang('Sales Center')</th>
+                        @else
+                            <th scope="col">@lang('Invoice Id')</th>
+                        @endif
                         <th scope="col">@lang('Total Amount')</th>
                         <th scope="col">@lang('Sales Date')</th>
                         <th scope="col">@lang('Last Payment Date')</th>
@@ -99,11 +112,18 @@
                     @forelse($salesLists as $key => $salesList)
                         <tr>
                             <td data-label="@lang('SL')">{{loopIndex($salesLists) + $key}}</td>
-                            <td data-label="@lang('Sales Center')">
-                                {{ optional($salesList->salesCenter)->name }} <br>
-                                <sapn class="font-weight-bold">Invoice:</sapn>
-                                <span class="font-weight-bold color-primary">{{ $salesList->invoice_id }}</span> </span>
-                            </td>
+                            @if(userType() == 1)
+                                <td data-label="@lang('Sales Center')">
+                                    {{ optional($salesList->salesCenter)->name }} <br>
+                                    <sapn class="font-weight-bold">Invoice:</sapn>
+                                    <span
+                                        class="font-weight-bold color-primary">{{ $salesList->invoice_id }}</span> </span>
+                                </td>
+                            @else
+                                <td data-label="@lang('Sales Center')">
+                                    <span class="font-weight-bold color-primary">{{ $salesList->invoice_id }}</span> </span>
+                                </td>
+                            @endif
 
                             <td data-label="@lang('Total Amount')"
                                 class="">  {{ $salesList->total_amount }} {{ $basic->currency_symbol }}</td>
@@ -137,6 +157,7 @@
                                             <a href="{{ route('user.salesDetails', $salesList->id) }}"
                                                class="dropdown-item"> <i class="fal fa-eye"></i> @lang('Details') </a>
                                         </li>
+
                                         @if(userType() == 2 && $salesList->sales_by == 2)
                                             <li>
                                                 <a href="{{ route('user.returnSales', $salesList->id) }}"

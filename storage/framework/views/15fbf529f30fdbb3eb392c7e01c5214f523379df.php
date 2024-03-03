@@ -1,4 +1,4 @@
-<?php $__env->startSection('title', trans('Sales Report')); ?>
+<?php $__env->startSection('title', trans('Affiliate Commission Report')); ?>
 <?php $__env->startSection('content'); ?>
     <?php $__env->startPush('style'); ?>
         <link href="<?php echo e(asset('assets/global/css/flatpickr.min.css')); ?>" rel="stylesheet">
@@ -8,12 +8,13 @@
             <div class="row mt-4 mb-2">
                 <div class="col ms-2">
                     <div class="header-text-full">
-                        <h3 class="dashboard_breadcurmb_heading mb-1"><?php echo app('translator')->get('Sales Reports'); ?></h3>
+                        <h3 class="dashboard_breadcurmb_heading mb-1"><?php echo app('translator')->get('Affiliate Commission Report'); ?></h3>
                         <nav aria-label="breadcrumb" class="ms-2">
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="<?php echo e(route('user.home')); ?>"><?php echo app('translator')->get('Dashboard'); ?></a>
                                 </li>
-                                <li class="breadcrumb-item active" aria-current="page"><?php echo app('translator')->get('Sales Report'); ?></li>
+                                <li class="breadcrumb-item active"
+                                    aria-current="page"><?php echo app('translator')->get('Affiliate Commission Report'); ?></li>
                             </ol>
                         </nav>
                     </div>
@@ -85,28 +86,28 @@ unset($__errorArgs, $__bag); ?>
                         </div>
 
                         <div class="input-box col-lg-3">
-                            <select class="form-control js-example-basic-single" name="sales_center_id"
+                            <select class="form-control js-example-basic-single" name="central_promoter_id"
                                     aria-label="Default select example">
-                                <option value=""><?php echo app('translator')->get('All Centers'); ?></option>
-                                <?php $__currentLoopData = $salesCenters; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $center): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <option selected disabled><?php echo app('translator')->get('Select Central Promoter'); ?></option>
+                                <?php $__currentLoopData = $centralPromoter; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $promoter): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                     <option
-                                        value="<?php echo e($center->id); ?>" <?php echo e(@request()->sales_center_id == $center->id ? 'selected' : ''); ?>><?php echo e($center->name); ?></option>
+                                        value="<?php echo e($promoter->id); ?>" <?php echo e(@request()->central_promoter_id == $promoter->id ? 'selected' : ''); ?>><?php echo e(kebab2Title($promoter->name)); ?></option>
                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </select>
                         </div>
 
-
-
-
-
-
-
-
-
-
-
-
                         <div class="input-box col-lg-3">
+                            <select class="form-control js-example-basic-single" name="affiliate_member_id"
+                                    aria-label="Default select example">
+                                <option value=""><?php echo app('translator')->get('All Members'); ?></option>
+                                <?php $__currentLoopData = $affiliateMembers; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $member): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <option
+                                        value="<?php echo e($member->id); ?>" <?php echo e(@request()->affiliate_member_id == $member->id ? 'selected' : ''); ?>><?php echo e($member->member_name); ?></option>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                            </select>
+                        </div>
+
+                        <div class="input-box col-lg-12">
                             <button class="btn-custom w-100" type="submit"><i class="fal fa-search"></i><?php echo app('translator')->get('Search'); ?>
                             </button>
                         </div>
@@ -114,24 +115,26 @@ unset($__errorArgs, $__bag); ?>
                 </form>
             </div>
 
-            <?php if(isset($salesReportRecords) && count($search) > 0): ?>
+            <?php if(isset($affiliateReportRecords) && count($search) > 0): ?>
                 <div class="card card-table">
-                    <?php if(count($salesReportRecords) > 0): ?>
+                    <?php if(count($affiliateReportRecords) > 0): ?>
                         <div
                             class="card-header custom-card-header bg-white d-flex flex-wrap justify-content-between align-items-center">
-                            <h5 class="m-0 text-primary"><?php echo app('translator')->get('All Purchases'); ?></h5>
+                            <h5 class="m-0 text-primary"><?php echo app('translator')->get('All Affiliate Commissions'); ?></h5>
 
                             <div class="total-price">
                                 <ul class="m-0 list-unstyled">
                                     <li class="text-uppercase color-primary font-weight-bold">
-                                        <span><?php echo app('translator')->get('Total Sales'); ?> =</span>
-                                        <span><?php echo e($totalSales); ?> <?php echo e(config('basic.currency_text')); ?> </span></li>
+                                        <span><?php echo app('translator')->get('Total Commission'); ?> =</span>
+                                        <span><?php echo e($totalCommission); ?> <?php echo e(config('basic.currency_text')); ?> </span></li>
                                 </ul>
+
                             </div>
 
-                            <a href="javascript:void(0)" data-route="<?php echo e(route('user.export.salesReports')); ?>"
+                            <a href="javascript:void(0)" data-route="<?php echo e(route('user.export.affiliateReports')); ?>"
                                class="btn text-white btn-custom2 reportsDownload downloadExcel"> <i
                                     class="fa fa-download"></i> <?php echo app('translator')->get('Download Excel File'); ?></a>
+
                         </div>
                     <?php endif; ?>
                     <ul class="list-style-none p-0 stock_list_style">
@@ -139,28 +142,20 @@ unset($__errorArgs, $__bag); ?>
                             <table class="table custom-table table-bordered mt-4">
                                 <thead>
                                 <tr>
-                                    <th scope="col">Sales Center</th>
-                                    <th scope="col">Item</th>
-                                    <th scope="col">Quantity</th>
-                                    <th scope="col">Cost Per Unit</th>
-                                    <th scope="col">Sub Total</th>
-                                    <th scope="col">Sales Date</th>
+                                    <th scope="col">Member</th>
+                                    <th scope="col">Commission</th>
+                                    <th scope="col">Date Of Commission</th>
                                 </tr>
                                 </thead>
                                 <tbody>
 
-                                <?php if(count($salesReportRecords) > 0): ?>
-                                    <?php $__currentLoopData = $salesReportRecords; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key1 => $sale): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                        <?php $__currentLoopData = $sale->salesItems; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key2 => $saleItem): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                            <tr>
-                                                <td data-label="Sales Center"><?php echo e($sale->salesCenter->name); ?></td>
-                                                <td data-label="Item"><?php echo e($saleItem->item->name); ?></td>
-                                                <td data-label="Quantity"><?php echo e($saleItem->item_quantity); ?></td>
-                                                <td data-label="Cost Per Unit"><?php echo e(config('basic.currency_symbol')); ?> <?php echo e($saleItem->cost_per_unit); ?> </td>
-                                                <td data-label="Sub Total"><?php echo e($saleItem->item_price); ?> <?php echo e(config('basic.currency_symbol')); ?></td>
-                                                <td data-label="Sales Date"><?php echo e(customDate($saleItem->created_at)); ?></td>
-                                            </tr>
-                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                <?php if(count($affiliateReportRecords) > 0): ?>
+                                    <?php $__currentLoopData = $affiliateReportRecords; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $commission): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <tr>
+                                            <td data-label="Member"><?php echo e($commission->affiliateMember->member_name); ?></td>
+                                            <td data-label="Commission"><?php echo e($commission->amount); ?></td>
+                                            <td data-label="Date Of Commission"><?php echo e($commission->commission_date); ?></td>
+                                        </tr>
                                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                 <?php else: ?>
                                     <tr>
@@ -192,7 +187,7 @@ unset($__errorArgs, $__bag); ?>
 
     <script>
         'use script'
-        var serachRoute = "<?php echo e(route('user.salesReports')); ?>"
+        var serachRoute = "<?php echo e(route('user.affiliateReports')); ?>"
         $(document).on("click", ".downloadExcel", function () {
             $('.searchForm').attr('action', $(this).data('route'));
             $('.searchForm').submit();
@@ -209,4 +204,4 @@ unset($__errorArgs, $__bag); ?>
     </script>
 <?php $__env->stopPush(); ?>
 
-<?php echo $__env->make($theme.'layouts.user', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH D:\xammp\htdocs\inventory_management\project\resources\views/themes/original/user/reports/sales/index.blade.php ENDPATH**/ ?>
+<?php echo $__env->make($theme.'layouts.user', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH D:\xammp\htdocs\inventory_management\project\resources\views/themes/original/user/reports/affiliate/index.blade.php ENDPATH**/ ?>

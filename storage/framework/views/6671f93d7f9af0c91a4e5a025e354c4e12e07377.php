@@ -2,7 +2,7 @@
 <?php $__env->startSection('content'); ?>
     <?php $__env->startPush('style'); ?>
         <style>
-             .balance-box {
+            .balance-box {
                 background: linear-gradient(to right, rgb(73 159 233), rgb(207 115 223));
             }
         </style>
@@ -23,14 +23,26 @@
                         <div class="card-box balance-box p-0 h-100 sales-statistics">
                             <div class="user-account-number h-100">
                                 <i class="account-wallet far fa-wallet"></i>
-                                <div class="mb-4">
-                                    <h5 class="text-white mb-2">
-                                        <?php echo app('translator')->get('Total Sales Amount'); ?>
-                                    </h5>
-                                    <h3>
-                                        <span class="text-white total_sales_amount infoShowHide"></span>
-                                    </h3>
-                                </div>
+                                <?php if(userType() == 1): ?>
+                                    <div class="mb-4">
+                                        <h5 class="text-white mb-2">
+                                            <?php echo app('translator')->get('Total Stock Transfer'); ?>
+                                        </h5>
+                                        <h3>
+                                            <span class="text-white total_stock_transfer infoShowHide"></span>
+                                        </h3>
+                                    </div>
+                                <?php else: ?>
+                                    <div class="mb-4">
+                                        <h5 class="text-white mb-2">
+                                            <?php echo app('translator')->get('Total Sales Amount'); ?>
+                                        </h5>
+                                        <h3>
+                                            <span class="text-white total_sales_amount infoShowHide"></span>
+                                        </h3>
+                                    </div>
+                                <?php endif; ?>
+
 
                                 <div class="">
                                     <h5 class="text-white mb-2">
@@ -38,8 +50,13 @@
                                     </h5>
                                     <h3 class="total_stock_amount text-white infoShowHide"></h3>
                                 </div>
-                                <a href="#" class="cash-in"> <i
-                                        class="fal fa-shopping-cart me-1"></i> <?php echo app('translator')->get('Sales Item'); ?></a>
+                                <?php if(userType() == 1): ?>
+                                    <a href="<?php echo e(route('user.stockTransfer')); ?>" class="cash-in"> <i
+                                            class="fal fa-paper-plane me-1"></i> <?php echo app('translator')->get('Transfer Stock'); ?></a>
+                                <?php else: ?>
+                                    <a href="<?php echo e(route('user.salesItem')); ?>" class="cash-in"> <i
+                                            class="fal fa-shopping-cart me-1"></i> <?php echo app('translator')->get('Sales Item'); ?></a>
+                                <?php endif; ?>
 
 
                             </div>
@@ -60,8 +77,8 @@
 
                                 <div class="col-lg-12 col-6 sales-statistics">
                                     <div class="dashboard-box gr-bg-2">
-                                        <h5 class="text-white"><?php echo app('translator')->get('Total Stock Transfer'); ?></h5>
-                                        <h3 class="text-white total_stock_transfer infoShowHide"></span>
+                                        <h5 class="text-white"><?php echo app('translator')->get('Total Sales Amount'); ?></h5>
+                                        <h3 class="text-white total_sales_amount infoShowHide"></span>
                                         </h3>
                                         <i class="fal fa-usd-circle text-white"></i>
                                     </div>
@@ -69,7 +86,6 @@
 
                             </div>
                         </div>
-
                     <?php else: ?>
                         <div class="col-xl-4 col-lg-6 d-sm-block d-none">
                             <div class="row g-3">
@@ -96,18 +112,38 @@
                     <div class="col-xl-4 d-sm-block d-none">
                         <div class="row g-3">
                             <?php if(userType() == 1): ?>
-                                <div class="col-xl-12 col-6 sales-statistics">
+
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+
+                                <div class="col-xl-12 col-6 raw-item-statistics">
                                     <div class="dashboard-box gr-bg-3">
-                                        <h5 class="text-white"><?php echo app('translator')->get('Affiliate Member Commission'); ?></h5>
-                                        <h3 class="text-white affiliateMemberCommission infoShowHide"></span>
+                                        <h5 class="text-white"><?php echo app('translator')->get('Raw Item Due'); ?></h5>
+                                        <h3 class="text-white rawItemDueAmount infoShowHide"></span>
                                         </h3>
                                         <i class="fal fa-hand-holding-usd text-white"></i>
                                     </div>
                                 </div>
+
+
+
+
+
+
+
+
+
+
                                 <div class="col-xl-12 col-6 box customer-statistics">
                                     <div class="dashboard-box gr-bg-4">
-                                        <h5 class="text-white"><?php echo app('translator')->get('Total Expense'); ?></h5>
-                                        <h3 class="text-white totalExpenseAmount infoShowHide"></span>
+                                        <h5 class="text-white"><?php echo app('translator')->get('Sales Due Amount'); ?></h5>
+                                        <h3 class="text-white customer_due_amount infoShowHide"></span>
                                         </h3>
                                         <i class="fal fa-hand-holding-usd text-white" aria-hidden="true"></i>
                                     </div>
@@ -146,6 +182,50 @@
                 <div class="dashboard-box-wrapper d-none d-lg-block">
                     <?php if(userType() == 1): ?>
                         <div class="row g-3 mb-4">
+
+                            <div class="col-xl-3 col-md-6 box supplier-statistics">
+                                <div class="dashboard-box">
+                                    <h5><?php echo app('translator')->get('Total Suppliers'); ?></h5>
+                                    <h3 class="totalSuppliers infoShowHide"></h3>
+                                    <i class="fal fa-shopping-cart" aria-hidden="true"></i>
+                                </div>
+                            </div>
+
+                            <div class="col-xl-3 col-md-6 box raw-item-statistics">
+                                <div class="dashboard-box">
+                                    <h5><?php echo app('translator')->get('Total Raw Items'); ?></h5>
+                                    <h3 class="totalRawItems infoShowHide"></h3>
+                                    
+                                    <i class="far fa-network-wired" aria-hidden="true"></i>
+                                </div>
+                            </div>
+
+                            <div class="col-xl-3 col-md-6 box raw-item-statistics">
+                                <div class="dashboard-box">
+                                    <h5><?php echo app('translator')->get('Stock Out Raw Items'); ?></h5>
+                                    <h3 class="outOfStockRawItems infoShowHide"></h3>
+                                    <i class="far fa-times-circle" aria-hidden="true"></i>
+                                    
+                                </div>
+                            </div>
+
+                            <div class="col-xl-3 col-md-6 box raw-item-statistics">
+                                <div class="dashboard-box">
+                                    <h5><?php echo app('translator')->get('Wastage Raw Items'); ?></h5>
+                                    <h3 class="wastageRawItemsAmount infoShowHide"></h3>
+                                    <i class="far fa-badge-dollar"></i>
+                                </div>
+                            </div>
+
+                            <div class="col-xl-3 col-md-6 box sales-center-statistics">
+                                <div class="dashboard-box">
+                                    <h5><?php echo app('translator')->get('Total Sales Center'); ?></h5>
+                                    <h3 class="totalSalesCenter infoShowHide"></h3>
+                                    
+                                    <i class="fal fa-shopping-cart"></i>
+                                </div>
+                            </div>
+
                             <div class="col-xl-3 col-md-6 box item-statistics">
                                 <div class="dashboard-box">
                                     <h5><?php echo app('translator')->get('Total Items'); ?></h5>
@@ -163,72 +243,32 @@
                                 </div>
                             </div>
 
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                            <div class="col-xl-3 col-md-6 box raw-item-statistics">
-                                <div class="dashboard-box">
-                                    <h5><?php echo app('translator')->get('Raw Item Due'); ?></h5>
-                                    <h3 class="rawItemDueAmount infoShowHide"></h3>
-                                    <i class="far fa-hand-holding-usd"></i>
-                                </div>
-                            </div>
-
-                            <div class="col-xl-3 col-md-6 box raw-item-statistics">
-                                <div class="dashboard-box">
-                                    <h5><?php echo app('translator')->get('Wastage Raw Items'); ?></h5>
-                                    <h3 class="wastageRawItemsAmount infoShowHide"></h3>
-                                    <i class="far fa-badge-dollar"></i>
-                                </div>
-                            </div>
-
-                            <div class="col-xl-3 col-md-6 box raw-item-statistics">
-                                <div class="dashboard-box">
-                                    <h5><?php echo app('translator')->get('Stock Out Raw Items'); ?></h5>
-                                    <h3 class="outOfStockRawItems infoShowHide"></h3>
-                                    <i class="far fa-times-circle" aria-hidden="true"></i>
-                                    
-                                </div>
-                            </div>
-
-                            <div class="col-xl-3 col-md-6 box sales-center-statistics">
-                                <div class="dashboard-box">
-                                    <h5><?php echo app('translator')->get('Total Sales Center'); ?></h5>
-                                    <h3 class="totalSalesCenter infoShowHide"></h3>
-                                    
-                                    <i class="fal fa-shopping-cart"></i>
-                                </div>
-                            </div>
-
-                            <div class="col-xl-3 col-md-6 box supplier-statistics">
-                                <div class="dashboard-box">
-                                    <h5><?php echo app('translator')->get('Total Suppliers'); ?></h5>
-                                    <h3 class="totalSuppliers infoShowHide"></h3>
-                                    <i class="fal fa-shopping-cart" aria-hidden="true"></i>
-                                </div>
-                            </div>
 
                             <div class="col-xl-3 col-md-6 box ">
                                 <div class="dashboard-box affiliate-member-statistics">
@@ -239,14 +279,50 @@
                                 </div>
                             </div>
 
+                            <div class="col-xl-3 col-md-6 box ">
+                                <div class="dashboard-box affiliate-member-statistics">
+                                    <h5><?php echo app('translator')->get('Affiliate Member Commission'); ?></h5>
+                                    <h3 class="affiliateMemberCommission infoShowHide"></h3>
+                                    
+                                    <i class="far fa-network-wired" aria-hidden="true"></i>
+                                </div>
+                            </div>
 
+                            <div class="col-xl-3 col-md-6 box ">
+                                <div class="dashboard-box affiliate-member-statistics">
+                                    <h5><?php echo app('translator')->get('Central Promoter Commission'); ?></h5>
+                                    <h3 class="centralPromoterCommission infoShowHide"></h3>
+                                    
+                                    <i class="far fa-network-wired" aria-hidden="true"></i>
+                                </div>
+                            </div>
 
+                            <div class="col-xl-3 col-md-6 box ">
+                                <div class="dashboard-box affiliate-member-statistics">
+                                    <h5><?php echo app('translator')->get('Total Affiliate Commission'); ?></h5>
+                                    <h3 class="totalAffiliateCommission infoShowHide"></h3>
+                                    
+                                    <i class="far fa-network-wired" aria-hidden="true"></i>
+                                </div>
+                            </div>
 
+                            <div class="col-xl-3 col-md-6 box ">
+                                <div class="dashboard-box affiliate-member-statistics">
+                                    <h5><?php echo app('translator')->get('Total Expense'); ?></h5>
+                                    <h3 class="totalExpenseAmount infoShowHide"></h3>
+                                    
+                                    <i class="far fa-network-wired" aria-hidden="true"></i>
+                                </div>
+                            </div>
 
+                            
+                            
+                            
+                            
+                            
 
-
-
-
+                            
+                            
                         </div>
                     <?php endif; ?>
                 </div>
@@ -341,14 +417,14 @@
                 <div class="card year-transaction  shadow-sm YearlySalesTransactions infoShowHide">
                     <?php if(userType() == 1): ?>
                         <div class="card-body">
-                            <h5 class="card-title"><?php echo app('translator')->get('Yearly Sales Transactions'); ?></h5>
+                            <h5 class="card-title"><?php echo app('translator')->get('Yearly Stock & Sales Transactions'); ?></h5>
                             <div class="yearly-sales-transaction-statistics">
                                 <canvas id="sales-transaction-current-year"></canvas>
                             </div>
                         </div>
                     <?php else: ?>
                         <div class="card-body">
-                            <h5 class="card-title"><?php echo app('translator')->get('Yearly Sales Transactions'); ?></h5>
+                            <h5 class="card-title"><?php echo app('translator')->get('Yearly Stock & Sales Transactions'); ?></h5>
                             <div class="sales-center-yearly-sales-transaction-statistics">
                                 <canvas id="sales-center-yearly-sales-transaction-statistics"></canvas>
                             </div>
@@ -480,6 +556,7 @@
                     url: "<?php echo e(route('user.getYearSalesTransactionChartRecords')); ?>",
                     method: 'GET',
                     success: function (response) {
+                        console.log(response);
                         Notiflix.Block.remove('.yearly-sales-transaction-statistics');
                         let basic = response.basic;
                         let yearSalesTransactionChartRecords = response.data.yearSalesTransactionChartRecords;
@@ -505,32 +582,38 @@
                             backgroundColor: "#65B741",
                         },
                         {
+                            data: yearSalesTransactionChartRecords.yearTotalStockTransfer,
+                            label: "Transfer Stocks",
+                            borderColor: "#0C359E",
+                            backgroundColor: "#0C359E",
+                        },
+                        {
                             data: yearSalesTransactionChartRecords.yearTotalSalesAmount,
                             label: "Total Sales",
                             borderColor: "#CE5A67",
                             backgroundColor: "#CE5A67",
                         },
-                        {
-                            data: yearSalesTransactionChartRecords.yearTotalSoldSalesCenterAmount,
-                            label: "Sold To Sales Centers",
-                            borderColor: "#163020",
-                            backgroundColor: "#163020",
-                        },
-                        {
-                            data: yearSalesTransactionChartRecords.yearTotalSoldCustomerAmount,
-                            label: "Sold To Customers",
-                            borderColor: "#37B5B6",
-                            backgroundColor: "#37B5B6",
-                        },
-                        {
-                            data: yearSalesTransactionChartRecords.yearTotalDueSalesCenterAmount,
-                            label: "Sales Center Due",
-                            borderColor: "#FDC72E",
-                            backgroundColor: "#FDC72E",
-                        },
+                        // {
+                        //     data: yearSalesTransactionChartRecords.yearTotalSoldSalesCenterAmount,
+                        //     label: "Sold To Sales Centers",
+                        //     borderColor: "#163020",
+                        //     backgroundColor: "#163020",
+                        // },
+                        // {
+                        //     data: yearSalesTransactionChartRecords.yearTotalSoldCustomerAmount,
+                        //     label: "Sold To Customers",
+                        //     borderColor: "#37B5B6",
+                        //     backgroundColor: "#37B5B6",
+                        // },
+                        // {
+                        //     data: yearSalesTransactionChartRecords.yearTotalDueSalesCenterAmount,
+                        //     label: "Sales Center Due",
+                        //     borderColor: "#FDC72E",
+                        //     backgroundColor: "#FDC72E",
+                        // },
                         {
                             data: yearSalesTransactionChartRecords.yearTotalDueCustomerAmount,
-                            label: "Customers Due",
+                            label: "Sales Due",
                             borderColor: "#D63484",
                             backgroundColor: "#D63484",
                         },
@@ -640,6 +723,8 @@
         function affiliateMemberStatistics(affiliateMemberStatRecords, currency) {
             $('.totalAffiliateMember').text(`${affiliateMemberStatRecords.totalAffiliateMembers ? affiliateMemberStatRecords.totalAffiliateMembers : 0}`);
             $('.affiliateMemberCommission').text(`${affiliateMemberStatRecords.totalAffiliateMemberCommission ? parseFloat(affiliateMemberStatRecords.totalAffiliateMemberCommission).toFixed(2) : 0} ${currency}`);
+            $('.centralPromoterCommission').text(`${affiliateMemberStatRecords.centralPromoterCommission ? parseFloat(affiliateMemberStatRecords.centralPromoterCommission).toFixed(2) : 0} ${currency}`);
+            $('.totalAffiliateCommission').text(`${affiliateMemberStatRecords.totalAffiliateCommission ? parseFloat(affiliateMemberStatRecords.totalAffiliateCommission).toFixed(2) : 0} ${currency}`);
         }
 
         function rawItemRecords() {
@@ -666,6 +751,7 @@
             $('.rawItemDueAmount').text(`${rawItemStatRecords.totalRawItemDueAmount ? parseFloat(rawItemStatRecords.totalRawItemDueAmount).toFixed(2) : 0} ${currency}`);
             $('.wastageRawItemsAmount').text(`${rawItemStatRecords.totalRawItemWastageAmount ? parseFloat(rawItemStatRecords.totalRawItemWastageAmount).toFixed(2) : 0} ${currency}`);
             $('.outOfStockRawItems').text(`${rawItemStatRecords.totalOutOfStockRawItems ? rawItemStatRecords.totalOutOfStockRawItems : 0}`);
+            $('.totalRawItems').text(`${rawItemStatRecords.totalRawItems ? rawItemStatRecords.totalRawItems : 0}`);
         }
 
         function totalCustomerRecords() {
@@ -745,140 +831,140 @@
 
     </script>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    
+    
+    
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+    
+    
+
+    
+    
+    
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+
+    
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
 <?php $__env->stopPush(); ?>
 

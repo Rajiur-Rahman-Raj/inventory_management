@@ -47,7 +47,7 @@ class ProfitLossReport implements FromCollection, WithHeadings, ShouldAutoSize, 
             ->when(isset($search['to_date']), function ($query) use ($fromDate, $toDate) {
                 return $query->whereBetween('created_at', [$fromDate, $toDate]);
             })
-            ->where('company_id', $admin->active_company_id)->where('sales_by', 1)
+            ->where('company_id', $admin->active_company_id)
             ->selectRaw('SUM(total_amount) AS totalSales')
             ->selectRaw('SUM(due_amount) AS totalSalesDue')
             ->get()
@@ -62,7 +62,7 @@ class ProfitLossReport implements FromCollection, WithHeadings, ShouldAutoSize, 
             ->when(isset($search['to_date']), function ($query) use ($fromDate, $toDate) {
                 return $query->whereBetween('created_at', [$fromDate, $toDate]);
             })
-            ->where('company_id', $admin->active_company_id)->where('sales_by', 1)
+            ->where('company_id', $admin->active_company_id)
             ->get();
 
 
