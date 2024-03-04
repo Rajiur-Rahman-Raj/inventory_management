@@ -43,10 +43,12 @@
                 </form>
             </div>
 
-            <div class="d-flex justify-content-end mb-4">
-                <a href="javascript:void(0)" class="btn btn-custom text-white addNewItem"> <i
-                        class="fa fa-plus-circle"></i> <?php echo app('translator')->get('Add Item'); ?></a>
-            </div>
+            <?php if(adminAccessRoute(config('permissionList.Manage_Raw_Items.Item_List.permission.add'))): ?>
+                <div class="d-flex justify-content-end mb-4">
+                    <a href="javascript:void(0)" class="btn btn-custom text-white addNewItem"> <i
+                            class="fa fa-plus-circle"></i> <?php echo app('translator')->get('Add Item'); ?></a>
+                </div>
+            <?php endif; ?>
 
             <div class="table-parent table-responsive me-2 ms-2 mt-4">
                 <table class="table table-striped">
@@ -55,7 +57,9 @@
                         <th scope="col"><?php echo app('translator')->get('SL'); ?></th>
                         <th scope="col"><?php echo app('translator')->get('Item'); ?></th>
                         <th scope="col"><?php echo app('translator')->get('Unit'); ?></th>
-                        <th scope="col"><?php echo app('translator')->get('Action'); ?></th>
+                        <?php if(adminAccessRoute(array_merge(config('permissionList.Manage_Raw_Items.Item_List.permission.edit'), config('permissionList.Manage_Raw_Items.Item_List.permission.delete')))): ?>
+                            <th scope="col"><?php echo app('translator')->get('Action'); ?></th>
+                        <?php endif; ?>
                     </tr>
 
                     </thead>
@@ -78,36 +82,42 @@
 
                             <td data-label="<?php echo app('translator')->get('Unit'); ?>"><?php echo e($itemList->unit); ?></td>
 
-                            <td data-label="Action">
-                                <div class="sidebar-dropdown-items">
-                                    <button
-                                        type="button"
-                                        class="dropdown-toggle"
-                                        data-bs-toggle="dropdown"
-                                        aria-expanded="false"
-                                    >
-                                        <i class="fal fa-cog"></i>
-                                    </button>
+                            <?php if(adminAccessRoute(array_merge(config('permissionList.Manage_Raw_Items.Item_List.permission.edit'), config('permissionList.Manage_Raw_Items.Item_List.permission.delete')))): ?>
+                                <td data-label="Action">
+                                    <div class="sidebar-dropdown-items">
+                                        <button
+                                            type="button"
+                                            class="dropdown-toggle"
+                                            data-bs-toggle="dropdown"
+                                            aria-expanded="false"
+                                        >
+                                            <i class="fal fa-cog"></i>
+                                        </button>
 
-                                    <ul class="dropdown-menu dropdown-menu-end">
-                                        <li>
-                                            <a class="dropdown-item btn editItem"
-                                               data-route="<?php echo e(route('user.updateRawItem', $itemList->id)); ?>"
-                                               data-property="<?php echo e($itemList); ?>">
-                                                <i class="fas fa-edit"></i> <?php echo app('translator')->get('Edit'); ?>
-                                            </a>
-                                        </li>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <?php if(adminAccessRoute(config('permissionList.Manage_Raw_Items.Item_List.permission.edit'))): ?>
+                                                <li>
+                                                    <a class="dropdown-item btn editItem"
+                                                       data-route="<?php echo e(route('user.updateRawItem', $itemList->id)); ?>"
+                                                       data-property="<?php echo e($itemList); ?>">
+                                                        <i class="fas fa-edit"></i> <?php echo app('translator')->get('Edit'); ?>
+                                                    </a>
+                                                </li>
+                                            <?php endif; ?>
 
-                                        <li>
-                                            <a class="dropdown-item btn deleteItem"
-                                               data-route="<?php echo e(route('user.deleteRawItem', $itemList->id)); ?>"
-                                               data-property="<?php echo e($itemList); ?>">
-                                                <i class="fas fa-trash-alt"></i> <?php echo app('translator')->get('Delete'); ?>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </td>
+                                            <?php if(adminAccessRoute(config('permissionList.Manage_Raw_Items.Item_List.permission.delete'))): ?>
+                                                <li>
+                                                    <a class="dropdown-item btn deleteItem"
+                                                       data-route="<?php echo e(route('user.deleteRawItem', $itemList->id)); ?>"
+                                                       data-property="<?php echo e($itemList); ?>">
+                                                        <i class="fas fa-trash-alt"></i> <?php echo app('translator')->get('Delete'); ?>
+                                                    </a>
+                                                </li>
+                                            <?php endif; ?>
+                                        </ul>
+                                    </div>
+                                </td>
+                            <?php endif; ?>
                         </tr>
                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                         <tr class="text-center">

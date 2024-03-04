@@ -8,433 +8,436 @@
         </style>
     <?php $__env->stopPush(); ?>
 
-    <div class="container-fluid">
-        <div class="main row">
-
-            <div class="col-12">
-                <div class="row">
-                    <div class="col-12 d-flex justify-content-end mb-3">
-                        <a href="#" class="show-hide  me-3" data-info="1"> <i
-                                class="fal fa-eye showHideEye"></i></a>
+    <?php if(adminAccessRoute(array_merge(config('permissionList.Company_Dashboard.Dashboard.permission.view')))): ?>
+        <div class="container-fluid">
+            <div class="main row">
+                <div class="col-12">
+                    <div class="row">
+                        <div class="col-12 d-flex justify-content-end mb-3">
+                            <a href="#" class="show-hide  me-3" data-info="1"> <i
+                                    class="fal fa-eye showHideEye"></i></a>
+                        </div>
                     </div>
-                </div>
-                <div class="row g-3">
-                    <div class="col-xl-4 col-lg-6">
-                        <div class="card-box balance-box p-0 h-100 sales-statistics">
-                            <div class="user-account-number h-100">
-                                <i class="account-wallet far fa-wallet"></i>
-                                <?php if(userType() == 1): ?>
-                                    <div class="mb-4">
+                    <div class="row g-3">
+                        <div class="col-xl-4 col-lg-6">
+                            <div class="card-box balance-box p-0 h-100 sales-statistics">
+                                <div class="user-account-number h-100">
+                                    <i class="account-wallet far fa-wallet"></i>
+                                    <?php if(userType() == 1): ?>
+                                        <div class="mb-4">
+                                            <h5 class="text-white mb-2">
+                                                <?php echo app('translator')->get('Total Stock Transfer'); ?>
+                                            </h5>
+                                            <h3>
+                                                <span class="text-white total_stock_transfer infoShowHide"></span>
+                                            </h3>
+                                        </div>
+                                    <?php else: ?>
+                                        <div class="mb-4">
+                                            <h5 class="text-white mb-2">
+                                                <?php echo app('translator')->get('Total Sales Amount'); ?>
+                                            </h5>
+                                            <h3>
+                                                <span class="text-white total_sales_amount infoShowHide"></span>
+                                            </h3>
+                                        </div>
+                                    <?php endif; ?>
+
+
+                                    <div class="">
                                         <h5 class="text-white mb-2">
-                                            <?php echo app('translator')->get('Total Stock Transfer'); ?>
+                                            <?php echo app('translator')->get('Total Stock Amount'); ?>
                                         </h5>
-                                        <h3>
-                                            <span class="text-white total_stock_transfer infoShowHide"></span>
-                                        </h3>
+                                        <h3 class="total_stock_amount text-white infoShowHide"></h3>
+                                    </div>
+                                    <?php if(userType() == 1): ?>
+                                        <a href="<?php echo e(route('user.stockTransfer')); ?>" class="cash-in"> <i
+                                                class="fal fa-paper-plane me-1"></i> <?php echo app('translator')->get('Transfer Stock'); ?></a>
+                                    <?php else: ?>
+                                        <a href="<?php echo e(route('user.salesItem')); ?>" class="cash-in"> <i
+                                                class="fal fa-shopping-cart me-1"></i> <?php echo app('translator')->get('Sales Item'); ?></a>
+                                    <?php endif; ?>
+
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <?php if(userType() == 1): ?>
+                            <div class="col-xl-4 col-lg-6 d-sm-block d-none">
+                                <div class="row g-3">
+                                    <div class="col-lg-12 col-6 sales-statistics">
+                                        <div class="dashboard-box gr-bg-1">
+                                            <h5 class="text-white"><?php echo app('translator')->get('Total Raw Item Purchase'); ?></h5>
+                                            <h3 class="text-white rawItemPurchaseAmount infoShowHide"></span>
+                                            </h3>
+                                            <i class="fal fa-usd-circle text-white" aria-hidden="true"></i>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-12 col-6 sales-statistics">
+                                        <div class="dashboard-box gr-bg-2">
+                                            <h5 class="text-white"><?php echo app('translator')->get('Total Sales Amount'); ?></h5>
+                                            <h3 class="text-white total_sales_amount infoShowHide"></span>
+                                            </h3>
+                                            <i class="fal fa-usd-circle text-white"></i>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        <?php else: ?>
+                            <div class="col-xl-4 col-lg-6 d-sm-block d-none">
+                                <div class="row g-3">
+                                    <div class="col-lg-12 col-6 customer-statistics">
+                                        <div class="dashboard-box gr-bg-1">
+                                            <h5 class="text-white"><?php echo app('translator')->get('Total Customers'); ?></h5>
+                                            <h3 class="text-white totalCustomers infoShowHide"></h3>
+                                            <i class="fal fa-users text-white"></i>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-12 col-6 sales-statistics">
+                                        <div class="dashboard-box gr-bg-2">
+                                            <h5 class="text-white"><?php echo app('translator')->get('Due Amount'); ?></h5>
+                                            <h3 class="text-white customer_due_amount infoShowHide"></span>
+                                            </h3>
+                                            <i class="fal fa-usd-circle text-white"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endif; ?>
+
+                        <div class="col-xl-4 d-sm-block d-none">
+                            <div class="row g-3">
+                                <?php if(userType() == 1): ?>
+
+                                    
+                                    
+                                    
+                                    
+                                    
+                                    
+                                    
+                                    
+
+                                    <div class="col-xl-12 col-6 raw-item-statistics">
+                                        <div class="dashboard-box gr-bg-3">
+                                            <h5 class="text-white"><?php echo app('translator')->get('Raw Item Due'); ?></h5>
+                                            <h3 class="text-white rawItemDueAmount infoShowHide"></span>
+                                            </h3>
+                                            <i class="fal fa-hand-holding-usd text-white"></i>
+                                        </div>
+                                    </div>
+
+                                    
+                                    
+                                    
+                                    
+                                    
+                                    
+                                    
+                                    
+
+                                    <div class="col-xl-12 col-6 box customer-statistics">
+                                        <div class="dashboard-box gr-bg-4">
+                                            <h5 class="text-white"><?php echo app('translator')->get('Sales Due Amount'); ?></h5>
+                                            <h3 class="text-white customer_due_amount infoShowHide"></span>
+                                            </h3>
+                                            <i class="fal fa-hand-holding-usd text-white" aria-hidden="true"></i>
+                                        </div>
                                     </div>
                                 <?php else: ?>
-                                    <div class="mb-4">
-                                        <h5 class="text-white mb-2">
-                                            <?php echo app('translator')->get('Total Sales Amount'); ?>
-                                        </h5>
-                                        <h3>
-                                            <span class="text-white total_sales_amount infoShowHide"></span>
-                                        </h3>
+                                    <div class="col-xl-12 col-6 item-statistics">
+                                        <div class="dashboard-box gr-bg-3">
+                                            <h5 class="text-white"><?php echo app('translator')->get('Total Items'); ?></h5>
+                                            <h3 class="text-white totalItems infoShowHide"></h3>
+                                            
+                                            <i class="far fa-network-wired text-white"></i>
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-12 col-6 box item-statistics">
+                                        <div class="dashboard-box gr-bg-4">
+                                            <h5 class="text-white"><?php echo app('translator')->get('Stock Out Items'); ?></h5>
+                                            <h3 class="text-white stockOutItems infoShowHide"></span>
+                                            </h3>
+                                            
+                                            <i class="far fa-times-circle text-white"></i>
+                                        </div>
                                     </div>
                                 <?php endif; ?>
 
-
-                                <div class="">
-                                    <h5 class="text-white mb-2">
-                                        <?php echo app('translator')->get('Total Stock Amount'); ?>
-                                    </h5>
-                                    <h3 class="total_stock_amount text-white infoShowHide"></h3>
-                                </div>
-                                <?php if(userType() == 1): ?>
-                                    <a href="<?php echo e(route('user.stockTransfer')); ?>" class="cash-in"> <i
-                                            class="fal fa-paper-plane me-1"></i> <?php echo app('translator')->get('Transfer Stock'); ?></a>
-                                <?php else: ?>
-                                    <a href="<?php echo e(route('user.salesItem')); ?>" class="cash-in"> <i
-                                            class="fal fa-shopping-cart me-1"></i> <?php echo app('translator')->get('Sales Item'); ?></a>
-                                <?php endif; ?>
-
-
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+        <!-- main -->
+        <div class="container-fluid">
+            <div class="main row">
+                <div class="col-12">
+                    <div class="dashboard-box-wrapper d-none d-lg-block">
+                        <?php if(userType() == 1): ?>
+                            <div class="row g-3 mb-4">
 
-                    <?php if(userType() == 1): ?>
-                        <div class="col-xl-4 col-lg-6 d-sm-block d-none">
-                            <div class="row g-3">
-                                <div class="col-lg-12 col-6 sales-statistics">
-                                    <div class="dashboard-box gr-bg-1">
-                                        <h5 class="text-white"><?php echo app('translator')->get('Total Raw Item Purchase'); ?></h5>
-                                        <h3 class="text-white rawItemPurchaseAmount infoShowHide"></span>
-                                        </h3>
-                                        <i class="fal fa-usd-circle text-white" aria-hidden="true"></i>
+                                <div class="col-xl-3 col-md-6 box supplier-statistics">
+                                    <div class="dashboard-box">
+                                        <h5><?php echo app('translator')->get('Total Suppliers'); ?></h5>
+                                        <h3 class="totalSuppliers infoShowHide"></h3>
+                                        <i class="fal fa-shopping-cart" aria-hidden="true"></i>
                                     </div>
                                 </div>
 
-                                <div class="col-lg-12 col-6 sales-statistics">
-                                    <div class="dashboard-box gr-bg-2">
-                                        <h5 class="text-white"><?php echo app('translator')->get('Total Sales Amount'); ?></h5>
-                                        <h3 class="text-white total_sales_amount infoShowHide"></span>
-                                        </h3>
-                                        <i class="fal fa-usd-circle text-white"></i>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-                    <?php else: ?>
-                        <div class="col-xl-4 col-lg-6 d-sm-block d-none">
-                            <div class="row g-3">
-                                <div class="col-lg-12 col-6 customer-statistics">
-                                    <div class="dashboard-box gr-bg-1">
-                                        <h5 class="text-white"><?php echo app('translator')->get('Total Customers'); ?></h5>
-                                        <h3 class="text-white totalCustomers infoShowHide"></h3>
-                                        <i class="fal fa-users text-white"></i>
-                                    </div>
-                                </div>
-
-                                <div class="col-lg-12 col-6 sales-statistics">
-                                    <div class="dashboard-box gr-bg-2">
-                                        <h5 class="text-white"><?php echo app('translator')->get('Due Amount'); ?></h5>
-                                        <h3 class="text-white customer_due_amount infoShowHide"></span>
-                                        </h3>
-                                        <i class="fal fa-usd-circle text-white"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    <?php endif; ?>
-
-                    <div class="col-xl-4 d-sm-block d-none">
-                        <div class="row g-3">
-                            <?php if(userType() == 1): ?>
-
-                                
-                                
-                                
-                                
-                                
-                                
-                                
-                                
-
-                                <div class="col-xl-12 col-6 raw-item-statistics">
-                                    <div class="dashboard-box gr-bg-3">
-                                        <h5 class="text-white"><?php echo app('translator')->get('Raw Item Due'); ?></h5>
-                                        <h3 class="text-white rawItemDueAmount infoShowHide"></span>
-                                        </h3>
-                                        <i class="fal fa-hand-holding-usd text-white"></i>
-                                    </div>
-                                </div>
-
-
-
-
-
-
-
-
-
-
-                                <div class="col-xl-12 col-6 box customer-statistics">
-                                    <div class="dashboard-box gr-bg-4">
-                                        <h5 class="text-white"><?php echo app('translator')->get('Sales Due Amount'); ?></h5>
-                                        <h3 class="text-white customer_due_amount infoShowHide"></span>
-                                        </h3>
-                                        <i class="fal fa-hand-holding-usd text-white" aria-hidden="true"></i>
-                                    </div>
-                                </div>
-                            <?php else: ?>
-                                <div class="col-xl-12 col-6 item-statistics">
-                                    <div class="dashboard-box gr-bg-3">
-                                        <h5 class="text-white"><?php echo app('translator')->get('Total Items'); ?></h5>
-                                        <h3 class="text-white totalItems infoShowHide"></h3>
+                                <div class="col-xl-3 col-md-6 box raw-item-statistics">
+                                    <div class="dashboard-box">
+                                        <h5><?php echo app('translator')->get('Total Raw Items'); ?></h5>
+                                        <h3 class="totalRawItems infoShowHide"></h3>
                                         
-                                        <i class="far fa-network-wired text-white"></i>
+                                        <i class="far fa-network-wired" aria-hidden="true"></i>
                                     </div>
                                 </div>
-                                <div class="col-xl-12 col-6 box item-statistics">
-                                    <div class="dashboard-box gr-bg-4">
-                                        <h5 class="text-white"><?php echo app('translator')->get('Stock Out Items'); ?></h5>
-                                        <h3 class="text-white stockOutItems infoShowHide"></span>
-                                        </h3>
+
+                                <div class="col-xl-3 col-md-6 box raw-item-statistics">
+                                    <div class="dashboard-box">
+                                        <h5><?php echo app('translator')->get('Stock Out Raw Items'); ?></h5>
+                                        <h3 class="outOfStockRawItems infoShowHide"></h3>
+                                        <i class="far fa-times-circle" aria-hidden="true"></i>
                                         
-                                        <i class="far fa-times-circle text-white"></i>
                                     </div>
                                 </div>
-                            <?php endif; ?>
 
+                                <div class="col-xl-3 col-md-6 box raw-item-statistics">
+                                    <div class="dashboard-box">
+                                        <h5><?php echo app('translator')->get('Wastage Raw Items'); ?></h5>
+                                        <h3 class="wastageRawItemsAmount infoShowHide"></h3>
+                                        <i class="far fa-badge-dollar"></i>
+                                    </div>
+                                </div>
+
+                                <div class="col-xl-3 col-md-6 box sales-center-statistics">
+                                    <div class="dashboard-box">
+                                        <h5><?php echo app('translator')->get('Total Sales Center'); ?></h5>
+                                        <h3 class="totalSalesCenter infoShowHide"></h3>
+                                        
+                                        <i class="fal fa-shopping-cart"></i>
+                                    </div>
+                                </div>
+
+                                <div class="col-xl-3 col-md-6 box item-statistics">
+                                    <div class="dashboard-box">
+                                        <h5><?php echo app('translator')->get('Total Items'); ?></h5>
+                                        <h3 class="totalItems infoShowHide"></h3>
+                                        
+                                        <i class="far fa-network-wired" aria-hidden="true"></i>
+                                    </div>
+                                </div>
+
+                                <div class="col-xl-3 col-md-6 box item-statistics">
+                                    <div class="dashboard-box">
+                                        <h5><?php echo app('translator')->get('Stock Out Items'); ?></h5>
+                                        <h3 class="stockOutItems infoShowHide"></h3>
+                                        <i class="far fa-times-circle" aria-hidden="true"></i>
+                                    </div>
+                                </div>
+
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+                                
+
+
+                                <div class="col-xl-3 col-md-6 box ">
+                                    <div class="dashboard-box affiliate-member-statistics">
+                                        <h5><?php echo app('translator')->get('Total Affiliate Member'); ?></h5>
+                                        <h3 class="totalAffiliateMember infoShowHide"></h3>
+                                        
+                                        <i class="far fa-network-wired" aria-hidden="true"></i>
+                                    </div>
+                                </div>
+
+                                <div class="col-xl-3 col-md-6 box ">
+                                    <div class="dashboard-box affiliate-member-statistics">
+                                        <h5><?php echo app('translator')->get('Affiliate Member Commission'); ?></h5>
+                                        <h3 class="affiliateMemberCommission infoShowHide"></h3>
+                                        
+                                        <i class="far fa-network-wired" aria-hidden="true"></i>
+                                    </div>
+                                </div>
+
+                                <div class="col-xl-3 col-md-6 box ">
+                                    <div class="dashboard-box affiliate-member-statistics">
+                                        <h5><?php echo app('translator')->get('Central Promoter Commission'); ?></h5>
+                                        <h3 class="centralPromoterCommission infoShowHide"></h3>
+                                        
+                                        <i class="far fa-network-wired" aria-hidden="true"></i>
+                                    </div>
+                                </div>
+
+                                <div class="col-xl-3 col-md-6 box ">
+                                    <div class="dashboard-box affiliate-member-statistics">
+                                        <h5><?php echo app('translator')->get('Total Affiliate Commission'); ?></h5>
+                                        <h3 class="totalAffiliateCommission infoShowHide"></h3>
+                                        
+                                        <i class="far fa-network-wired" aria-hidden="true"></i>
+                                    </div>
+                                </div>
+
+                                <div class="col-xl-3 col-md-6 box ">
+                                    <div class="dashboard-box affiliate-member-statistics">
+                                        <h5><?php echo app('translator')->get('Total Expense'); ?></h5>
+                                        <h3 class="totalExpenseAmount infoShowHide"></h3>
+                                        
+                                        <i class="far fa-network-wired" aria-hidden="true"></i>
+                                    </div>
+                                </div>
+
+                                
+                                
+                                
+                                
+                                
+
+                                
+                                
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                    <div class="d-lg-none mb-4">
+                        <div class="card-box-wrapper owl-carousel card-boxes">
+                            <div class="dashboard-box gr-bg-1">
+                                <h5 class="text-white"><?php echo app('translator')->get('Total Sales Amount'); ?></h5>
+                                <h3 class="text-white infoShowHide">
+                                    <small><sup><?php echo e(trans(config('basic.currency_symbol'))); ?></sup></small><?php echo e(getAmount($walletBalance, config('basic.fraction_number'))); ?>
+
+                                </h3>
+                                <i class="fal fa-funnel-dollar text-white"></i>
+                            </div>
+                            <div class="dashboard-box gr-bg-2">
+                                <h5 class="text-white"><?php echo app('translator')->get('Interest Balance'); ?></h5>
+                                <h3 class="text-white infoShowHide">
+                                    <small><sup><?php echo e(trans(config('basic.currency_symbol'))); ?></sup></small><?php echo e(getAmount($interestBalance, config('basic.fraction_number'))); ?>
+
+                                </h3>
+                                <i class="fal fa-hand-holding-usd text-white"></i>
+                            </div>
+                            <div class="dashboard-box gr-bg-3">
+                                <h5 class="text-white"><?php echo app('translator')->get('Total Deposit'); ?></h5>
+                                <h3 class="text-white infoShowHide">
+                                    <small><sup><?php echo e(trans(config('basic.currency_symbol'))); ?></sup></small><?php echo e(getAmount($totalDeposit, config('basic.fraction_number'))); ?>
+
+                                </h3>
+                                <i class="fal fa-box-usd text-white"></i>
+                            </div>
+                            <div class="dashboard-box gr-bg-5">
+                                <h5 class="text-white"><?php echo app('translator')->get('Total Invest'); ?></h5>
+                                <h3 class="text-white infoShowHide">
+                                    <small><sup><?php echo e(trans(config('basic.currency_symbol'))); ?></sup></small><?php echo e(getAmount($investment['totalInvestAmount'])); ?>
+
+                                </h3>
+                                <i class="fal fa-search-dollar text-white"></i>
+                            </div>
+                            <div class="dashboard-box gr-bg-5">
+                                <h5 class="text-white"><?php echo app('translator')->get('Running Invest'); ?></h5>
+                                <h3 class="text-white infoShowHide">
+                                    <small><sup><?php echo e(trans(config('basic.currency_symbol'))); ?></sup></small><?php echo e(getAmount($investment['runningInvestAmount'])); ?>
+
+                                </h3>
+                                <i class="fal fa-search-dollar text-white"></i>
+                            </div>
+                            <div class="dashboard-box gr-bg-4">
+                                <h5 class="text-white"><?php echo app('translator')->get('Total Earn'); ?></h5>
+                                <h3 class="text-white infoShowHide">
+                                    <small><sup><?php echo e(trans(config('basic.currency_symbol'))); ?></sup></small><?php echo e(getAmount($totalInterestProfit, config('basic.fraction_number'))); ?>
+
+                                </h3>
+                                <i class="fal fa-badge-dollar text-white"></i>
+                            </div>
+                            <div class="dashboard-box gr-bg-6">
+                                <h5 class="text-white"><?php echo app('translator')->get('Total Payout'); ?></h5>
+                                <h3 class="text-white infoShowHide">
+                                    <small><sup><?php echo e(trans(config('basic.currency_symbol'))); ?></sup></small><?php echo e(getAmount($totalPayout)); ?>
+
+                                </h3>
+                                <i class="fal fa-usd-circle text-white"></i>
+                            </div>
+                            <div class="dashboard-box gr-bg-7">
+                                <h5 class="text-white"><?php echo app('translator')->get('Total Referral Bonus'); ?></h5>
+                                <h3 class="text-white">
+                                    <small><sup><?php echo e(trans(config('basic.currency_symbol'))); ?></sup></small><?php echo e(getAmount($depositBonus + $investBonus)); ?>
+
+                                </h3>
+                                <i class="fal fa-lightbulb-dollar text-white"></i>
+                            </div>
+
+                            <div class="dashboard-box gr-bg-8">
+                                <h5 class="text-white"><?php echo app('translator')->get('Last Referral Bonus'); ?></h5>
+                                <h3 class="text-white">
+                                    <small><sup><?php echo e(trans(config('basic.currency_symbol'))); ?></sup></small><?php echo e(getAmount($lastBonus, config('basic.fraction_number'))); ?>
+
+                                </h3>
+                                <i class="fal fa-box-open text-white"></i>
+                            </div>
+
+                            <div class="dashboard-box gr-bg-9">
+                                <h5 class="text-white"><?php echo app('translator')->get('Total Ticket'); ?></h5>
+                                <h3 class="text-white"><?php echo e($ticket); ?></h3>
+                                <i class="fal fa-ticket text-white"></i>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <!-- main -->
-    <div class="container-fluid">
-        <div class="main row">
-            <div class="col-12">
-                <div class="dashboard-box-wrapper d-none d-lg-block">
-                    <?php if(userType() == 1): ?>
-                        <div class="row g-3 mb-4">
-
-                            <div class="col-xl-3 col-md-6 box supplier-statistics">
-                                <div class="dashboard-box">
-                                    <h5><?php echo app('translator')->get('Total Suppliers'); ?></h5>
-                                    <h3 class="totalSuppliers infoShowHide"></h3>
-                                    <i class="fal fa-shopping-cart" aria-hidden="true"></i>
+            <div class="main row">
+                <div class="col-md-12">
+                    <div class="card year-transaction  shadow-sm YearlySalesTransactions infoShowHide">
+                        <?php if(userType() == 1): ?>
+                            <div class="card-body">
+                                <h5 class="card-title"><?php echo app('translator')->get('Yearly Stock & Sales Transactions'); ?></h5>
+                                <div class="yearly-sales-transaction-statistics">
+                                    <canvas id="sales-transaction-current-year"></canvas>
                                 </div>
                             </div>
-
-                            <div class="col-xl-3 col-md-6 box raw-item-statistics">
-                                <div class="dashboard-box">
-                                    <h5><?php echo app('translator')->get('Total Raw Items'); ?></h5>
-                                    <h3 class="totalRawItems infoShowHide"></h3>
-                                    
-                                    <i class="far fa-network-wired" aria-hidden="true"></i>
+                        <?php else: ?>
+                            <div class="card-body">
+                                <h5 class="card-title"><?php echo app('translator')->get('Yearly Stock & Sales Transactions'); ?></h5>
+                                <div class="sales-center-yearly-sales-transaction-statistics">
+                                    <canvas id="sales-center-yearly-sales-transaction-statistics"></canvas>
                                 </div>
                             </div>
-
-                            <div class="col-xl-3 col-md-6 box raw-item-statistics">
-                                <div class="dashboard-box">
-                                    <h5><?php echo app('translator')->get('Stock Out Raw Items'); ?></h5>
-                                    <h3 class="outOfStockRawItems infoShowHide"></h3>
-                                    <i class="far fa-times-circle" aria-hidden="true"></i>
-                                    
-                                </div>
-                            </div>
-
-                            <div class="col-xl-3 col-md-6 box raw-item-statistics">
-                                <div class="dashboard-box">
-                                    <h5><?php echo app('translator')->get('Wastage Raw Items'); ?></h5>
-                                    <h3 class="wastageRawItemsAmount infoShowHide"></h3>
-                                    <i class="far fa-badge-dollar"></i>
-                                </div>
-                            </div>
-
-                            <div class="col-xl-3 col-md-6 box sales-center-statistics">
-                                <div class="dashboard-box">
-                                    <h5><?php echo app('translator')->get('Total Sales Center'); ?></h5>
-                                    <h3 class="totalSalesCenter infoShowHide"></h3>
-                                    
-                                    <i class="fal fa-shopping-cart"></i>
-                                </div>
-                            </div>
-
-                            <div class="col-xl-3 col-md-6 box item-statistics">
-                                <div class="dashboard-box">
-                                    <h5><?php echo app('translator')->get('Total Items'); ?></h5>
-                                    <h3 class="totalItems infoShowHide"></h3>
-                                    
-                                    <i class="far fa-network-wired" aria-hidden="true"></i>
-                                </div>
-                            </div>
-
-                            <div class="col-xl-3 col-md-6 box item-statistics">
-                                <div class="dashboard-box">
-                                    <h5><?php echo app('translator')->get('Stock Out Items'); ?></h5>
-                                    <h3 class="stockOutItems infoShowHide"></h3>
-                                    <i class="far fa-times-circle" aria-hidden="true"></i>
-                                </div>
-                            </div>
-
-                            
-                            
-                            
-                            
-                            
-                            
-                            
-
-                            
-                            
-                            
-                            
-                            
-                            
-                            
-
-                            
-                            
-                            
-                            
-                            
-                            
-                            
-                            
-
-
-
-                            <div class="col-xl-3 col-md-6 box ">
-                                <div class="dashboard-box affiliate-member-statistics">
-                                    <h5><?php echo app('translator')->get('Total Affiliate Member'); ?></h5>
-                                    <h3 class="totalAffiliateMember infoShowHide"></h3>
-                                    
-                                    <i class="far fa-network-wired" aria-hidden="true"></i>
-                                </div>
-                            </div>
-
-                            <div class="col-xl-3 col-md-6 box ">
-                                <div class="dashboard-box affiliate-member-statistics">
-                                    <h5><?php echo app('translator')->get('Affiliate Member Commission'); ?></h5>
-                                    <h3 class="affiliateMemberCommission infoShowHide"></h3>
-                                    
-                                    <i class="far fa-network-wired" aria-hidden="true"></i>
-                                </div>
-                            </div>
-
-                            <div class="col-xl-3 col-md-6 box ">
-                                <div class="dashboard-box affiliate-member-statistics">
-                                    <h5><?php echo app('translator')->get('Central Promoter Commission'); ?></h5>
-                                    <h3 class="centralPromoterCommission infoShowHide"></h3>
-                                    
-                                    <i class="far fa-network-wired" aria-hidden="true"></i>
-                                </div>
-                            </div>
-
-                            <div class="col-xl-3 col-md-6 box ">
-                                <div class="dashboard-box affiliate-member-statistics">
-                                    <h5><?php echo app('translator')->get('Total Affiliate Commission'); ?></h5>
-                                    <h3 class="totalAffiliateCommission infoShowHide"></h3>
-                                    
-                                    <i class="far fa-network-wired" aria-hidden="true"></i>
-                                </div>
-                            </div>
-
-                            <div class="col-xl-3 col-md-6 box ">
-                                <div class="dashboard-box affiliate-member-statistics">
-                                    <h5><?php echo app('translator')->get('Total Expense'); ?></h5>
-                                    <h3 class="totalExpenseAmount infoShowHide"></h3>
-                                    
-                                    <i class="far fa-network-wired" aria-hidden="true"></i>
-                                </div>
-                            </div>
-
-                            
-                            
-                            
-                            
-                            
-
-                            
-                            
-                        </div>
-                    <?php endif; ?>
-                </div>
-                <div class="d-lg-none mb-4">
-                    <div class="card-box-wrapper owl-carousel card-boxes">
-                        <div class="dashboard-box gr-bg-1">
-                            <h5 class="text-white"><?php echo app('translator')->get('Total Sales Amount'); ?></h5>
-                            <h3 class="text-white infoShowHide">
-                                <small><sup><?php echo e(trans(config('basic.currency_symbol'))); ?></sup></small><?php echo e(getAmount($walletBalance, config('basic.fraction_number'))); ?>
-
-                            </h3>
-                            <i class="fal fa-funnel-dollar text-white"></i>
-                        </div>
-                        <div class="dashboard-box gr-bg-2">
-                            <h5 class="text-white"><?php echo app('translator')->get('Interest Balance'); ?></h5>
-                            <h3 class="text-white infoShowHide">
-                                <small><sup><?php echo e(trans(config('basic.currency_symbol'))); ?></sup></small><?php echo e(getAmount($interestBalance, config('basic.fraction_number'))); ?>
-
-                            </h3>
-                            <i class="fal fa-hand-holding-usd text-white"></i>
-                        </div>
-                        <div class="dashboard-box gr-bg-3">
-                            <h5 class="text-white"><?php echo app('translator')->get('Total Deposit'); ?></h5>
-                            <h3 class="text-white infoShowHide">
-                                <small><sup><?php echo e(trans(config('basic.currency_symbol'))); ?></sup></small><?php echo e(getAmount($totalDeposit, config('basic.fraction_number'))); ?>
-
-                            </h3>
-                            <i class="fal fa-box-usd text-white"></i>
-                        </div>
-                        <div class="dashboard-box gr-bg-5">
-                            <h5 class="text-white"><?php echo app('translator')->get('Total Invest'); ?></h5>
-                            <h3 class="text-white infoShowHide">
-                                <small><sup><?php echo e(trans(config('basic.currency_symbol'))); ?></sup></small><?php echo e(getAmount($investment['totalInvestAmount'])); ?>
-
-                            </h3>
-                            <i class="fal fa-search-dollar text-white"></i>
-                        </div>
-                        <div class="dashboard-box gr-bg-5">
-                            <h5 class="text-white"><?php echo app('translator')->get('Running Invest'); ?></h5>
-                            <h3 class="text-white infoShowHide">
-                                <small><sup><?php echo e(trans(config('basic.currency_symbol'))); ?></sup></small><?php echo e(getAmount($investment['runningInvestAmount'])); ?>
-
-                            </h3>
-                            <i class="fal fa-search-dollar text-white"></i>
-                        </div>
-                        <div class="dashboard-box gr-bg-4">
-                            <h5 class="text-white"><?php echo app('translator')->get('Total Earn'); ?></h5>
-                            <h3 class="text-white infoShowHide">
-                                <small><sup><?php echo e(trans(config('basic.currency_symbol'))); ?></sup></small><?php echo e(getAmount($totalInterestProfit, config('basic.fraction_number'))); ?>
-
-                            </h3>
-                            <i class="fal fa-badge-dollar text-white"></i>
-                        </div>
-                        <div class="dashboard-box gr-bg-6">
-                            <h5 class="text-white"><?php echo app('translator')->get('Total Payout'); ?></h5>
-                            <h3 class="text-white infoShowHide">
-                                <small><sup><?php echo e(trans(config('basic.currency_symbol'))); ?></sup></small><?php echo e(getAmount($totalPayout)); ?>
-
-                            </h3>
-                            <i class="fal fa-usd-circle text-white"></i>
-                        </div>
-                        <div class="dashboard-box gr-bg-7">
-                            <h5 class="text-white"><?php echo app('translator')->get('Total Referral Bonus'); ?></h5>
-                            <h3 class="text-white">
-                                <small><sup><?php echo e(trans(config('basic.currency_symbol'))); ?></sup></small><?php echo e(getAmount($depositBonus + $investBonus)); ?>
-
-                            </h3>
-                            <i class="fal fa-lightbulb-dollar text-white"></i>
-                        </div>
-
-                        <div class="dashboard-box gr-bg-8">
-                            <h5 class="text-white"><?php echo app('translator')->get('Last Referral Bonus'); ?></h5>
-                            <h3 class="text-white">
-                                <small><sup><?php echo e(trans(config('basic.currency_symbol'))); ?></sup></small><?php echo e(getAmount($lastBonus, config('basic.fraction_number'))); ?>
-
-                            </h3>
-                            <i class="fal fa-box-open text-white"></i>
-                        </div>
-
-                        <div class="dashboard-box gr-bg-9">
-                            <h5 class="text-white"><?php echo app('translator')->get('Total Ticket'); ?></h5>
-                            <h3 class="text-white"><?php echo e($ticket); ?></h3>
-                            <i class="fal fa-ticket text-white"></i>
-                        </div>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="main row">
-            <div class="col-md-12">
-                <div class="card year-transaction  shadow-sm YearlySalesTransactions infoShowHide">
-                    <?php if(userType() == 1): ?>
-                        <div class="card-body">
-                            <h5 class="card-title"><?php echo app('translator')->get('Yearly Stock & Sales Transactions'); ?></h5>
-                            <div class="yearly-sales-transaction-statistics">
-                                <canvas id="sales-transaction-current-year"></canvas>
-                            </div>
-                        </div>
-                    <?php else: ?>
-                        <div class="card-body">
-                            <h5 class="card-title"><?php echo app('translator')->get('Yearly Stock & Sales Transactions'); ?></h5>
-                            <div class="sales-center-yearly-sales-transaction-statistics">
-                                <canvas id="sales-center-yearly-sales-transaction-statistics"></canvas>
-                            </div>
-                        </div>
-                    <?php endif; ?>
-                </div>
-            </div>
         </div>
+    <?php else: ?>
+        <script>window.location = "<?php echo e(route(optional(auth()->user()->role)->permission[0])); ?>";</script>
+    <?php endif; ?>
 
-    </div>
+
 <?php $__env->stopSection(); ?>
 
 <?php $__env->startPush('script'); ?>

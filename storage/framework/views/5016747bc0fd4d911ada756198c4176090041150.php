@@ -122,14 +122,29 @@ unset($__errorArgs, $__bag); ?>
                         </tr>
 
                         <tr>
+                            <td><?php echo app('translator')->get('Total Purchase Due'); ?></td>
+                            <td> <?php echo e(config('basic.currency_text')); ?> <?php echo e(fractionNumber($profitLossReportRecords['totalPurchaseDue'], false)); ?></td>
+                        </tr>
+
+                        <tr>
                             <td><?php echo app('translator')->get('Total Stock'); ?></td>
                             <td> <?php echo e(config('basic.currency_text')); ?> <?php echo e(fractionNumber($profitLossReportRecords['totalStocks'], false)); ?> </td>
+                        </tr>
+
+                        <tr>
+                            <td><?php echo app('translator')->get('Total Stock Transfer'); ?></td>
+                            <td> <?php echo e(config('basic.currency_text')); ?> <?php echo e(fractionNumber($profitLossReportRecords['totalStockTransfer'], false)); ?> </td>
                         </tr>
 
                         <?php if(userType() == 1): ?>
                             <tr>
                                 <td><?php echo app('translator')->get('Total Sales'); ?></td>
                                 <td> <?php echo e(config('basic.currency_text')); ?> <?php echo e(fractionNumber($profitLossReportRecords['totalSales'], false)); ?> </td>
+                            </tr>
+
+                            <tr>
+                                <td><?php echo app('translator')->get('Total Sales Due'); ?></td>
+                                <td> <?php echo e(config('basic.currency_text')); ?> <?php echo e(fractionNumber($profitLossReportRecords['totalSalesDue'], false)); ?> </td>
                             </tr>
 
                             <tr>

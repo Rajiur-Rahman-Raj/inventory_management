@@ -75,7 +75,6 @@
                         <div class="input-box col-lg-3">
                             <select class="form-control js-example-basic-single" name="central_promoter_id"
                                     aria-label="Default select example">
-                                <option selected disabled>@lang('Select Central Promoter')</option>
                                 @foreach($centralPromoter as $promoter)
                                     <option
                                         value="{{ $promoter->id }}" {{ @request()->central_promoter_id == $promoter->id ? 'selected' : '' }}>{{ kebab2Title($promoter->name) }}</option>
@@ -129,7 +128,7 @@
                             <table class="table custom-table table-bordered mt-4">
                                 <thead>
                                 <tr>
-                                    <th scope="col">Member</th>
+                                    <th scope="col">Affiliator</th>
                                     <th scope="col">Commission</th>
                                     <th scope="col">Date Of Commission</th>
                                 </tr>
@@ -139,7 +138,9 @@
                                 @if(count($affiliateReportRecords) > 0)
                                     @foreach($affiliateReportRecords as $key => $commission)
                                         <tr>
-                                            <td data-label="Member">{{ $commission->affiliateMember->member_name }}</td>
+                                            <td data-label="Affiliator">
+                                                {{ $key == 0 ? $commission->centralPromoter->name : $commission->affiliateMember->member_name }}
+                                            </td>
                                             <td data-label="Commission">{{ $commission->amount }}</td>
                                             <td data-label="Date Of Commission">{{ $commission->commission_date }}</td>
                                         </tr>

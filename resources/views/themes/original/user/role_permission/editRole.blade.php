@@ -245,7 +245,7 @@
                                                                                         <input type="checkbox"
                                                                                                class="cursor-pointer multiplePermissionSelectAll{{$j}}"
                                                                                                id="multiplePermissionSelectAll{{$j}}"
-                                                                                               value="{{join(",",$subMenu['permission']['view'])}}"
+{{--                                                                                               value="{{join(",",$subMenu['permission']['view'])}}"--}}
                                                                                                onclick="multiplePermissionSelectAll({{$j}})"
                                                                                                name="permissions[]">
                                                                                         <label class="mb-0"

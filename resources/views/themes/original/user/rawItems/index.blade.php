@@ -44,10 +44,12 @@
                 </form>
             </div>
 
-            <div class="d-flex justify-content-end mb-4">
-                <a href="javascript:void(0)" class="btn btn-custom text-white addNewItem"> <i
-                        class="fa fa-plus-circle"></i> @lang('Add Item')</a>
-            </div>
+            @if(adminAccessRoute(config('permissionList.Manage_Raw_Items.Item_List.permission.add')))
+                <div class="d-flex justify-content-end mb-4">
+                    <a href="javascript:void(0)" class="btn btn-custom text-white addNewItem"> <i
+                            class="fa fa-plus-circle"></i> @lang('Add Item')</a>
+                </div>
+            @endif
 
             <div class="table-parent table-responsive me-2 ms-2 mt-4">
                 <table class="table table-striped">
@@ -56,7 +58,9 @@
                         <th scope="col">@lang('SL')</th>
                         <th scope="col">@lang('Item')</th>
                         <th scope="col">@lang('Unit')</th>
-                        <th scope="col">@lang('Action')</th>
+                        @if(adminAccessRoute(array_merge(config('permissionList.Manage_Raw_Items.Item_List.permission.edit'), config('permissionList.Manage_Raw_Items.Item_List.permission.delete'))))
+                            <th scope="col">@lang('Action')</th>
+                        @endif
                     </tr>
 
                     </thead>
@@ -79,36 +83,42 @@
 
                             <td data-label="@lang('Unit')">{{ $itemList->unit }}</td>
 
-                            <td data-label="Action">
-                                <div class="sidebar-dropdown-items">
-                                    <button
-                                        type="button"
-                                        class="dropdown-toggle"
-                                        data-bs-toggle="dropdown"
-                                        aria-expanded="false"
-                                    >
-                                        <i class="fal fa-cog"></i>
-                                    </button>
+                            @if(adminAccessRoute(array_merge(config('permissionList.Manage_Raw_Items.Item_List.permission.edit'), config('permissionList.Manage_Raw_Items.Item_List.permission.delete'))))
+                                <td data-label="Action">
+                                    <div class="sidebar-dropdown-items">
+                                        <button
+                                            type="button"
+                                            class="dropdown-toggle"
+                                            data-bs-toggle="dropdown"
+                                            aria-expanded="false"
+                                        >
+                                            <i class="fal fa-cog"></i>
+                                        </button>
 
-                                    <ul class="dropdown-menu dropdown-menu-end">
-                                        <li>
-                                            <a class="dropdown-item btn editItem"
-                                               data-route="{{route('user.updateRawItem', $itemList->id)}}"
-                                               data-property="{{ $itemList }}">
-                                                <i class="fas fa-edit"></i> @lang('Edit')
-                                            </a>
-                                        </li>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            @if(adminAccessRoute(config('permissionList.Manage_Raw_Items.Item_List.permission.edit')))
+                                                <li>
+                                                    <a class="dropdown-item btn editItem"
+                                                       data-route="{{route('user.updateRawItem', $itemList->id)}}"
+                                                       data-property="{{ $itemList }}">
+                                                        <i class="fas fa-edit"></i> @lang('Edit')
+                                                    </a>
+                                                </li>
+                                            @endif
 
-                                        <li>
-                                            <a class="dropdown-item btn deleteItem"
-                                               data-route="{{route('user.deleteRawItem', $itemList->id)}}"
-                                               data-property="{{ $itemList }}">
-                                                <i class="fas fa-trash-alt"></i> @lang('Delete')
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </td>
+                                            @if(adminAccessRoute(config('permissionList.Manage_Raw_Items.Item_List.permission.delete')))
+                                                <li>
+                                                    <a class="dropdown-item btn deleteItem"
+                                                       data-route="{{route('user.deleteRawItem', $itemList->id)}}"
+                                                       data-property="{{ $itemList }}">
+                                                        <i class="fas fa-trash-alt"></i> @lang('Delete')
+                                                    </a>
+                                                </li>
+                                            @endif
+                                        </ul>
+                                    </div>
+                                </td>
+                            @endif
                         </tr>
                     @empty
                         <tr class="text-center">

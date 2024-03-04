@@ -9,7 +9,8 @@
 
 <div id="sidebar" class="">
     <div class="sidebar-top">
-        <?php if(userType() == 1 && optional(auth()->user()->role)->company == null): ?>
+
+        <?php if(userType() == 1 && (optional(auth()->user()->role)->company == null || optional(auth()->user()->role)->company != null)): ?>
             <a class="navbar-brand d-none d-lg-block" href="<?php echo e(url('/')); ?>"> <img
                     src="<?php echo e(getFile(config('location.companyLogo.path').optional($user->activeCompany)->logo)); ?>"
                     alt="<?php echo e(config('basic.site_title')); ?>"/></a>
@@ -26,6 +27,7 @@
 
     <ul class="main">
 
+
         <?php if(adminAccessRoute(array_merge(config('permissionList.Company_Dashboard.Dashboard.permission.view')))): ?>
             <li>
                 <a class="<?php echo e(menuActive(['user.home'])); ?>" href="<?php echo e(route('user.home')); ?>"><i
@@ -33,7 +35,9 @@
             </li>
         <?php endif; ?>
 
-        <?php if(userType() == 1 && adminAccessRoute(array_merge(config('permissionList.Manage_Companies.Companies.permission.view')))): ?>
+
+
+        <?php if(auth()->user()->role_id == 0 && userType() == 1): ?>
             <li>
                 <a class="<?php echo e(menuActive(['user.companyList', 'user.createCompany', 'user.companyEdit'])); ?>"
                    href="<?php echo e(route('user.companyList')); ?>"><i class="fal fa-building"></i><?php echo app('translator')->get('Companies'); ?></a>
@@ -61,7 +65,7 @@
             </li>
         <?php endif; ?>
 
-        <?php if(userType() == 1 && adminAccessRoute(array_merge(config('permissionList.Manage_Raw_Items.Items.permission.view'), config('permissionList.Manage_Raw_Items.Purchase.permission.view'), config('permissionList.Manage_Raw_Items.Purchase_History.permission.view'), config('permissionList.Manage_Raw_Items.Stock_List.permission.view')))): ?>
+        <?php if(userType() == 1 && adminAccessRoute(array_merge(config('permissionList.Manage_Raw_Items.Item_List.permission.view'), config('permissionList.Manage_Raw_Items.Purchase.permission.add'), config('permissionList.Manage_Raw_Items.Purchase_History.permission.view'), config('permissionList.Manage_Raw_Items.Stock_List.permission.view')))): ?>
             <li>
                 <a
                     class="dropdown-toggle"
@@ -76,7 +80,7 @@
                     class="collapse <?php echo e(menuActive(['user.rawItemList', 'user.purchaseRawItem', 'user.purchaseRawItemList', 'user.rawItemPurchaseDetails', 'user.purchaseRawItemStocks'],4)); ?> dropdownRawItems"
                     id="dropdownRawItems">
                     <ul class="">
-                        <?php if(adminAccessRoute(config('permissionList.Manage_Raw_Items.Items.permission.view'))): ?>
+                        <?php if(adminAccessRoute(config('permissionList.Manage_Raw_Items.Item_List.permission.view'))): ?>
                             <li>
                                 <a class="<?php echo e(in_array($currentRouteName, ['user.rawItemList']) ? 'active' : ''); ?>"
                                    href="<?php echo e(route('user.rawItemList')); ?>"><i
@@ -85,7 +89,7 @@
                             </li>
                         <?php endif; ?>
 
-                        <?php if(adminAccessRoute(config('permissionList.Manage_Raw_Items.Items.Purchase.view'))): ?>
+                        <?php if(adminAccessRoute(config('permissionList.Manage_Raw_Items.Purchase.permission.add'))): ?>
                             <li>
                                 <a class="<?php echo e(in_array($currentRouteName, ['user.purchaseRawItem']) ? 'active' : ''); ?>"
                                    href="<?php echo e(route('user.purchaseRawItem')); ?>"><i
@@ -94,7 +98,7 @@
                             </li>
                         <?php endif; ?>
 
-                        <?php if(adminAccessRoute(config('permissionList.Manage_Raw_Items.Items.Purchase_History.view'))): ?>
+                        <?php if(adminAccessRoute(config('permissionList.Manage_Raw_Items.Purchase_History.permission.view'))): ?>
                             <li>
                                 <a class="<?php echo e(in_array($currentRouteName, ['user.purchaseRawItemList', 'user.rawItemPurchaseDetails']) ? 'active' : ''); ?>"
                                    href="<?php echo e(route('user.purchaseRawItemList')); ?>"><i
@@ -103,11 +107,11 @@
                             </li>
                         <?php endif; ?>
 
-                        <?php if(adminAccessRoute(config('permissionList.Manage_Raw_Items.Items.Stock_List.view'))): ?>
+                        <?php if(adminAccessRoute(config('permissionList.Manage_Raw_Items.Stock_List.permission.view'))): ?>
                             <li>
                                 <a class="<?php echo e(in_array($currentRouteName, ['user.purchaseRawItemStocks']) ? 'active' : ''); ?>"
                                    href="<?php echo e(route('user.purchaseRawItemStocks')); ?>"><i
-                                        class="fal fa-house-return"></i><?php echo app('translator')->get('Item Stocks'); ?>
+                                        class="fal fa-house-return"></i><?php echo app('translator')->get('Stock List'); ?>
                                 </a>
                             </li>
                         <?php endif; ?>
@@ -123,7 +127,7 @@
             </li>
         <?php endif; ?>
 
-        <?php if(userType() == 2 || (userType() == 1 && adminAccessRoute(array_merge(config('permissionList.Manage_Stocks.Stocks.permission.view'))))): ?>
+        <?php if(userType() == 2 || (userType() == 1 && adminAccessRoute(array_merge(config('permissionList.Manage_Stocks.Stock_List.permission.view'), config('permissionList.Manage_Stocks.Stock_In.permission.add'), config('permissionList.Manage_Stocks.Stock_Transfer.permission.add'), config('permissionList.Manage_Stocks.Stock_Transfer_List.permission.view'))))): ?>
             <li>
                 <a
                     class="dropdown-toggle"
@@ -138,32 +142,42 @@
                     class="collapse <?php echo e(menuActive(['user.stockList', 'user.addStock', 'user.stockDetails', 'user.stockTransfer', 'user.stockTransferList', 'user.stockTransferDetails'],4)); ?> dropdownManageStocks"
                     id="dropdownManageStocks">
                     <ul class="">
-                        <li>
-                            <a class="<?php echo e(in_array($currentRouteName, ['user.stockList', 'user.stockDetails']) ? 'active' : ''); ?>"
-                               href="<?php echo e(route('user.stockList')); ?>"><i
-                                    class="fal fa-sack-dollar"></i><?php echo app('translator')->get('Stock List'); ?>
-                            </a>
-                        </li>
-                        <?php if(userType() == 1): ?>
+                        <?php if(adminAccessRoute(config('permissionList.Manage_Stocks.Stock_List.permission.view'))): ?>
                             <li>
-                                <a class="<?php echo e(in_array($currentRouteName, ['user.addStock']) ? 'active' : ''); ?>"
-                                   href="<?php echo e(route('user.addStock')); ?>"><i class="fal fa-house-return"></i><?php echo app('translator')->get('Stock In'); ?>
+                                <a class="<?php echo e(in_array($currentRouteName, ['user.stockList', 'user.stockDetails']) ? 'active' : ''); ?>"
+                                   href="<?php echo e(route('user.stockList')); ?>"><i
+                                        class="fal fa-sack-dollar"></i><?php echo app('translator')->get('Stock List'); ?>
                                 </a>
                             </li>
+                        <?php endif; ?>
 
+                        <?php if(userType() == 1 && adminAccessRoute(config('permissionList.Manage_Stocks.Stock_In.permission.add'))): ?>
                             <li>
-                                <a class="<?php echo e(in_array($currentRouteName, ['user.stockTransfer']) ? 'active' : ''); ?>" href="<?php echo e(route('user.stockTransfer')); ?>"><i
+                                <a class="<?php echo e(in_array($currentRouteName, ['user.addStock']) ? 'active' : ''); ?>"
+                                   href="<?php echo e(route('user.addStock')); ?>"><i
+                                        class="fal fa-house-return"></i><?php echo app('translator')->get('Stock In'); ?>
+                                </a>
+                            </li>
+                        <?php endif; ?>
+
+                        <?php if(userType() == 1 && adminAccessRoute(config('permissionList.Manage_Stocks.Stock_Transfer.permission.add'))): ?>
+                            <li>
+                                <a class="<?php echo e(in_array($currentRouteName, ['user.stockTransfer']) ? 'active' : ''); ?>"
+                                   href="<?php echo e(route('user.stockTransfer')); ?>"><i
                                         class="fal fa-house-return"></i><?php echo app('translator')->get('Stock Transfer'); ?>
                                 </a>
                             </li>
+                        <?php endif; ?>
 
+                        <?php if(userType() == 1 && adminAccessRoute(config('permissionList.Manage_Stocks.Stock_Transfer_List.permission.view'))): ?>
                             <li>
-                                <a class="<?php echo e(in_array($currentRouteName, ['user.stockTransferList', 'user.stockTransferDetails']) ? 'active' : ''); ?>" href="<?php echo e(route('user.stockTransferList')); ?>"><i
+                                <a class="<?php echo e(in_array($currentRouteName, ['user.stockTransferList', 'user.stockTransferDetails']) ? 'active' : ''); ?>"
+                                   href="<?php echo e(route('user.stockTransferList')); ?>"><i
                                         class="fal fa-house-return"></i><?php echo app('translator')->get('Stock Transfer List'); ?>
                                 </a>
                             </li>
-
                         <?php endif; ?>
+
                     </ul>
                 </div>
             </li>
@@ -180,7 +194,9 @@
                     aria-controls="collapseExample">
                     <i class="fal fa-car-building"></i><?php echo app('translator')->get('Sales'); ?>
                 </a>
-                <div class="collapse <?php echo e(menuActive(['user.salesItem', 'user.salesList', 'user.salesDetails', 'user.salesInvoice', 'user.returnSales'],4)); ?> dropdownManageSales" id="dropdownManageSales">
+                <div
+                    class="collapse <?php echo e(menuActive(['user.salesItem', 'user.salesList', 'user.salesDetails', 'user.salesInvoice', 'user.returnSales'],4)); ?> dropdownManageSales"
+                    id="dropdownManageSales">
                     <ul class="">
                         <?php if(adminAccessRoute(config('permissionList.Manage_Sales.Sales_List.permission.view'))): ?>
                             <li>
@@ -211,7 +227,7 @@
             </li>
         <?php endif; ?>
 
-        <?php if(userType() == 1 && adminAccessRoute(array_merge(config('permissionList.Manage_Affiliate_Members.Affiliate.permission.view')))): ?>
+        <?php if(userType() == 1 && adminAccessRoute(array_merge(config('permissionList.Manage_Affiliate.Affiliate.permission.view')))): ?>
             <li>
                 <a class="<?php echo e(menuActive(['user.affiliateMemberList', 'user.createAffiliateMember', 'user.affiliateMemberEdit'])); ?>"
                    href="<?php echo e(route('user.affiliateMemberList')); ?>"><i class="fal fa-sitemap"></i><?php echo app('translator')->get('Affiliate'); ?>
@@ -362,7 +378,7 @@
                     <i class="fal fa-car-building"></i><?php echo app('translator')->get('Roles & Permission'); ?>
                 </a>
                 <div
-                    class="collapse <?php echo e(menuActive(['user.role', 'user.role.staff'],4)); ?> dropDownRolesAndPermission"
+                    class="collapse <?php echo e(menuActive(['user.role', 'user.role.staff', 'user.createRole', 'user.editRole'],4)); ?> dropDownRolesAndPermission"
                     id="dropDownRolesAndPermission">
                     <ul class="">
                         <li>
@@ -396,7 +412,9 @@
         </li>
     </ul>
 
-    <?php echo $__env->make($theme . 'partials.sidebarBottom', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+    <?php if(auth()->user()->role_id == 0 && userType() == 1): ?>
+        <?php echo $__env->make($theme . 'partials.sidebarBottom', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+    <?php endif; ?>
 
 </div>
 <?php /**PATH D:\xammp\htdocs\inventory_management\project\resources\views/themes/original/partials/sidebar.blade.php ENDPATH**/ ?>

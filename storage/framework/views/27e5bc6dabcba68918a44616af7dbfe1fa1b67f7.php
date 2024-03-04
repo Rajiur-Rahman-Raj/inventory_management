@@ -9,12 +9,12 @@
             <div class="row mt-4 mb-2">
                 <div class="col ms-2">
                     <div class="header-text-full">
-                        <h3 class="dashboard_breadcurmb_heading mb-1"><?php echo app('translator')->get('Customer List'); ?></h3>
+                        <h3 class="dashboard_breadcurmb_heading mb-1"><?php echo app('translator')->get('Supplier List'); ?></h3>
                         <nav aria-label="breadcrumb" class="ms-2">
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="<?php echo e(route('user.home')); ?>"><?php echo app('translator')->get('Dashboard'); ?></a>
                                 </li>
-                                <li class="breadcrumb-item active" aria-current="page"><?php echo app('translator')->get('Customer List'); ?></li>
+                                <li class="breadcrumb-item active" aria-current="page"><?php echo app('translator')->get('Supplier List'); ?></li>
                             </ol>
                         </nav>
                     </div>
@@ -80,10 +80,12 @@
                 </form>
             </div>
 
-            <div class="d-flex justify-content-end mb-4">
-                <a href="<?php echo e(route('user.createSupplier')); ?>" class="btn btn-custom text-white "> <i
-                        class="fa fa-plus-circle"></i> <?php echo app('translator')->get('Add Supplier'); ?></a>
-            </div>
+            <?php if(adminAccessRoute(array_merge(config('permissionList.Manage_Suppliers.Suppliers.permission.add')))): ?>
+                <div class="d-flex justify-content-end mb-4">
+                    <a href="<?php echo e(route('user.createSupplier')); ?>" class="btn btn-custom text-white "> <i
+                            class="fa fa-plus-circle"></i> <?php echo app('translator')->get('Add Supplier'); ?></a>
+                </div>
+            <?php endif; ?>
 
             <div class="table-parent table-responsive me-2 ms-2 mt-4">
                 <table class="table table-striped">
@@ -137,20 +139,24 @@
                                             <a href="<?php echo e(route('user.supplierDetails', $supplier->id)); ?>"
                                                class="dropdown-item"> <i class="fal fa-eye"></i> <?php echo app('translator')->get('Details'); ?> </a>
                                         </li>
+                                        <?php if(adminAccessRoute(array_merge(config('permissionList.Manage_Suppliers.Suppliers.permission.edit')))): ?>
+                                            <li>
+                                                <a class="dropdown-item btn"
+                                                   href="<?php echo e(route('user.supplierEdit', $supplier->id)); ?>">
+                                                    <i class="fas fa-edit"></i> <?php echo app('translator')->get('Edit'); ?>
+                                                </a>
+                                            </li>
+                                        <?php endif; ?>
 
-                                        <li>
-                                            <a class="dropdown-item btn" href="<?php echo e(route('user.supplierEdit', $supplier->id)); ?>">
-                                                <i class="fas fa-edit"></i> <?php echo app('translator')->get('Edit'); ?>
-                                            </a>
-                                        </li>
-
-                                        <li>
-                                            <a class="dropdown-item btn deleteSupplier"
-                                               data-route="<?php echo e(route('user.deleteSupplier', $supplier->id)); ?>"
-                                               data-property="<?php echo e($supplier); ?>">
-                                                <i class="fas fa-trash-alt"></i> <?php echo app('translator')->get('Delete'); ?>
-                                            </a>
-                                        </li>
+                                        <?php if(adminAccessRoute(array_merge(config('permissionList.Manage_Suppliers.Suppliers.permission.delete')))): ?>
+                                            <li>
+                                                <a class="dropdown-item btn deleteSupplier"
+                                                   data-route="<?php echo e(route('user.deleteSupplier', $supplier->id)); ?>"
+                                                   data-property="<?php echo e($supplier); ?>">
+                                                    <i class="fas fa-trash-alt"></i> <?php echo app('translator')->get('Delete'); ?>
+                                                </a>
+                                            </li>
+                                        <?php endif; ?>
 
                                     </ul>
                                 </div>

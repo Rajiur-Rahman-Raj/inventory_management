@@ -78,6 +78,7 @@
                 </form>
             </div>
 
+
             <div class="d-flex justify-content-end mb-4">
                 @if(userType() == 1)
                     <a href="{{route('user.addStock')}}" class="btn btn-custom text-white "> <i

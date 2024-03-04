@@ -28,7 +28,8 @@
 
                         <div class="input-box col-lg-3">
                             <label for=""><?php echo app('translator')->get('Sales Center'); ?></label>
-                            <select class="form-control js-example-basic-single" name="sales_center_id" aria-label="Default select example">
+                            <select class="form-control js-example-basic-single" name="sales_center_id"
+                                    aria-label="Default select example">
                                 <option value=""><?php echo app('translator')->get('All'); ?></option>
                                 <?php $__currentLoopData = $centerLists; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $centerList): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                     <option
@@ -59,10 +60,12 @@
                 </form>
             </div>
 
-            <div class="d-flex justify-content-end mb-4">
-                <a href="<?php echo e(route('user.createSalesCenter')); ?>" class="btn btn-custom text-white "> <i
-                        class="fa fa-plus-circle"></i> <?php echo app('translator')->get('Create Center'); ?></a>
-            </div>
+            <?php if(adminAccessRoute(array_merge(config('permissionList.Manage_Sales_Center.Sales_Center.permission.add')))): ?>
+                <div class="d-flex justify-content-end mb-4">
+                    <a href="<?php echo e(route('user.createSalesCenter')); ?>" class="btn btn-custom text-white "> <i
+                            class="fa fa-plus-circle"></i> <?php echo app('translator')->get('Create Center'); ?></a>
+                </div>
+            <?php endif; ?>
 
             <div class="table-parent table-responsive me-2 ms-2 mt-4">
                 <table class="table table-striped">
@@ -84,7 +87,8 @@
                             <td class="company-logo" data-label="<?php echo app('translator')->get('Owner'); ?>">
                                 <div>
                                     <a href="" target="_blank">
-                                        <img src="<?php echo e(getFile(config('location.user.path').optional($centerList->user)->image)); ?>">
+                                        <img
+                                            src="<?php echo e(getFile(config('location.user.path').optional($centerList->user)->image)); ?>">
                                     </a>
                                 </div>
                                 <div>
@@ -115,21 +119,24 @@
                                             <a href="<?php echo e(route('user.salesCenterDetails', $centerList->id)); ?>"
                                                class="dropdown-item"> <i class="fal fa-eye"></i> <?php echo app('translator')->get('Details'); ?> </a>
                                         </li>
+                                        <?php if(adminAccessRoute(array_merge(config('permissionList.Manage_Sales_Center.Sales_Center.permission.edit')))): ?>
+                                            <li>
+                                                <a class="dropdown-item btn"
+                                                   href="<?php echo e(route('user.salesCenterEdit', $centerList->id)); ?>">
+                                                    <i class="fas fa-edit"></i> <?php echo app('translator')->get('Edit'); ?>
+                                                </a>
+                                            </li>
+                                        <?php endif; ?>
 
-                                        <li>
-                                            <a class="dropdown-item btn"
-                                               href="<?php echo e(route('user.salesCenterEdit', $centerList->id)); ?>">
-                                                <i class="fas fa-edit"></i> <?php echo app('translator')->get('Edit'); ?>
-                                            </a>
-                                        </li>
-
-                                        <li>
-                                            <a class="dropdown-item btn deleteCenter"
-                                               data-route="<?php echo e(route('user.deleteSalesCenter', $centerList->id)); ?>"
-                                               data-property="<?php echo e($centerList); ?>">
-                                                <i class="fas fa-trash-alt"></i> <?php echo app('translator')->get('Delete'); ?>
-                                            </a>
-                                        </li>
+                                        <?php if(adminAccessRoute(array_merge(config('permissionList.Manage_Sales_Center.Sales_Center.permission.delete')))): ?>
+                                            <li>
+                                                <a class="dropdown-item btn deleteCenter"
+                                                   data-route="<?php echo e(route('user.deleteSalesCenter', $centerList->id)); ?>"
+                                                   data-property="<?php echo e($centerList); ?>">
+                                                    <i class="fas fa-trash-alt"></i> <?php echo app('translator')->get('Delete'); ?>
+                                                </a>
+                                            </li>
+                                        <?php endif; ?>
 
                                     </ul>
                                 </div>

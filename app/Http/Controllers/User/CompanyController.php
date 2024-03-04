@@ -173,6 +173,12 @@ class CompanyController extends Controller
     {
         $user = $this->user;
 
+        User::with('role')
+            ->whereNotNull('role_id')
+            ->where('role_id', '!=', 0)
+            ->orderBy('role_id', 'asc')
+            ->update(['active_company_id' => $id]);
+
         $company = Company::where('user_id', $user->id)->findOrFail($id);
 
         $user = User::findOrFail($user->id);
@@ -185,6 +191,13 @@ class CompanyController extends Controller
     public function companyActive($id)
     {
         $user = $this->user;
+
+
+        User::with('role')
+            ->whereNotNull('role_id')
+            ->where('role_id', '!=', 0)
+            ->orderBy('role_id', 'asc')
+            ->update(['active_company_id' => $id]);
 
         $company = Company::where('user_id', $user->id)->findOrFail($id);
 
@@ -1318,7 +1331,6 @@ class CompanyController extends Controller
                 ]);
             })
             ->findOrFail($id);
-
         return view($this->theme . 'user.manageSales.salesDetails', $data);
     }
 
@@ -1834,8 +1846,8 @@ class CompanyController extends Controller
 
     public function salesOrderUpdate(Request $request, $id)
     {
-
         $purifiedData = Purify::clean($request->except('_token', '_method'));
+
         $rules = [
             'payment_date' => 'required',
             'payment_note' => 'nullable',
@@ -1868,6 +1880,7 @@ class CompanyController extends Controller
 
         $sale->customer_paid_amount = $due_or_change_amount <= 0 ? $sale->total_amount : (float)$request->customer_paid_amount + (float)$sale->customer_paid_amount;
         $sale->due_amount = $due_or_change_amount <= 0 ? 0 : $request->due_or_change_amount;
+        $sale->discount += $request->discount_amount;
         $sale->latest_payment_date = Carbon::parse($request->payment_date);
         $sale->payment_status = $due_or_change_amount <= 0 ? 1 : 0;
         $sale->latest_note = $request->note;
@@ -2193,7 +2206,7 @@ class CompanyController extends Controller
     // Suppliers Module
     public function suppliers(Request $request)
     {
-
+        $admin = $this->user;
         $search = $request->all();
         $fromDate = Carbon::parse($request->from_date);
         $toDate = Carbon::parse($request->to_date)->addDay();
@@ -2214,29 +2227,9 @@ class CompanyController extends Controller
             ->when(isset($search['to_date']), function ($q2) use ($fromDate, $toDate) {
                 return $q2->whereBetween('created_at', [$fromDate, $toDate]);
             })
+            ->where('company_id', $admin->active_company_id)
             ->latest()
             ->paginate(config('basic.paginate'));
-
-
-//        $data['customers'] = Customer::with('division:id,name', 'district:id,name', 'upazila:id,name', 'union:id,name')
-//            ->when(isset($search['name']), function ($query) use ($search) {
-//                $query->where('name', 'LIKE', '%' . $search['name'] . '%');
-//            })
-//            ->when(isset($search['email']), function ($query) use ($search) {
-//                $query->where('email', 'LIKE', '%' . $search['email'] . '%');
-//            })
-//            ->when(isset($search['phone']), function ($query) use ($search) {
-//                $query->where('phone', 'LIKE', '%' . $search['phone'] . '%');
-//            })
-//            ->when(isset($search['from_date']), function ($q2) use ($fromDate) {
-//                return $q2->whereDate('created_at', '>=', $fromDate);
-//            })
-//            ->when(isset($search['to_date']), function ($q2) use ($fromDate, $toDate) {
-//                return $q2->whereBetween('created_at', [$fromDate, $toDate]);
-//            })
-//            ->select('id', 'division_id', 'district_id', 'upazila_id', 'union_id', 'name', 'email', 'phone', 'national_id', 'address', 'created_at')
-//            ->where('company_id', $admin->active_company_id)
-//            ->latest()->paginate(config('basic.paginate'));
 
         return view($this->theme . 'user.suppliers.index', $data);
     }

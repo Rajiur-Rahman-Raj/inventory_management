@@ -209,16 +209,24 @@
                                 <h5>@lang('Total Due Amount')</h5>
                                 <h6 class="total-due-amount"></h6>
                             </div>
-                            <div
-                                class="enter-amount d-flex justify-content-between align-items-center">
-                                <h6>Customer Paid Amount</h6>
-                                <input type="text"
-                                       class="form-control customer-paid-amount"
-                                       value="0" min="0"
-                                       onkeyup="this.value = this.value.replace (/^\.|[^\d\.]/g, '')"
-                                       id="exampleFormControlInput1"
-                                       name="customer_paid_amount">
+
+                            <div class="enter-amount d-flex justify-content-between align-items-center">
+                                <h6>@lang('Discount Amount')</h6>
+                                <div class="input-group d-flex ">
+                                    <input type="text" name="discount_amount" value="0" min="0" class="form-control bg-white text-dark discount-amount" onkeyup="this.value = this.value.replace (/^\.|[^\d\.]/g, '')">
+                                </div>
                             </div>
+
+                            <div class="enter-amount d-flex justify-content-between align-items-center">
+                                <h6>@lang('Customer Paid Amount')</h6>
+                                <div class="input-group d-flex ">
+                                    <input type="text" class="form-control customer-paid-amount" value="0" min="0"
+                                           onkeyup="this.value = this.value.replace (/^\.|[^\d\.]/g, '')"
+                                           id="exampleFormControlInput1" name="customer_paid_amount">
+                                </div>
+
+                            </div>
+
                             <div
                                 class="change-amount d-flex align-items-center justify-content-between">
                                 <h4 class="m-2 due-or-change-text"></h4>  <span
@@ -335,10 +343,29 @@
 
 
         $(document).on('keyup', '.customer-paid-amount', function () {
-            var totalAmount = parseFloat($('.total-due-amount').text().match(/[\d.]+/)[0]);
-            let customerPaidAmount = isNaN(parseFloat($(this).val())) ? 0 : parseFloat($(this).val());
+            let _this = $(this);
+            makeSalesDuePaymentCal(_this);
+        });
 
-            let dueOrChangeAmount = totalAmount - customerPaidAmount;
+        $(document).on('keyup', '.discount-amount', function (){
+            let _this = $(this);
+            makeSalesDuePaymentCal(_this);
+        });
+
+
+        function makeSalesDuePaymentCal(_this){
+            var totalAmount = parseFloat($('.total-due-amount').text().match(/[\d.]+/)[0]);
+            var discountAmount = isNaN(parseFloat($('.discount-amount').val())) ? 0 : parseFloat($('.discount-amount').val());
+            let customerPaidAmount = isNaN(parseFloat($('.customer-paid-amount').val())) ? 0 : parseFloat($('.customer-paid-amount').val());
+
+            if(discountAmount > totalAmount){
+                Notiflix.Notify.warning('Discount amount can not exceed the total due amount');
+                $(this).val(totalAmount);
+            }
+
+            let newTotalAmount = totalAmount - discountAmount;
+
+            let dueOrChangeAmount = newTotalAmount - customerPaidAmount;
 
             if (dueOrChangeAmount >= 0) {
                 $('.due-or-change-text').text('Due Amount')
@@ -351,12 +378,12 @@
             } else {
                 $('.due-or-change-text').text('Change Amount')
                 $('.due-or-change-amount').text(`${Math.abs(dueOrChangeAmount).toFixed(2)} {{ $basic->currency_symbol }}`)
-                $('.total-payable-amount').text(`${totalAmount.toFixed(2)} {{ $basic->currency_symbol }}`)
+                $('.total-payable-amount').text(`${newTotalAmount.toFixed(2)} {{ $basic->currency_symbol }}`)
 
                 $('.due_or_change_amount_input').val(`${dueOrChangeAmount.toFixed(2)}`)
-                $('.total_payable_amount_input').val(`${totalAmount.toFixed(2)}`)
+                $('.total_payable_amount_input').val(`${newTotalAmount.toFixed(2)}`)
             }
-        });
+        }
 
     </script>
 @endpush

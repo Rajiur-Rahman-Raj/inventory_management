@@ -9,7 +9,8 @@
 
 <div id="sidebar" class="">
     <div class="sidebar-top">
-        @if(userType() == 1 && optional(auth()->user()->role)->company == null)
+
+        @if(userType() == 1 && (optional(auth()->user()->role)->company == null || optional(auth()->user()->role)->company != null))
             <a class="navbar-brand d-none d-lg-block" href="{{url('/')}}"> <img
                     src="{{getFile(config('location.companyLogo.path').optional($user->activeCompany)->logo)}}"
                     alt="{{config('basic.site_title')}}"/></a>
@@ -26,6 +27,7 @@
 
     <ul class="main">
 
+
         @if(adminAccessRoute(array_merge(config('permissionList.Company_Dashboard.Dashboard.permission.view'))))
             <li>
                 <a class="{{menuActive(['user.home'])}}" href="{{ route('user.home') }}"><i
@@ -33,7 +35,9 @@
             </li>
         @endif
 
-        @if(userType() == 1 && adminAccessRoute(array_merge(config('permissionList.Manage_Companies.Companies.permission.view'))))
+
+
+        @if(auth()->user()->role_id == 0 && userType() == 1)
             <li>
                 <a class="{{menuActive(['user.companyList', 'user.createCompany', 'user.companyEdit'])}}"
                    href="{{ route('user.companyList') }}"><i class="fal fa-building"></i>@lang('Companies')</a>
@@ -61,7 +65,7 @@
             </li>
         @endif
 
-        @if(userType() == 1 && adminAccessRoute(array_merge(config('permissionList.Manage_Raw_Items.Items.permission.view'), config('permissionList.Manage_Raw_Items.Purchase.permission.view'), config('permissionList.Manage_Raw_Items.Purchase_History.permission.view'), config('permissionList.Manage_Raw_Items.Stock_List.permission.view'))))
+        @if(userType() == 1 && adminAccessRoute(array_merge(config('permissionList.Manage_Raw_Items.Item_List.permission.view'), config('permissionList.Manage_Raw_Items.Purchase.permission.add'), config('permissionList.Manage_Raw_Items.Purchase_History.permission.view'), config('permissionList.Manage_Raw_Items.Stock_List.permission.view'))))
             <li>
                 <a
                     class="dropdown-toggle"
@@ -76,7 +80,7 @@
                     class="collapse {{menuActive(['user.rawItemList', 'user.purchaseRawItem', 'user.purchaseRawItemList', 'user.rawItemPurchaseDetails', 'user.purchaseRawItemStocks'],4)}} dropdownRawItems"
                     id="dropdownRawItems">
                     <ul class="">
-                        @if(adminAccessRoute(config('permissionList.Manage_Raw_Items.Items.permission.view')))
+                        @if(adminAccessRoute(config('permissionList.Manage_Raw_Items.Item_List.permission.view')))
                             <li>
                                 <a class="{{ in_array($currentRouteName, ['user.rawItemList']) ? 'active' : '' }}"
                                    href="{{ route('user.rawItemList') }}"><i
@@ -85,7 +89,7 @@
                             </li>
                         @endif
 
-                        @if(adminAccessRoute(config('permissionList.Manage_Raw_Items.Items.Purchase.view')))
+                        @if(adminAccessRoute(config('permissionList.Manage_Raw_Items.Purchase.permission.add')))
                             <li>
                                 <a class="{{ in_array($currentRouteName, ['user.purchaseRawItem']) ? 'active' : '' }}"
                                    href="{{ route('user.purchaseRawItem') }}"><i
@@ -94,7 +98,7 @@
                             </li>
                         @endif
 
-                        @if(adminAccessRoute(config('permissionList.Manage_Raw_Items.Items.Purchase_History.view')))
+                        @if(adminAccessRoute(config('permissionList.Manage_Raw_Items.Purchase_History.permission.view')))
                             <li>
                                 <a class="{{ in_array($currentRouteName, ['user.purchaseRawItemList', 'user.rawItemPurchaseDetails']) ? 'active' : '' }}"
                                    href="{{ route('user.purchaseRawItemList') }}"><i
@@ -103,11 +107,11 @@
                             </li>
                         @endif
 
-                        @if(adminAccessRoute(config('permissionList.Manage_Raw_Items.Items.Stock_List.view')))
+                        @if(adminAccessRoute(config('permissionList.Manage_Raw_Items.Stock_List.permission.view')))
                             <li>
                                 <a class="{{ in_array($currentRouteName, ['user.purchaseRawItemStocks']) ? 'active' : '' }}"
                                    href="{{ route('user.purchaseRawItemStocks') }}"><i
-                                        class="fal fa-house-return"></i>@lang('Item Stocks')
+                                        class="fal fa-house-return"></i>@lang('Stock List')
                                 </a>
                             </li>
                         @endif
@@ -123,7 +127,7 @@
             </li>
         @endif
 
-        @if(userType() == 2 || (userType() == 1 && adminAccessRoute(array_merge(config('permissionList.Manage_Stocks.Stocks.permission.view')))))
+        @if(userType() == 2 || (userType() == 1 && adminAccessRoute(array_merge(config('permissionList.Manage_Stocks.Stock_List.permission.view'), config('permissionList.Manage_Stocks.Stock_In.permission.add'), config('permissionList.Manage_Stocks.Stock_Transfer.permission.add'), config('permissionList.Manage_Stocks.Stock_Transfer_List.permission.view')))))
             <li>
                 <a
                     class="dropdown-toggle"
@@ -138,32 +142,42 @@
                     class="collapse {{menuActive(['user.stockList', 'user.addStock', 'user.stockDetails', 'user.stockTransfer', 'user.stockTransferList', 'user.stockTransferDetails'],4)}} dropdownManageStocks"
                     id="dropdownManageStocks">
                     <ul class="">
-                        <li>
-                            <a class="{{ in_array($currentRouteName, ['user.stockList', 'user.stockDetails']) ? 'active' : '' }}"
-                               href="{{ route('user.stockList') }}"><i
-                                    class="fal fa-sack-dollar"></i>@lang('Stock List')
-                            </a>
-                        </li>
-                        @if(userType() == 1)
+                        @if(adminAccessRoute(config('permissionList.Manage_Stocks.Stock_List.permission.view')))
                             <li>
-                                <a class="{{ in_array($currentRouteName, ['user.addStock']) ? 'active' : '' }}"
-                                   href="{{ route('user.addStock') }}"><i class="fal fa-house-return"></i>@lang('Stock In')
+                                <a class="{{ in_array($currentRouteName, ['user.stockList', 'user.stockDetails']) ? 'active' : '' }}"
+                                   href="{{ route('user.stockList') }}"><i
+                                        class="fal fa-sack-dollar"></i>@lang('Stock List')
                                 </a>
                             </li>
+                        @endif
 
+                        @if(userType() == 1 && adminAccessRoute(config('permissionList.Manage_Stocks.Stock_In.permission.add')))
                             <li>
-                                <a class="{{ in_array($currentRouteName, ['user.stockTransfer']) ? 'active' : '' }}" href="{{ route('user.stockTransfer') }}"><i
+                                <a class="{{ in_array($currentRouteName, ['user.addStock']) ? 'active' : '' }}"
+                                   href="{{ route('user.addStock') }}"><i
+                                        class="fal fa-house-return"></i>@lang('Stock In')
+                                </a>
+                            </li>
+                        @endif
+
+                        @if(userType() == 1 && adminAccessRoute(config('permissionList.Manage_Stocks.Stock_Transfer.permission.add')))
+                            <li>
+                                <a class="{{ in_array($currentRouteName, ['user.stockTransfer']) ? 'active' : '' }}"
+                                   href="{{ route('user.stockTransfer') }}"><i
                                         class="fal fa-house-return"></i>@lang('Stock Transfer')
                                 </a>
                             </li>
+                        @endif
 
+                        @if(userType() == 1 && adminAccessRoute(config('permissionList.Manage_Stocks.Stock_Transfer_List.permission.view')))
                             <li>
-                                <a class="{{ in_array($currentRouteName, ['user.stockTransferList', 'user.stockTransferDetails']) ? 'active' : '' }}" href="{{ route('user.stockTransferList') }}"><i
+                                <a class="{{ in_array($currentRouteName, ['user.stockTransferList', 'user.stockTransferDetails']) ? 'active' : '' }}"
+                                   href="{{ route('user.stockTransferList') }}"><i
                                         class="fal fa-house-return"></i>@lang('Stock Transfer List')
                                 </a>
                             </li>
-
                         @endif
+
                     </ul>
                 </div>
             </li>
@@ -180,7 +194,9 @@
                     aria-controls="collapseExample">
                     <i class="fal fa-car-building"></i>@lang('Sales')
                 </a>
-                <div class="collapse {{menuActive(['user.salesItem', 'user.salesList', 'user.salesDetails', 'user.salesInvoice', 'user.returnSales'],4)}} dropdownManageSales" id="dropdownManageSales">
+                <div
+                    class="collapse {{menuActive(['user.salesItem', 'user.salesList', 'user.salesDetails', 'user.salesInvoice', 'user.returnSales'],4)}} dropdownManageSales"
+                    id="dropdownManageSales">
                     <ul class="">
                         @if(adminAccessRoute(config('permissionList.Manage_Sales.Sales_List.permission.view')))
                             <li>
@@ -211,7 +227,7 @@
             </li>
         @endif
 
-        @if(userType() == 1 && adminAccessRoute(array_merge(config('permissionList.Manage_Affiliate_Members.Affiliate.permission.view'))))
+        @if(userType() == 1 && adminAccessRoute(array_merge(config('permissionList.Manage_Affiliate.Affiliate.permission.view'))))
             <li>
                 <a class="{{menuActive(['user.affiliateMemberList', 'user.createAffiliateMember', 'user.affiliateMemberEdit'])}}"
                    href="{{ route('user.affiliateMemberList') }}"><i class="fal fa-sitemap"></i>@lang('Affiliate')
@@ -362,7 +378,7 @@
                     <i class="fal fa-car-building"></i>@lang('Roles & Permission')
                 </a>
                 <div
-                    class="collapse {{menuActive(['user.role', 'user.role.staff'],4)}} dropDownRolesAndPermission"
+                    class="collapse {{menuActive(['user.role', 'user.role.staff', 'user.createRole', 'user.editRole'],4)}} dropDownRolesAndPermission"
                     id="dropDownRolesAndPermission">
                     <ul class="">
                         <li>
@@ -396,6 +412,8 @@
         </li>
     </ul>
 
-    @include($theme . 'partials.sidebarBottom')
+    @if(auth()->user()->role_id == 0 && userType() == 1)
+        @include($theme . 'partials.sidebarBottom')
+    @endif
 
 </div>

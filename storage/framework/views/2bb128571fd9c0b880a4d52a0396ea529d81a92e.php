@@ -67,17 +67,15 @@ endif;
 unset($__errorArgs, $__bag); ?>
                                             </div>
                                         </div>
-
                                     </div>
+
                                     <div class="col-md-6 form-group">
                                         <label class="font-weight-bold text-dark"><?php echo app('translator')->get('Status'); ?></label>
                                         <div class="selectgroup">
                                             <select class="form-control js-example-basic-single" name="status"
                                                     aria-label="Default select example">
-                                                <option
-                                                    value="1" <?php echo e(old('status') == 1 ? 'selected' : ''); ?>><?php echo app('translator')->get('Active'); ?></option>
-                                                <option
-                                                    value="0" <?php echo e(old('status') == 0 ? 'selected' : ''); ?>><?php echo app('translator')->get('Deactive'); ?></option>
+                                                <option value="0" <?php echo e(old('status') == 0 ? 'selected' : ''); ?>><?php echo app('translator')->get('Deactive'); ?></option>
+                                                <option value="1" <?php echo e(old('status') == 1 ? 'selected' : ''); ?> selected><?php echo app('translator')->get('Active'); ?></option>
                                             </select>
                                         </div>
                                     </div>
@@ -230,6 +228,7 @@ unset($__errorArgs, $__bag); ?>
                                                                         <table class="child-table">
                                                                             <tbody>
                                                                             <?php $__currentLoopData = $permission; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key2 => $subMenu): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+
                                                                                 <?php
                                                                                     $j++;
                                                                                 ?>
@@ -238,7 +237,7 @@ unset($__errorArgs, $__bag); ?>
                                                                                         <input type="checkbox"
                                                                                                class="cursor-pointer multiplePermissionSelectAll<?php echo e($j); ?>"
                                                                                                id="multiplePermissionSelectAll<?php echo e($j); ?>"
-                                                                                               value="<?php echo e(join(",",$subMenu['permission']['view'])); ?>"
+
                                                                                                onclick="multiplePermissionSelectAll(<?php echo e($j); ?>)"
                                                                                                name="permissions[]">
                                                                                         <label class="mb-0"

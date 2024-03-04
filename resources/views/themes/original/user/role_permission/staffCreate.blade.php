@@ -129,9 +129,9 @@
                                             <select class="form-select js-example-basic-single" name="status"
                                                     aria-label="Default select example">
                                                 <option
-                                                    value="1" {{ old('status') == 1 ? 'selected' : ''}}> @lang('Active') </option>
+                                                    value="0" {{ old('status', @request()->status) == 0 ? 'selected' : ''}}> @lang('Deactive') </option>
                                                 <option
-                                                    value="0" {{ old('status') == 0 ? 'selected' : ''}}> @lang('Deactive') </option>
+                                                    value="1" {{ old('status', @request()->status) == 1 ? 'selected' : ''}} selected> @lang('Active') </option>
                                             </select>
 
                                             @if($errors->has('role_id'))

@@ -32,7 +32,8 @@
                                     aria-label="Default select example">
                                 <option value="">@lang('All')</option>
                                 @foreach($rawItems as $item)
-                                    <option value="{{ $item->id }}" {{ @request()->item_id == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
+                                    <option
+                                        value="{{ $item->id }}" {{ @request()->item_id == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -45,10 +46,12 @@
                 </form>
             </div>
 
-            <div class="d-flex justify-content-end mb-4">
-                <a href="{{route('user.purchaseRawItem')}}" class="btn btn-custom text-white"> <i
-                        class="fa fa-plus-circle"></i> @lang('Purchase')</a>
-            </div>
+            @if(adminAccessRoute(config('permissionList.Manage_Raw_Items.Purchase.permission.add')))
+                <div class="d-flex justify-content-end mb-4">
+                    <a href="{{route('user.purchaseRawItem')}}" class="btn btn-custom text-white"> <i
+                            class="fa fa-plus-circle"></i> @lang('Purchase')</a>
+                </div>
+            @endif
 
             <div class="table-parent table-responsive me-2 ms-2 mt-4">
                 <table class="table table-striped">
@@ -66,8 +69,9 @@
                             <td data-label="@lang('Image')">
                                 <div class="d-flex gap-2">
                                     <div class="logo-brand">
-                                        <img src="{{ getFile(config('location.rawItemImage.path').optional($purchaseItem->rawItem)->image) }}"
-                                             alt="">
+                                        <img
+                                            src="{{ getFile(config('location.rawItemImage.path').optional($purchaseItem->rawItem)->image) }}"
+                                            alt="">
                                     </div>
                                     <div class="product-summary">
                                         <p class="font-weight-bold mt-3">{{ optional($purchaseItem->rawItem)->name }}</p>

@@ -11,27 +11,17 @@ $arr = [
 			],
 		],
 	],
-	"Manage_Companies" => [
-		"Companies" => [
-			'permission' => [
-				'view' => ['user.companyList'],
-				'add' => ['user.createCompany', 'user.companyStore'],
-				'edit' => ['user.companyEdit', 'user.companyUpdate'],
-				'delete' => ['user.deleteCompany'],
-				'switch' => ['user.activeCompany', 'user.inactiveCompany', 'user.companyActive'],
-			],
-		],
-	],
-    "Manage_Sales_Center" => [
-        "Sales_Center" => [
-            'permission' => [
-                'view' => ['user.salesCenterList', 'user.salesCenterDetails'],
-                'add' => ['user.createSalesCenter', 'user.storeSalesCenter'],
-                'edit' => [],
-                'delete' => ['user.deleteSalesCenter'],
-            ],
-        ],
-    ],
+//	"Manage_Companies" => [
+//		"Companies" => [
+//			'permission' => [
+//				'view' => ['user.companyList'],
+//				'add' => ['user.createCompany', 'user.companyStore'],
+//				'edit' => ['user.companyEdit', 'user.companyUpdate'],
+//				'delete' => ['user.deleteCompany'],
+//				'switch' => ['user.activeCompany', 'user.inactiveCompany', 'user.companyActive'],
+//			],
+//		],
+//	],
     "Manage_Suppliers" => [
         "Suppliers" => [
             'permission' => [
@@ -42,18 +32,28 @@ $arr = [
             ],
         ],
     ],
-	"Manage_Customers" => [
-		"Customers" => [
-			'permission' => [
-				'view' => ['user.customerList', 'user.customerDetails'],
-				'edit' => ['user.customerEdit', 'user.customerUpdate'],
-				'add' => ['user.createCustomer', 'user.customerStore'],
-				'delete' => ['user.deleteCustomer'],
-			],
-		],
-	],
+    "Manage_Sales_Center" => [
+        "Sales_Center" => [
+            'permission' => [
+                'view' => ['user.salesCenterList', 'user.salesCenterDetails'],
+                'add' => ['user.createSalesCenter', 'user.storeSalesCenter'],
+                'edit' => ['user.salesCenterEdit', 'user.updateSalesCenter'],
+                'delete' => ['user.deleteSalesCenter'],
+            ],
+        ],
+    ],
+//	"Manage_Customers" => [
+//		"Customers" => [
+//			'permission' => [
+//				'view' => ['user.customerList', 'user.customerDetails'],
+//				'edit' => ['user.customerEdit', 'user.customerUpdate'],
+//				'add' => ['user.createCustomer', 'user.customerStore'],
+//				'delete' => ['user.deleteCustomer'],
+//			],
+//		],
+//	],
     "Manage_Raw_Items" => [
-        "Items" => [
+        "Item_List" => [
             'permission' => [
                 'view' => ['user.rawItemList'],
                 'add' => ['user.rawItemStore'],
@@ -63,8 +63,7 @@ $arr = [
         ],
         "Purchase" => [
             'permission' => [
-                'view' => ['user.purchaseRawItem'],
-                'add' => ['user.storePurchaseItem'],
+                'add' => ['user.purchaseRawItem', 'user.storePurchaseItem'],
             ],
         ],
         "Purchase_History" => [
@@ -90,29 +89,41 @@ $arr = [
 	],
 
 	"Manage_Stocks" => [
-		"Stocks" => [
+		"Stock_List" => [
 			'permission' => [
 				'view' => ['user.stockList', 'user.stockDetails'],
-				'add' => ['user.addStock','user.stockStore'],
-				'edit' => [],
-				'delete' => [],
 			],
 		],
+        "Stock_In" => [
+            'permission' => [
+                'add' => ['user.addStock', 'user.stockStore'],
+            ],
+        ],
+        "Stock_Transfer" => [
+            'permission' => [
+                'add' => ['user.stockTransfer', 'user.storeStockTransfer'],
+            ],
+        ],
+        "Stock_Transfer_List" => [
+            'permission' => [
+                'view' => ['user.stockTransferList', 'user.stockTransferDetails'],
+            ],
+        ],
 	],
 
 	"Manage_Sales" => [
 		"Sales_List" => [
 			'permission' => [
 				'view' => ['user.salesList', 'user.salesDetails', 'user.salesInvoice'],
-				'return' => ['user.returnSales', 'user.returnSalesOrder', 'user.salesInvoiceUpdate', 'user.salesOrderUpdate'],
+//				'return' => ['user.returnSales', 'user.returnSalesOrder', 'user.salesInvoiceUpdate', 'user.salesOrderUpdate'],
 			],
 		],
-		"Sales_Item" => [
-			'permission' => [
-				'view' => ['user.salesItem'],
-				'add' => ['user.salesOrderStore'],
-			],
-		],
+//		"Sales_Item" => [
+//			'permission' => [
+//				'view' => ['user.salesItem'],
+//				'add' => ['user.salesOrderStore'],
+//			],
+//		],
 	],
 
 	'Manage_Wastage' => [
@@ -125,7 +136,7 @@ $arr = [
 		],
 	],
 
-	'Manage_Affiliate_Members' => [
+	'Manage_Affiliate' => [
 		"Affiliate" => [
 			'permission' => [
 				'view' => ['user.affiliateMemberList', 'user.affiliateMemberDetails'],

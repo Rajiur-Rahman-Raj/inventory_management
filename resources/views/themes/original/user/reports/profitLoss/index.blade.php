@@ -109,14 +109,29 @@
                         </tr>
 
                         <tr>
+                            <td>@lang('Total Purchase Due')</td>
+                            <td> {{ config('basic.currency_text') }} {{ fractionNumber($profitLossReportRecords['totalPurchaseDue'], false) }}</td>
+                        </tr>
+
+                        <tr>
                             <td>@lang('Total Stock')</td>
                             <td> {{ config('basic.currency_text') }} {{ fractionNumber($profitLossReportRecords['totalStocks'], false) }} </td>
+                        </tr>
+
+                        <tr>
+                            <td>@lang('Total Stock Transfer')</td>
+                            <td> {{ config('basic.currency_text') }} {{ fractionNumber($profitLossReportRecords['totalStockTransfer'], false) }} </td>
                         </tr>
 
                         @if(userType() == 1)
                             <tr>
                                 <td>@lang('Total Sales')</td>
                                 <td> {{ config('basic.currency_text') }} {{ fractionNumber($profitLossReportRecords['totalSales'], false) }} </td>
+                            </tr>
+
+                            <tr>
+                                <td>@lang('Total Sales Due')</td>
+                                <td> {{ config('basic.currency_text') }} {{ fractionNumber($profitLossReportRecords['totalSalesDue'], false) }} </td>
                             </tr>
 
                             <tr>

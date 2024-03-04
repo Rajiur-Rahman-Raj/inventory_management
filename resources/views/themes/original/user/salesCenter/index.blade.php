@@ -29,7 +29,8 @@
 
                         <div class="input-box col-lg-3">
                             <label for="">@lang('Sales Center')</label>
-                            <select class="form-control js-example-basic-single" name="sales_center_id" aria-label="Default select example">
+                            <select class="form-control js-example-basic-single" name="sales_center_id"
+                                    aria-label="Default select example">
                                 <option value="">@lang('All')</option>
                                 @foreach($centerLists as $centerList)
                                     <option
@@ -60,10 +61,12 @@
                 </form>
             </div>
 
-            <div class="d-flex justify-content-end mb-4">
-                <a href="{{route('user.createSalesCenter')}}" class="btn btn-custom text-white "> <i
-                        class="fa fa-plus-circle"></i> @lang('Create Center')</a>
-            </div>
+            @if(adminAccessRoute(array_merge(config('permissionList.Manage_Sales_Center.Sales_Center.permission.add'))))
+                <div class="d-flex justify-content-end mb-4">
+                    <a href="{{route('user.createSalesCenter')}}" class="btn btn-custom text-white "> <i
+                            class="fa fa-plus-circle"></i> @lang('Create Center')</a>
+                </div>
+            @endif
 
             <div class="table-parent table-responsive me-2 ms-2 mt-4">
                 <table class="table table-striped">
@@ -85,7 +88,8 @@
                             <td class="company-logo" data-label="@lang('Owner')">
                                 <div>
                                     <a href="" target="_blank">
-                                        <img src="{{ getFile(config('location.user.path').optional($centerList->user)->image) }}">
+                                        <img
+                                            src="{{ getFile(config('location.user.path').optional($centerList->user)->image) }}">
                                     </a>
                                 </div>
                                 <div>
@@ -116,21 +120,24 @@
                                             <a href="{{ route('user.salesCenterDetails', $centerList->id) }}"
                                                class="dropdown-item"> <i class="fal fa-eye"></i> @lang('Details') </a>
                                         </li>
+                                        @if(adminAccessRoute(array_merge(config('permissionList.Manage_Sales_Center.Sales_Center.permission.edit'))))
+                                            <li>
+                                                <a class="dropdown-item btn"
+                                                   href="{{ route('user.salesCenterEdit', $centerList->id) }}">
+                                                    <i class="fas fa-edit"></i> @lang('Edit')
+                                                </a>
+                                            </li>
+                                        @endif
 
-                                        <li>
-                                            <a class="dropdown-item btn"
-                                               href="{{ route('user.salesCenterEdit', $centerList->id) }}">
-                                                <i class="fas fa-edit"></i> @lang('Edit')
-                                            </a>
-                                        </li>
-
-                                        <li>
-                                            <a class="dropdown-item btn deleteCenter"
-                                               data-route="{{route('user.deleteSalesCenter', $centerList->id)}}"
-                                               data-property="{{ $centerList }}">
-                                                <i class="fas fa-trash-alt"></i> @lang('Delete')
-                                            </a>
-                                        </li>
+                                        @if(adminAccessRoute(array_merge(config('permissionList.Manage_Sales_Center.Sales_Center.permission.delete'))))
+                                            <li>
+                                                <a class="dropdown-item btn deleteCenter"
+                                                   data-route="{{route('user.deleteSalesCenter', $centerList->id)}}"
+                                                   data-property="{{ $centerList }}">
+                                                    <i class="fas fa-trash-alt"></i> @lang('Delete')
+                                                </a>
+                                            </li>
+                                        @endif
 
                                     </ul>
                                 </div>

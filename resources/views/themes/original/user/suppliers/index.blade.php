@@ -10,12 +10,12 @@
             <div class="row mt-4 mb-2">
                 <div class="col ms-2">
                     <div class="header-text-full">
-                        <h3 class="dashboard_breadcurmb_heading mb-1">@lang('Customer List')</h3>
+                        <h3 class="dashboard_breadcurmb_heading mb-1">@lang('Supplier List')</h3>
                         <nav aria-label="breadcrumb" class="ms-2">
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="{{ route('user.home') }}">@lang('Dashboard')</a>
                                 </li>
-                                <li class="breadcrumb-item active" aria-current="page">@lang('Customer List')</li>
+                                <li class="breadcrumb-item active" aria-current="page">@lang('Supplier List')</li>
                             </ol>
                         </nav>
                     </div>
@@ -81,10 +81,12 @@
                 </form>
             </div>
 
-            <div class="d-flex justify-content-end mb-4">
-                <a href="{{route('user.createSupplier')}}" class="btn btn-custom text-white "> <i
-                        class="fa fa-plus-circle"></i> @lang('Add Supplier')</a>
-            </div>
+            @if(adminAccessRoute(array_merge(config('permissionList.Manage_Suppliers.Suppliers.permission.add'))))
+                <div class="d-flex justify-content-end mb-4">
+                    <a href="{{route('user.createSupplier')}}" class="btn btn-custom text-white "> <i
+                            class="fa fa-plus-circle"></i> @lang('Add Supplier')</a>
+                </div>
+            @endif
 
             <div class="table-parent table-responsive me-2 ms-2 mt-4">
                 <table class="table table-striped">
@@ -138,20 +140,24 @@
                                             <a href="{{ route('user.supplierDetails', $supplier->id) }}"
                                                class="dropdown-item"> <i class="fal fa-eye"></i> @lang('Details') </a>
                                         </li>
+                                        @if(adminAccessRoute(array_merge(config('permissionList.Manage_Suppliers.Suppliers.permission.edit'))))
+                                            <li>
+                                                <a class="dropdown-item btn"
+                                                   href="{{ route('user.supplierEdit', $supplier->id) }}">
+                                                    <i class="fas fa-edit"></i> @lang('Edit')
+                                                </a>
+                                            </li>
+                                        @endif
 
-                                        <li>
-                                            <a class="dropdown-item btn" href="{{ route('user.supplierEdit', $supplier->id) }}">
-                                                <i class="fas fa-edit"></i> @lang('Edit')
-                                            </a>
-                                        </li>
-
-                                        <li>
-                                            <a class="dropdown-item btn deleteSupplier"
-                                               data-route="{{route('user.deleteSupplier', $supplier->id)}}"
-                                               data-property="{{ $supplier }}">
-                                                <i class="fas fa-trash-alt"></i> @lang('Delete')
-                                            </a>
-                                        </li>
+                                        @if(adminAccessRoute(array_merge(config('permissionList.Manage_Suppliers.Suppliers.permission.delete'))))
+                                            <li>
+                                                <a class="dropdown-item btn deleteSupplier"
+                                                   data-route="{{route('user.deleteSupplier', $supplier->id)}}"
+                                                   data-property="{{ $supplier }}">
+                                                    <i class="fas fa-trash-alt"></i> @lang('Delete')
+                                                </a>
+                                            </li>
+                                        @endif
 
                                     </ul>
                                 </div>

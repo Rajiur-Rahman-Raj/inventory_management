@@ -144,7 +144,7 @@
                             <div class="enter-amount d-flex justify-content-between align-items-center">
                                 <h6><?php echo app('translator')->get('Discount Amount'); ?></h6>
                                 <div class="input-group d-flex ">
-                                    <input type="text" name="discount_amount" value="0" min="0" max="100" class="form-control bg-white text-dark discount-amount" onkeyup="this.value = this.value.replace (/^\.|[^\d\.]/g, '')">
+                                    <input type="text" name="discount_amount" value="0" min="0" class="form-control bg-white text-dark discount-amount" onkeyup="this.value = this.value.replace (/^\.|[^\d\.]/g, '')">
                                 </div>
                             </div>
 

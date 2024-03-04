@@ -258,7 +258,7 @@ unset($__errorArgs, $__bag); ?>
                                                                                         <input type="checkbox"
                                                                                                class="cursor-pointer multiplePermissionSelectAll<?php echo e($j); ?>"
                                                                                                id="multiplePermissionSelectAll<?php echo e($j); ?>"
-                                                                                               value="<?php echo e(join(",",$subMenu['permission']['view'])); ?>"
+
                                                                                                onclick="multiplePermissionSelectAll(<?php echo e($j); ?>)"
                                                                                                name="permissions[]">
                                                                                         <label class="mb-0"

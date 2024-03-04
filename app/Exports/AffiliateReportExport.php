@@ -3,6 +3,8 @@
 namespace App\Exports;
 
 use App\Models\AffiliateMemberCommission;
+use App\Models\CentralPromoter;
+use App\Models\CentralPromoterCommission;
 use Carbon\Carbon;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
@@ -35,6 +37,8 @@ class AffiliateReportExport implements FromCollection, WithHeadings, ShouldAutoS
         $currencyText = config('basic.currency_text');
         $currencySymbol = config('basic.currency_symbol');
 
+        $centralPromoter = CentralPromoter::where('company_id', $admin->active_company_id)->select('id', 'name')->get();
+
         $affiliateReportRecords = AffiliateMemberCommission::with('affiliateMember:id,member_name')
             ->when(isset($search['from_date']), function ($query) use ($fromDate) {
                 return $query->whereDate('commission_date', '>=', $fromDate);
@@ -47,12 +51,27 @@ class AffiliateReportExport implements FromCollection, WithHeadings, ShouldAutoS
             })
             ->where('company_id', $admin->active_company_id)
             ->get();
+
+        $centralPromoterReportRecords = CentralPromoterCommission::with('centralPromoter:id,name')->where('central_promoter_id', $centralPromoter[0]->id)
+            ->when(isset($search['from_date']), function ($query) use ($fromDate) {
+                return $query->whereDate('commission_date', '>=', $fromDate);
+            })
+            ->when(isset($search['to_date']), function ($query) use ($fromDate, $toDate) {
+                return $query->whereBetween('commission_date', [$fromDate, $toDate]);
+            })
+            ->when(isset($search['central_promoter_id']) && $search['central_promoter_id'] != null, function ($query) use ($search) {
+                return $query->where('central_promoter_id', $search['central_promoter_id']);
+            })
+            ->first();
+
+        $affiliateReportRecords->prepend($centralPromoterReportRecords);
+
         $totalCommission = $affiliateReportRecords->sum('amount');
 
         $affiliateReportData = $affiliateReportRecords->map(function ($commission) use (&$SL, $currencySymbol) {
             return [
                 'SL' => ++$SL,
-                'Member' => $commission->affiliateMember->member_name,
+                'Affiliator' => $SL == 1 ? $commission->centralPromoter->name : $commission->affiliateMember->member_name,
                 'Commission' => $currencySymbol.' '.$commission->amount,
                 'Date Of Commission' => $commission->commission_date,
             ];
@@ -73,7 +92,7 @@ class AffiliateReportExport implements FromCollection, WithHeadings, ShouldAutoS
     {
         return [
             'SL',
-            'Member',
+            'Affiliator',
             'Commission',
             'Date Of Commission',
         ];

@@ -52,7 +52,6 @@ class RolesPermissionController extends Controller
 
     public function roleStore(Request $request)
     {
-
         $admin = $this->user;
         $purifiedData = Purify::clean($request->except('_token', '_method'));
 
@@ -78,7 +77,6 @@ class RolesPermissionController extends Controller
         $role->name = $request->name;
         $role->permission = (isset($request->permissions)) ? explode(',', join(',', $request->permissions)) : [];
         $role->status = $request->status;
-        $role->user_type = 1;
         $role->save();
 
         return back()->with('success', 'New role created successfully!');
@@ -117,7 +115,6 @@ class RolesPermissionController extends Controller
         $role->name = $request->name;
         $role->permission = (isset($request->permissions)) ? explode(',', join(',', $request->permissions)) : [];
         $role->status = $request->status;
-        $role->user_type = 1;
         $role->save();
 
         return back()->with('success', 'Role updated successfully!');
@@ -149,7 +146,7 @@ class RolesPermissionController extends Controller
 
     public function staffStore(Request $request)
     {
-
+        $admin = $this->user;
         $validator = Validator::make($request->all(), [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
@@ -169,6 +166,8 @@ class RolesPermissionController extends Controller
         $user->username = $request->username;
         $user->password = Hash::make($request->password);
         $user->role_id = $request->role_id;
+        $user->user_type = 1;
+        $user->active_company_id = $admin->active_company_id;
         $user->status = $request->status;
 
         $user->save();

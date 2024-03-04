@@ -54,17 +54,15 @@
                                                 @error('name') @lang($message) @enderror
                                             </div>
                                         </div>
-
                                     </div>
+
                                     <div class="col-md-6 form-group">
                                         <label class="font-weight-bold text-dark">@lang('Status')</label>
                                         <div class="selectgroup">
                                             <select class="form-control js-example-basic-single" name="status"
                                                     aria-label="Default select example">
-                                                <option
-                                                    value="1" {{ old('status') == 1 ? 'selected' : '' }}>@lang('Active')</option>
-                                                <option
-                                                    value="0" {{ old('status') == 0 ? 'selected' : '' }}>@lang('Deactive')</option>
+                                                <option value="0" {{ old('status') == 0 ? 'selected' : '' }}>@lang('Deactive')</option>
+                                                <option value="1" {{ old('status') == 1 ? 'selected' : '' }} selected>@lang('Active')</option>
                                             </select>
                                         </div>
                                     </div>
@@ -217,6 +215,7 @@
                                                                         <table class="child-table">
                                                                             <tbody>
                                                                             @foreach($permission as $key2 => $subMenu)
+
                                                                                 @php
                                                                                     $j++;
                                                                                 @endphp
@@ -225,7 +224,7 @@
                                                                                         <input type="checkbox"
                                                                                                class="cursor-pointer multiplePermissionSelectAll{{$j}}"
                                                                                                id="multiplePermissionSelectAll{{$j}}"
-                                                                                               value="{{join(",",$subMenu['permission']['view'])}}"
+{{--                                                                                               value="{{join(",",$subMenu['permission']['view'])}}"--}}
                                                                                                onclick="multiplePermissionSelectAll({{$j}})"
                                                                                                name="permissions[]">
                                                                                         <label class="mb-0"

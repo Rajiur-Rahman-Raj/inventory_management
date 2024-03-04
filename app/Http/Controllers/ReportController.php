@@ -277,6 +277,7 @@ class ReportController extends Controller
             $data['centralPromoter'] = CentralPromoter::where('company_id', $admin->active_company_id)->select('id', 'name')->get();
 
             if (!empty($search)) {
+
                 $data['affiliateReportRecords'] = AffiliateMemberCommission::with('affiliateMember:id,member_name')
                     ->when(isset($search['from_date']), function ($query) use ($fromDate) {
                         return $query->whereDate('commission_date', '>=', $fromDate);
@@ -284,26 +285,26 @@ class ReportController extends Controller
                     ->when(isset($search['to_date']), function ($query) use ($fromDate, $toDate) {
                         return $query->whereBetween('commission_date', [$fromDate, $toDate]);
                     })
-                    ->when($search['affiliate_member_id'] != null, function ($query) use ($search) {
+                    ->when(isset($search['affiliate_member_id']) && $search['affiliate_member_id'] != null, function ($query) use ($search) {
                         return $query->where('affiliate_member_id', $search['affiliate_member_id']);
                     })
                     ->where('company_id', $admin->active_company_id)
                     ->get();
 
-//                $data['centralPromoterReportRecords'] = CentralPromoterCommission::where('central_promoter_id', $data['centralPromoter'][0]->id)
-//                    ->when(isset($search['from_date']), function ($query) use ($fromDate) {
-//                        return $query->whereDate('commission_date', '>=', $fromDate);
-//                    })
-//                    ->when(isset($search['to_date']), function ($query) use ($fromDate, $toDate) {
-//                        return $query->whereBetween('commission_date', [$fromDate, $toDate]);
-//                    })
-//                    ->when($search['central_promoter_id'] != null, function ($query) use ($search) {
-//                        return $query->where('central_promoter_id', $search['central_promoter_id']);
-//                    })
-//                    ->where('company_id', $admin->active_company_id)
-//                    ->get();
 
+                $data['centralPromoterReportRecords'] = CentralPromoterCommission::with('centralPromoter:id,name')->where('central_promoter_id', $data['centralPromoter'][0]->id)
+                    ->when(isset($search['from_date']), function ($query) use ($fromDate) {
+                        return $query->whereDate('commission_date', '>=', $fromDate);
+                    })
+                    ->when(isset($search['to_date']), function ($query) use ($fromDate, $toDate) {
+                        return $query->whereBetween('commission_date', [$fromDate, $toDate]);
+                    })
+                    ->when(isset($search['central_promoter_id']) && $search['central_promoter_id'] != null, function ($query) use ($search) {
+                        return $query->where('central_promoter_id', $search['central_promoter_id']);
+                    })
+                    ->first();
 
+                $data['affiliateReportRecords']->prepend($data['centralPromoterReportRecords']);
 
                 $data['totalCommission'] = $data['affiliateReportRecords']->sum('amount');
 
@@ -442,7 +443,7 @@ class ReportController extends Controller
                     })
                     ->where('company_id', $admin->active_company_id)
                     ->selectRaw('SUM(total_amount) AS totalSales')
-                    ->selectRaw('SUM(due_amount) AS totalSalesDue')
+                    ->selectRaw('SUM(CASE WHEN payment_status = 0 THEN due_amount END) AS totalSalesDue')
                     ->get()
                     ->toArray();
 
@@ -474,16 +475,27 @@ class ReportController extends Controller
 
                 $data['profitLossReportRecords']['totalStocks'] = StockIn::when(isset($search['from_date']), fn($query) => $query->whereDate('stock_date', '>=', $fromDate))
                     ->when(isset($search['to_date']), fn($query) => $query->whereBetween('stock_date', [$fromDate, $toDate]))
-                    ->where('company_id', $admin->active_company_id)->sum('total_cost');
+                    ->where('company_id', $admin->active_company_id)->whereNull('sales_center_id')->sum('total_cost');
+
+                $data['profitLossReportRecords']['totalStockTransfer'] = StockIn::when(isset($search['from_date']), fn($query) => $query->whereDate('stock_date', '>=', $fromDate))
+                    ->when(isset($search['to_date']), fn($query) => $query->whereBetween('stock_date', [$fromDate, $toDate]))
+                    ->where('company_id', $admin->active_company_id)->whereNotNull('sales_center_id')->sum('total_cost');
 
                 $data['profitLossReportRecords']['totalWastage'] = Wastage::when(isset($search['from_date']), fn($query) => $query->whereDate('wastage_date', '>=', $fromDate))
                     ->when(isset($search['to_date']), fn($query) => $query->whereBetween('wastage_date', [$fromDate, $toDate]))
                     ->where('company_id', $admin->active_company_id)->sum('total_cost');
 
-                $data['profitLossReportRecords']['totalAffiliateCommission'] = AffiliateMemberCommission::when(isset($search['from_date']), fn($query) => $query->whereDate('commission_date', '>=', $fromDate))
+                $data['profitLossReportRecords']['affiliateMemberCommission'] = AffiliateMemberCommission::when(isset($search['from_date']), fn($query) => $query->whereDate('commission_date', '>=', $fromDate))
                     ->when(isset($search['to_date']), fn($query) => $query->whereBetween('commission_date', [$fromDate, $toDate]))
                     ->where('company_id', $admin->active_company_id)->sum('amount');
 
+                $data['centralPromoter'] = CentralPromoter::where('company_id', $admin->active_company_id)->select('id', 'name')->get();
+                $data['profitLossReportRecords']['centralPromoterCommission'] = CentralPromoterCommission::with('centralPromoter:id,name')
+                    ->when(isset($search['from_date']), fn($query) => $query->whereDate('commission_date', '>=', $fromDate))
+                    ->when(isset($search['to_date']), fn($query) => $query->whereBetween('commission_date', [$fromDate, $toDate]))
+                    ->where('central_promoter_id', $data['centralPromoter'][0]->id)->sum('amount');
+
+                $data['profitLossReportRecords']['totalAffiliateCommission'] = $data['profitLossReportRecords']['affiliateMemberCommission'] + $data['profitLossReportRecords']['centralPromoterCommission'];
 
                 $data['profitLossReportRecords']['totalExpense'] = Expense::when(isset($search['from_date']), fn($query) => $query->whereDate('expense_date', '>=', $fromDate))
                     ->when(isset($search['to_date']), fn($query) => $query->whereBetween('expense_date', [$fromDate, $toDate]))

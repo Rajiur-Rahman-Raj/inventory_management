@@ -32,7 +32,7 @@ Route::group(['middleware' => ['guest']], function () {
     Route::get('register/{sponsor?}', 'Auth\RegisterController@sponsor')->name('register.sponsor');
 });
 
-Route::group(['middleware' => ['auth'], 'prefix' => 'user', 'as' => 'user.'], function () {
+Route::group(['middleware' => ['auth'], 'as' => 'user.'], function () {
     Route::get('/check', 'User\VerificationController@check')->name('check');
     Route::get('/resend_code', 'User\VerificationController@resendCode')->name('resendCode');
     Route::post('/mail-verify', 'User\VerificationController@mailVerify')->name('mailVerify');

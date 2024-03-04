@@ -31,7 +31,8 @@
                                     aria-label="Default select example">
                                 <option value=""><?php echo app('translator')->get('All'); ?></option>
                                 <?php $__currentLoopData = $rawItems; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                    <option value="<?php echo e($item->id); ?>" <?php echo e(@request()->item_id == $item->id ? 'selected' : ''); ?>><?php echo e($item->name); ?></option>
+                                    <option
+                                        value="<?php echo e($item->id); ?>" <?php echo e(@request()->item_id == $item->id ? 'selected' : ''); ?>><?php echo e($item->name); ?></option>
                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </select>
                         </div>
@@ -44,10 +45,12 @@
                 </form>
             </div>
 
-            <div class="d-flex justify-content-end mb-4">
-                <a href="<?php echo e(route('user.purchaseRawItem')); ?>" class="btn btn-custom text-white"> <i
-                        class="fa fa-plus-circle"></i> <?php echo app('translator')->get('Purchase'); ?></a>
-            </div>
+            <?php if(adminAccessRoute(config('permissionList.Manage_Raw_Items.Purchase.permission.add'))): ?>
+                <div class="d-flex justify-content-end mb-4">
+                    <a href="<?php echo e(route('user.purchaseRawItem')); ?>" class="btn btn-custom text-white"> <i
+                            class="fa fa-plus-circle"></i> <?php echo app('translator')->get('Purchase'); ?></a>
+                </div>
+            <?php endif; ?>
 
             <div class="table-parent table-responsive me-2 ms-2 mt-4">
                 <table class="table table-striped">
@@ -65,8 +68,9 @@
                             <td data-label="<?php echo app('translator')->get('Image'); ?>">
                                 <div class="d-flex gap-2">
                                     <div class="logo-brand">
-                                        <img src="<?php echo e(getFile(config('location.rawItemImage.path').optional($purchaseItem->rawItem)->image)); ?>"
-                                             alt="">
+                                        <img
+                                            src="<?php echo e(getFile(config('location.rawItemImage.path').optional($purchaseItem->rawItem)->image)); ?>"
+                                            alt="">
                                     </div>
                                     <div class="product-summary">
                                         <p class="font-weight-bold mt-3"><?php echo e(optional($purchaseItem->rawItem)->name); ?></p>

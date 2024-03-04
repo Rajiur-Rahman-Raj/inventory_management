@@ -10,4 +10,10 @@ class CentralPromoterCommission extends Model
     use HasFactory;
 
     protected $guarded = ['id'];
+
+    public function centralPromoter(){
+        return $this->belongsTo(CentralPromoter::class, 'central_promoter_id', 'id');
+    }
+
+
 }

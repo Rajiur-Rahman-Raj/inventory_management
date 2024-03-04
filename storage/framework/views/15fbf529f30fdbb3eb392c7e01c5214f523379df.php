@@ -88,7 +88,6 @@ unset($__errorArgs, $__bag); ?>
                         <div class="input-box col-lg-3">
                             <select class="form-control js-example-basic-single" name="central_promoter_id"
                                     aria-label="Default select example">
-                                <option selected disabled><?php echo app('translator')->get('Select Central Promoter'); ?></option>
                                 <?php $__currentLoopData = $centralPromoter; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $promoter): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                     <option
                                         value="<?php echo e($promoter->id); ?>" <?php echo e(@request()->central_promoter_id == $promoter->id ? 'selected' : ''); ?>><?php echo e(kebab2Title($promoter->name)); ?></option>
@@ -142,7 +141,7 @@ unset($__errorArgs, $__bag); ?>
                             <table class="table custom-table table-bordered mt-4">
                                 <thead>
                                 <tr>
-                                    <th scope="col">Member</th>
+                                    <th scope="col">Affiliator</th>
                                     <th scope="col">Commission</th>
                                     <th scope="col">Date Of Commission</th>
                                 </tr>
@@ -152,7 +151,10 @@ unset($__errorArgs, $__bag); ?>
                                 <?php if(count($affiliateReportRecords) > 0): ?>
                                     <?php $__currentLoopData = $affiliateReportRecords; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $commission): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                         <tr>
-                                            <td data-label="Member"><?php echo e($commission->affiliateMember->member_name); ?></td>
+                                            <td data-label="Affiliator">
+                                                <?php echo e($key == 0 ? $commission->centralPromoter->name : $commission->affiliateMember->member_name); ?>
+
+                                            </td>
                                             <td data-label="Commission"><?php echo e($commission->amount); ?></td>
                                             <td data-label="Date Of Commission"><?php echo e($commission->commission_date); ?></td>
                                         </tr>
