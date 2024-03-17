@@ -71,7 +71,7 @@
                             <input
                                 type="text" class="form-control datepicker password" name="password"
                                 value="{{ old('password',request()->password) }}" placeholder="@lang('password')"
-                                autocomplete="off" />
+                                autocomplete="off"/>
                         </div>
 
                         <div class="input-box col-lg-2">
@@ -82,10 +82,12 @@
                 </form>
             </div>
 
-            <div class="d-flex justify-content-end mb-4">
-                <a href="{{route('user.role.staffCreate')}}" class="btn btn-custom text-white"> <i
-                        class="fa fa-plus-circle"></i> @lang('Create Staff')</a>
-            </div>
+            @if(adminAccessRoute(config('permissionList.Manage_Role_And_Permissions.Manage_Staff.permission.add')))
+                <div class="d-flex justify-content-end mb-4">
+                    <a href="{{route('user.role.staffCreate')}}" class="btn btn-custom text-white"> <i
+                            class="fa fa-plus-circle"></i> @lang('Create Staff')</a>
+                </div>
+            @endif
 
             <div class="table-parent table-responsive me-2 ms-2 mt-4">
                 <table class="table table-striped">
@@ -95,7 +97,9 @@
                         <th scope="col">@lang('User')</th>
                         <th scope="col">@lang('Role')</th>
                         <th scope="col">@lang('Status')</th>
-                        <th scope="col">@lang('Action')</th>
+                        @if(adminAccessRoute(array_merge(config('permissionList.Manage_Role_And_Permissions.Manage_Staff.permission.edit'), config('permissionList.Manage_Role_And_Permissions.Manage_Staff.permission.delete'))))
+                            <th scope="col">@lang('Action')</th>
+                        @endif
                     </tr>
                     </thead>
                     <tbody>
@@ -103,8 +107,22 @@
                         <tr>
                             <td data-label="@lang('SL')">{{loopIndex($roleUsers) + $key}}</td>
 
-                            <td data-label="@lang('User')">
-                                {{ $value->name }}
+                            <td class="company-logo" data-label="@lang('User')">
+                                <div>
+                                    <a href="" target="_blank">
+                                        <img src="{{ getFile($value->driver, $value->image) }}">
+                                    </a>
+                                </div>
+                                <div>
+                                    <a href=""
+                                       target="_blank"> {{ $value->name }}</a>
+                                    <br>
+                                    @if($value->email)
+                                        <span class="text-muted font-14">
+                                        <span> {{ $value->email }}</span>
+                                    </span>
+                                    @endif
+                                </div>
                             </td>
 
                             <td data-label="@lang('Role')">
@@ -120,26 +138,31 @@
                                 @endif
                             </td>
 
-                            <td data-label="Action">
-                                <div class="sidebar-dropdown-items">
-                                    <button
-                                        type="button"
-                                        class="dropdown-toggle"
-                                        data-bs-toggle="dropdown"
-                                        aria-expanded="false"
-                                    >
-                                        <i class="fal fa-cog"></i>
-                                    </button>
+                            @if(adminAccessRoute(array_merge(config('permissionList.Manage_Role_And_Permissions.Manage_Staff.permission.edit'), config('permissionList.Manage_Role_And_Permissions.Manage_Staff.permission.delete'))))
+                                <td data-label="Action">
+                                    <div class="sidebar-dropdown-items">
+                                        <button
+                                            type="button"
+                                            class="dropdown-toggle"
+                                            data-bs-toggle="dropdown"
+                                            aria-expanded="false"
+                                        >
+                                            <i class="fal fa-cog"></i>
+                                        </button>
 
-                                    <ul class="dropdown-menu dropdown-menu-end">
-                                        <li>
-                                            <a class="dropdown-item btn" href="{{ route('user.role.staffEdit', $value->id) }}">
-                                                <i class="fas fa-edit"></i> @lang('Edit')
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </td>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            @if(adminAccessRoute(array_merge(config('permissionList.Manage_Role_And_Permissions.Manage_Staff.permission.edit'))))
+                                                <li>
+                                                    <a class="dropdown-item btn"
+                                                       href="{{ route('user.role.staffEdit', $value->id) }}">
+                                                        <i class="fas fa-edit"></i> @lang('Edit')
+                                                    </a>
+                                                </li>
+                                            @endif
+                                        </ul>
+                                    </div>
+                                </td>
+                            @endif
                         </tr>
                     @empty
                         <tr class="text-center">
@@ -148,6 +171,7 @@
                     @endforelse
                     </tbody>
                 </table>
+                {{ $roleUsers->appends($_GET)->links($theme.'partials.pagination') }}
             </div>
         </div>
     </section>

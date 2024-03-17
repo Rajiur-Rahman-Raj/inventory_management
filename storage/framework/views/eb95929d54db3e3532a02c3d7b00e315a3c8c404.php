@@ -107,8 +107,9 @@ unset($__errorArgs, $__bag); ?>
             <?php if(isset($wastageReportRecords) && count($search) > 0): ?>
                 <div class="card card-table">
                     <?php if(count($wastageReportRecords) > 0): ?>
-                        <div class="card-header custom-card-header bg-white d-flex flex-wrap justify-content-between align-items-center">
-                            <h5 class="m-0 text-primary"><?php echo app('translator')->get('All Stocks'); ?></h5>
+                        <div
+                            class="card-header custom-card-header bg-white d-flex flex-wrap justify-content-between align-items-center">
+                            <h5 class="m-0 text-primary"><?php echo app('translator')->get('All Wastage'); ?></h5>
 
                             <div class="total-price">
                                 <ul class="m-0 list-unstyled">
@@ -122,9 +123,11 @@ unset($__errorArgs, $__bag); ?>
                                 </ul>
                             </div>
 
-                            <a href="javascript:void(0)" data-route="<?php echo e(route('user.export.wastageReports')); ?>"
-                               class="btn text-white btn-custom2 reportsDownload downloadExcel"> <i
-                                    class="fa fa-download"></i> <?php echo app('translator')->get('Download Excel File'); ?></a>
+                            <?php if(adminAccessRoute(config('permissionList.Manage_Reports.Wastage_Report.permission.export'))): ?>
+                                <a href="javascript:void(0)" data-route="<?php echo e(route('user.export.wastageReports')); ?>"
+                                   class="btn text-white btn-custom2 reportsDownload downloadExcel"> <i
+                                        class="fa fa-download"></i> <?php echo app('translator')->get('Download Excel File'); ?></a>
+                            <?php endif; ?>
 
                         </div>
                     <?php endif; ?>

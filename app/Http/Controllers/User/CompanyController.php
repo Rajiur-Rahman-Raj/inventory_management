@@ -6,6 +6,7 @@ use App\Exports\SalesReportExport;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CompanyStoreRequest;
 use App\Http\Requests\CompanyUpdateRequest;
+use App\Http\Requests\EmployeeStoreRequest;
 use App\Http\Requests\SalesCenterStoreRequest;
 use App\Http\Traits\Notify;
 use App\Http\Traits\RawItemPurchaseTrait;
@@ -19,7 +20,10 @@ use App\Http\Traits\Upload;
 use App\Models\Customer;
 use App\Models\District;
 use App\Models\Division;
+use App\Models\Employee;
+use App\Models\EmployeeSalary;
 use App\Models\Expense;
+use App\Models\StockMissing;
 use App\Models\StockTransferDetails;
 use Exception;
 use App\Models\ExpenseCategory;
@@ -71,7 +75,6 @@ class CompanyController extends Controller
     {
         $user = $this->user;
         $data['companies'] = Company::where('user_id', $user->id)->get();
-        $data['allBadges'] = Badge::with('details')->where('status', 1)->orderBy('sort_by', 'ASC')->get();
         return view($this->theme . 'user.company.index', $data);
     }
 
@@ -95,15 +98,20 @@ class CompanyController extends Controller
 
             if ($request->hasFile('logo')) {
                 try {
-                    $company->logo = $this->uploadImage($request->logo, config('location.companyLogo.path'), config('location.companyLogo.size'));
+                    $image = $this->fileUpload($request->logo, config('location.company.path'), null, null, 'avif', null, null, null);
+                    if ($image) {
+                        $company->logo = $image['path'];
+                        $company->driver = $image['driver'];
+                    }
                 } catch (\Exception $exp) {
                     return back()->with('error', 'Logo could not be uploaded.');
                 }
             }
 
+
             $company->save();
 
-            if ($request->promoter_check_box){
+            if ($request->promoter_check_box) {
                 $centralPromoter = new CentralPromoter();
                 $centralPromoter->company_id = $company->id;
                 $centralPromoter->name = $request->promoter_name;
@@ -118,6 +126,7 @@ class CompanyController extends Controller
 
             return back()->with('success', 'Company created successfully');
         } catch (\Exception $e) {
+            DB::rollBack();
             return back()->with('error', 'Something went wrong');
         }
     }
@@ -143,15 +152,20 @@ class CompanyController extends Controller
 
             if ($request->hasFile('logo')) {
                 try {
-                    $company->logo = $this->uploadImage($request->logo, config('location.companyLogo.path'), config('location.companyLogo.size'));
+                    $image = $this->fileUpload($request->logo, config('location.company.path'), null, null, 'avif', null, $company->logo, $company->driver);
+                    if ($image) {
+                        $company->logo = $image['path'];
+                        $company->driver = $image['driver'];
+                    }
                 } catch (\Exception $exp) {
                     return back()->with('error', 'Logo could not be uploaded.');
                 }
             }
 
+
             $company->save();
 
-            if ($company->centralPromoter){
+            if ($company->centralPromoter) {
                 $centralPromoter = CentralPromoter::where('company_id', $company->id)->first();
                 $centralPromoter->name = $request->promoter_name;
                 $centralPromoter->email = $request->promoter_email;
@@ -221,21 +235,62 @@ class CompanyController extends Controller
         return back()->with('success', $company_name . ' Inactive Successfully!');
     }
 
+//    public function deleteCompany($id)
+//    {
+//        $user = $this->user;
+//        $company = Company::with('salesCenter.user', 'supplier')->where('user_id', $user->id)->findOrFail($id);
+//
+//        if (count($company->salesCenter) > 0) {
+//            foreach ($company->salesCenter as $salesCenter) {
+//                if ($salesCenter->user) {
+//                    $this->fileDelete($salesCenter->user->driver, $salesCenter->user->image);
+//                    $salesCenter->user->delete();
+//                }
+//                $salesCenter->delete();
+//            }
+//        }
+//
+//        if (count($company->supplier) > 0) {
+//            foreach ($company->supplier as $supplier) {
+//                $this->fileDelete($supplier->driver, $supplier->image);
+//                $supplier->delete();
+//            }
+//        }
+//
+//        $this->fileDelete($company->driver, $company->logo);
+//        $company->delete();
+//        return back()->with('success', 'Company Deleted Successfully');
+//    }
+
+
     public function deleteCompany($id)
     {
-        $user = $this->user;
-        $company = Company::with('salesCenter.user')->where('user_id', $user->id)->findOrFail($id);
 
-        if (count($company->salesCenter) > 0) {
-            foreach ($company->salesCenter as $salesCenter) {
-                $salesCenter->user->delete();
-                $salesCenter->delete();
-            }
-        }
+        $company = Company::with('salesCenter.user', 'suppliers')->where('user_id', $this->user->id)->findOrFail($id);
 
+
+        $this->deleteRelatedEntities($company->salesCenter);
+        $this->deleteRelatedEntities($company->suppliers);
+
+        $this->fileDelete($company->driver, $company->logo);
         $company->delete();
+
         return back()->with('success', 'Company Deleted Successfully');
     }
+
+    private function deleteRelatedEntities($entities)
+    {
+        foreach ($entities as $entity) {
+            if (isset($entity->user)) {
+                $this->fileDelete($entity->user->driver, $entity->user->image);
+                $entity->user->delete();
+            } else {
+                $this->fileDelete($entity->driver, $entity->image);
+                $entity->delete();
+            }
+        }
+    }
+
 
     public function salesCenterList(Request $request)
     {
@@ -256,6 +311,7 @@ class CompanyController extends Controller
                 return $q2->whereBetween('created_at', [$fromDate, $toDate]);
             })
             ->where('company_id', optional($loggedInUser->activeCompany)->id)->paginate(config('basic.paginate'));
+
 
         return view($this->theme . 'user.salesCenter.index', $data);
     }
@@ -281,7 +337,11 @@ class CompanyController extends Controller
 
             if ($request->hasFile('image')) {
                 try {
-                    $user->image = $this->uploadImage($request->image, config('location.user.path'), config('location.user.size'));
+                    $image = $this->fileUpload($request->image, config('location.user.path'), null, null, 'avif', null, null, null);
+                    if ($image) {
+                        $user->image = $image['path'];
+                        $user->driver = $image['driver'];
+                    }
                 } catch (\Exception $exp) {
                     return back()->with('error', 'Logo could not be uploaded.');
                 }
@@ -306,13 +366,13 @@ class CompanyController extends Controller
             $salesCenter->save();
             DB::commit();
 
-            $this->sendMailSms($user, $type = 'CREATE_SALES_CENTER', [
-                'center_name' => optional($user->salesCenter)->name,
-                'owner_name' => $user->name,
-                'code' => optional($user->salesCenter)->code,
-                'email' => $user->email,
-                'password' => $request->password,
-            ]);
+            // $this->sendMailSms($user, $type = 'CREATE_SALES_CENTER', [
+            //     'center_name' => optional($user->salesCenter)->name,
+            //     'owner_name' => $user->name,
+            //     'code' => optional($user->salesCenter)->code,
+            //     'email' => $user->email,
+            //     'password' => $request->password,
+            // ]);
 
             return back()->with('success', 'Sales Center Created Successfully');
         } catch (\Exception $e) {
@@ -346,7 +406,11 @@ class CompanyController extends Controller
 
             if ($request->hasFile('image')) {
                 try {
-                    $user->image = $this->uploadImage($request->image, config('location.user.path'), config('location.user.size'));
+                    $image = $this->fileUpload($request->image, config('location.user.path'), null, null, 'avif', null, $user->image, $user->driver);
+                    if ($image) {
+                        $user->image = $image['path'];
+                        $user->driver = $image['driver'];
+                    }
                 } catch (\Exception $exp) {
                     return back()->with('error', 'Logo could not be uploaded.');
                 }
@@ -383,14 +447,237 @@ class CompanyController extends Controller
     public function deleteSalesCenter($id)
     {
         $salesCenter = SalesCenter::with('user')->findOrFail($id);
-        optional($salesCenter->user)->delete();
+        if ($salesCenter->user) {
+            $this->fileDelete(optional($salesCenter->user)->driver, optional($salesCenter->user)->image);
+            optional($salesCenter->user)->delete();
+        }
+
         $salesCenter->delete();
         return back()->with('success', 'Sales Center Deleted Successfully!');
+    }
+
+    public function employeeList(Request $request)
+    {
+        $search = $request->all();
+        $fromDate = Carbon::parse($request->from_joining_date);
+        $toDate = Carbon::parse($request->to_joining_date)->addDay();
+        $admin = $this->user;
+
+        $data['employees'] = Employee::where('company_id', $admin->active_company_id)->get();
+
+        $data['employeeLists'] = Employee::
+        when(isset($search['employee_id']), function ($query) use ($search) {
+            $query->where('id', $search['employee_id']);
+        })
+            ->when(isset($search['from_joining_date']), function ($q2) use ($fromDate) {
+                return $q2->whereDate('joining_date', '>=', $fromDate);
+            })
+            ->when(isset($search['from_joining_date']), function ($q2) use ($fromDate, $toDate) {
+                return $q2->whereBetween('joining_date', [$fromDate, $toDate]);
+            })
+            ->where('company_id', $admin->active_company_id)->paginate(config('basic.paginate'));
+
+        return view($this->theme . 'user.employee.index', $data);
+    }
+
+    public function createEmployee()
+    {
+        return view($this->theme . 'user.employee.create');
+    }
+
+    public function employeeStore(EmployeeStoreRequest $request)
+    {
+
+        $admin = $this->user;
+        DB::beginTransaction();
+        try {
+            $employee = new Employee();
+            $employee->company_id = $admin->active_company_id;
+            $employee->name = $request->name;
+            $employee->phone = $request->phone;
+            $employee->email = $request->email;
+            $employee->national_id = $request->national_id;
+            $employee->date_of_birth = Carbon::parse($request->date_of_birth);
+            $employee->joining_date = Carbon::parse($request->joining_date);
+            $employee->designation = $request->designation;
+            $employee->employee_type = $request->employee_type;
+            $employee->joining_salary = $request->joining_salary;
+            $employee->current_salary = $request->current_salary;
+            $employee->present_address = $request->present_address;
+            $employee->permanent_address = $request->permanent_address;
+            $employee->status = $request->status;
+
+            if ($request->hasFile('image')) {
+                try {
+                    $image = $this->fileUpload($request->image, config('location.employee.path'), null, null, 'avif', null, null, null);
+                    if ($image) {
+                        $employee->image = $image['path'];
+                        $employee->driver = $image['driver'];
+                    }
+                } catch (\Exception $exp) {
+                    return back()->with('error', 'Photo could not be uploaded.');
+                }
+            }
+
+            $employee->save();
+
+            DB::commit();
+
+            return back()->with('success', 'Employee Created Successfully');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Something went wrong');
+        }
+    }
+
+    public function employeeDetails($id)
+    {
+        $admin = $this->user;
+        $data['singleEmployee'] = Employee::where('company_id', $admin->active_company_id)->findOrFail($id);
+        return view($this->theme . 'user.employee.details', $data);
+    }
+
+    public function employeeEdit($id)
+    {
+        $admin = $this->user;
+        $data['singleEmployeeInfo'] = Employee::where('company_id', $admin->active_company_id)->findOrFail($id);
+        return view($this->theme . 'user.employee.edit', $data);
+    }
+
+    public function employeeUpdate(EmployeeStoreRequest $request, $id)
+    {
+        $admin = $this->user;
+        DB::beginTransaction();
+        try {
+            $employee = Employee::where('company_id', $admin->active_company_id)->findOrFail($id);
+            $employee->name = $request->name;
+            $employee->phone = $request->phone;
+            $employee->email = $request->email;
+            $employee->national_id = $request->national_id;
+            $employee->date_of_birth = Carbon::parse($request->date_of_birth);
+            $employee->joining_date = Carbon::parse($request->joining_date);
+            $employee->designation = $request->designation;
+            $employee->employee_type = $request->employee_type;
+            $employee->joining_salary = $request->joining_salary;
+            $employee->current_salary = $request->current_salary;
+            $employee->present_address = $request->present_address;
+            $employee->permanent_address = $request->permanent_address;
+            $employee->status = $request->status;
+
+            if ($request->hasFile('image')) {
+                try {
+                    $image = $this->fileUpload($request->image, config('location.employee.path'), null, null, 'avif', null, $employee->image, $employee->driver);
+                    if ($image) {
+                        $employee->image = $image['path'];
+                        $employee->driver = $image['driver'];
+                    }
+                } catch (\Exception $exp) {
+                    return back()->with('error', 'Photo could not be uploaded.');
+                }
+            }
+
+            $employee->save();
+
+            DB::commit();
+
+            return back()->with('success', 'Employee Updated Successfully');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Something went wrong');
+        }
+    }
+
+    public function employeeDelete($id)
+    {
+        $admin = $this->user;
+        $employee = Employee::where('company_id', $admin->active_company_id)->findOrFail($id);
+        $this->fileDelete($employee->driver, $employee->image);
+        $employee->delete();
+        return back()->with('success', 'Employee Deleted Successfully!');
+    }
+
+
+    public function employeeSalaryList(Request $request)
+    {
+        $search = $request->all();
+        $fromDate = Carbon::parse($request->from_date);
+        $toDate = Carbon::parse($request->to_date);
+        $admin = $this->user;
+
+        $data['employees'] = Employee::where('company_id', $admin->active_company_id)->get();
+
+        $data['employeeSalaryLists'] = EmployeeSalary::with('employee')
+        ->when(isset($search['employee_id']), function ($query) use ($search) {
+            $query->where('employee_id', $search['employee_id']);
+        })
+            ->when(isset($search['from_date']), function ($q2) use ($fromDate) {
+                return $q2->whereDate('payment_date', '>=', $fromDate);
+            })
+            ->when(isset($search['to_date']), function ($q2) use ($fromDate, $toDate) {
+                return $q2->whereBetween('payment_date', [$fromDate, $toDate]);
+            })
+            ->where('company_id', $admin->active_company_id)->paginate(config('basic.paginate'));
+
+        return view($this->theme . 'user.employeeSalary.index', $data);
+    }
+
+    public function addEmployeeSalary(Request $request)
+    {
+        $admin = $this->user;
+        DB::beginTransaction();
+        try {
+            $employeeSalary = new EmployeeSalary();
+            $employeeSalary->company_id = $admin->active_company_id;
+            $employeeSalary->employee_id = $request->employee_id;
+            $employeeSalary->amount = $request->amount;
+            $employeeSalary->payment_date = Carbon::parse($request->payment_date);
+
+            $employeeSalary->save();
+
+            DB::commit();
+
+            return back()->with('success', 'Employee Salary Added Successfully');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Something went wrong');
+        }
+    }
+
+    public function employeeSalaryEdit(Request $request, $id)
+    {
+        $admin = $this->user;
+        DB::beginTransaction();
+        try {
+            $employeeSalary = EmployeeSalary::where('company_id', $admin->active_company_id)->findOrFail($id);
+            $employeeSalary->employee_id = $request->employee_id;
+            $employeeSalary->amount = $request->amount;
+            $employeeSalary->payment_date = Carbon::parse($request->payment_date);
+            $employeeSalary->save();
+
+            DB::commit();
+
+            return back()->with('success', 'Employee Salary Updated Successfully');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Something went wrong');
+        }
+    }
+
+    public function employeeSalaryDelete($id){
+        $admin = $this->user;
+        $employeeSalary = EmployeeSalary::where('company_id', $admin->active_company_id)->findOrFail($id);
+        $employeeSalary->delete();
+        return back()->with('success', 'Salary Deleted Successfully!');
     }
 
 
     public function itemList(Request $request)
     {
+
         $search = $request->all();
         $fromDate = Carbon::parse($request->from_date);
         $toDate = Carbon::parse($request->to_date)->addDay();
@@ -411,6 +698,120 @@ class CompanyController extends Controller
             })
             ->where('status', 1)->paginate(config('basic.paginate'));
         return view($this->theme . 'user.items.index', $data);
+    }
+
+    public function itemStore(Request $request)
+    {
+        $loggedInUser = $this->user;
+        $purifiedData = Purify::clean($request->except('_token', '_method'));
+
+        if ($request->name == null) {
+            return back()->with('error', 'Item name is required');
+        }
+
+        try {
+
+            $rules = [
+                'name' => 'required|string|max:255',
+                'unit' => 'nullable',
+            ];
+
+            $message = [
+                'name.required' => __('Item name field is required'),
+            ];
+
+            $validate = Validator::make($purifiedData, $rules, $message);
+
+            if ($validate->fails()) {
+                return back()->withInput()->withErrors($validate);
+            }
+
+            DB::beginTransaction();
+            $item = new Item();
+            $item->name = $request->name;
+            $item->unit = $request->unit;
+            $item->company_id = optional($loggedInUser->activeCompany)->id;
+
+            if ($request->hasFile('image')) {
+                try {
+                    $image = $this->fileUpload($request->image, config('location.item.path'), null, null, 'avif', null, null, null);
+                    if ($image) {
+                        $item->image = $image['path'];
+                        $item->driver = $image['driver'];
+                    }
+                } catch (\Exception $exp) {
+                    return back()->with('error', 'Image could not be uploaded.');
+                }
+            }
+
+            $item->save();
+            DB::commit();
+            return back()->with('success', 'Item Created Successfully');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Something went wrong');
+        }
+    }
+
+    public function updateItem(Request $request, $id)
+    {
+
+        $purifiedData = Purify::clean($request->except('_token', '_method'));
+
+        if ($request->name == null) {
+            return back()->with('error', 'Item name is required');
+        }
+
+        try {
+            $rules = [
+                'name' => 'required|string|max:255',
+                'unit' => 'nullable',
+            ];
+
+            $message = [
+                'name.required' => __('Item name field is required'),
+            ];
+
+            $validate = Validator::make($purifiedData, $rules, $message);
+
+            if ($validate->fails()) {
+                return back()->withInput()->withErrors($validate);
+            }
+
+            $item = Item::findOrFail($id);
+
+            $item->name = $request->name;
+            $item->unit = $request->unit;
+
+            if ($request->hasFile('image')) {
+                try {
+                    $image = $this->fileUpload($request->image, config('location.item.path'), null, null, 'avif', null, $item->image, $item->driver);
+                    if ($image) {
+                        $item->image = $image['path'];
+                        $item->driver = $image['driver'];
+                    }
+                } catch (\Exception $exp) {
+                    return back()->with('error', 'Image could not be uploaded.');
+                }
+            }
+
+            $item->save();
+
+            return back()->with('success', 'Item Update Successfully');
+
+        } catch (\Exception $e) {
+            return back()->with('error', 'Something went wrong');
+        }
+
+    }
+
+    public function deleteItem($id)
+    {
+        $item = Item::findOrFail($id);
+        $this->fileDelete($item->driver, $item->image);
+        $item->delete();
+        return back()->with('success', 'Item Deleted Successfully!');
     }
 
     public function wastageList(Request $request)
@@ -483,24 +884,38 @@ class CompanyController extends Controller
         return back()->with('success', 'Wastage Deleted Successfully');
     }
 
-    public function itemStore(Request $request)
+
+    public function stockMissingList(Request $request)
     {
-        $loggedInUser = $this->user;
+        $search = $request->all();
+        $admin = $this->user;
+        $data['stockItems'] = Stock::with('item')->where('company_id', $admin->active_company_id)->whereNull('sales_center_id')->get();
+        $data['stockMissingLists'] = StockMissing::with('item')
+            ->when(isset($search['item_id']), function ($query) use ($search) {
+                $query->where('item_id', $search['item_id']);
+            })
+            ->where('company_id', $admin->active_company_id)
+            ->latest()
+            ->paginate(config('basic.paginate'));
+        return view($this->theme . 'user.stockMissing.index', $data);
+    }
+
+    public function stockMissingStore(Request $request)
+    {
+
+        $admin = $this->user;
         $purifiedData = Purify::clean($request->except('_token', '_method'));
 
-        if ($request->name == null) {
-            return back()->with('error', 'Item name is required');
-        }
-
         try {
-
             $rules = [
-                'name' => 'required|string|max:255',
-                'unit' => 'nullable',
+                'item_id' => 'required|exists:items,id',
+                'quantity' => 'required',
             ];
 
             $message = [
-                'name.required' => __('Item name field is required'),
+                'item_id.required' => __('Item name field is required'),
+                'quantity.required' => __('Quantity field is required'),
+                'missing_date.required' => __('Missing Date is required'),
             ];
 
             $validate = Validator::make($purifiedData, $rules, $message);
@@ -509,83 +924,36 @@ class CompanyController extends Controller
                 return back()->withInput()->withErrors($validate);
             }
 
-            DB::beginTransaction();
-            $item = new Item();
-            $item->name = $request->name;
-            $item->unit = $request->unit;
-            $item->company_id = optional($loggedInUser->activeCompany)->id;
+            $itemStock = Stock::where('company_id', $admin->active_company_id)->where('item_id', $request->item_id)->whereNull('sales_center_id')->select('id', 'quantity', 'cost_per_unit', 'last_cost_per_unit')->first();
 
-            if ($request->hasFile('image')) {
-                try {
-                    $item->image = $this->uploadImage($request->image, config('location.itemImage.path'), config('location.itemImage.size'));
-                } catch (\Exception $exp) {
-                    return back()->with('error', 'Logo could not be uploaded.');
-                }
+            $missingStock = new StockMissing();
+            if ($itemStock->quantity > 0) {
+                $missingStock->company_id = $admin->active_company_id;
+                $missingStock->item_id = $request->item_id;
+                $missingStock->quantity = $request->quantity;
+                $missingStock->cost_per_unit = $itemStock->last_cost_per_unit;
+                $missingStock->total_cost = $request->quantity * $itemStock->last_cost_per_unit;
+                $missingStock->missing_date = $request->missing_date;
+                $missingStock->save();
+
+                $itemStock->quantity = ($itemStock->quantity <= 0 ? 0 : $itemStock->quantity - $request->quantity);
+                $itemStock->save();
             }
 
-            $item->save();
             DB::commit();
-            return back()->with('success', 'Item Created Successfully');
-
+            return back()->with('success', 'Stock Missing Added Successfully');
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Something went wrong');
         }
     }
 
-    public function updateItem(Request $request, $id)
+    public function stockMissingDelete(Request $request, $id)
     {
-
-        $purifiedData = Purify::clean($request->except('_token', '_method'));
-
-        if ($request->name == null) {
-            return back()->with('error', 'Item name is required');
-        }
-
-        try {
-            $rules = [
-                'name' => 'required|string|max:255',
-                'unit' => 'nullable',
-            ];
-
-            $message = [
-                'name.required' => __('Item name field is required'),
-            ];
-
-            $validate = Validator::make($purifiedData, $rules, $message);
-
-            if ($validate->fails()) {
-                return back()->withInput()->withErrors($validate);
-            }
-
-            $item = Item::findOrFail($id);
-
-            $item->name = $request->name;
-            $item->unit = $request->unit;
-
-            if ($request->hasFile('image')) {
-                try {
-                    $item->image = $this->uploadImage($request->image, config('location.itemImage.path'), config('location.itemImage.size'));
-                } catch (\Exception $exp) {
-                    return back()->with('error', 'Logo could not be uploaded.');
-                }
-            }
-
-            $item->save();
-
-            return back()->with('success', 'Item Update Successfully');
-
-        } catch (\Exception $e) {
-            return back()->with('error', 'Something went wrong');
-        }
-
-    }
-
-    public function deleteItem($id)
-    {
-        $item = Item::findOrFail($id);
-        $item->delete();
-        return back()->with('success', 'Item Deleted Successfully!');
+        $admin = $this->user;
+        $stockMissing = StockMissing::where('company_id', $admin->active_company_id)->findOrFail($id);
+        $stockMissing->delete();
+        return back()->with('success', 'Stock Missing Deleted Successfully');
     }
 
     public function expenseCategory(Request $request)
@@ -810,7 +1178,6 @@ class CompanyController extends Controller
 
     public function stockStore(Request $request)
     {
-
         $admin = $this->user;
         $purifiedData = Purify::clean($request->except('_token', '_method'));
 
@@ -828,7 +1195,7 @@ class CompanyController extends Controller
             return back()->withInput()->withErrors($validate);
         }
 
-        try {
+//        try {
             DB::beginTransaction();
             $stockIn = new StockIn();
             $stockIn->company_id = $admin->active_company_id;
@@ -842,10 +1209,10 @@ class CompanyController extends Controller
             DB::commit();
             return back()->with('success', 'Item stock added successfully');
 
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return back()->with('error', $e->getMessage());
-        }
+//        } catch (\Exception $e) {
+//            DB::rollBack();
+//            return back()->with('error', $e->getMessage());
+//        }
     }
 
     public function stockList(Request $request)
@@ -1141,9 +1508,13 @@ class CompanyController extends Controller
 
             if ($request->hasFile('image')) {
                 try {
-                    $customer->image = $this->uploadImage($request->image, config('location.customer.path'), config('location.customer.size'));
+                    $image = $this->fileUpload($request->image, config('location.customer.path'), null, null, 'avif', null, null, null);
+                    if ($image) {
+                        $customer->image = $image['path'];
+                        $customer->driver = $image['driver'];
+                    }
                 } catch (\Exception $exp) {
-                    return back()->with('error', 'Logo could not be uploaded.');
+                    return back()->with('error', 'Image could not be uploaded.');
                 }
             }
 
@@ -1198,7 +1569,6 @@ class CompanyController extends Controller
 
     public function customerUpdate(Request $request, $id)
     {
-
         $purifiedData = Purify::clean($request->except('_token', '_method'));
 
         $rules = [
@@ -1251,9 +1621,13 @@ class CompanyController extends Controller
 
             if ($request->hasFile('image')) {
                 try {
-                    $customer->image = $this->uploadImage($request->image, config('location.customer.path'), config('location.customer.size'));
+                    $image = $this->fileUpload($request->image, config('location.customer.path'), null, null, 'avif', null, $customer->image, $customer->driver);
+                    if ($image) {
+                        $customer->image = $image['path'];
+                        $customer->driver = $image['driver'];
+                    }
                 } catch (\Exception $exp) {
-                    return back()->with('error', 'Logo could not be uploaded.');
+                    return back()->with('error', 'Image could not be uploaded.');
                 }
             }
 
@@ -1343,7 +1717,7 @@ class CompanyController extends Controller
             ->latest()
             ->get();
 
-        $data['stocks'] = Stock::with('item:id,name,image')
+        $data['stocks'] = Stock::with('item:id,name,image,driver')
             ->when(!isset($admin->salesCenter) && $admin->user_type == 1, function ($query) use ($admin) {
                 return $query->where('company_id', $admin->active_company_id)->whereNull('sales_center_id');
             })
@@ -1402,12 +1776,17 @@ class CompanyController extends Controller
                     ['sales_center_id', $admin->salesCenter->id],
                 ]);
             })
-            ->select('id', 'last_cost_per_unit')
+            ->select('id', 'selling_price')
             ->findOrFail($id);
 
-        $stock->last_cost_per_unit = $request->cost_per_unit;
+        $stock->selling_price = $request->selling_price;
         $stock->save();
-        return back()->with('success', 'Item Cost Per Unit Update successfully!')->with('filterItemId', $filter_item_id);
+        if ($request->filter_by == 'all') {
+            return back()->with('success', 'Item Cost Per Unit Update successfully!');
+        } else {
+            return back()->with('success', 'Item Cost Per Unit Update successfully!')->with('filterItemId', $filter_item_id);
+        }
+
     }
 
     public function updateSellingPrice(Request $request, $id)
@@ -1432,7 +1811,7 @@ class CompanyController extends Controller
     {
         $admin = $this->user;
 
-        $query = Stock::with('item:id,name,image')
+        $query = Stock::with('item:id,name,image,driver')
             ->select('id', 'item_id', 'quantity', 'cost_per_unit', 'last_cost_per_unit', 'selling_price')
             ->when(!isset($admin->salesCenter) && $admin->user_type == 1, function ($query) use ($admin) {
                 return $query->where('company_id', $admin->active_company_id)
@@ -1451,7 +1830,7 @@ class CompanyController extends Controller
 
         $stocks = $query->latest()->get()->map(function ($stock) {
             $item = $stock->item;
-            $item->image = getFile(config('location.itemImage.path') . optional($stock->item)->image);
+            $item->image = getFile(optional($stock->item)->driver, optional($stock->item)->image);
             return $stock;
         });
 
@@ -1762,13 +2141,11 @@ class CompanyController extends Controller
 
     public function salesOrderStore(Request $request)
     {
-//        dd($request->all());
-
         $purifiedData = Purify::clean($request->except('_token', '_method'));
         $admin = $this->user;
 
         DB::beginTransaction();
-//        try {
+        try {
             $rules = [
                 'items' => 'nullable',
                 'payment_date' => 'required',
@@ -1838,10 +2215,10 @@ class CompanyController extends Controller
 
             DB::commit();
             return redirect()->route('user.salesInvoice', $sale->id)->with('success', 'Order confirmed successfully!');
-//        } catch (\Exception $e) {
-//            DB::rollBack();
-//            return back()->with('error', 'Something went wrong');
-//        }
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Something went wrong');
+        }
     }
 
     public function salesOrderUpdate(Request $request, $id)
@@ -2108,7 +2485,7 @@ class CompanyController extends Controller
             ->latest()
             ->get();
 
-        $data['stocks'] = Stock::with('item:id,name,image')
+        $data['stocks'] = Stock::with('item:id,name,image,driver')
             ->when(!isset($admin->salesCenter) && $admin->user_type == 1, function ($query) use ($admin) {
                 return $query->where('company_id', $admin->active_company_id)->whereNull('sales_center_id');
             })
@@ -2256,6 +2633,8 @@ class CompanyController extends Controller
             'upazila_id' => 'nullable|exists:upazilas,id',
             'union_id' => 'nullable|exists:unions,id',
             'address' => 'required',
+            'image' => 'nullable',
+            'driver' => 'nullable',
         ];
 
         $messages = [
@@ -2291,6 +2670,19 @@ class CompanyController extends Controller
             $supplier->upazila_id = $request->upazila_id;
             $supplier->union_id = $request->union_id;
             $supplier->address = $request->address;
+
+            if ($request->hasFile('image')) {
+                try {
+                    $image = $this->fileUpload($request->image, config('location.supplier.path'), null, null, 'avif', null, null, null);
+                    if ($image) {
+                        $supplier->image = $image['path'];
+                        $supplier->driver = $image['driver'];
+                    }
+                } catch (\Exception $exp) {
+                    return back()->with('error', 'Photo could not be uploaded.');
+                }
+            }
+
             $supplier->save();
 
             DB::commit();
@@ -2306,13 +2698,6 @@ class CompanyController extends Controller
         $admin = $this->user;
         $data['supplier'] = Supplier::with('division', 'district', 'upazila', 'union')->where('company_id', $admin->active_company_id)->findOrFail($id);
         return view($this->theme . "user.suppliers.details", $data);
-    }
-
-    public function deleteSupplier($id)
-    {
-        $supplier = Supplier::findOrFail($id);
-        $supplier->delete();
-        return back()->with('success', "Supplier Deleted Successfully!");
     }
 
     public function supplierEdit($id)
@@ -2341,6 +2726,8 @@ class CompanyController extends Controller
             'upazila_id' => 'nullable|exists:upazilas,id',
             'union_id' => 'nullable|exists:unions,id',
             'address' => 'required',
+            'image' => 'nullable',
+            'driver' => 'nullable',
         ];
 
         $messages = [
@@ -2373,6 +2760,19 @@ class CompanyController extends Controller
             $supplier->upazila_id = $request->upazila_id;
             $supplier->union_id = $request->union_id;
             $supplier->address = $request->address;
+
+            if ($request->hasFile('image')) {
+                try {
+                    $image = $this->fileUpload($request->image, config('location.supplier.path'), null, null, 'avif', null, $supplier->image, $supplier->driver);
+                    if ($image) {
+                        $supplier->image = $image['path'];
+                        $supplier->driver = $image['driver'];
+                    }
+                } catch (\Exception $exp) {
+                    return back()->with('error', 'Photo could not be uploaded.');
+                }
+            }
+
             $supplier->save();
 
             DB::commit();
@@ -2381,6 +2781,14 @@ class CompanyController extends Controller
         } catch (\Exception $e) {
             return back()->with('error', 'Something went wrong');
         }
+    }
+
+    public function deleteSupplier($id)
+    {
+        $supplier = Supplier::findOrFail($id);
+        $this->fileDelete($supplier->driver, $supplier->image);
+        $supplier->delete();
+        return back()->with('success', "Supplier Deleted Successfully!");
     }
 
     public function rawItemList(Request $request)
@@ -2406,7 +2814,6 @@ class CompanyController extends Controller
             ->where('status', 1)->paginate(config('basic.paginate'));
         return view($this->theme . 'user.rawItems.index', $data);
     }
-
 
     public function rawItemStore(Request $request)
     {
@@ -2442,9 +2849,13 @@ class CompanyController extends Controller
 
             if ($request->hasFile('image')) {
                 try {
-                    $rawItem->image = $this->uploadImage($request->image, config('location.rawItemImage.path'), config('location.rawItemImage.size'));
+                    $image = $this->fileUpload($request->image, config('location.rawItem.path'), null, null, 'avif', null, null, null);
+                    if ($image) {
+                        $rawItem->image = $image['path'];
+                        $rawItem->driver = $image['driver'];
+                    }
                 } catch (\Exception $exp) {
-                    return back()->with('error', 'Logo could not be uploaded.');
+                    return back()->with('error', 'Image could not be uploaded.');
                 }
             }
 
@@ -2482,19 +2893,23 @@ class CompanyController extends Controller
 
         try {
             DB::beginTransaction();
-            $item = RawItem::findOrFail($id);
-            $item->name = $request->name;
-            $item->unit = $request->unit;
+            $rawItem = RawItem::findOrFail($id);
+            $rawItem->name = $request->name;
+            $rawItem->unit = $request->unit;
 
             if ($request->hasFile('image')) {
                 try {
-                    $item->image = $this->uploadImage($request->image, config('location.rawItemImage.path'), config('location.rawItemImage.size'));
+                    $image = $this->fileUpload($request->image, config('location.rawItem.path'), null, null, 'avif', null, $rawItem->image, $rawItem->driver);
+                    if ($image) {
+                        $rawItem->image = $image['path'];
+                        $rawItem->driver = $image['driver'];
+                    }
                 } catch (\Exception $exp) {
-                    return back()->with('error', 'Logo could not be uploaded.');
+                    return back()->with('error', 'Image could not be uploaded.');
                 }
             }
 
-            $item->save();
+            $rawItem->save();
             DB::commit();
             return back()->with('success', 'Item Update Successfully');
 
@@ -2507,6 +2922,7 @@ class CompanyController extends Controller
     public function deleteRawItem($id)
     {
         $rawItem = RawItem::findOrFail($id);
+        $this->fileDelete($rawItem->driver, $rawItem->image);
         $rawItem->delete();
         return back()->with('success', 'Raw Item Deleted Successfully!');
     }
@@ -2664,7 +3080,6 @@ class CompanyController extends Controller
         $admin = $this->user;
         $data['allDivisions'] = Division::where('status', 1)->get();
         $data['affiliateMembers'] = AffiliateMember::with('salesCenter', 'division', 'district', 'upazila', 'union')->where('company_id', $admin->active_company_id)->latest()->paginate(config('basic.paginate'));
-//        dd($data['affiliateMembers']);
         return view($this->theme . 'user.affiliate.index', $data);
     }
 

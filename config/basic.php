@@ -63,7 +63,7 @@
   'error_log' => 0,
   'maintenance_mode' => 0,
   'strong_password' => 0,
-  'registration' => 1,
+  'registration' => 0,
   'address_verification' => 0,
   'identity_verification' => 0,
   'maintenance' => 0,

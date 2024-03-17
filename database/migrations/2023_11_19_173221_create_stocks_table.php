@@ -19,8 +19,11 @@ class CreateStocksTable extends Migration
             $table->foreignId('sales_center_id')->index()->nullable();
             $table->foreignId('item_id')->index()->nullable();
             $table->integer('quantity')->nullable();
-            $table->decimal('cost_per_unit')->default(0);
-            $table->decimal('last_cost_per_unit')->default(0);
+            $table->decimal('cost_per_unit', 11, 2)->default(0);
+            $table->decimal('last_cost_per_unit', 11, 2)->default(0);
+            $table->decimal('selling_price', 11,2)->default(0);
+            $table->timestamp('stock_date')->nullable();
+            $table->timestamp('last_stock_date')->nullable();
             $table->timestamps();
         });
     }

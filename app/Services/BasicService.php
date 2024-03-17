@@ -71,40 +71,7 @@ class BasicService
                 $this->setBonus($user, getAmount($order->amount), $type = 'deposit');
             }
 
-            $currentDate = dateTime(Carbon::now());
-            $msg = [
-                'username' => $user->username,
-                'amount' => getAmount($order->amount),
-                'currency' => $basic->currency,
-                'gateway' => $gateway->name
-            ];
-            $action = [
-                "link" => route('admin.user.fundLog', $user->id),
-                "icon" => "fa fa-money-bill-alt text-white"
-            ];
-            $this->adminPushNotification('ADMIN_NOTIFY_FUND_DEPOSIT_PAYMENT_COMPLETE', $msg, $action);
-            $this->mailToAdmin($type = 'ADMIN_MAIL_FUND_DEPOSIT_PAYMENT_COMPLETE', [
-                'username' => $user->username,
-                'amount' => getAmount($order->amount),
-                'currency' => $basic->currency,
-                'gateway' => $gateway->name,
-                'date'  => $currentDate,
-            ]);
-
-            $userAction = [
-                "link" => route('user.fund-history'),
-                "icon" => "fa fa-money-bill-alt text-white"
-            ];
-
-            $this->userPushNotification($user, 'USER_NOTIFY_FUND_DEPOSIT_PAYMENT_COMPLETE', $msg, $userAction);
-            $this->sendMailSms($user, 'USER_MAIL_FUND_DEPOSIT_PAYMENT_COMPLETE', [
-                'gateway_name' => $gateway->name,
-                'amount' => getAmount($order->amount),
-                'charge' => getAmount($order->charge),
-                'currency' => $basic->currency,
-                'transaction' => $order->transaction,
-                'remaining_balance' => getAmount($user->balance)
-            ]);
+    
             session()->forget('amount');
             session()->forget('plan_id');
         }
@@ -173,29 +140,6 @@ class BasicService
             $bonus->type = $commissionType;
             $bonus->remarks = $remarks;
             $bonus->save();
-
-
-            $this->sendMailSms($refer, $type = 'REFERRAL_BONUS', [
-                'transaction_id' => $trx,
-                'amount' => getAmount($com),
-                'currency' => $basic->currency_symbol,
-                'bonus_from' => $user->username,
-                'final_balance' => $refer->interest_balance,
-                'level' => $i
-            ]);
-
-
-            $msg = [
-                'bonus_from' => $user->username,
-                'amount' => getAmount($com),
-                'currency' => $basic->currency_symbol,
-                'level' => $i
-            ];
-            $action = [
-                "link" => route('user.referral.bonus'),
-                "icon" => "fa fa-money-bill-alt"
-            ];
-            $this->userPushNotification($refer,'REFERRAL_BONUS', $msg, $action);
 
             $userId = $refer->id;
             $i++;

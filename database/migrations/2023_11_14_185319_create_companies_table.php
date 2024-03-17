@@ -22,6 +22,8 @@ class CreateCompaniesTable extends Migration
             $table->text('address')->nullable();
             $table->string('trade_id')->nullable();
             $table->string('logo')->nullable();
+            $table->string('driver')->nullable();
+            $table->boolean('status')->default(1);
             $table->timestamps();
         });
     }

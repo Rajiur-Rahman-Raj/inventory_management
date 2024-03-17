@@ -67,16 +67,16 @@
                                                        id="flexCheckDefault"/>
                                                 <label class="form-check-label" for="flexCheckDefault"> @lang('Remember me') </label>
                                             </div>
-                                            <a href="{{ route('password.request') }}">@lang('Forget password?')</a>
+{{--                                            <a href="{{ route('password.request') }}">@lang('Forget password?')</a>--}}
                                         </div>
                                     </div>
                                 </div>
-                                <button class="btn-custom" type="submit">@lang('Sign in')</button>
-                                <div class="bottom">
-                                    @lang("Don't have an account?")
+                                <button class="btn-custom w-100" type="submit">@lang('Sign in')</button>
+{{--                                <div class="bottom">--}}
+{{--                                    @lang("Don't have an account?")--}}
 
-                                    <a href="{{ route('register') }}">@lang('Create account')</a>
-                                </div>
+{{--                                    <a href="{{ route('register') }}">@lang('Create account')</a>--}}
+{{--                                </div>--}}
                             </form>
                         </div>
                     </div>

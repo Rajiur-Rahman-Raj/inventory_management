@@ -22,8 +22,6 @@ trait Upload
 
     public function uploadImage($file, $location, $size = null, $old = null, $thumb = null, $filename = null)
     {
-
-
         $path = $this->makeDirectory($location);
 
         if (!$path) throw new \Exception('File could not been created.');
@@ -55,6 +53,32 @@ trait Upload
     }
 
 
+    protected function makeImage($activeDisk, $file, $location, $size, $encodedFormat, $encodedQuality, $fileExtension)
+    {
+        $image = Image::make($file);
+
+        if (!empty($size)) {
+            $size = explode('x', strtolower($size));
+            $image->resize($size[0], $size[1]);
+        }
+
+        $path = $location . '/' . Str::random(30) . '.' . $encodedFormat ?? $fileExtension;
+
+        Storage::disk($activeDisk)->put($path, !empty($encodedFormat) ? $image->encode($encodedFormat, $encodedQuality) : $image->encode());
+        return $path;
+    }
+
+    protected function isImageUrl($url)
+    {
+        $imageInfo = @getimagesize($url);
+        if ($imageInfo != false && str_starts_with($imageInfo['mime'], 'image/'))
+            return true;
+
+        return false;
+    }
+
+
+//  File upload methods
     public function fileUpload($file, $location, $fileName = null, $size = null, $encodedFormat = null, $encodedQuality = 90, $oldFileName = null, $oldDriver = 'local')
     {
         $activeDisk = config('filesystems.default');
@@ -82,28 +106,6 @@ trait Upload
             'path' => $path,
             'driver' => $activeDisk,
         ];
-    }
-
-    protected function makeImage($activeDisk, $file, $location, $size, $encodedFormat, $encodedQuality, $fileExtension)
-    {
-        $image = Image::make($file);
-        if (!empty($size)) {
-            $size = explode('x', strtolower($size));
-            $image->resize($size[0], $size[1]);
-        }
-
-        $path = $location . '/' . Str::random(30) . '.' . $encodedFormat ?? $fileExtension;
-        Storage::disk($activeDisk)->put($path, !empty($encodedFormat) ? $image->encode($encodedFormat, $encodedQuality) : $image->encode());
-        return $path;
-    }
-
-    protected function isImageUrl($url)
-    {
-        $imageInfo = @getimagesize($url);
-        if ($imageInfo != false && str_starts_with($imageInfo['mime'], 'image/'))
-            return true;
-
-        return false;
     }
 
     public function fileDelete($driver = 'local', $old)

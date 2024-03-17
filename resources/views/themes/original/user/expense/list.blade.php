@@ -36,7 +36,8 @@
                                 <option value="" selected
                                         disabled>@lang('Select Category')</option>
                                 @foreach($expenseCategories as $category)
-                                    <option value="{{ $category->id }}" {{ old('category_id', @request()->category_id) == $category->id ? 'selected' : ''}}> @lang($category->name)</option>
+                                    <option
+                                        value="{{ $category->id }}" {{ old('category_id', @request()->category_id) == $category->id ? 'selected' : ''}}> @lang($category->name)</option>
                                 @endforeach
                             </select>
                             <div class="invalid-feedback d-block">
@@ -68,10 +69,12 @@
                 </form>
             </div>
 
-            <div class="d-flex justify-content-end mb-4">
-                <a href="javascript:void(0)" class="btn btn-custom text-white addNewExpense"> <i
-                        class="fa fa-plus-circle"></i> @lang('Add Expense')</a>
-            </div>
+            @if(adminAccessRoute(array_merge(config('permissionList.Manage_Expense.Expense_List.permission.add'))))
+                <div class="d-flex justify-content-end mb-4">
+                    <a href="javascript:void(0)" class="btn btn-custom text-white addNewExpense"> <i
+                            class="fa fa-plus-circle"></i> @lang('Add Expense')</a>
+                </div>
+            @endif
 
             <div class="table-parent table-responsive me-2 ms-2 mt-4">
                 <table class="table table-striped">
@@ -81,7 +84,9 @@
                         <th scope="col">@lang('Category')</th>
                         <th scope="col">@lang('Amount')</th>
                         <th scope="col">@lang('Date Of Expense')</th>
-                        <th scope="col">@lang('Action')</th>
+                        @if(adminAccessRoute(array_merge(config('permissionList.Manage_Expense.Expense_List.permission.edit'), config('permissionList.Manage_Expense.Expense_List.permission.delete'))))
+                            <th scope="col">@lang('Action')</th>
+                        @endif
                     </tr>
                     </thead>
                     <tbody>
@@ -94,36 +99,42 @@
                             <td data-label="@lang('Amount')">{{ $expense->amount }}</td>
                             <td data-label="@lang('Date')">{{ customDate($expense->expense_date) }}</td>
 
-                            <td data-label="Action">
-                                <div class="sidebar-dropdown-items">
-                                    <button
-                                        type="button"
-                                        class="dropdown-toggle"
-                                        data-bs-toggle="dropdown"
-                                        aria-expanded="false"
-                                    >
-                                        <i class="fal fa-cog"></i>
-                                    </button>
+                            @if(adminAccessRoute(array_merge(config('permissionList.Manage_Expense.Expense_List.permission.edit'), config('permissionList.Manage_Expense.Expense_List.permission.delete'))))
+                                <td data-label="Action">
+                                    <div class="sidebar-dropdown-items">
+                                        <button
+                                            type="button"
+                                            class="dropdown-toggle"
+                                            data-bs-toggle="dropdown"
+                                            aria-expanded="false"
+                                        >
+                                            <i class="fal fa-cog"></i>
+                                        </button>
 
-                                    <ul class="dropdown-menu dropdown-menu-end">
-                                        <li>
-                                            <a class="dropdown-item btn updateExpenseList"
-                                               data-route="{{route('user.updateExpenseList', $expense->id)}}"
-                                               data-property="{{ $expense }}">
-                                                <i class="fas fa-edit"></i> @lang('Edit')
-                                            </a>
-                                        </li>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            @if(adminAccessRoute(array_merge(config('permissionList.Manage_Expense.Expense_List.permission.edit'))))
+                                                <li>
+                                                    <a class="dropdown-item btn updateExpenseList"
+                                                       data-route="{{route('user.updateExpenseList', $expense->id)}}"
+                                                       data-property="{{ $expense }}">
+                                                        <i class="fas fa-edit"></i> @lang('Edit')
+                                                    </a>
+                                                </li>
+                                            @endif
 
-                                        <li>
-                                            <a class="dropdown-item btn deleteExpenseList"
-                                               data-route="{{route('user.deleteExpenseList', $expense->id)}}"
-                                               data-property="{{ $expense }}">
-                                                <i class="fas fa-trash-alt"></i> @lang('Delete')
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </td>
+                                            @if(adminAccessRoute(array_merge(config('permissionList.Manage_Expense.Expense_List.permission.delete'))))
+                                                <li>
+                                                    <a class="dropdown-item btn deleteExpenseList"
+                                                       data-route="{{route('user.deleteExpenseList', $expense->id)}}"
+                                                       data-property="{{ $expense }}">
+                                                        <i class="fas fa-trash-alt"></i> @lang('Delete')
+                                                    </a>
+                                                </li>
+                                            @endif
+                                        </ul>
+                                    </div>
+                                </td>
+                            @endif
                         </tr>
                     @empty
                         <tr class="text-center">
@@ -132,6 +143,7 @@
                     @endforelse
                     </tbody>
                 </table>
+                {{ $expenseList->appends($_GET)->links($theme.'partials.pagination') }}
             </div>
         </div>
     </section>
@@ -167,7 +179,8 @@
                                                 <option value="" selected
                                                         disabled>@lang('Select Category')</option>
                                                 @foreach($expenseCategories as $category)
-                                                    <option value="{{ $category->id }}" {{ old('category_id', @request()->category_id) == $category->id ? 'selected' : ''}}> @lang($category->name)</option>
+                                                    <option
+                                                        value="{{ $category->id }}" {{ old('category_id', @request()->category_id) == $category->id ? 'selected' : ''}}> @lang($category->name)</option>
                                                 @endforeach
                                             </select>
                                             <div class="invalid-feedback d-block">

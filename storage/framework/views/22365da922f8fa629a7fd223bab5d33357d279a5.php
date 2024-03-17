@@ -58,9 +58,11 @@
             </div>
 
             <div class="d-flex justify-content-end mb-4">
-                <?php if(userType() == 1): ?>
-                    <a href="<?php echo e(route('user.createRole')); ?>" class="btn btn-custom text-white"> <i
-                            class="fa fa-plus-circle"></i> <?php echo app('translator')->get('Create Role'); ?></a>
+                <?php if(adminAccessRoute(config('permissionList.Manage_Role_And_Permissions.Available_Roles.permission.add'))): ?>
+                    <?php if(userType() == 1): ?>
+                        <a href="<?php echo e(route('user.createRole')); ?>" class="btn btn-custom text-white"> <i
+                                class="fa fa-plus-circle"></i> <?php echo app('translator')->get('Create Role'); ?></a>
+                    <?php endif; ?>
                 <?php endif; ?>
             </div>
 
@@ -71,7 +73,9 @@
                         <th scope="col"><?php echo app('translator')->get('SL'); ?></th>
                         <th scope="col"><?php echo app('translator')->get('Name'); ?></th>
                         <th scope="col"><?php echo app('translator')->get('Status'); ?></th>
-                        <th scope="col"><?php echo app('translator')->get('Action'); ?></th>
+                        <?php if(adminAccessRoute(array_merge(config('permissionList.Manage_Role_And_Permissions.Available_Roles.permission.edit'), config('permissionList.Manage_Role_And_Permissions.Available_Roles.permission.delete')))): ?>
+                            <th scope="col"><?php echo app('translator')->get('Action'); ?></th>
+                        <?php endif; ?>
                     </tr>
                     </thead>
                     <tbody>
@@ -85,35 +89,38 @@
                                     class="badge <?php echo e($role->status == 1 ? 'bg-success' : 'bg-danger'); ?>"><?php echo e($role->status == 1 ? 'Active' : 'Deactive'); ?> </span>
                             </td>
 
-                            <td data-label="Action">
-                                <div class="sidebar-dropdown-items">
-                                    <button
-                                        type="button"
-                                        class="dropdown-toggle"
-                                        data-bs-toggle="dropdown"
-                                        aria-expanded="false">
-                                        <i class="fal fa-cog"></i>
-                                    </button>
+                            <?php if(adminAccessRoute(array_merge(config('permissionList.Manage_Role_And_Permissions.Available_Roles.permission.edit'), config('permissionList.Manage_Role_And_Permissions.Available_Roles.permission.delete')))): ?>
+                                <td data-label="Action">
+                                    <div class="sidebar-dropdown-items">
+                                        <button
+                                            type="button"
+                                            class="dropdown-toggle"
+                                            data-bs-toggle="dropdown"
+                                            aria-expanded="false">
+                                            <i class="fal fa-cog"></i>
+                                        </button>
 
-                                    <ul class="dropdown-menu dropdown-menu-end">
-                                        <?php if(userType() == 1): ?>
-                                            <li>
-                                                <a href="<?php echo e(route('user.editRole', $role->id)); ?>"
-                                                   class="dropdown-item"> <i class="fal fa-edit"></i> <?php echo app('translator')->get('Edit'); ?>
-                                                </a>
-                                            </li>
-                                        <?php else: ?>
-                                            <li>
-                                                <a class="dropdown-item btn deleteRole"
-                                                   data-route="<?php echo e(route('user.deleteRole', $role->id)); ?>"
-                                                   data-property="<?php echo e($role); ?>">
-                                                    <i class="fas fa-trash-alt"></i> <?php echo app('translator')->get('Delete'); ?>
-                                                </a>
-                                            </li>
-                                        <?php endif; ?>
-                                    </ul>
-                                </div>
-                            </td>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <?php if(adminAccessRoute(array_merge(config('permissionList.Manage_Role_And_Permissions.Available_Roles.permission.edit')))): ?>
+                                                <li>
+                                                    <a href="<?php echo e(route('user.editRole', $role->id)); ?>"
+                                                       class="dropdown-item"> <i class="fal fa-edit"></i> <?php echo app('translator')->get('Edit'); ?>
+                                                    </a>
+                                                </li>
+                                            <?php endif; ?>
+                                            <?php if(adminAccessRoute(array_merge(config('permissionList.Manage_Role_And_Permissions.Available_Roles.permission.delete')))): ?>
+                                                <li>
+                                                    <a class="dropdown-item btn deleteRole"
+                                                       data-route="<?php echo e(route('user.deleteRole', $role->id)); ?>"
+                                                       data-property="<?php echo e($role); ?>">
+                                                        <i class="fas fa-trash-alt"></i> <?php echo app('translator')->get('Delete'); ?>
+                                                    </a>
+                                                </li>
+                                            <?php endif; ?>
+                                        </ul>
+                                    </div>
+                                </td>
+                            <?php endif; ?>
                         </tr>
                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                         <tr class="text-center">
@@ -122,12 +129,13 @@
                     <?php endif; ?>
                     </tbody>
                 </table>
+                <?php echo e($roles->appends($_GET)->links($theme.'partials.pagination')); ?>
+
             </div>
         </div>
     </section>
 
     <?php $__env->startPush('loadModal'); ?>
-
         <!--Delete Role Modal -->
         <div class="modal fade" id="deleteRoleModal" tabindex="-1" aria-labelledby="editModalLabel"
              aria-hidden="true">

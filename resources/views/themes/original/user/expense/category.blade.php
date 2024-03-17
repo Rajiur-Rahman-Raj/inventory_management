@@ -44,19 +44,23 @@
                 </form>
             </div>
 
-            <div class="d-flex justify-content-end mb-4">
-                <a href="javascript:void(0)" class="btn btn-custom text-white addNewCategory"> <i
-                        class="fa fa-plus-circle"></i> @lang('Add Category')</a>
-            </div>
+            @if(adminAccessRoute(array_merge(config('permissionList.Manage_Expense.Expense_Category.permission.add'))))
+                <div class="d-flex justify-content-end mb-4">
+                    <a href="javascript:void(0)" class="btn btn-custom text-white addNewCategory"> <i
+                            class="fa fa-plus-circle"></i> @lang('Add Category')</a>
+                </div>
+            @endif
 
             <div class="table-parent table-responsive me-2 ms-2 mt-4">
                 <table class="table table-striped">
                     <thead>
-                        <tr>
-                            <th scope="col">@lang('SL')</th>
-                            <th scope="col">@lang('Category')</th>
+                    <tr>
+                        <th scope="col">@lang('SL')</th>
+                        <th scope="col">@lang('Category')</th>
+                        @if(adminAccessRoute(array_merge(config('permissionList.Manage_Expense.Expense_Category.permission.edit'), config('permissionList.Manage_Expense.Expense_Category.permission.delete'))))
                             <th scope="col">@lang('Action')</th>
-                        </tr>
+                        @endif
+                    </tr>
                     </thead>
                     <tbody>
 
@@ -66,36 +70,42 @@
 
                             <td data-label="@lang('Category')">{{ $category->name }}</td>
 
-                            <td data-label="Action">
-                                <div class="sidebar-dropdown-items">
-                                    <button
-                                        type="button"
-                                        class="dropdown-toggle"
-                                        data-bs-toggle="dropdown"
-                                        aria-expanded="false"
-                                    >
-                                        <i class="fal fa-cog"></i>
-                                    </button>
+                            @if(adminAccessRoute(array_merge(config('permissionList.Manage_Expense.Expense_Category.permission.edit'), config('permissionList.Manage_Expense.Expense_Category.permission.delete'))))
+                                <td data-label="Action">
+                                    <div class="sidebar-dropdown-items">
+                                        <button
+                                            type="button"
+                                            class="dropdown-toggle"
+                                            data-bs-toggle="dropdown"
+                                            aria-expanded="false"
+                                        >
+                                            <i class="fal fa-cog"></i>
+                                        </button>
 
-                                    <ul class="dropdown-menu dropdown-menu-end">
-                                        <li>
-                                            <a class="dropdown-item btn updateExpenseCategory"
-                                               data-route="{{route('user.updateExpenseCategory', $category->id)}}"
-                                               data-property="{{ $category }}">
-                                                <i class="fas fa-edit"></i> @lang('Edit')
-                                            </a>
-                                        </li>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            @if(adminAccessRoute(array_merge(config('permissionList.Manage_Expense.Expense_Category.permission.edit'))))
+                                                <li>
+                                                    <a class="dropdown-item btn updateExpenseCategory"
+                                                       data-route="{{route('user.updateExpenseCategory', $category->id)}}"
+                                                       data-property="{{ $category }}">
+                                                        <i class="fas fa-edit"></i> @lang('Edit')
+                                                    </a>
+                                                </li>
+                                            @endif
 
-                                        <li>
-                                            <a class="dropdown-item btn deleteExpenseCategory"
-                                               data-route="{{route('user.deleteExpenseCategory', $category->id)}}"
-                                               data-property="{{ $category }}">
-                                                <i class="fas fa-trash-alt"></i> @lang('Delete')
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </td>
+                                            @if(adminAccessRoute(array_merge(config('permissionList.Manage_Expense.Expense_Category.permission.delete'))))
+                                                <li>
+                                                    <a class="dropdown-item btn deleteExpenseCategory"
+                                                       data-route="{{route('user.deleteExpenseCategory', $category->id)}}"
+                                                       data-property="{{ $category }}">
+                                                        <i class="fas fa-trash-alt"></i> @lang('Delete')
+                                                    </a>
+                                                </li>
+                                            @endif
+                                        </ul>
+                                    </div>
+                                </td>
+                            @endif
                         </tr>
                     @empty
                         <tr class="text-center">
@@ -104,6 +114,7 @@
                     @endforelse
                     </tbody>
                 </table>
+                {{ $expenseCategories->appends($_GET)->links($theme.'partials.pagination') }}
             </div>
         </div>
     </section>

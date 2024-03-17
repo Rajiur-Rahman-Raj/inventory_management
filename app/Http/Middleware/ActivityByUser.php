@@ -21,7 +21,6 @@ class ActivityByUser
      */
     public function handle(Request $request, Closure $next)
     {
-        dd('i am here');
         if (auth()->check()) {
             $expiresAt = Carbon::now()->addMinute(1); // keep online for 1 min
             Cache::put('user-is-online-' . auth()->id, true, $expiresAt);

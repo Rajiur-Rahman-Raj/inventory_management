@@ -49,12 +49,12 @@
                                                         <h6 class="ms-2">{{ $salesCenter->code }}</h6>
                                                     </div>
 
-                                                    <div class="investmentDate d-flex justify-content-start">
-                                                        <h6 class="font-weight-bold text-dark"><i
-                                                                class="far fa-calendar-check me-2 text-primary"></i> @lang('Sale Discount')
-                                                            : </h6>
-                                                        <h6 class="ms-2">{{ $salesCenter->discount_percent }}%</h6>
-                                                    </div>
+{{--                                                    <div class="investmentDate d-flex justify-content-start">--}}
+{{--                                                        <h6 class="font-weight-bold text-dark"><i--}}
+{{--                                                                class="far fa-calendar-check me-2 text-primary"></i> @lang('Sale Discount')--}}
+{{--                                                            : </h6>--}}
+{{--                                                        <h6 class="ms-2">{{ $salesCenter->discount_percent }}%</h6>--}}
+{{--                                                    </div>--}}
 
                                                     <div class="investmentDate d-flex justify-content-start">
                                                         <h6 class="font-weight-bold text-dark"><i

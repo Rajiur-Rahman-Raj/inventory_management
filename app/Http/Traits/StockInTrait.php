@@ -16,6 +16,7 @@ trait StockInTrait
     public function storeStockInDetails($request, $stockIn)
     {
         foreach ($request->item_id as $itemKey => $value) {
+
             $stockInDetails = new StockInDetails();
             $stockInDetails->stock_in_id = $stockIn->id;
             $stockInDetails->item_id = $value;
@@ -25,8 +26,23 @@ trait StockInTrait
             $stockInDetails->stock_date = $request->stock_date;
             $stockInDetails->save();
 
-            $rawItems = $request->raw_item_id[$itemKey];
+//            foreach ($request->raw_item_id as $rawItemKey => $rawItemId) {
+//                StockInExpenseRawItem::create([
+//                    'stock_in_details_id' => $stockInDetails->id,
+//                    'raw_item_id' => $rawItemId[$itemKey],
+//                    'quantity' => $request->raw_item_quantity[$rawItemKey][$itemKey],
+//                ]);
+//
+//                $rawItemPurchaseStock = RawItemPurchaseStock::where('company_id', $this->user->active_company_id)
+//                    ->findOrFail($rawItemId[$itemKey]);
+//
+//                throw_if($rawItemPurchaseStock->quantity <= 0, 'Raw item stock quantity finished');
+//
+//                $rawItemPurchaseStock->quantity = $rawItemPurchaseStock->quantity - (int)$request->raw_item_quantity[$rawItemKey][$itemKey];
+//                $rawItemPurchaseStock->save();
+//            }
 
+            $rawItems = $request->raw_item_id[$itemKey];
             foreach ($rawItems as $rawItemKey => $rawItemId) {
                 StockInExpenseRawItem::create([
                     'stock_in_details_id' => $stockInDetails->id,

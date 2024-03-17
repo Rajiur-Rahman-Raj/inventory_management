@@ -80,10 +80,12 @@
                 </form>
             </div>
 
-            <div class="d-flex justify-content-end mb-4">
-                <a href="{{route('user.createAffiliateMember')}}" class="btn btn-custom text-white "> <i
-                        class="fa fa-plus-circle"></i> @lang('Add Member')</a>
-            </div>
+            @if(adminAccessRoute(array_merge(config('permissionList.Manage_Affiliate.Affiliate.permission.add'))))
+                <div class="d-flex justify-content-end mb-4">
+                    <a href="{{route('user.createAffiliateMember')}}" class="btn btn-custom text-white "> <i
+                            class="fa fa-plus-circle"></i> @lang('Add Member')</a>
+                </div>
+            @endif
 
             <div class="table-parent table-responsive me-2 ms-2 mt-4">
                 <table class="table table-striped">
@@ -97,7 +99,9 @@
                         <th scope="col">@lang('District')</th>
                         <th scope="col">@lang('Commission')(%)</th>
                         <th scope="col">@lang('Join Date')</th>
-                        <th scope="col">@lang('Action')</th>
+                        @if(adminAccessRoute(array_merge(config('permissionList.Manage_Affiliate.Affiliate.permission.view'), config('permissionList.Manage_Affiliate.Affiliate.permission.edit'), config('permissionList.Manage_Affiliate.Affiliate.permission.delete'))))
+                            <th scope="col">@lang('Action')</th>
+                        @endif
                     </tr>
                     </thead>
                     <tbody>
@@ -124,40 +128,50 @@
                             <td data-label="@lang('Commission')">{{ $member->member_commission }}</td>
                             <td data-label="@lang('Join Date')">{{ dateTime($member->created_at) }}</td>
 
-                            <td data-label="Action">
-                                <div class="sidebar-dropdown-items">
-                                    <button
-                                        type="button"
-                                        class="dropdown-toggle"
-                                        data-bs-toggle="dropdown"
-                                        aria-expanded="false"
-                                    >
-                                        <i class="fal fa-cog"></i>
-                                    </button>
+                            @if(adminAccessRoute(array_merge(config('permissionList.Manage_Affiliate.Affiliate.permission.view'), config('permissionList.Manage_Affiliate.Affiliate.permission.edit'), config('permissionList.Manage_Affiliate.Affiliate.permission.delete'))))
+                                <td data-label="Action">
+                                    <div class="sidebar-dropdown-items">
+                                        <button
+                                            type="button"
+                                            class="dropdown-toggle"
+                                            data-bs-toggle="dropdown"
+                                            aria-expanded="false"
+                                        >
+                                            <i class="fal fa-cog"></i>
+                                        </button>
 
-                                    <ul class="dropdown-menu dropdown-menu-end">
-                                        <li>
-                                            <a href="{{ route('user.affiliateMemberDetails', $member->id) }}"
-                                               class="dropdown-item"> <i class="fal fa-eye"></i> @lang('Details') </a>
-                                        </li>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            @if(adminAccessRoute(array_merge(config('permissionList.Manage_Affiliate.Affiliate.permission.view'))))
+                                                <li>
+                                                    <a href="{{ route('user.affiliateMemberDetails', $member->id) }}"
+                                                       class="dropdown-item"> <i
+                                                            class="fal fa-eye"></i> @lang('Details')
+                                                    </a>
+                                                </li>
+                                            @endif
 
-                                        <li>
-                                            <a class="dropdown-item btn"
-                                               href="{{ route('user.affiliateMemberEdit', $member->id) }}">
-                                                <i class="fas fa-edit"></i> @lang('Edit')
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a class="dropdown-item btn deleteMember"
-                                               data-route="{{route('user.affiliateMemberDelete', $member->id)}}"
-                                               data-property="{{ $member }}">
-                                                <i class="fas fa-trash-alt"></i> @lang('Delete')
-                                            </a>
-                                        </li>
+                                            @if(adminAccessRoute(array_merge(config('permissionList.Manage_Affiliate.Affiliate.permission.edit'))))
+                                                <li>
+                                                    <a class="dropdown-item btn"
+                                                       href="{{ route('user.affiliateMemberEdit', $member->id) }}">
+                                                        <i class="fas fa-edit"></i> @lang('Edit')
+                                                    </a>
+                                                </li>
+                                            @endif
 
-                                    </ul>
-                                </div>
-                            </td>
+                                            @if(adminAccessRoute(array_merge(config('permissionList.Manage_Affiliate.Affiliate.permission.delete'))))
+                                                <li>
+                                                    <a class="dropdown-item btn deleteMember"
+                                                       data-route="{{route('user.affiliateMemberDelete', $member->id)}}"
+                                                       data-property="{{ $member }}">
+                                                        <i class="fas fa-trash-alt"></i> @lang('Delete')
+                                                    </a>
+                                                </li>
+                                            @endif
+                                        </ul>
+                                    </div>
+                                </td>
+                            @endif
                         </tr>
                     @empty
                         <tr class="text-center">
@@ -166,6 +180,7 @@
                     @endforelse
                     </tbody>
                 </table>
+                {{ $affiliateMembers->appends($_GET)->links($theme.'partials.pagination') }}
             </div>
         </div>
     </section>

@@ -16,7 +16,8 @@ class CreateSalesPaymentsTable extends Migration
         Schema::create('sales_payments', function (Blueprint $table) {
             $table->id();
             $table->foreignId('sale_id')->index()->nullable();
-            $table->integer('amount')->nullable();
+            $table->decimal('amount', 11, 2)->nullable();
+            $table->decimal('due', 11, 2)->nullable();
             $table->timestamp('payment_date')->nullable();
             $table->text('note')->nullable();
             $table->integer('paid_by')->nullable();

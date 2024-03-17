@@ -20,6 +20,7 @@ class CreateStockInDetailsTable extends Migration
             $table->integer('quantity')->nullable();
             $table->decimal('cost_per_unit', 11, 2)->default(0);
             $table->decimal('total_unit_cost', 11, 2)->default(0);
+            $table->timestamp('stock_date')->nullable();
             $table->timestamps();
         });
     }

@@ -72,7 +72,7 @@
                             <td data-label="@lang('Image')">
                                 <div class="d-flex gap-2">
                                     <div class="logo-brand">
-                                        <img src="{{ getFile(config('location.rawItemImage.path').$itemList->image) }}"
+                                        <img src="{{ getFile($itemList->driver, $itemList->image) }}"
                                              alt="">
                                     </div>
                                     <div class="product-summary">
@@ -127,6 +127,7 @@
                     @endforelse
                     </tbody>
                 </table>
+                {{ $itemLists->appends($_GET)->links($theme.'partials.pagination') }}
             </div>
         </div>
     </section>
@@ -188,7 +189,7 @@
                                                 <span><sub>@lang('(optional)')</sub></span></label>
                                             <div class="attach-file">
                                                <span class="prev">
-                                                  @lang('Image')
+                                                  @lang('Upload Image')
                                                </span>
                                                 <input type="file" name="image" class="form-control"/>
                                             </div>
@@ -270,7 +271,7 @@
                                                     class="text-danger">*</span></label>
                                             <div class="attach-file">
                                                <span class="prev">
-                                                  @lang('Image')
+                                                  @lang('Upload Image')
                                                </span>
                                                 <input type="file" name="image" class="form-control"/>
                                             </div>

@@ -170,6 +170,26 @@ unset($__errorArgs, $__bag); ?>"
                                             <?php endif; ?>
                                         </div>
 
+                                        <div class="col-md-12 mb-4 input-box">
+                                            <label for="" class="golden-text"><?php echo app('translator')->get('Photo'); ?> <span class="text-muted"> <sub>(optional)</sub></span> </label>
+                                            <div class="attach-file">
+                                               <span class="prev">
+                                                  <?php echo app('translator')->get('Upload Photo'); ?>
+                                               </span>
+                                                <input type="file" name="image" class="form-control"/>
+                                            </div>
+                                            <?php $__errorArgs = ['image'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                            <span class="text-danger"><?php echo e(trans($message)); ?></span>
+                                            <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                                        </div>
+
                                         <div class="input-box col-12">
                                             <button class="btn-custom w-100"
                                                     type="submit"><?php echo app('translator')->get('Add Supplier'); ?></button>

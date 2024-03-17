@@ -58,7 +58,7 @@
                                             <div class="product-img">
                                                 <a href="javascript:void(0)">
                                                     <img class="img-fluid"
-                                                         src="{{ getFile(config('location.itemImage.path').optional($stock->item)->image) }}"
+                                                         src="{{ getFile(optional($stock->item)->driver,optional($stock->item)->image) }}"
                                                          alt="">
                                                 </a>
                                             </div>

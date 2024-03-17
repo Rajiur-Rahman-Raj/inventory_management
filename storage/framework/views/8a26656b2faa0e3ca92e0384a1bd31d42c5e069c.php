@@ -35,7 +35,8 @@
                                 <option value="" selected
                                         disabled><?php echo app('translator')->get('Select Category'); ?></option>
                                 <?php $__currentLoopData = $expenseCategories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $category): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                    <option value="<?php echo e($category->id); ?>" <?php echo e(old('category_id', @request()->category_id) == $category->id ? 'selected' : ''); ?>> <?php echo app('translator')->get($category->name); ?></option>
+                                    <option
+                                        value="<?php echo e($category->id); ?>" <?php echo e(old('category_id', @request()->category_id) == $category->id ? 'selected' : ''); ?>> <?php echo app('translator')->get($category->name); ?></option>
                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </select>
                             <div class="invalid-feedback d-block">
@@ -74,10 +75,12 @@ unset($__errorArgs, $__bag); ?>
                 </form>
             </div>
 
-            <div class="d-flex justify-content-end mb-4">
-                <a href="javascript:void(0)" class="btn btn-custom text-white addNewExpense"> <i
-                        class="fa fa-plus-circle"></i> <?php echo app('translator')->get('Add Expense'); ?></a>
-            </div>
+            <?php if(adminAccessRoute(array_merge(config('permissionList.Manage_Expense.Expense_List.permission.add')))): ?>
+                <div class="d-flex justify-content-end mb-4">
+                    <a href="javascript:void(0)" class="btn btn-custom text-white addNewExpense"> <i
+                            class="fa fa-plus-circle"></i> <?php echo app('translator')->get('Add Expense'); ?></a>
+                </div>
+            <?php endif; ?>
 
             <div class="table-parent table-responsive me-2 ms-2 mt-4">
                 <table class="table table-striped">
@@ -87,7 +90,9 @@ unset($__errorArgs, $__bag); ?>
                         <th scope="col"><?php echo app('translator')->get('Category'); ?></th>
                         <th scope="col"><?php echo app('translator')->get('Amount'); ?></th>
                         <th scope="col"><?php echo app('translator')->get('Date Of Expense'); ?></th>
-                        <th scope="col"><?php echo app('translator')->get('Action'); ?></th>
+                        <?php if(adminAccessRoute(array_merge(config('permissionList.Manage_Expense.Expense_List.permission.edit'), config('permissionList.Manage_Expense.Expense_List.permission.delete')))): ?>
+                            <th scope="col"><?php echo app('translator')->get('Action'); ?></th>
+                        <?php endif; ?>
                     </tr>
                     </thead>
                     <tbody>
@@ -100,36 +105,42 @@ unset($__errorArgs, $__bag); ?>
                             <td data-label="<?php echo app('translator')->get('Amount'); ?>"><?php echo e($expense->amount); ?></td>
                             <td data-label="<?php echo app('translator')->get('Date'); ?>"><?php echo e(customDate($expense->expense_date)); ?></td>
 
-                            <td data-label="Action">
-                                <div class="sidebar-dropdown-items">
-                                    <button
-                                        type="button"
-                                        class="dropdown-toggle"
-                                        data-bs-toggle="dropdown"
-                                        aria-expanded="false"
-                                    >
-                                        <i class="fal fa-cog"></i>
-                                    </button>
+                            <?php if(adminAccessRoute(array_merge(config('permissionList.Manage_Expense.Expense_List.permission.edit'), config('permissionList.Manage_Expense.Expense_List.permission.delete')))): ?>
+                                <td data-label="Action">
+                                    <div class="sidebar-dropdown-items">
+                                        <button
+                                            type="button"
+                                            class="dropdown-toggle"
+                                            data-bs-toggle="dropdown"
+                                            aria-expanded="false"
+                                        >
+                                            <i class="fal fa-cog"></i>
+                                        </button>
 
-                                    <ul class="dropdown-menu dropdown-menu-end">
-                                        <li>
-                                            <a class="dropdown-item btn updateExpenseList"
-                                               data-route="<?php echo e(route('user.updateExpenseList', $expense->id)); ?>"
-                                               data-property="<?php echo e($expense); ?>">
-                                                <i class="fas fa-edit"></i> <?php echo app('translator')->get('Edit'); ?>
-                                            </a>
-                                        </li>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <?php if(adminAccessRoute(array_merge(config('permissionList.Manage_Expense.Expense_List.permission.edit')))): ?>
+                                                <li>
+                                                    <a class="dropdown-item btn updateExpenseList"
+                                                       data-route="<?php echo e(route('user.updateExpenseList', $expense->id)); ?>"
+                                                       data-property="<?php echo e($expense); ?>">
+                                                        <i class="fas fa-edit"></i> <?php echo app('translator')->get('Edit'); ?>
+                                                    </a>
+                                                </li>
+                                            <?php endif; ?>
 
-                                        <li>
-                                            <a class="dropdown-item btn deleteExpenseList"
-                                               data-route="<?php echo e(route('user.deleteExpenseList', $expense->id)); ?>"
-                                               data-property="<?php echo e($expense); ?>">
-                                                <i class="fas fa-trash-alt"></i> <?php echo app('translator')->get('Delete'); ?>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </td>
+                                            <?php if(adminAccessRoute(array_merge(config('permissionList.Manage_Expense.Expense_List.permission.delete')))): ?>
+                                                <li>
+                                                    <a class="dropdown-item btn deleteExpenseList"
+                                                       data-route="<?php echo e(route('user.deleteExpenseList', $expense->id)); ?>"
+                                                       data-property="<?php echo e($expense); ?>">
+                                                        <i class="fas fa-trash-alt"></i> <?php echo app('translator')->get('Delete'); ?>
+                                                    </a>
+                                                </li>
+                                            <?php endif; ?>
+                                        </ul>
+                                    </div>
+                                </td>
+                            <?php endif; ?>
                         </tr>
                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                         <tr class="text-center">
@@ -173,7 +184,8 @@ unset($__errorArgs, $__bag); ?>
                                                 <option value="" selected
                                                         disabled><?php echo app('translator')->get('Select Category'); ?></option>
                                                 <?php $__currentLoopData = $expenseCategories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $category): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                    <option value="<?php echo e($category->id); ?>" <?php echo e(old('category_id', @request()->category_id) == $category->id ? 'selected' : ''); ?>> <?php echo app('translator')->get($category->name); ?></option>
+                                                    <option
+                                                        value="<?php echo e($category->id); ?>" <?php echo e(old('category_id', @request()->category_id) == $category->id ? 'selected' : ''); ?>> <?php echo app('translator')->get($category->name); ?></option>
                                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                             </select>
                                             <div class="invalid-feedback d-block">

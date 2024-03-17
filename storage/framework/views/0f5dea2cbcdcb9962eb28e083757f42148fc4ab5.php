@@ -6,7 +6,8 @@
             class="dropdown-toggle"
             data-bs-toggle="dropdown"
             aria-expanded="false">
-            <img src="<?php echo e(getFile(config('location.companyLogo.path').@Auth::user()->activeCompany->logo)); ?>"
+            <img
+                src="<?php echo e(getFile(@Auth::user()->activeCompany->driver, @Auth::user()->activeCompany->logo)); ?>"
                  alt="..."/> <?php echo e(@Auth::user()->activeCompany->name); ?>
 
             <?php if(@Auth::user()->activeCompany == null): ?>
@@ -22,7 +23,8 @@
                 <?php $__empty_1 = true; $__currentLoopData = $companies; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                     <li>
                         <a class="dropdown-item" href="<?php echo e(route('user.companyActive',$item->id)); ?>">
-                            <img src="<?php echo e(getFile(config('location.companyLogo.path').$item->logo)); ?>"
+                            <img
+                                src="<?php echo e(getFile($item->driver, $item->logo)); ?>"
                                  alt="<?php echo e($item->name); ?>"/>
                             <?php echo e($item->name); ?>
 

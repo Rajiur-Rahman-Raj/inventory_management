@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Traits\Upload;
 use App\Models\Admin;
 use App\Models\Role;
 use App\Models\User;
@@ -12,7 +13,7 @@ use Stevebauman\Purify\Facades\Purify;
 
 class RolesPermissionController extends Controller
 {
-
+    use Upload;
     public function __construct()
     {
         $this->middleware(['auth']);
@@ -170,6 +171,19 @@ class RolesPermissionController extends Controller
         $user->active_company_id = $admin->active_company_id;
         $user->status = $request->status;
 
+
+        if ($request->hasFile('image')) {
+            try {
+                $image = $this->fileUpload($request->image, config('location.user.path'), null, null, 'avif', null, null, null);
+                if ($image) {
+                    $user->image = $image['path'];
+                    $user->driver = $image['driver'];
+                }
+            } catch (\Exception $exp) {
+                return back()->with('error', 'Image could not be uploaded.');
+            }
+        }
+
         $user->save();
         return back()->with('success', 'Staff Created Successfully!');
     }
@@ -199,6 +213,18 @@ class RolesPermissionController extends Controller
         $user->username = $request->username;
         $user->role_id = $request->role_id;
         $user->status = $request->status;
+
+        if ($request->hasFile('image')) {
+            try {
+                $image = $this->fileUpload($request->image, config('location.user.path'), null, null, 'avif', null, $user->image, $user->driver);
+                if ($image) {
+                    $user->image = $image['path'];
+                    $user->driver = $image['driver'];
+                }
+            } catch (\Exception $exp) {
+                return back()->with('error', 'Image could not be uploaded.');
+            }
+        }
 
         $user->save();
         return back()->with('success', 'Staff Updated Successfully!');

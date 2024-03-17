@@ -35,7 +35,8 @@
                                 <div
                                     class="badge-box  <?php echo e(Auth()->user()->active_company_id == null || Auth()->user()->active_company_id != $company->id ? 'locked' : ''); ?>">
                                     <img class="img-fluid"
-                                         src="<?php echo e(getFile(config('location.companyLogo.path').$company->logo)); ?>"
+
+                                         src="<?php echo e(getFile($company->driver, $company->logo)); ?>"
                                          alt=""/>
                                     <h3 class="m-0"><?php echo app('translator')->get($company->name); ?></h3>
                                     <p class=""><?php echo app('translator')->get($company->email); ?></p>

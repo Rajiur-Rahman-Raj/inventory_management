@@ -117,6 +117,8 @@
                     <?php endif; ?>
                     </tbody>
                 </table>
+                <?php echo e($purchasedItems->appends($_GET)->links($theme.'partials.pagination')); ?>
+
             </div>
         </div>
     </section>

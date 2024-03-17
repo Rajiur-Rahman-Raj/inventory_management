@@ -16,6 +16,7 @@ class CreateStockInsTable extends Migration
         Schema::create('stock_ins', function (Blueprint $table) {
             $table->id();
             $table->foreignId('company_id')->index()->nullable();
+            $table->foreignId('sales_center_id')->index()->nullable();
             $table->timestamp('stock_date')->nullable();
             $table->decimal('total_cost', 11, 2)->nullable();
             $table->timestamps();

@@ -84,12 +84,15 @@
                     </div>
                 </form>
             </div>
-            @if(isset($profitLossReportRecords) && count($search) > 0)
-                <div class="d-flex justify-content-end mb-4">
-                    <a href="javascript:void(0)" data-route="{{route('user.export.profitLossReports')}}"
-                       class="btn btn-custom text-white reportsDownload downloadExcel"> <i
-                            class="fa fa-download"></i> @lang('Download Excel')</a>
-                </div>
+
+            @if(adminAccessRoute(config('permissionList.Manage_Reports.Profit_And_Loss_Report.permission.export')))
+                @if(isset($profitLossReportRecords) && count($search) > 0)
+                    <div class="d-flex justify-content-end mb-4">
+                        <a href="javascript:void(0)" data-route="{{route('user.export.profitLossReports')}}"
+                           class="btn btn-custom text-white reportsDownload downloadExcel"> <i
+                                class="fa fa-download"></i> @lang('Download Excel')</a>
+                    </div>
+                @endif
             @endif
 
             @if(isset($profitLossReportRecords) && count($search) > 0)
@@ -140,6 +143,11 @@
                             </tr>
 
                             <tr>
+                                <td>@lang('Total Stock Missing')</td>
+                                <td> {{ config('basic.currency_text') }} {{ fractionNumber($profitLossReportRecords['totalStockMissing'], false) }} </td>
+                            </tr>
+
+                            <tr>
                                 <td>@lang('Total Affiliate Commission')</td>
                                 <td> {{ config('basic.currency_text') }} {{ fractionNumber($profitLossReportRecords['totalAffiliateCommission'], false) }} </td>
                             </tr>
@@ -148,6 +156,11 @@
                         <tr>
                             <td>@lang('Total Expense')</td>
                             <td> {{ config('basic.currency_text') }} {{ fractionNumber($profitLossReportRecords['totalExpense'], false) }} </td>
+                        </tr>
+
+                        <tr>
+                            <td>@lang('Total Salary')</td>
+                            <td> {{ config('basic.currency_text') }} {{ fractionNumber($profitLossReportRecords['totalSalary'], false) }} </td>
                         </tr>
 
                         <tr>
@@ -163,17 +176,17 @@
                         </tr>
 
 
-{{--                        <tr>--}}
-{{--                            <td>@lang('Sales profit')</td>--}}
-{{--                            <td> {{ config('basic.currency_text') }} {{ fractionNumber($profitLossReportRecords['salesProfit'], false) }} </td>--}}
-{{--                        </tr>--}}
+                        {{--                        <tr>--}}
+                        {{--                            <td>@lang('Sales profit')</td>--}}
+                        {{--                            <td> {{ config('basic.currency_text') }} {{ fractionNumber($profitLossReportRecords['salesProfit'], false) }} </td>--}}
+                        {{--                        </tr>--}}
 
-{{--                        <tr>--}}
-{{--                            <td>@lang('Net profit')</td>--}}
-{{--                            <td class="{{ $profitLossReportRecords['netProfit'] < 0 ? 'text-danger' : 'text-success' }}">--}}
-{{--                                {{ config('basic.currency_text') }} {{ fractionNumber($profitLossReportRecords['netProfit'], false) }}--}}
-{{--                            </td>--}}
-{{--                        </tr>--}}
+                        {{--                        <tr>--}}
+                        {{--                            <td>@lang('Net profit')</td>--}}
+                        {{--                            <td class="{{ $profitLossReportRecords['netProfit'] < 0 ? 'text-danger' : 'text-success' }}">--}}
+                        {{--                                {{ config('basic.currency_text') }} {{ fractionNumber($profitLossReportRecords['netProfit'], false) }}--}}
+                        {{--                            </td>--}}
+                        {{--                        </tr>--}}
 
                         </tbody>
                     </table>

@@ -67,12 +67,14 @@
                 </form>
             </div>
 
-            <div class="d-flex justify-content-end mb-4">
-                <?php if(userType() == 1): ?>
-                    <a href="<?php echo e(route('user.stockTransfer')); ?>" class="btn btn-custom text-white "> <i
-                            class="fa fa-plus-circle"></i> <?php echo app('translator')->get('Transfer Stock'); ?></a>
-                <?php endif; ?>
-            </div>
+            <?php if(adminAccessRoute(array_merge(config('permissionList.Manage_Stocks.Stock_In.permission.add')))): ?>
+                <div class="d-flex justify-content-end mb-4">
+                    <?php if(userType() == 1): ?>
+                        <a href="<?php echo e(route('user.stockTransfer')); ?>" class="btn btn-custom text-white "> <i
+                                class="fa fa-plus-circle"></i> <?php echo app('translator')->get('Transfer Stock'); ?></a>
+                    <?php endif; ?>
+                </div>
+            <?php endif; ?>
 
             <div class="table-parent table-responsive me-2 ms-2 mt-4">
                 <table class="table table-striped">
@@ -128,6 +130,8 @@
                     <?php endif; ?>
                     </tbody>
                 </table>
+                <?php echo e($stockLists->appends($_GET)->links($theme.'partials.pagination')); ?>
+
             </div>
         </div>
     </section>

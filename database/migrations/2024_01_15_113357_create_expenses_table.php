@@ -18,6 +18,7 @@ class CreateExpensesTable extends Migration
             $table->foreignId('company_id')->index()->nullable();
             $table->foreignId('category_id')->index()->nullable();
             $table->string('amount')->nullable();
+            $table->timestamp('expense_date')->nullable();
             $table->boolean('status')->default(1);
             $table->integer('created_by')->nullable();
             $table->integer('updated_by')->nullable();

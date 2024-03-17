@@ -7,8 +7,10 @@ use App\Exports\ExpenseReportExport;
 use App\Exports\ProfitLossReport;
 use App\Exports\PurchaseExport;
 use App\Exports\PurchasePaymentReportExport;
+use App\Exports\SalaryReportExport;
 use App\Exports\SalesPaymentReportExport;
 use App\Exports\SalesReportExport;
+use App\Exports\StockMissingReportExport;
 use App\Exports\StockReportExport;
 use App\Exports\wastageReportExport;
 use App\Models\AffiliateMember;
@@ -16,6 +18,8 @@ use App\Models\AffiliateMemberCommission;
 use App\Models\CentralPromoter;
 use App\Models\CentralPromoterCommission;
 use App\Models\Customer;
+use App\Models\Employee;
+use App\Models\EmployeeSalary;
 use App\Models\Expense;
 use App\Models\ExpenseCategory;
 use App\Models\Item;
@@ -23,7 +27,9 @@ use App\Models\RawItem;
 use App\Models\RawItemPurchaseIn;
 use App\Models\Sale;
 use App\Models\SalesCenter;
+use App\Models\Stock;
 use App\Models\StockIn;
+use App\Models\StockMissing;
 use App\Models\Supplier;
 use App\Models\Wastage;
 use Carbon\Carbon;
@@ -176,6 +182,49 @@ class ReportController extends Controller
     }
 
 
+    public function stockMissingReports(Request $request)
+    {
+        $admin = $this->user;
+        $search = $request->all();
+
+        $fromDate = Carbon::parse($request->from_date);
+        $toDate = Carbon::parse($request->to_date)->addDay();
+
+        try {
+
+            $data['stockItems'] = Stock::with('item')->where('company_id', $admin->active_company_id)->whereNull('sales_center_id')->get();
+
+            if (!empty($search)) {
+                $data['stockMissingReportRecords'] = StockMissing::with('item:id,name')
+                    ->when(isset($search['from_date']), fn($query) => $query->whereDate('missing_date', '>=', $fromDate))
+                    ->when(isset($search['to_date']), fn($query) => $query->whereBetween('missing_date', [$fromDate, $toDate]))
+                    ->when($search['item_id'] != null, fn($query) => $query->where('item_id', $search['item_id']))
+                    ->where('company_id', $admin->active_company_id)
+                    ->get();
+
+                $data['totalMissing'] = $data['stockMissingReportRecords']->sum('quantity');
+                $data['totalMissingAmount'] = $data['stockMissingReportRecords']->sum('total_cost');
+
+                return view($this->theme . 'user.reports.stockMissing.index', $data, compact('search'));
+
+            } else {
+                $data['stockMissingReportRecords'] = null;
+                return view($this->theme . 'user.reports.stockMissing.index', $data, compact('search'));
+            }
+
+        } catch (\Exception $exception) {
+            $data = ['error' => $exception->getMessage()];
+            return view($this->theme . 'user.reports.stockMissing.index', $data, compact('search'));
+        }
+    }
+
+    public function exportStockMissingReports(Request $request)
+    {
+        $admin = $this->user;
+        return Excel::download(new StockMissingReportExport($request, $admin), 'stockMissingReport.xlsx');
+    }
+
+
     public function expenseReports(Request $request)
     {
         $admin = $this->user;
@@ -215,6 +264,48 @@ class ReportController extends Controller
     {
         $admin = $this->user;
         return Excel::download(new ExpenseReportExport($request, $admin), 'expenseReport.xlsx');
+    }
+
+
+    public function salaryReports(Request $request)
+    {
+        $admin = $this->user;
+        $search = $request->all();
+        $fromDate = Carbon::parse($request->from_date);
+        $toDate = Carbon::parse($request->to_date)->addDay();
+
+        try {
+
+            $data['employees'] = Employee::where('company_id', $admin->active_company_id)->select('id', 'name')->get();
+
+            if (!empty($search)) {
+                $data['salaryReportRecords'] = EmployeeSalary::with('employee:id,name')
+                    ->when(isset($search['from_date']), fn($query) => $query->whereDate('payment_date', '>=', $fromDate))
+                    ->when(isset($search['to_date']), fn($query) => $query->whereBetween('payment_date', [$fromDate, $toDate]))
+                    ->when($search['employee_id'] != null, fn($query) => $query->where('employee_id', $search['employee_id']))
+                    ->where('company_id', $admin->active_company_id)
+                    ->get();
+
+                $data['totalSalary'] = $data['salaryReportRecords']->sum('amount');
+
+                return view($this->theme . 'user.reports.salary.index', $data, compact('search'));
+
+            } else {
+                $data['salaryReportRecords'] = null;
+                return view($this->theme . 'user.reports.salary.index', $data, compact('search'));
+            }
+
+        } catch (\Exception $exception) {
+
+            $data = ['error' => $exception->getMessage()];
+            return view($this->theme . 'user.reports.salary.index', $data, compact('search'));
+        }
+    }
+
+    public function exportSalaryReports(Request $request)
+    {
+        $admin = $this->user;
+        return Excel::download(new SalaryReportExport($request, $admin), 'salaryReport.xlsx');
     }
 
     public function purchasePaymentReports(Request $request)
@@ -485,6 +576,10 @@ class ReportController extends Controller
                     ->when(isset($search['to_date']), fn($query) => $query->whereBetween('wastage_date', [$fromDate, $toDate]))
                     ->where('company_id', $admin->active_company_id)->sum('total_cost');
 
+                $data['profitLossReportRecords']['totalStockMissing'] = StockMissing::when(isset($search['from_date']), fn($query) => $query->whereDate('missing_date', '>=', $fromDate))
+                    ->when(isset($search['to_date']), fn($query) => $query->whereBetween('missing_date', [$fromDate, $toDate]))
+                    ->where('company_id', $admin->active_company_id)->sum('total_cost');
+
                 $data['profitLossReportRecords']['affiliateMemberCommission'] = AffiliateMemberCommission::when(isset($search['from_date']), fn($query) => $query->whereDate('commission_date', '>=', $fromDate))
                     ->when(isset($search['to_date']), fn($query) => $query->whereBetween('commission_date', [$fromDate, $toDate]))
                     ->where('company_id', $admin->active_company_id)->sum('amount');
@@ -501,7 +596,11 @@ class ReportController extends Controller
                     ->when(isset($search['to_date']), fn($query) => $query->whereBetween('expense_date', [$fromDate, $toDate]))
                     ->where('company_id', $admin->active_company_id)->sum('amount');
 
-                $data['profitLossReportRecords']['netProfit'] = $data['profitLossReportRecords']['revenue'] - $data['profitLossReportRecords']['totalAffiliateCommission'] - $data['profitLossReportRecords']['totalExpense'];
+                $data['profitLossReportRecords']['totalSalary'] = EmployeeSalary::when(isset($search['from_date']), fn($query) => $query->whereDate('payment_date', '>=', $fromDate))
+                    ->when(isset($search['to_date']), fn($query) => $query->whereBetween('payment_date', [$fromDate, $toDate]))
+                    ->where('company_id', $admin->active_company_id)->sum('amount');
+
+                $data['profitLossReportRecords']['netProfit'] = $data['profitLossReportRecords']['revenue'] - $data['profitLossReportRecords']['totalAffiliateCommission'] - $data['profitLossReportRecords']['totalExpense'] - $data['profitLossReportRecords']['totalSalary'];
 
 
                 return view($this->theme . 'user.reports.profitLoss.index', $data, compact('search'));

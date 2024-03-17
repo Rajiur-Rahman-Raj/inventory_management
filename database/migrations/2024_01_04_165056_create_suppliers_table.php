@@ -25,6 +25,8 @@ class CreateSuppliersTable extends Migration
             $table->string('upazila_id')->nullable();
             $table->string('union_id')->nullable();
             $table->text('address')->nullable();
+            $table->string('image')->nullable();
+            $table->string('driver')->nullable();
             $table->integer('created_by')->nullable();
             $table->integer('updated_by')->nullable();
             $table->boolean('status')->default(1);

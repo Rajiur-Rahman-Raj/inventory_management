@@ -30,7 +30,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="col">
                 <!-- profile setting -->
                 <section class="profile-setting">
@@ -43,7 +42,6 @@
                                     <div class="row g-4">
                                         <div class="input-box col-md-12">
                                             <label for="name">@lang('Stock In Date') </label>
-
                                             <div class="flatpickr">
                                                 <div class="input-group input-box">
                                                     <input type="date" placeholder="@lang('Stock Date')"
@@ -64,17 +62,13 @@
                                                     </div>
                                                 </div>
                                             </div>
-
                                         </div>
-
                                     </div>
-
                                     <div class="row mt-4">
                                         <div class="col-md-12 d-flex justify-content-between">
                                             <div>
                                                 <h6 class="text-dark font-weight-bold"> @lang('Add Stock Item') </h6>
                                             </div>
-
                                             <div class="addStockItemFieldButton">
                                                 <div class="form-group">
                                                     <a href="javascript:void(0)"
@@ -86,10 +80,9 @@
                                             </div>
                                         </div>
                                     </div>
-
                                     <div class="stockItemField">
-
-                                        <div class="row mt-4 parentItemRow">
+                                        {{-- Item Field --}}
+                                        <div class="row parentItemRow">
                                             <div class="input-box col-md-3">
                                                 <label for="item_id">@lang('Select Item')</label>
                                                 <select
@@ -102,15 +95,13 @@
                                                             value="{{ $item->id }}" {{ old('item_id.0') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
                                                     @endforeach
                                                 </select>
-
                                                 @if($errors->has('item_id'))
                                                     <div
                                                         class="error text-danger">@lang($errors->first('item_id.0'))
                                                     </div>
                                                 @endif
                                             </div>
-
-                                            <div class="input-box col-md-3">
+                                            <div class="input-box col-md-2">
                                                 <label for="item_quantity"> @lang('Quantity')</label>
                                                 <div class="input-group">
                                                     <input type="text" name="item_quantity[]"
@@ -127,8 +118,7 @@
                                                     @error('item_quantity.0') @lang($message) @enderror
                                                 </div>
                                             </div>
-
-                                            <div class="input-box col-md-3 cost_per_unit_parent">
+                                            <div class="input-box col-md-2 cost_per_unit_parent">
                                                 <label for="cost_per_unit"> @lang('Cost Per Unit')</label>
                                                 <div class="input-group">
                                                     <input type="text" name="cost_per_unit[]"
@@ -152,8 +142,8 @@
                                                 <div class="input-group">
                                                     <input type="text" name="total_unit_cost[]"
                                                            class="form-control @error('total_unit_cost.0') is-invalid @enderror totalItemCost"
-                                                           value="{{ old('total_unit_cost.0') }}">
-                                                    <div class="input-group-append" readonly="">
+                                                           value="{{ old('total_unit_cost.0') }}" readonly="">
+                                                    <div class="input-group-append">
                                                         <div class="form-control currency_symbol append_group">
                                                             {{ $basic->currency_symbol }}
                                                         </div>
@@ -164,14 +154,33 @@
                                                     @error('total_unit_cost.0') @lang($message) @enderror
                                                 </div>
                                             </div>
+
+                                            <div class="input-box col-md-2">
+                                                <label for="selling_price"> @lang('Selling Price')</label>
+                                                <div class="input-group">
+                                                    <input type="text" name="selling_price[]"
+                                                           class="form-control @error('selling_price.0') is-invalid @enderror"
+                                                           onkeyup="this.value = this.value.replace (/^\.|[^\d\.]/g, '')"
+                                                           value="{{ old('selling_price.0') }}">
+                                                    <div class="input-group-append" readonly="">
+                                                        <div class="form-control currency_symbol append_group">
+                                                            {{ $basic->currency_symbol }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="invalid-feedback">
+                                                    @error('selling_price.0') @lang($message) @enderror
+                                                </div>
+                                            </div>
                                         </div>
 
-
+                                        {{-- Raw Item Field --}}
                                         <div class="row parentRawItemRow">
                                             <div class="input-box col-md-6 mt-3">
                                                 <label for="raw_item_id">@lang('Select Raw Item')</label>
                                                 <select
-                                                    class="form-select js-example-basic-single selectedRawItem @error('raw_item_id.0.0') is-invalid @enderror"
+                                                    class="form-select js-example-basic-single selectedRawItem raw_item_id @error('raw_item_id.0.0') is-invalid @enderror"
                                                     name="raw_item_id[0][]"
                                                     aria-label="Default select example">
                                                     <option value="" selected
@@ -192,9 +201,9 @@
                                                 <label for="raw_item_quantity"> @lang('Expense Quantity')</label>
                                                 <div class="input-group">
                                                     <input type="text" name="raw_item_quantity[0][]"
-                                                           class="form-control @error('raw_item_quantity.0') is-invalid @enderror totalRawItemQuantity"
+                                                           class="form-control raw_item_quantity @error('raw_item_quantity.0') is-invalid @enderror totalRawItemQuantity"
                                                            onkeyup="this.value = this.value.replace (/^\.|[^\d\.]/g, '')"
-                                                           value="{{ old('raw_item_quantity.0') }}">
+                                                           value="{{ old('raw_item_quantity.0.0') }}">
                                                     <div class="input-group-append" readonly="">
                                                         <div
                                                             class="form-control currency_symbol append_group raw_item_unit"></div>
@@ -207,59 +216,60 @@
                                             </div>
                                             <div class="input-box col-md-1 mt-5">
                                                 <span class="input-group-btn">
-                                                    <button class="btn btn-outline-success mt-2 rawItemFieldGenerate"
-                                                            type="button"
-                                                            id="rawItemFieldGenerate">
+                                                    <button
+                                                        class="btn btn-outline-success mt-2 rawItemFieldBtn rawItemFieldGenerate"
+                                                        type="button"
+                                                        id="rawItemFieldGenerate">
                                                         <i class="fa fa-plus"></i>
                                                     </button>
                                                 </span>
                                             </div>
                                         </div>
 
-                                        <div class="addRawItemField">
-                                            @php
-                                                $oldRawItemCounts = old('raw_item_id') ? count(old('raw_item_id')) : 0;
-                                            @endphp
+                                        @php
+                                            $oldRawItemCounts = old('raw_item_id') ? count(old('raw_item_id')) : 0;
+                                        @endphp
 
-                                            @if($oldRawItemCounts > 1)
-                                                @for($i = 1; $i < $oldRawItemCounts; $i++)
-                                                    <div class="row parentRawItemRow">
-                                                        <div class="input-box col-md-6 mt-3">
-                                                            <label for="raw_item_id">@lang('Select Raw Item')</label>
-                                                            <select
-                                                                class="form-select js-example-basic-single{{$i}} selectedRawItem_{{$i}} @error("raw_item_id.$i") is-invalid @enderror"
-                                                                name="raw_item_id[]"
-                                                                onchange="selectedRawItemHandel({{$i}})"
-                                                                aria-label="Default select example">
-                                                                <option value="" selected
-                                                                        disabled>@lang('Select Raw Item')</option>
-                                                                @foreach($rawItems as $key => $rawItem)
-                                                                    <option
-                                                                        value="{{ $rawItem->id }}" {{ old("raw_item_id.$i") == $rawItem->id ? 'selected' : '' }}>{{ $rawItem->name }}</option>
-                                                                @endforeach
-                                                            </select>
-                                                            @if($errors->has("raw_item_id.$i"))
+                                        @if($oldRawItemCounts > 1)
+                                            @for($i = 1; $i < $oldRawItemCounts; $i++)
+                                                {{-- Old Raw Item Field --}}
+                                                <div class="row parentRawItemRow">
+                                                    <div class="input-box col-md-6 mt-3">
+                                                        <label for="raw_item_id">@lang('Select Raw Item')</label>
+                                                        <select
+                                                            class="form-select js-example-basic-single raw_item_id @error("raw_item_id.$i") is-invalid @enderror"
+                                                            name="raw_item_id[0][]"
+                                                            onchange="selectedRawItemHandel({{$i}})"
+                                                            aria-label="Default select example">
+                                                            <option value="" selected
+                                                                    disabled>@lang('Select Raw Item')</option>
+                                                            @foreach($rawItems as $key => $rawItem)
+                                                                <option
+                                                                    value="{{ $rawItem->id }}" {{ old("raw_item_id.$i") == $rawItem->id ? 'selected' : '' }}>{{ $rawItem->name }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                        @if($errors->has("raw_item_id.$i"))
+                                                            <div
+                                                                class="error text-danger">@lang($errors->first("raw_item_id.$i"))</div>
+                                                        @endif
+                                                    </div>
+                                                    <div class="input-box col-md-5 mt-3">
+                                                        <label
+                                                            for="raw_item_quantity"> @lang('Expense Quantity')</label>
+                                                        <div class="input-group">
+                                                            <input type="text" name="raw_item_quantity[0][]"
+                                                                   value="{{ old("raw_item_quantity.$i") }}"
+                                                                   class="form-control raw_item_quantity @error("item_quantity.$i") is-invalid @enderror totalRawItemQuantity">
+                                                            <div class="input-group-append" readonly="">
                                                                 <div
-                                                                    class="error text-danger">@lang($errors->first("raw_item_id.$i"))</div>
-                                                            @endif
-                                                        </div>
-                                                        <div class="input-box col-md-5 mt-3">
-                                                            <label
-                                                                for="raw_item_quantity"> @lang('Expense Quantity')</label>
-                                                            <div class="input-group">
-                                                                <input type="text" name="raw_item_quantity[]"
-                                                                       value="{{ old("raw_item_quantity.$i") }}"
-                                                                       class="form-control @error("item_quantity.$i") is-invalid @enderror totalRawItemQuantity">
-                                                                <div class="input-group-append" readonly="">
-                                                                    <div
-                                                                        class="form-control currency_symbol append_group raw_item_unit_{{$i}}"></div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="invalid-feedback">
-                                                                @error("raw_item_quantity.$i") @lang($message) @enderror
+                                                                    class="form-control currency_symbol append_group"></div>
                                                             </div>
                                                         </div>
-                                                        <div class="input-box col-md-1 mt-5">
+                                                        <div class="invalid-feedback">
+                                                            @error("raw_item_quantity.$i") @lang($message) @enderror
+                                                        </div>
+                                                    </div>
+                                                    <div class="input-box col-md-1 mt-5">
                                                             <span class="input-group-btn">
                                                                 <button
                                                                     class="btn btn-outline-danger delete_raw_item_field mt-2"
@@ -267,26 +277,23 @@
                                                                     <i class="fa fa-minus"></i>
                                                                 </button>
                                                             </span>
-                                                        </div>
                                                     </div>
-                                                    @push('script')
-                                                        <script>
-                                                            const rawItemSelect2Class{{$i}} = `.js-example-basic-single{{$i}}`;
-                                                            $(document).ready(function () {
-                                                                $(rawItemSelect2Class{{$i}}).select2({
-                                                                    width: '100%',
-                                                                });
+                                                </div>
+                                                @push('script')
+                                                    <script>
+                                                        const rawItemSelect2Class{{$i}} = `.js-example-basic-single{{$i}}`;
+                                                        $(document).ready(function () {
+                                                            $(rawItemSelect2Class{{$i}}).select2({
+                                                                width: '100%',
                                                             });
-                                                        </script>
-                                                    @endpush
-                                                @endfor
-                                            @endif
-                                        </div>
-                                    </div>
+                                                        });
+                                                    </script>
+                                                @endpush
+                                            @endfor
+                                        @endif
+                                        {{--                                    </div>--}}
 
-
-                                    <div class="addedItemField">
-
+                                        {{--                                    <div class="addedItemField">--}}
                                         @php
                                             $oldItemCounts = old('item_id') ? count(old('item_id')) : 0;
                                         @endphp
@@ -294,11 +301,12 @@
                                         @if($oldItemCounts > 1)
                                             @for($i = 1; $i < $oldItemCounts; $i++)
                                                 <div id="removeItemField{{$i}}">
+                                                    {{-- Old Item Field --}}
                                                     <div class="row mt-4 addMoreItemBox parentItemRow">
                                                         <div class="col-md-12 d-flex justify-content-end">
                                                             <button
                                                                 class="btn btn-danger delete_item_desc custom_delete_desc_padding mt-4"
-                                                                type="button" onclick="deleteItemField({{$i}})">
+                                                                type="button">
                                                                 <i class="fa fa-times"></i>
                                                             </button>
                                                         </div>
@@ -323,8 +331,7 @@
                                                             @endif
                                                         </div>
 
-
-                                                        <div class="input-box col-md-3">
+                                                        <div class="input-box col-md-2">
                                                             <label for="item_quantity"> @lang('Quantity')</label>
                                                             <div class="input-group">
                                                                 <input type="text" name="item_quantity[]"
@@ -341,7 +348,7 @@
                                                             </div>
                                                         </div>
 
-                                                        <div class="input-box col-md-3 cost_per_unit_parent">
+                                                        <div class="input-box col-md-2 cost_per_unit_parent">
                                                             <label for="cost_per_unit"> @lang('Cost Per Unit')</label>
                                                             <div class="input-group">
                                                                 <input type="text" name="cost_per_unit[]"
@@ -365,8 +372,8 @@
                                                             <div class="input-group">
                                                                 <input type="text" name="total_unit_cost[]"
                                                                        class="form-control @error("total_unit_cost.$i") is-invalid @enderror totalItemCost"
-                                                                       value="{{ old("total_unit_cost.$i") }}">
-                                                                <div class="input-group-append" readonly="">
+                                                                       value="{{ old("total_unit_cost.$i") }}" readonly>
+                                                                <div class="input-group-append">
                                                                     <div class="form-control currency_symbol">
                                                                         {{ $basic->currency_symbol }}
                                                                     </div>
@@ -377,14 +384,34 @@
                                                                 @error("total_unit_cost.$i") @lang($message) @enderror
                                                             </div>
                                                         </div>
+
+                                                        <div class="input-box col-md-2">
+                                                            <label for="selling_price"> @lang('Selling Price')</label>
+                                                            <div class="input-group">
+                                                                <input type="text" name="selling_price[]"
+                                                                       class="form-control @error("selling_price.$i") is-invalid @enderror"
+                                                                       onkeyup="this.value = this.value.replace (/^\.|[^\d\.]/g, '')"
+                                                                       value="{{ old("selling_price.$i") }}">
+                                                                <div class="input-group-append" readonly="">
+                                                                    <div class="form-control currency_symbol append_group">
+                                                                        {{ $basic->currency_symbol }}
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="invalid-feedback">
+                                                                @error("selling_price.$i") @lang($message) @enderror
+                                                            </div>
+                                                        </div>
+
                                                     </div>
 
                                                     <div class="row">
                                                         <div class="input-box col-md-6 mt-3">
                                                             <label for="raw_item_id">@lang('Select Raw Item')</label>
                                                             <select
-                                                                class="form-select js-example-basic-single{{$i}} selectedRawItem_{{$i}} @error("raw_item_id.$i") selectedRawItem is-invalid @enderror"
-                                                                name="raw_item_id[]"
+                                                                class="form-select js-example-basic-single raw_item_id @error("raw_item_id.$i") selectedRawItem is-invalid @enderror"
+                                                                name="raw_item_id[0][]"
                                                                 aria-label="Default select example">
                                                                 <option value="" selected
                                                                         disabled>@lang('Select Raw Item')</option>
@@ -405,8 +432,8 @@
                                                             <label
                                                                 for="raw_item_quantity"> @lang('Expense Quantity')</label>
                                                             <div class="input-group">
-                                                                <input type="text" name="raw_item_quantity[]"
-                                                                       class="form-control @error("raw_item_quantity.$i") is-invalid @enderror totalRawItemQuantity"
+                                                                <input type="text" name="raw_item_quantity[0][]"
+                                                                       class="form-control raw_item_quantity @error("raw_item_quantity.$i") is-invalid @enderror totalRawItemQuantity"
                                                                        onkeyup="this.value = this.value.replace (/^\.|[^\d\.]/g, '')"
                                                                        value="{{ old("raw_item_quantity.$i") }}">
                                                                 <div class="input-group-append" readonly="">
@@ -423,10 +450,9 @@
                                                         <div class="input-box col-md-1 mt-5">
                                                             <span class="input-group-btn">
                                                                 <button
-                                                                    class="btn btn-outline-success mt-2 rawItemFieldGenerate"
+                                                                    class="btn btn-outline-success mt-2 rawItemFieldBtn rawItemFieldGenerate"
                                                                     type="button"
-                                                                    id="rawItemFieldGenerate"
-                                                                    onclick="myClickFunction($i)">
+                                                                    id="rawItemFieldGenerate">
                                                                     <i class="fa fa-plus"></i>
                                                                 </button>
                                                             </span>
@@ -447,7 +473,7 @@
 
                                     <div class=" d-flex justify-content-end mt-2">
                                         <div class="col-md-3 d-flex justify-content-end">
-                                            <span class="fw-bold mt-2 me-3">@lang('Subtotal')</span>
+                                            <span class="fw-bold mt-2 me-3">@lang('Sub Total')</span>
                                             <div class="input-group w-50">
                                                 <input type="number" name="sub_total"
                                                        value="{{ old('sub_total') ?? '0' }}"
@@ -486,220 +512,117 @@
     <script>
         'use strict'
 
+        // Get the current date
+        var currentDate = new Date();
+
+        // Calculate the minimum date based on the current day
+        var minDate;
+        if (currentDate.getDay() === 0) {
+            // If today is Sunday, set minDate to Friday
+            minDate = new Date(currentDate.getTime() - 2 * 24 * 60 * 60 * 1000);
+        } else {
+            // For other days, set minDate to yesterday
+            minDate = new Date(currentDate.getTime() - 24 * 60 * 60 * 1000);
+        }
+
         $(".flatpickr").flatpickr({
             wrap: true,
-            minDate: "today",
+            // minDate: minDate,
+            // maxDate: new Date(currentDate.getTime() + 24 * 60 * 60 * 1000), // Set maxDate to tomorrow
             altInput: true,
             dateFormat: "Y-m-d H:i",
         });
 
 
         $("#stockItemGenerate").on('click', function () {
-            const id = Date.now();
-            var form = `
-            <div id="removeItemField${id}">
-                <div class="row addMoreItemBox parentItemRow">
-                    <div class="col-md-12 d-flex justify-content-end">
-                        <button
-                            class="btn btn-danger delete_item_desc custom_delete_desc_padding mt-4"
-                            type="button" onclick="deleteItemField(${id})">
-                            <i class="fa fa-times"></i>
-                        </button>
-                    </div>
+            let parentLength = $('.parentItemRow').length;
 
-                    <div class="input-box col-md-3">
-                        <label for="item_id">@lang('Select Item')</label>
-                        <select class="form-select js-example-basic-single${id} selectedItem_${id}" onchange="selectedItemHandel(${id})" name="item_id[]"
-                              aria-label="Default select example">
-                              <option value="" selected disabled>@lang('Select Item')</option>
-                              @foreach($items as $key => $item)
-                                <option value="{{ $item->id }}">{{ $item->name }}</option>
-                              @endforeach
-                        </select>
-                    </div>
+            let itemMarkup = $('.parentItemRow:eq(0)').clone();
+            itemMarkup.prepend(`<div class="col-md-12 d-flex justify-content-end">
+                                    <button class="btn btn-danger itemRemoveBtn delete_item_desc custom_delete_desc_padding mt-4" type="button">
+                                        <i class="fa fa-times"></i>
+                                    </button>
+                                </div>`);
 
-                    <div class="input-box col-md-3">
-                        <label for="item_quantity"> @lang('Quantity')</label>
-                        <div class="input-group">
-                            <input type="text" name="item_quantity[]"
-                                   class="form-control totalQuantity">
-                            <div class="input-group-append" readonly="">
-                                <div class="form-control currency_symbol append_group item_unit_${id}"></div>
-                            </div>
-                        </div>
-                    </div>
+            itemMarkup.addClass('mt-4').find('input').val('');
+            itemMarkup.find('.input-group-append > .item_unit').text('');
 
-                    <div class="input-box col-md-3 cost_per_unit_parent">
-                        <label for="cost_per_unit"> @lang('Cost Per Unit')</label>
-                        <div class="input-group">
-                            <input type="text" name="cost_per_unit[]"
-                                   class="form-control costPerUnit">
-                            <div class="input-group-append" readonly="">
-                                <div class="form-control currency_symbol append_group">
-                                    {{ $basic->currency_symbol }}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+            $('.stockItemField').append(itemMarkup);
 
-                    <div class="input-box col-md-3">
-                        <label for="total_unit_cost"> @lang('Total Cost')</label>
-                        <div class="input-group">
-                             <input type="text" name="total_unit_cost[]" class="form-control totalItemCost">
-                             <div class="input-group-append" readonly="">
-                                <div class="form-control currency_symbol">
-                                    {{ $basic->currency_symbol }}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            let rawItemMarkup = $('.parentRawItemRow:eq(0)').clone();
+            rawItemMarkup.find('input').val('');
+            rawItemMarkup.find('.raw_item_id').attr('name', `raw_item_id[${parentLength}][]`);
+            rawItemMarkup.find('.raw_item_quantity').attr('name', `raw_item_quantity[${parentLength}][]`);
+            rawItemMarkup.find('.input-group-append > .raw_item_unit').text('');
 
-                <div class="row">
-					<div class="input-box col-md-6 mt-3">
-						<label for="raw_item_id">@lang('Select Raw Item')</label>
-						<select class="form-select js-example-basic-single${id} selectedRawItem_${id}" onchange="selectedRawItemHandel(${id})" name="raw_item_id[]" aria-label="Default select example">
-							<option value="" selected disabled>@lang('Select Raw Item')</option>
-								@foreach($rawItems as $key => $rawItem)
-                                    <option value="{{ $rawItem->id }}">{{ $rawItem->name }}</option>
-								@endforeach
-                        </select>
-                    </div>
+            $('.stockItemField').append(rawItemMarkup);
 
-                    <div class="input-box col-md-5 mt-3">
-                        <label for="raw_item_quantity"> @lang('Expense Quantity')</label>
-						<div class="input-group">
-						    <input type="text" name="raw_item_quantity[]" class="form-control totalRawItemQuantity">
-                            <div class="input-group-append" readonly="">
-                                <div class="form-control currency_symbol append_group raw_item_unit_${id}"></div>
-                            </div>
-						</div>
-                    </div>
-
-                    <div class="input-box col-md-1 mt-5">
-                        <span class="input-group-btn">
-                            <button class="btn btn-outline-success mt-2" type="button"
-                                     onclick="myClickFunction(${id})">
-                                <i class="fa fa-plus"></i>
-                            </button>
-                        </span>
-                    </div>
-                </div>
-
-                <div class="addRawItemField_${id}"></div>
-
-            </div>`;
-
-            $('.addedItemField').append(form)
-
-            const selectClass = `.js-example-basic-single${id}`;
-            $(".addedItemField").find(selectClass).each(function () {
+            $('.js-example-basic-single').each(function () {
                 $(this).select2({
                     width: '100%',
                 });
+
+                if ($(this).siblings('.select2').length > 1)
+                    $(this).siblings('.select2').not(':first').remove();
             });
         });
 
-        function deleteItemField(id) {
-            $(`#removeItemField${id}`).remove();
-            calculateItemTotalPrice();
-        }
+        $(document).on('click', '.rawItemFieldGenerate', function () {
+            var closestParentRawItemRow = $(this).closest('.parentRawItemRow');
+            var parentItemRowIndex = closestParentRawItemRow.prevAll('.parentItemRow').not('.parentRawItemRow').length - 1;
+            let parentLength = $('.parentItemRow').length;
 
-
-        function myClickFunction($id) {
-            let id = $id;
-            var form = `<div class="row">
-                             <div class="input-box col-md-6 mt-3">
-                             <label for="item_id">@lang('Select Raw Item')</label>
-                                <select class="form-select js-example-basic-single${id} selectedRawItem_${id}" name="raw_item_id[]" onchange="selectedRawItemHandel(${id})" aria-label="Default select example">
-                                    <option value="" selected disabled>@lang('Select Raw Item')</option>
-                                    @foreach($rawItems as $key => $rawItem)
-                                        <option value="{{ $rawItem->id }}">{{ $rawItem->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-            <div class="input-box col-md-5 mt-3">
-                <label for="raw_item_quantity"> @lang('Expense Quantity')</label>
-                                                    <div class="input-group">
-                                                        <input type="text" name="raw_item_quantity[]"
-                                                               class="form-control totalRawItemQuantity">
-                                                        <div class="input-group-append" readonly="">
-                                                            <div
-                                                                class="form-control currency_symbol append_group raw_item_unit_${id}"></div>
-                                                        </div>
-                                                    </div>
-        </div>
-        <div class="input-box col-md-1 mt-5">
-        <span class="input-group-btn">
-            <button class="btn btn-outline-danger delete_raw_item_field mt-2" type="button">
-                <i class="fa fa-minus"></i>
-            </button>
-        </span>
-        </div>
-    </div>`;
-
-            $(`.addRawItemField_${id}`).append(form)
-
-            const rawItemSelect2Class = `.js-example-basic-single${id}`;
-            $(`.addRawItemField_${id}`).find(rawItemSelect2Class).each(function () {
+            let rawItemMarkup = $('.parentRawItemRow:eq(0)').clone();
+            console.log(rawItemMarkup);
+            rawItemMarkup.find('input').val('');
+            rawItemMarkup.find('.raw_item_id').attr('name', `raw_item_id[${parentItemRowIndex}][]`);
+            rawItemMarkup.find('.raw_item_quantity').attr('name', `raw_item_quantity[${parentItemRowIndex}][]`);
+            rawItemMarkup.find('.input-group-append > .raw_item_unit').text('');
+            rawItemMarkup.find('.rawItemFieldBtn').removeClass('btn-outline-success rawItemFieldGenerate').addClass('btn-outline-danger rawItemFieldRemove').find('i').removeClass('fa-plus').addClass('fa-minus');
+            $(this).parents('.parentRawItemRow').after(rawItemMarkup);
+            $('.js-example-basic-single').each(function () {
                 $(this).select2({
                     width: '100%',
                 });
-            });
-        }
 
-
-        $("#rawItemFieldGenerate").on('click', function () {
-            const id = Date.now();
-            var form = `<div class="row">
-                                                <div class="input-box col-md-6 mt-3">
-                                                    <label for="item_id">@lang('Select Raw Item')</label>
-                                                    <select
-                                                        class="form-select js-example-basic-single${id} selectedRawItem_${id}"
-                                                        name="raw_item_id[]"
-                                                        onchange="selectedRawItemHandel(${id})"
-                                                        aria-label="Default select example">
-                                                        <option value="" selected
-                                                                disabled>@lang('Select Raw Item')</option>
-                                                        @foreach($rawItems as $key => $rawItem)
-            <option
-                value="{{ $rawItem->id }}">{{ $rawItem->name }}</option>
-                                                        @endforeach
-            </select>
-            </div>
-            <div class="input-box col-md-5 mt-3">
-                <label for="raw_item_quantity"> @lang('Expense Quantity')</label>
-                                                    <div class="input-group">
-                                                        <input type="text" name="raw_item_quantity[]"
-                                                               class="form-control totalRawItemQuantity">
-                                                        <div class="input-group-append" readonly="">
-                                                            <div
-                                                                class="form-control currency_symbol append_group raw_item_unit_${id}"></div>
-                                                        </div>
-                                                    </div>
-        </div>
-        <div class="input-box col-md-1 mt-5">
-        <span class="input-group-btn">
-            <button class="btn btn-outline-danger delete_raw_item_field mt-2" type="button">
-                <i class="fa fa-minus"></i>
-            </button>
-        </span>
-        </div>
-    </div>`;
-
-            $('.addRawItemField').append(form)
-
-            const rawItemSelect2Class = `.js-example-basic-single${id}`;
-            $(".addRawItemField").find(rawItemSelect2Class).each(function () {
-                $(this).select2({
-                    width: '100%',
-                });
+                if ($(this).siblings('.select2').length > 1)
+                    $(this).siblings('.select2').not(':first').remove();
             });
         });
 
+        // $(document).on('click', '.rawItemFieldGenerate', function () {
+        //     var closestParentRawItemRow = $(this).closest('.parentRawItemRow');
+        //     var parentItemRowIndex = closestParentRawItemRow.prevAll('.parentItemRow').not('.parentRawItemRow').length - 1;
+        //     let parentLength = $('.parentItemRow').length;
+        //
+        //     let rawItemMarkup = $('.parentRawItemRow:eq(0)').clone();
+        //     rawItemMarkup.find('input').val('');
+        //     rawItemMarkup.find('.raw_item_id').attr('name', `raw_item_id[${parentItemRowIndex}][]`);
+        //     rawItemMarkup.find('.raw_item_quantity').attr('name', `raw_item_quantity[${parentItemRowIndex}][]`);
+        //     rawItemMarkup.find('.input-group-append > .raw_item_unit').text('');
+        //     rawItemMarkup.find('.rawItemFieldBtn').removeClass('btn-outline-success rawItemFieldGenerate').addClass('btn-outline-danger rawItemFieldRemove').find('i').removeClass('fa-plus').addClass('fa-minus');
+        //
+        //     // Append the new raw item markup to the end of the parent container
+        //     $('.parentContainer').append(rawItemMarkup);
+        //
+        //     $('.js-example-basic-single').each(function () {
+        //         $(this).select2({
+        //             width: '100%',
+        //         });
+        //
+        //         if ($(this).siblings('.select2').length > 1)
+        //             $(this).siblings('.select2').not(':first').remove();
+        //     });
+        // });
 
-        $(document).on('click', '.delete_raw_item_field', function () {
-            $(this).closest('.input-box').parent().remove();
+
+        $(document).on('click', '.itemRemoveBtn', function () {
+            $(this).parents('.parentItemRow').nextUntil('.parentItemRow').remove();
+            $(this).parents('.parentItemRow').remove();
+        });
+
+        $(document).on('click', '.rawItemFieldRemove', function () {
+            $(this).parents('.parentRawItemRow').remove();
         });
 
 
@@ -729,7 +652,6 @@
             let total = parseFloat($('.updateSubTotal').val()).toFixed(2);
             $('.itemSubTotal').val(total);
         }
-
     </script>
 
 @endpush

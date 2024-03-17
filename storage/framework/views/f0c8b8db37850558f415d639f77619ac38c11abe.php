@@ -71,7 +71,7 @@
                             <td data-label="<?php echo app('translator')->get('Image'); ?>">
                                 <div class="d-flex gap-2">
                                     <div class="logo-brand">
-                                        <img src="<?php echo e(getFile(config('location.rawItemImage.path').$itemList->image)); ?>"
+                                        <img src="<?php echo e(getFile($itemList->driver, $itemList->image)); ?>"
                                              alt="">
                                     </div>
                                     <div class="product-summary">
@@ -126,6 +126,8 @@
                     <?php endif; ?>
                     </tbody>
                 </table>
+                <?php echo e($itemLists->appends($_GET)->links($theme.'partials.pagination')); ?>
+
             </div>
         </div>
     </section>
@@ -215,7 +217,7 @@ unset($__errorArgs, $__bag); ?>
                                                 <span><sub><?php echo app('translator')->get('(optional)'); ?></sub></span></label>
                                             <div class="attach-file">
                                                <span class="prev">
-                                                  <?php echo app('translator')->get('Image'); ?>
+                                                  <?php echo app('translator')->get('Upload Image'); ?>
                                                </span>
                                                 <input type="file" name="image" class="form-control"/>
                                             </div>
@@ -332,7 +334,7 @@ unset($__errorArgs, $__bag); ?>
                                                     class="text-danger">*</span></label>
                                             <div class="attach-file">
                                                <span class="prev">
-                                                  <?php echo app('translator')->get('Image'); ?>
+                                                  <?php echo app('translator')->get('Upload Image'); ?>
                                                </span>
                                                 <input type="file" name="image" class="form-control"/>
                                             </div>

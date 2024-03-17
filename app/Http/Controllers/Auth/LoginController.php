@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Models\Badge;
 use App\Template;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
@@ -75,7 +74,6 @@ class LoginController extends Controller
     }
 
 
-
     public function login(Request $request)
     {
 
@@ -92,10 +90,10 @@ class LoginController extends Controller
                 return back()->with('error', 'You are banned from this application. Please contact with system Administrator.');
             }
         }
+
         $this->incrementLoginAttempts($request);
         return $this->sendFailedLoginResponse($request);
     }
-
 
 
     /**
@@ -112,14 +110,6 @@ class LoginController extends Controller
 			$this->username() => 'required|string',
 			'password' => 'required|string',
 		];
-
-		if (basicControl()->reCaptcha_status_login) {
-			$validateData['g-recaptcha-response'] = 'sometimes|required|captcha';
-		}
-
-		$request->validate($validateData, [
-            'g-recaptcha-response.required' => 'The reCAPTCHA field is required.',
-        ]);
     }
 
     public function username()
@@ -132,9 +122,7 @@ class LoginController extends Controller
 
     public function showLoginForm()
     {
-        $templateSection = ['news-letter'];
-        $data['templates'] = \App\Models\Template::templateMedia()->whereIn('section_name', $templateSection)->get()->groupBy('section_name');
-        return view($this->theme . 'auth.login', $data);
+        return view($this->theme . 'auth.login');
     }
 
     public function showAdminLoginForm()
@@ -149,8 +137,6 @@ class LoginController extends Controller
         return $this->loggedOut($request) ?: redirect('/login');
     }
 
-
-
     /**
      * The user has been authenticated.
      *
@@ -164,91 +150,6 @@ class LoginController extends Controller
         $user->two_fa_verify = ($user->two_fa == 1) ? 0 : 1;
         $user->timezone = $request->timezone;
         $user->save();
-
-        if ($user) {
-            $interestBalance = $user->total_interest_balance;
-            $investBalance = $user->total_invest;
-            $depositBalance = $user->total_deposit;
-
-            $badges = Badge::where([
-                ['min_invest', '<=', $investBalance],
-                ['min_deposit', '<=', $depositBalance],
-                ['min_earning', '<=', $interestBalance]])->where('status', 1)->get();
-
-            if ($badges) {
-                $userBadge = [
-                    'min_invest' => '0',
-                    'min_deposit' => '0',
-                    'min_earning' => '0'
-                ];
-
-                foreach ($badges as $badge) {
-                    $userBadge = (object)$userBadge;
-                    if (($userBadge->min_invest <= $badge->min_invest) && ($userBadge->min_deposit <= $badge->min_deposit) && ($userBadge->min_earning <= $badge->min_earning)) {
-                        $userBadge = $badge;
-                        $user->last_level = @$userBadge->rank_level;
-                        $user->save();
-                    }
-                }
-
-
-                if(@$user->last_level == NULL || @$user->last_level != @$userBadge->rank_level){
-
-                    $user->last_level = @$userBadge->rank_level;
-                    $user->save();
-
-                    $msg = [
-                        'user' => $user->fullname,
-                        'badge' => @$userBadge->rank_level,
-                    ];
-
-                    $adminAction = [
-                        "link" => route('admin.users'),
-                        "icon" => "fa fa-user text-white"
-                    ];
-
-                    $userAction = [
-                        "link" => route('user.profile'),
-                        "icon" => "fa fa-user text-white"
-                    ];
-
-                    $user->userPushNotification($user, 'BADGE_NOTIFY_TO_USER', $msg, $userAction);
-                    $user->adminPushNotification('BADGE_NOTIFY_TO_ADMIN', $msg, $adminAction);
-
-                    $currentDate = Carbon::now();
-                    $user->sendMailSms($user, $type = 'BADGE_MAIL_TO_USER', [
-                        'user' => $user->fullname,
-                        'badge' => @$userBadge->rank_level,
-                        'date' => $currentDate
-                    ]);
-
-                    $user->mailToAdmin($type = 'BADGE_MAIL_TO_ADMIN', [
-                        'user' => $user->fullname,
-                        'badge' => @$userBadge->rank_level,
-                        'date' => $currentDate
-                    ]);
-                }
-            }
-        }
-
-
-        $currentDate = dateTime(Carbon::now());
-        $msg = [
-            'name' => $user->fullname,
-        ];
-
-        $action = [
-            "link" => "#",
-            "icon" => "fas fa-user text-white"
-        ];
-
-        $this->userPushNotification($user, 'LOGIN_NOTIFY_TO_USER', $msg, $action);
-
-        $this->sendMailSms($user, $type = 'LOGIN_MAIL_TO_USER', [
-            'name'          => $user->fullname,
-            'last_login_time' => $currentDate
-        ]);
-
     }
 
     /**

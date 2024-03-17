@@ -46,10 +46,12 @@
                 </form>
             </div>
 
-            <div class="d-flex justify-content-end mb-4">
-                <a href="javascript:void(0)" class="btn btn-custom text-white addNewWastage"> <i
-                        class="fa fa-plus-circle"></i> @lang('Add Wastage')</a>
-            </div>
+            @if(adminAccessRoute(config('permissionList.Manage_Wastage.Wastage.permission.add')))
+                <div class="d-flex justify-content-end mb-4">
+                    <a href="javascript:void(0)" class="btn btn-custom text-white addNewWastage"> <i
+                            class="fa fa-plus-circle"></i> @lang('Add Wastage')</a>
+                </div>
+            @endif
 
             <div class="table-parent table-responsive me-2 ms-2 mt-4">
                 <table class="table table-striped">
@@ -59,7 +61,9 @@
                         <th scope="col">@lang('Raw Item')</th>
                         <th scope="col">@lang('Quantity')</th>
                         <th scope="col">@lang('Date')</th>
-                        <th scope="col">@lang('Action')</th>
+                        @if(adminAccessRoute(config('permissionList.Manage_Wastage.Wastage.permission.delete')))
+                            <th scope="col">@lang('Action')</th>
+                        @endif
                     </tr>
 
                     </thead>
@@ -72,7 +76,7 @@
                                 <div class="d-flex gap-2">
                                     <div class="logo-brand">
                                         <img
-                                            src="{{ getFile(config('location.rawItemImage.path').optional($wastageList->rawItem)->image) }}"
+                                            src="{{ getFile(optional($wastageList->rawItem)->driver, optional($wastageList->rawItem)->image) }}"
                                             alt="">
                                     </div>
                                     <div class="product-summary">
@@ -84,11 +88,14 @@
                             <td data-label="@lang('Quantity')">{{ $wastageList->quantity }}</td>
                             <td data-label="@lang('Date')">{{ customDate($wastageList->wastage_date) }}</td>
 
-                            <td data-label="Action" class="action d-flex justify-content-center">
-                                <button class="action-btn deleteItem" data-route="{{route('user.deleteWastage', $wastageList->id)}}">
-                                    <i class="fa fa-trash font-14" aria-hidden="true"></i>
-                                </button>
-                            </td>
+                            @if(adminAccessRoute(config('permissionList.Manage_Wastage.Wastage.permission.delete')))
+                                <td data-label="Action" class="action d-flex justify-content-center">
+                                    <button class="action-btn deleteItem"
+                                            data-route="{{route('user.deleteWastage', $wastageList->id)}}">
+                                        <i class="fa fa-trash font-14" aria-hidden="true"></i>
+                                    </button>
+                                </td>
+                            @endif
 
                         </tr>
                     @empty
@@ -98,6 +105,7 @@
                     @endforelse
                     </tbody>
                 </table>
+                {{ $wastageLists->appends($_GET)->links($theme.'partials.pagination') }}
             </div>
         </div>
     </section>
@@ -169,7 +177,7 @@
                                                        placeholder="@lang('Wastage Date')"
                                                        class="form-control wastage_date @error('wastage_date') is-invalid @enderror"
                                                        name="wastage_date"
-                                                       value="{{ old('wastage_date',request()->payment_date) }}"
+                                                       value="{{ old('wastage_date',request()->wastage_date) }}"
                                                        data-input>
                                                 <div class="input-group-append"
                                                      readonly="">

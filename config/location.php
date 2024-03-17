@@ -6,92 +6,84 @@ return [
         'path' => 'assets/uploads/logo/',
     ],
     'admin' => [
-        'path' => 'assets/uploads/admin/',
-        'size' => '400x400'
+        'path' => 'admin',
     ],
     'user' => [
-        'path' => 'assets/uploads/users/',
-        'size' => '200x200'
+        'path' => 'users',
     ],
     'customer' => [
-        'path' => 'assets/uploads/customers/',
-        'size' => '200x200'
+        'path' => 'customers',
+    ],
+    'employee' => [
+        'path' => 'employee',
     ],
     'category' => [
-        'path' => 'assets/uploads/categories/',
-        'size' => '250x250'
+        'path' => 'categories',
     ],
     'blog' => [
-        'path' => 'assets/uploads/blogs/',
-        'size' => '1920x1152'
+        'path' => 'blogs',
     ],
     'ticket' => [
-        'path' => 'assets/uploads/ticket/'
+        'path' => 'tickets'
     ],
     'gateway' => [
-        'path' => 'assets/uploads/gateway/',
-        'size' => '300x250'
+        'path' => 'gateways',
     ],
     'withdraw' => [
-        'path' => 'assets/uploads/withdraw/',
-        'size' => '300x250'
+        'path' => 'withdraw',
     ],
     'withdrawLog' => [
-        'path' => 'assets/uploads/withdrawLog/',
+        'path' => 'withdrawLog',
     ],
     'logo' => [
-        'path' => 'assets/uploads/logo/'
+        'path' => 'logo'
     ],
     'language' => [
-        'path' => 'assets/uploads/language/',
-        'size' => '60x60'
+        'path' => 'language',
     ],
     'content' => [
-        'path' => 'assets/uploads/content/',
-        'size' => '60x60'
+        'path' => 'content',
     ],
     'template' => [
-        'path' => 'assets/uploads/content/',
-        'size' => '60x60'
+        'path' => 'template',
     ],
     'deposit' => [
-        'path' => 'assets/uploads/deposit/'
+        'path' => 'deposit',
     ],
     'kyc' => [
-        'path' => 'assets/uploads/kyc/'
+        'path' => 'kyc'
     ],
     'badge' => [
-        'path' => 'assets/uploads/badge/',
-        'size' => '60x60'
+        'path' => 'badge',
     ],
     'propertyThumbnail' => [
-        'path' => 'assets/uploads/propertyThumbnail/',
-        'size' => '1920x1152'
+        'path' => 'propertyThumbnail',
     ],
     'property' => [
-        'path' => 'assets/uploads/property/',
-        'size' => '1920x1152'
+        'path' => 'property',
     ],
     'message' => [
-        'path' => 'assets/uploads/message/'
+        'path' => 'message'
     ],
-    'companyLogo' => [
-        'path' => 'assets/uploads/company/',
-        'size' => '400x200'
+    'company' => [
+        'path' => 'company',
     ],
-    'itemImage' => [
-        'path' => 'assets/uploads/item/',
+    'supplier' => [
+        'path' => 'supplier',
+    ],
+    'item' => [
+        'path' => 'item',
         'size' => '400x300'
     ],
-    'rawItemImage' => [
-        'path' => 'assets/uploads/rawItem/',
+    'rawItem' => [
+        'path' => 'rawItem',
         'size' => '400x300'
     ],
     'salesCenter' => [
-        'path' => 'assets/uploads/salesCenter/',
+        'path' => 'salesCenter',
         'size' => '200x200'
     ],
     'affiliate' => [
-        'path' => 'assets/uploads/affiliate/',
+        'path' => 'affiliate',
     ],
 ];

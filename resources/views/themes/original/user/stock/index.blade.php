@@ -34,11 +34,13 @@
                                 <option value="">@lang('All')</option>
                                 @if(userType() == 1)
                                     @foreach($allItems as $item)
-                                        <option value="{{ $item->id }}" {{ @request()->item_id == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
+                                        <option
+                                            value="{{ $item->id }}" {{ @request()->item_id == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
                                     @endforeach
                                 @else
                                     @foreach($stockLists as $stock)
-                                        <option value="{{ optional($stock->item)->id }}" {{ @request()->item_id == optional($stock->item)->id ? 'selected' : '' }}>{{ optional($stock->item)->name }}</option>
+                                        <option
+                                            value="{{ optional($stock->item)->id }}" {{ @request()->item_id == optional($stock->item)->id ? 'selected' : '' }}>{{ optional($stock->item)->name }}</option>
                                     @endforeach
                                 @endif
                             </select>
@@ -78,13 +80,14 @@
                 </form>
             </div>
 
-
-            <div class="d-flex justify-content-end mb-4">
-                @if(userType() == 1)
-                    <a href="{{route('user.addStock')}}" class="btn btn-custom text-white "> <i
-                            class="fa fa-plus-circle"></i> @lang('Add Stock')</a>
-                @endif
-            </div>
+            @if(adminAccessRoute(array_merge(config('permissionList.Manage_Stocks.Stock_Transfer.permission.add'))))
+                <div class="d-flex justify-content-end mb-4">
+                    @if(userType() == 1)
+                        <a href="{{route('user.addStock')}}" class="btn btn-custom text-white "> <i
+                                class="fa fa-plus-circle"></i> @lang('Add Stock')</a>
+                    @endif
+                </div>
+            @endif
 
             <div class="table-parent table-responsive me-2 ms-2 mt-4">
                 <table class="table table-striped">
@@ -96,7 +99,9 @@
                         <th scope="col">@lang('Last Cost Per Unit')</th>
                         <th scope="col">@lang('Selling Price')</th>
                         <th scope="col">@lang('Last Stock Date')</th>
-                        <th scope="col">@lang('Action')</th>
+                        @if(adminAccessRoute(array_merge(config('permissionList.Manage_Stocks.Stock_List.permission.view'))))
+                            <th scope="col">@lang('Action')</th>
+                        @endif
                     </tr>
 
                     </thead>
@@ -113,56 +118,59 @@
                             <td data-label="@lang('Last Cost Per Unit')"> {{ $stockList->last_cost_per_unit }} {{ $basic->currency_symbol }} </td>
                             <td data-label="@lang('Selling Price')"> {{ $stockList->selling_price }} {{ $basic->currency_symbol }} </td>
                             <td data-label="@lang('Last Stock Date')"> {{ customDate($stockList->last_stock_date) }} </td>
+                            @if(adminAccessRoute(array_merge(config('permissionList.Manage_Stocks.Stock_List.permission.view'))))
+                                <td data-label="Action">
+                                    <div class="sidebar-dropdown-items">
+                                        <button
+                                            type="button"
+                                            class="dropdown-toggle"
+                                            data-bs-toggle="dropdown"
+                                            aria-expanded="false">
+                                            <i class="fal fa-cog"></i>
+                                        </button>
 
-                            <td data-label="Action">
-                                <div class="sidebar-dropdown-items">
-                                    <button
-                                        type="button"
-                                        class="dropdown-toggle"
-                                        data-bs-toggle="dropdown"
-                                        aria-expanded="false">
-                                        <i class="fal fa-cog"></i>
-                                    </button>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            @if(userType() == 1)
+                                                <li>
+                                                    <a href="{{ route('user.stockDetails', [slug(optional($stockList->item)->name), $stockList->id]) }}"
+                                                       class="dropdown-item"> <i
+                                                            class="fal fa-eye"></i> @lang('Details')
+                                                    </a>
+                                                </li>
+                                            @else
+                                                <li>
+                                                    <a href="{{ route('user.salesCenterStockDetails', [slug(optional($stockList->item)->name), $stockList->id]) }}"
+                                                       class="dropdown-item"> <i
+                                                            class="fal fa-eye"></i> @lang('Details')
+                                                    </a>
+                                                </li>
+                                            @endif
+                                            {{--                                        <li>--}}
+                                            {{--                                            <a class="dropdown-item btn editItem"--}}
+                                            {{--                                               data-route="{{route('user.updateItem', $itemList->id)}}"--}}
+                                            {{--                                               data-property="{{ $itemList }}">--}}
+                                            {{--                                                <i class="fas fa-edit"></i> @lang('Details')--}}
+                                            {{--                                            </a>--}}
+                                            {{--                                        </li>--}}
+                                            {{--                                        <li>--}}
+                                            {{--                                            <a class="dropdown-item btn editItem"--}}
+                                            {{--                                               data-route="{{route('user.updateItem', $itemList->id)}}"--}}
+                                            {{--                                               data-property="{{ $itemList }}">--}}
+                                            {{--                                                <i class="fas fa-edit"></i> @lang('Edit')--}}
+                                            {{--                                            </a>--}}
+                                            {{--                                        </li>--}}
 
-                                    <ul class="dropdown-menu dropdown-menu-end">
-                                        @if(userType() == 1)
-                                            <li>
-                                                <a href="{{ route('user.stockDetails', [slug(optional($stockList->item)->name), $stockList->id]) }}"
-                                                   class="dropdown-item"> <i class="fal fa-eye"></i> @lang('Details')
-                                                </a>
-                                            </li>
-                                        @else
-                                            <li>
-                                                <a href="{{ route('user.salesCenterStockDetails', [slug(optional($stockList->item)->name), $stockList->id]) }}"
-                                                   class="dropdown-item"> <i class="fal fa-eye"></i> @lang('Details')
-                                                </a>
-                                            </li>
-                                        @endif
-                                        {{--                                        <li>--}}
-                                        {{--                                            <a class="dropdown-item btn editItem"--}}
-                                        {{--                                               data-route="{{route('user.updateItem', $itemList->id)}}"--}}
-                                        {{--                                               data-property="{{ $itemList }}">--}}
-                                        {{--                                                <i class="fas fa-edit"></i> @lang('Details')--}}
-                                        {{--                                            </a>--}}
-                                        {{--                                        </li>--}}
-                                        {{--                                        <li>--}}
-                                        {{--                                            <a class="dropdown-item btn editItem"--}}
-                                        {{--                                               data-route="{{route('user.updateItem', $itemList->id)}}"--}}
-                                        {{--                                               data-property="{{ $itemList }}">--}}
-                                        {{--                                                <i class="fas fa-edit"></i> @lang('Edit')--}}
-                                        {{--                                            </a>--}}
-                                        {{--                                        </li>--}}
-
-                                        {{--                                        <li>--}}
-                                        {{--                                            <a class="dropdown-item btn deleteItem"--}}
-                                        {{--                                               data-route="{{route('user.deleteItem', $itemList->id)}}"--}}
-                                        {{--                                               data-property="{{ $itemList }}">--}}
-                                        {{--                                                <i class="fas fa-trash-alt"></i> @lang('Delete')--}}
-                                        {{--                                            </a>--}}
-                                        {{--                                        </li>--}}
-                                    </ul>
-                                </div>
-                            </td>
+                                            {{--                                        <li>--}}
+                                            {{--                                            <a class="dropdown-item btn deleteItem"--}}
+                                            {{--                                               data-route="{{route('user.deleteItem', $itemList->id)}}"--}}
+                                            {{--                                               data-property="{{ $itemList }}">--}}
+                                            {{--                                                <i class="fas fa-trash-alt"></i> @lang('Delete')--}}
+                                            {{--                                            </a>--}}
+                                            {{--                                        </li>--}}
+                                        </ul>
+                                    </div>
+                                </td>
+                            @endif
                         </tr>
                     @empty
                         <tr class="text-center">
@@ -171,6 +179,7 @@
                     @endforelse
                     </tbody>
                 </table>
+                {{ $stockLists->appends($_GET)->links($theme.'partials.pagination') }}
             </div>
         </div>
     </section>

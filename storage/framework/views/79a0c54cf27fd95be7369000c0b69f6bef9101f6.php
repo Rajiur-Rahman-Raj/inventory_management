@@ -90,7 +90,8 @@ unset($__errorArgs, $__bag); ?>
                                 <option value=""><?php echo app('translator')->get('All Center'); ?></option>
 
                                 <?php $__currentLoopData = $salesCenters; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $center): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                    <option value="<?php echo e($center->id); ?>" <?php echo e(@request()->sales_center_id == $center->id ? 'selected' : ''); ?>><?php echo e($center->name); ?></option>
+                                    <option
+                                        value="<?php echo e($center->id); ?>" <?php echo e(@request()->sales_center_id == $center->id ? 'selected' : ''); ?>><?php echo e($center->name); ?></option>
                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </select>
                         </div>
@@ -122,9 +123,11 @@ unset($__errorArgs, $__bag); ?>
 
                             </div>
 
-                            <a href="javascript:void(0)" data-route="<?php echo e(route('user.export.salesPaymentReports')); ?>"
-                               class="btn btn-custom2 text-white reportsDownload downloadExcel"> <i
-                                    class="fa fa-download"></i> <?php echo app('translator')->get('Download Excel File'); ?></a>
+                            <?php if(adminAccessRoute(config('permissionList.Manage_Reports.Sales_Payment_Report.permission.export'))): ?>
+                                <a href="javascript:void(0)" data-route="<?php echo e(route('user.export.salesPaymentReports')); ?>"
+                                   class="btn btn-custom2 text-white reportsDownload downloadExcel"> <i
+                                        class="fa fa-download"></i> <?php echo app('translator')->get('Download Excel File'); ?></a>
+                            <?php endif; ?>
 
                         </div>
                     <?php endif; ?>

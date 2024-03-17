@@ -45,10 +45,12 @@
                 </form>
             </div>
 
-            <div class="d-flex justify-content-end mb-4">
-                <a href="javascript:void(0)" class="btn btn-custom text-white addNewWastage"> <i
-                        class="fa fa-plus-circle"></i> <?php echo app('translator')->get('Add Wastage'); ?></a>
-            </div>
+            <?php if(adminAccessRoute(config('permissionList.Manage_Wastage.Wastage.permission.add'))): ?>
+                <div class="d-flex justify-content-end mb-4">
+                    <a href="javascript:void(0)" class="btn btn-custom text-white addNewWastage"> <i
+                            class="fa fa-plus-circle"></i> <?php echo app('translator')->get('Add Wastage'); ?></a>
+                </div>
+            <?php endif; ?>
 
             <div class="table-parent table-responsive me-2 ms-2 mt-4">
                 <table class="table table-striped">
@@ -58,7 +60,9 @@
                         <th scope="col"><?php echo app('translator')->get('Raw Item'); ?></th>
                         <th scope="col"><?php echo app('translator')->get('Quantity'); ?></th>
                         <th scope="col"><?php echo app('translator')->get('Date'); ?></th>
-                        <th scope="col"><?php echo app('translator')->get('Action'); ?></th>
+                        <?php if(adminAccessRoute(config('permissionList.Manage_Wastage.Wastage.permission.delete'))): ?>
+                            <th scope="col"><?php echo app('translator')->get('Action'); ?></th>
+                        <?php endif; ?>
                     </tr>
 
                     </thead>
@@ -71,7 +75,7 @@
                                 <div class="d-flex gap-2">
                                     <div class="logo-brand">
                                         <img
-                                            src="<?php echo e(getFile(config('location.rawItemImage.path').optional($wastageList->rawItem)->image)); ?>"
+                                            src="<?php echo e(getFile(optional($wastageList->rawItem)->driver, optional($wastageList->rawItem)->image)); ?>"
                                             alt="">
                                     </div>
                                     <div class="product-summary">
@@ -83,11 +87,14 @@
                             <td data-label="<?php echo app('translator')->get('Quantity'); ?>"><?php echo e($wastageList->quantity); ?></td>
                             <td data-label="<?php echo app('translator')->get('Date'); ?>"><?php echo e(customDate($wastageList->wastage_date)); ?></td>
 
-                            <td data-label="Action" class="action d-flex justify-content-center">
-                                <button class="action-btn deleteItem" data-route="<?php echo e(route('user.deleteWastage', $wastageList->id)); ?>">
-                                    <i class="fa fa-trash font-14" aria-hidden="true"></i>
-                                </button>
-                            </td>
+                            <?php if(adminAccessRoute(config('permissionList.Manage_Wastage.Wastage.permission.delete'))): ?>
+                                <td data-label="Action" class="action d-flex justify-content-center">
+                                    <button class="action-btn deleteItem"
+                                            data-route="<?php echo e(route('user.deleteWastage', $wastageList->id)); ?>">
+                                        <i class="fa fa-trash font-14" aria-hidden="true"></i>
+                                    </button>
+                                </td>
+                            <?php endif; ?>
 
                         </tr>
                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
@@ -97,6 +104,8 @@
                     <?php endif; ?>
                     </tbody>
                 </table>
+                <?php echo e($wastageLists->appends($_GET)->links($theme.'partials.pagination')); ?>
+
             </div>
         </div>
     </section>
@@ -203,7 +212,7 @@ if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>"
                                                        name="wastage_date"
-                                                       value="<?php echo e(old('wastage_date',request()->payment_date)); ?>"
+                                                       value="<?php echo e(old('wastage_date',request()->wastage_date)); ?>"
                                                        data-input>
                                                 <div class="input-group-append"
                                                      readonly="">

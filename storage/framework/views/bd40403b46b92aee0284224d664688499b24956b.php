@@ -69,7 +69,7 @@
                                 <div class="d-flex gap-2">
                                     <div class="logo-brand">
                                         <img
-                                            src="<?php echo e(getFile(config('location.rawItemImage.path').optional($purchaseItem->rawItem)->image)); ?>"
+                                            src="<?php echo e(getFile(optional($purchaseItem->rawItem)->driver, optional($purchaseItem->rawItem)->image)); ?>"
                                             alt="">
                                     </div>
                                     <div class="product-summary">
@@ -78,10 +78,8 @@
                                 </div>
                             </td>
                             <td data-label="<?php echo app('translator')->get('Quantity'); ?>" class="font-weight-bold">
-                                <span
-                                    class="badge <?php echo e($purchaseItem->quantity > 0 ? 'bg-info' : 'bg-danger'); ?>"><?php echo e($purchaseItem->quantity); ?> </span>
+                                <span class="badge <?php echo e($purchaseItem->quantity > 0 ? 'bg-info' : 'bg-danger'); ?>"><?php echo e($purchaseItem->quantity); ?> </span>
                             </td>
-
                         </tr>
                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                         <tr class="text-center">
@@ -90,6 +88,8 @@
                     <?php endif; ?>
                     </tbody>
                 </table>
+                <?php echo e($purchasedItems->appends($_GET)->links($theme.'partials.pagination')); ?>
+
             </div>
         </div>
     </section>

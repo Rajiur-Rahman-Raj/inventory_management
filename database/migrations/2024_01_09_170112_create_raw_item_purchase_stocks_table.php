@@ -16,7 +16,8 @@ class CreateRawItemPurchaseStocksTable extends Migration
         Schema::create('raw_item_purchase_stocks', function (Blueprint $table) {
             $table->id();
             $table->foreignId('company_id')->index()->nullable();
-            $table->foreignId('supplier_id')->index()->nullable();
+            $table->foreignId('supplier_id')->index()->nullable()->comment('optional column');
+            $table->foreignId('raw_item_purchase_in_id')->index()->nullable()->comment('optional column');
             $table->foreignId('raw_item_id')->index()->nullable();
             $table->integer('quantity')->nullable();
             $table->decimal('cost_per_unit', 11, 2)->nullable();

@@ -135,7 +135,8 @@ unset($__errorArgs, $__bag); ?>
                                                                                id="singlePermissionSelect<?php echo e($i); ?>"
                                                                                value="<?php echo e(join(",",collect($permission)->collapse()['permission']['view'])); ?>"
                                                                                onclick="singlePermissionSelectAll(<?php echo e($i); ?>)"
-                                                                               name="permissions[]"/>
+                                                                               name="permissions[]"
+                                                                        />
                                                                         <label
                                                                             for="singlePermissionSelect<?php echo e($i); ?>"><?php echo e(str_replace('_', ' ', collect($permission)->keys()[0])); ?></label>
                                                                     </td>
@@ -260,7 +261,8 @@ unset($__errorArgs, $__bag); ?>
                                                                                                id="multiplePermissionSelectAll<?php echo e($j); ?>"
 
                                                                                                onclick="multiplePermissionSelectAll(<?php echo e($j); ?>)"
-                                                                                               name="permissions[]">
+
+                                                                                        >
                                                                                         <label class="mb-0"
                                                                                                for="multiplePermissionSelectAll<?php echo e($j); ?>"><?php echo app('translator')->get(str_replace('_', ' ', $key2)); ?></label>
                                                                                     </td>

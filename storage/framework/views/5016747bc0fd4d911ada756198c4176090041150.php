@@ -97,12 +97,15 @@ unset($__errorArgs, $__bag); ?>
                     </div>
                 </form>
             </div>
-            <?php if(isset($profitLossReportRecords) && count($search) > 0): ?>
-                <div class="d-flex justify-content-end mb-4">
-                    <a href="javascript:void(0)" data-route="<?php echo e(route('user.export.profitLossReports')); ?>"
-                       class="btn btn-custom text-white reportsDownload downloadExcel"> <i
-                            class="fa fa-download"></i> <?php echo app('translator')->get('Download Excel'); ?></a>
-                </div>
+
+            <?php if(adminAccessRoute(config('permissionList.Manage_Reports.Profit_And_Loss_Report.permission.export'))): ?>
+                <?php if(isset($profitLossReportRecords) && count($search) > 0): ?>
+                    <div class="d-flex justify-content-end mb-4">
+                        <a href="javascript:void(0)" data-route="<?php echo e(route('user.export.profitLossReports')); ?>"
+                           class="btn btn-custom text-white reportsDownload downloadExcel"> <i
+                                class="fa fa-download"></i> <?php echo app('translator')->get('Download Excel'); ?></a>
+                    </div>
+                <?php endif; ?>
             <?php endif; ?>
 
             <?php if(isset($profitLossReportRecords) && count($search) > 0): ?>
@@ -153,6 +156,11 @@ unset($__errorArgs, $__bag); ?>
                             </tr>
 
                             <tr>
+                                <td><?php echo app('translator')->get('Total Stock Missing'); ?></td>
+                                <td> <?php echo e(config('basic.currency_text')); ?> <?php echo e(fractionNumber($profitLossReportRecords['totalStockMissing'], false)); ?> </td>
+                            </tr>
+
+                            <tr>
                                 <td><?php echo app('translator')->get('Total Affiliate Commission'); ?></td>
                                 <td> <?php echo e(config('basic.currency_text')); ?> <?php echo e(fractionNumber($profitLossReportRecords['totalAffiliateCommission'], false)); ?> </td>
                             </tr>
@@ -161,6 +169,11 @@ unset($__errorArgs, $__bag); ?>
                         <tr>
                             <td><?php echo app('translator')->get('Total Expense'); ?></td>
                             <td> <?php echo e(config('basic.currency_text')); ?> <?php echo e(fractionNumber($profitLossReportRecords['totalExpense'], false)); ?> </td>
+                        </tr>
+
+                        <tr>
+                            <td><?php echo app('translator')->get('Total Salary'); ?></td>
+                            <td> <?php echo e(config('basic.currency_text')); ?> <?php echo e(fractionNumber($profitLossReportRecords['totalSalary'], false)); ?> </td>
                         </tr>
 
                         <tr>
@@ -177,17 +190,17 @@ unset($__errorArgs, $__bag); ?>
                         </tr>
 
 
+                        
+                        
+                        
+                        
 
-
-
-
-
-
-
-
-
-
-
+                        
+                        
+                        
+                        
+                        
+                        
 
                         </tbody>
                     </table>

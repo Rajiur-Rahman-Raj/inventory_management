@@ -107,6 +107,11 @@
 
                             <td class="company-logo" data-label="<?php echo app('translator')->get('Name'); ?>">
                                 <div>
+                                    <a href="" target="_blank">
+                                        <img src="<?php echo e(getFile($supplier->driver, $supplier->image)); ?>">
+                                    </a>
+                                </div>
+                                <div>
                                     <a href=""
                                        target="_blank"><?php echo e($supplier->name); ?></a>
                                     <br>
@@ -169,6 +174,8 @@
                     <?php endif; ?>
                     </tbody>
                 </table>
+                <?php echo e($suppliers->appends($_GET)->links($theme.'partials.pagination')); ?>
+
             </div>
         </div>
     </section>
