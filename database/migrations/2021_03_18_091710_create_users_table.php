@@ -15,12 +15,12 @@ class CreateUsersTable extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('active_company_id')->index()->nullable();
             $table->string('firstname',60)->nullable();
             $table->string('lastname',60)->nullable();
+            $table->string('name')->nullable();
             $table->string('username',60)->nullable();
-            $table->integer('referral_id')->nullable();
             $table->integer('language_id')->nullable();
-//            $table->integer('email')->unique();
             $table->integer('email')->nullable();
             $table->string('country_code',20)->nullable();
             $table->string('phone_code',20)->nullable();
@@ -28,9 +28,9 @@ class CreateUsersTable extends Migration
             $table->decimal('balance',11,2)->default(0);
             $table->decimal('interest_balance',11,2)->default(0);
             $table->string('image',191)->nullable();
+            $table->string('driver',191)->nullable();
             $table->text('address')->nullable();
-            $table->string('provider',191)->nullable();
-            $table->string('provider_id',191)->nullable();
+            $table->text('bio')->nullable();
             $table->boolean('status')->default(1);
             $table->boolean('two_fa')->default(0)->comment('0: two-FA off, 1: two-FA on');
             $table->boolean('two_fa_verify')->default(1)->comment('0: two-FA unverified, 1: two-FA verified');
@@ -43,6 +43,11 @@ class CreateUsersTable extends Migration
             $table->string('password',191)->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('remember_token',191)->nullable();
+            $table->boolean('identity_verify')->default(0)->comment('0 => Not Applied, 1=> Applied, 2=> Approved, 3 => Rejected');
+            $table->boolean('address_verify')->default(0)->comment('0 => Not Applied, 1=> Applied, 2=> Approved, 3 => Rejected');
+            $table->timestamp('last_seen')->nullable();
+            $table->string('timezone')->nullable();
+            $table->integer('user_type')->default(2)->comment('1=> admin , 2=>sales center');
             $table->timestamps();
         });
     }

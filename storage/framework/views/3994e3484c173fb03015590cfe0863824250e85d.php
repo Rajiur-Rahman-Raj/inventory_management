@@ -88,7 +88,7 @@
                                 <div>
                                     <a href="" target="_blank">
                                         <img
-                                            src="<?php echo e(getFile(config('location.user.path').optional($centerList->user)->image)); ?>">
+                                            src="<?php echo e(getFile(optional($centerList->user)->driver,optional($centerList->user)->image)); ?>">
                                     </a>
                                 </div>
                                 <div>
@@ -149,6 +149,8 @@
                     <?php endif; ?>
                     </tbody>
                 </table>
+                <?php echo e($centerLists->appends($_GET)->links($theme.'partials.pagination')); ?>
+
             </div>
         </div>
     </section>

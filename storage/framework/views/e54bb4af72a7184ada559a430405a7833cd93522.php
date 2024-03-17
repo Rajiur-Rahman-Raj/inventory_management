@@ -33,11 +33,13 @@
                                 <option value=""><?php echo app('translator')->get('All'); ?></option>
                                 <?php if(userType() == 1): ?>
                                     <?php $__currentLoopData = $allItems; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                        <option value="<?php echo e($item->id); ?>" <?php echo e(@request()->item_id == $item->id ? 'selected' : ''); ?>><?php echo e($item->name); ?></option>
+                                        <option
+                                            value="<?php echo e($item->id); ?>" <?php echo e(@request()->item_id == $item->id ? 'selected' : ''); ?>><?php echo e($item->name); ?></option>
                                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                 <?php else: ?>
                                     <?php $__currentLoopData = $stockLists; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $stock): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                        <option value="<?php echo e(optional($stock->item)->id); ?>" <?php echo e(@request()->item_id == optional($stock->item)->id ? 'selected' : ''); ?>><?php echo e(optional($stock->item)->name); ?></option>
+                                        <option
+                                            value="<?php echo e(optional($stock->item)->id); ?>" <?php echo e(@request()->item_id == optional($stock->item)->id ? 'selected' : ''); ?>><?php echo e(optional($stock->item)->name); ?></option>
                                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                 <?php endif; ?>
                             </select>
@@ -77,13 +79,14 @@
                 </form>
             </div>
 
-
-            <div class="d-flex justify-content-end mb-4">
-                <?php if(userType() == 1): ?>
-                    <a href="<?php echo e(route('user.addStock')); ?>" class="btn btn-custom text-white "> <i
-                            class="fa fa-plus-circle"></i> <?php echo app('translator')->get('Add Stock'); ?></a>
-                <?php endif; ?>
-            </div>
+            <?php if(adminAccessRoute(array_merge(config('permissionList.Manage_Stocks.Stock_Transfer.permission.add')))): ?>
+                <div class="d-flex justify-content-end mb-4">
+                    <?php if(userType() == 1): ?>
+                        <a href="<?php echo e(route('user.addStock')); ?>" class="btn btn-custom text-white "> <i
+                                class="fa fa-plus-circle"></i> <?php echo app('translator')->get('Add Stock'); ?></a>
+                    <?php endif; ?>
+                </div>
+            <?php endif; ?>
 
             <div class="table-parent table-responsive me-2 ms-2 mt-4">
                 <table class="table table-striped">
@@ -95,7 +98,9 @@
                         <th scope="col"><?php echo app('translator')->get('Last Cost Per Unit'); ?></th>
                         <th scope="col"><?php echo app('translator')->get('Selling Price'); ?></th>
                         <th scope="col"><?php echo app('translator')->get('Last Stock Date'); ?></th>
-                        <th scope="col"><?php echo app('translator')->get('Action'); ?></th>
+                        <?php if(adminAccessRoute(array_merge(config('permissionList.Manage_Stocks.Stock_List.permission.view')))): ?>
+                            <th scope="col"><?php echo app('translator')->get('Action'); ?></th>
+                        <?php endif; ?>
                     </tr>
 
                     </thead>
@@ -112,56 +117,59 @@
                             <td data-label="<?php echo app('translator')->get('Last Cost Per Unit'); ?>"> <?php echo e($stockList->last_cost_per_unit); ?> <?php echo e($basic->currency_symbol); ?> </td>
                             <td data-label="<?php echo app('translator')->get('Selling Price'); ?>"> <?php echo e($stockList->selling_price); ?> <?php echo e($basic->currency_symbol); ?> </td>
                             <td data-label="<?php echo app('translator')->get('Last Stock Date'); ?>"> <?php echo e(customDate($stockList->last_stock_date)); ?> </td>
+                            <?php if(adminAccessRoute(array_merge(config('permissionList.Manage_Stocks.Stock_List.permission.view')))): ?>
+                                <td data-label="Action">
+                                    <div class="sidebar-dropdown-items">
+                                        <button
+                                            type="button"
+                                            class="dropdown-toggle"
+                                            data-bs-toggle="dropdown"
+                                            aria-expanded="false">
+                                            <i class="fal fa-cog"></i>
+                                        </button>
 
-                            <td data-label="Action">
-                                <div class="sidebar-dropdown-items">
-                                    <button
-                                        type="button"
-                                        class="dropdown-toggle"
-                                        data-bs-toggle="dropdown"
-                                        aria-expanded="false">
-                                        <i class="fal fa-cog"></i>
-                                    </button>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <?php if(userType() == 1): ?>
+                                                <li>
+                                                    <a href="<?php echo e(route('user.stockDetails', [slug(optional($stockList->item)->name), $stockList->id])); ?>"
+                                                       class="dropdown-item"> <i
+                                                            class="fal fa-eye"></i> <?php echo app('translator')->get('Details'); ?>
+                                                    </a>
+                                                </li>
+                                            <?php else: ?>
+                                                <li>
+                                                    <a href="<?php echo e(route('user.salesCenterStockDetails', [slug(optional($stockList->item)->name), $stockList->id])); ?>"
+                                                       class="dropdown-item"> <i
+                                                            class="fal fa-eye"></i> <?php echo app('translator')->get('Details'); ?>
+                                                    </a>
+                                                </li>
+                                            <?php endif; ?>
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
 
-                                    <ul class="dropdown-menu dropdown-menu-end">
-                                        <?php if(userType() == 1): ?>
-                                            <li>
-                                                <a href="<?php echo e(route('user.stockDetails', [slug(optional($stockList->item)->name), $stockList->id])); ?>"
-                                                   class="dropdown-item"> <i class="fal fa-eye"></i> <?php echo app('translator')->get('Details'); ?>
-                                                </a>
-                                            </li>
-                                        <?php else: ?>
-                                            <li>
-                                                <a href="<?php echo e(route('user.salesCenterStockDetails', [slug(optional($stockList->item)->name), $stockList->id])); ?>"
-                                                   class="dropdown-item"> <i class="fal fa-eye"></i> <?php echo app('translator')->get('Details'); ?>
-                                                </a>
-                                            </li>
-                                        <?php endif; ?>
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        
-
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        
-                                        
-                                    </ul>
-                                </div>
-                            </td>
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                            
+                                        </ul>
+                                    </div>
+                                </td>
+                            <?php endif; ?>
                         </tr>
                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                         <tr class="text-center">
@@ -170,6 +178,8 @@
                     <?php endif; ?>
                     </tbody>
                 </table>
+                <?php echo e($stockLists->appends($_GET)->links($theme.'partials.pagination')); ?>
+
             </div>
         </div>
     </section>

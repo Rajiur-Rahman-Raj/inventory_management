@@ -2,34 +2,14 @@
 
 namespace App\Http\Controllers\User;
 
-use App\Events\ChatEvent;
-use App\Helper\GoogleAuthenticator;
-use App\Helper\SystemInfo;
 use App\Http\Controllers\Controller;
 use App\Http\Traits\Notify;
 use App\Http\Traits\Upload;
 use App\Models\AffiliateMember;
-use App\Models\Badge;
 use App\Models\CentralPromoter;
-use App\Models\Comment;
 use App\Models\Customer;
 use App\Models\Expense;
-use App\Models\Fund;
-use App\Models\Gateway;
 use App\Models\IdentifyForm;
-use App\Models\Investment;
-use App\Models\Item;
-use App\Models\KYC;
-use App\Models\Language;
-use App\Models\ManageProperty;
-use App\Models\MoneyTransfer;
-use App\Models\OfferLock;
-use App\Models\OfferReply;
-use App\Models\PayoutLog;
-use App\Models\PayoutMethod;
-use App\Models\PayoutSetting;
-use App\Models\PropertyOffer;
-use App\Models\PropertyShare;
 use App\Models\RawItem;
 use App\Models\RawItemPurchaseIn;
 use App\Models\RawItemPurchaseStock;
@@ -38,26 +18,15 @@ use App\Models\SalesCenter;
 use App\Models\Stock;
 use App\Models\StockIn;
 use App\Models\Supplier;
-use App\Models\Ticket;
-use App\Models\Transaction;
-use App\Models\User;
 use App\Models\UserSocial;
 use App\Models\Wastage;
-use Cassandra\Custom;
-use Facades\App\Services\InvestmentService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
-use Illuminate\Validation\Rule;
-use Intervention\Image\Facades\Image;
 use Stevebauman\Purify\Facades\Purify;
-use Facades\App\Services\BasicService;
 
-use App\Console\Commands\PayoutCurrencyUpdateCron;
 
 class HomeController extends Controller
 {
@@ -110,22 +79,19 @@ class HomeController extends Controller
         });
 
 
-        $monthlySalesCenterStockTransactions = Sale::when(isset($admin->salesCenter) && $admin->user_type == 2, function ($query) use ($admin, $today) {
+        $monthlySalesCenterStockTransactions = StockIn::when(isset($admin->salesCenter) && $admin->user_type == 2, function ($query) use ($admin, $today) {
             return $query->where([
                 ['company_id', $admin->salesCenter->company_id],
                 ['sales_center_id', $admin->salesCenter->id],
-                ['sales_by', 1],
-            ])->whereNull('customer_id')
-                ->select('created_at')
+            ])->select('created_at')
                 ->whereYear('created_at', $today)
                 ->groupBy([DB::raw("DATE_FORMAT(created_at, '%m')")])
-                ->selectRaw('SUM(total_amount) AS totalStockAmount')
+                ->selectRaw('SUM(total_cost) AS totalStockAmount')
                 ->get()
                 ->groupBy([function ($query) {
                     return $query->created_at->format('F');
                 }]);
         });
-
 
         $yearTotalStockAmount = [];
         $yearTotalSalesAmount = [];
@@ -418,145 +384,7 @@ class HomeController extends Controller
 
     public function index()
     {
-        $data['walletBalance'] = getAmount($this->user->balance);
-        $data['interestBalance'] = getAmount($this->user->interest_balance);
-        $data['totalDeposit'] = getAmount($this->user->funds()->whereStatus(1)->sum('amount'));
-        $data['totalPayout'] = getAmount($this->user->payout()->whereStatus(2)->sum('amount'));
-        $data['depositBonus'] = getAmount($this->user->referralBonusLog()->where('type', 'deposit')->sum('amount'));
-        $data['investBonus'] = getAmount($this->user->referralBonusLog()->where('type', 'invest')->sum('amount'));
-        $data['profitBonus'] = getAmount($this->user->referralBonusLog()->where('type', 'profit_commission')->sum('amount'));
-        $data['lastBonus'] = getAmount(optional($this->user->referralBonusLog()->orderBy('id', 'DESC')->first())->amount);
-        $data['totalBadgeBonus'] = getAmount($this->user->total_badge_bonous);
-
-        $data['totalInterestProfit'] = getAmount($this->user->transaction()->where('balance_type', 'interest_balance')->where('trx_type', '+')->sum('amount'));
-
-
-        $data['investment'] = collect(Investment::with('property')->where('user_id', $this->user->id)
-            ->selectRaw('SUM( amount ) AS totalInvestAmount')
-            ->selectRaw('SUM(CASE WHEN invest_status = 1 AND status = 0 AND is_active = 1 THEN amount END) AS runningInvestAmount')
-            ->selectRaw('COUNT(id) AS totalInvestment')
-            ->selectRaw('COUNT(CASE WHEN invest_status = 1 AND status = 0 AND is_active = 1 THEN id END) AS runningInvestment')
-            ->selectRaw('COUNT(CASE WHEN invest_status = 0 AND status = 0 AND is_active = 1 THEN id END) AS dueInvestment')
-            ->selectRaw('COUNT(CASE WHEN invest_status = 1 AND status = 1 AND is_active = 1 THEN id END) AS completedInvestment')
-            ->get()->makeHidden('nextPayment')->toArray())->collapse();
-
-        $data['ticket'] = Ticket::where('user_id', $this->user->id)->count();
-
-        $monthlyInvestment = collect(['January' => 0, 'February' => 0, 'March' => 0, 'April' => 0, 'May' => 0, 'June' => 0, 'July' => 0, 'August' => 0, 'September' => 0, 'October' => 0, 'November' => 0, 'December' => 0]);
-        Investment::where('user_id', $this->user->id)
-            ->whereBetween('created_at', [
-                Carbon::now()->startOfYear(),
-                Carbon::now()->endOfYear(),
-            ])
-            ->select(
-                DB::raw('sum(amount) as totalAmount'),
-                DB::raw("DATE_FORMAT(created_at,'%M') as months")
-            )
-            ->groupBy(DB::raw("MONTH(created_at)"))
-            ->get()->makeHidden('nextPayment')->map(function ($item) use ($monthlyInvestment) {
-                $monthlyInvestment->put($item['months'], round($item['totalAmount'], 2));
-            });
-        $monthly['investment'] = $monthlyInvestment;
-
-
-        $monthlyPayout = collect(['January' => 0, 'February' => 0, 'March' => 0, 'April' => 0, 'May' => 0, 'June' => 0, 'July' => 0, 'August' => 0, 'September' => 0, 'October' => 0, 'November' => 0, 'December' => 0]);
-        $this->user->payout()->whereStatus(2)
-            ->whereBetween('created_at', [
-                Carbon::now()->startOfYear(),
-                Carbon::now()->endOfYear(),
-            ])
-            ->select(
-                DB::raw('sum(amount) as totalAmount'),
-                DB::raw("DATE_FORMAT(created_at,'%M') as months")
-            )
-            ->groupBy(DB::raw("MONTH(created_at)"))
-            ->get()->map(function ($item) use ($monthlyPayout) {
-                $monthlyPayout->put($item['months'], round($item['totalAmount'], 2));
-            });
-        $monthly['payout'] = $monthlyPayout;
-
-
-        $monthlyFunding = collect(['January' => 0, 'February' => 0, 'March' => 0, 'April' => 0, 'May' => 0, 'June' => 0, 'July' => 0, 'August' => 0, 'September' => 0, 'October' => 0, 'November' => 0, 'December' => 0]);
-        $this->user->funds()->whereNull('plan_id')->whereStatus(1)
-            ->whereBetween('created_at', [
-                Carbon::now()->startOfYear(),
-                Carbon::now()->endOfYear(),
-            ])
-            ->select(
-                DB::raw('sum(amount) as totalAmount'),
-                DB::raw("DATE_FORMAT(created_at,'%M') as months")
-            )
-            ->groupBy(DB::raw("MONTH(created_at)"))
-            ->get()->map(function ($item) use ($monthlyFunding) {
-                $monthlyFunding->put($item['months'], round($item['totalAmount'], 2));
-            });
-        $monthly['funding'] = $monthlyFunding;
-
-        $monthlyReferralInvestBonus = collect(['January' => 0, 'February' => 0, 'March' => 0, 'April' => 0, 'May' => 0, 'June' => 0, 'July' => 0, 'August' => 0, 'September' => 0, 'October' => 0, 'November' => 0, 'December' => 0]);
-        $this->user->referralBonusLog()->where('type', 'invest')
-            ->whereBetween('created_at', [
-                Carbon::now()->startOfYear(),
-                Carbon::now()->endOfYear(),
-            ])
-            ->select(
-                DB::raw('sum(amount) as totalAmount'),
-                DB::raw("DATE_FORMAT(created_at,'%M') as months")
-            )
-            ->groupBy(DB::raw("MONTH(created_at)"))
-            ->get()->map(function ($item) use ($monthlyReferralInvestBonus) {
-                $monthlyReferralInvestBonus->put($item['months'], round($item['totalAmount'], 2));
-            });
-
-        $monthly['referralInvestBonus'] = $monthlyReferralInvestBonus;
-
-
-        $monthlyReferralFundBonus = collect(['January' => 0, 'February' => 0, 'March' => 0, 'April' => 0, 'May' => 0, 'June' => 0, 'July' => 0, 'August' => 0, 'September' => 0, 'October' => 0, 'November' => 0, 'December' => 0]);
-
-        $this->user->referralBonusLog()->where('type', 'deposit')
-            ->whereBetween('created_at', [
-                Carbon::now()->startOfYear(),
-                Carbon::now()->endOfYear(),
-            ])
-            ->select(
-                DB::raw('sum(amount) as totalAmount'),
-                DB::raw("DATE_FORMAT(created_at,'%M') as months")
-            )
-            ->groupBy(DB::raw("MONTH(created_at)"))
-            ->get()->map(function ($item) use ($monthlyReferralFundBonus) {
-                $monthlyReferralFundBonus->put($item['months'], round($item['totalAmount'], 2));
-            });
-        $monthly['referralFundBonus'] = $monthlyReferralFundBonus;
-
-
-        $monthlyProfit = collect(['January' => 0, 'February' => 0, 'March' => 0, 'April' => 0, 'May' => 0, 'June' => 0, 'July' => 0, 'August' => 0, 'September' => 0, 'October' => 0, 'November' => 0, 'December' => 0]);
-
-        $this->user->transaction()->whereBetween('created_at', [
-            Carbon::now()->startOfYear(),
-            Carbon::now()->endOfYear(),
-        ])
-            ->select(
-                DB::raw('SUM((CASE WHEN remarks LIKE "%Interest From%" THEN amount END)) AS totalAmount'),
-                DB::raw("DATE_FORMAT(created_at,'%M') as months")
-            )
-            ->groupBy(DB::raw("MONTH(created_at)"))
-            ->get()->map(function ($item) use ($monthlyProfit) {
-                $monthlyProfit->put($item['months'], round($item['totalAmount'], 2));
-            });
-        $monthly['monthlyGaveProfit'] = $monthlyProfit;
-
-
-        $latestRegisteredUser = User::where('referral_id', $this->user->id)->latest()->first();
-        $data['allBadges'] = Badge::with('details')->where('status', 1)->orderBy('sort_by', 'ASC')->get();
-        $user = $this->user;
-
-        $data['investorBadge'] = BasicService::getInvestorCurrentBadge($user);
-        if ($data['investorBadge'] != null) {
-            $data['lastInvestorBadge'] = $data['investorBadge']->with('details')->first();
-        } else {
-            $data['lastInvestorBadge'] = null;
-        }
-
-        return view($this->theme . 'user.dashboard', $data, compact('monthly', 'latestRegisteredUser'));
+        return view($this->theme . 'user.dashboard');
     }
 
 
@@ -564,7 +392,6 @@ class HomeController extends Controller
     {
         $validator = Validator::make($request->all(), []);
         $data['user'] = $this->user;
-        $data['languages'] = Language::all();
         $data['social_links'] = UserSocial::where('user_id', $data['user']->id)->get();
         $data['identityFormList'] = IdentifyForm::where('status', 1)->get();
         if ($request->has('identity_type')) {
@@ -608,33 +435,6 @@ class HomeController extends Controller
         }
         $user->save();
 
-        $msg = [
-            'name' => $user->fullname,
-        ];
-
-        $adminAction = [
-            "link" => route('admin.user-edit', $user->id),
-            "icon" => "fas fa-user text-white"
-        ];
-        $userAction = [
-            "link" => route('user.profile'),
-            "icon" => "fas fa-user text-white"
-        ];
-
-        $this->adminPushNotification('ADMIN_NOTIFY_USER_PROFILE_UPDATE', $msg, $adminAction);
-        $this->userPushNotification($user, 'USER_NOTIFY_HIS_PROFILE_UPDATE', $msg, $userAction);
-
-        $currentDate = dateTime(Carbon::now());
-        $this->sendMailSms($user, $type = 'USER_MAIL_HIS_PROFILE_UPDATE', [
-            'name' => $user->fullname,
-            'date' => $currentDate,
-        ]);
-
-        $this->mailToAdmin($type = 'ADMIN_MAIL_USER_PROFILE_UPDATE', [
-            'name' => $user->fullname,
-            'date' => $currentDate,
-        ]);
-
         return back()->with('success', 'Updated Successfully.');
     }
 
@@ -663,13 +463,21 @@ class HomeController extends Controller
         $user = $this->user;
 
         if ($request->hasFile('profile_image')) {
-            $user->image = $this->uploadImage($request->profile_image, config('location.user.path'), config('location.user.size'), $user->image);
-            $user->save();
+            try {
+                $image = $this->fileUpload($request->profile_image, config('location.user.path'), null, null, 'avif', null, null, null);
+                if ($image) {
+                    $user->image = $image['path'];
+                    $user->driver = $image['driver'];
+                    $user->save();
+                }
+            } catch (\Exception $exp) {
+                return back()->with('error', 'Image could not be uploaded.');
+            }
         }
 
-        $src = asset('assets/uploads/users/' . $user->image);
-
+        $src = asset('assets/upload/' . $user->image);
         return response()->json(['src' => $src]);
+
     }
 
     public function updateInformation(Request $request)
@@ -711,7 +519,7 @@ class HomeController extends Controller
 
         $rules = [
             'current_password' => "required",
-            'password' => "required|min:5|confirmed",
+            'password' => "required|min:2|confirmed",
         ];
 
         $validator = Validator::make($request->all(), $rules);
@@ -724,33 +532,6 @@ class HomeController extends Controller
             if (Hash::check($request->current_password, $user->password)) {
                 $user->password = bcrypt($request->password);
                 $user->save();
-
-                $msg = [
-                    'name' => $user->fullname,
-                ];
-
-                $adminAction = [
-                    "link" => route('admin.user-edit', $user->id),
-                    "icon" => "fas fa-user text-white"
-                ];
-                $userAction = [
-                    "link" => route('user.profile'),
-                    "icon" => "fas fa-user text-white"
-                ];
-
-                $this->adminPushNotification('ADMIN_NOTIFY_USER_PROFILE_PASSWORD_UPDATE', $msg, $adminAction);
-                $this->userPushNotification($user, 'USER_NOTIFY_HIS_PROFILE_PASSWORD_UPDATE', $msg, $userAction);
-
-                $currentDate = dateTime(Carbon::now());
-                $this->sendMailSms($user, $type = 'USER_MAIL_HIS_PROFILE_PASSWORD_UPDATE', [
-                    'name' => $user->fullname,
-                    'date' => $currentDate,
-                ]);
-
-                $this->mailToAdmin($type = 'ADMIN_MAIL_USER_PROFILE_PASSWORD_UPDATE', [
-                    'name' => $user->fullname,
-                    'date' => $currentDate,
-                ]);
 
                 return back()->with('success', 'Password Changes successfully.');
             } else {

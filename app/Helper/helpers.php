@@ -50,9 +50,23 @@ function menuActive($routeName, $type = null)
 }
 
 
-function getFile($image, $clean = '')
+function getFileOld($image, $clean = '')
 {
     return file_exists($image) && is_file($image) ? asset($image) . $clean : asset(config('location.default'));
+}
+
+function getFile($disk = 'local', $image = '')
+{
+    try {
+        if ($disk == 'local') {
+            $localImage = asset('/assets/upload') . '/' . $image;
+            return Storage::disk($disk)->exists($image) ? $localImage : asset(config('location.default'));
+        } else {
+            return Storage::disk($disk)->exists($image) ? Storage::disk($disk)->url($image) : asset(config('location.default'));
+        }
+    } catch (Exception $e) {
+        return asset(config('location.default'));
+    }
 }
 
 function removeFile($path)

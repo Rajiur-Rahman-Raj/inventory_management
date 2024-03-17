@@ -19,6 +19,7 @@ class CreateItemsTable extends Migration
             $table->string('name')->nullable();
             $table->string('unit')->nullable();
             $table->string('image')->nullable();
+            $table->string('driver')->nullable();
             $table->boolean('status')->default(1);
             $table->timestamps();
         });

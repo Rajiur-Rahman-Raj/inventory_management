@@ -21,10 +21,13 @@ class CreateSalesCentersTable extends Migration
             $table->foreignId('district_id')->index()->nullable();
             $table->foreignId('upazila_id')->index()->nullable();
             $table->foreignId('union_id')->index()->nullable();
-            $table->string('name');
+            $table->text('center_address')->nullable();
+            $table->string('name')->nullable();
             $table->string('code')->nullable();
+            $table->integer('discount_percent')->default(0);
             $table->string('national_id')->nullable();
             $table->string('trade_id')->nullable();
+            $table->boolean('status')->default(1);
             $table->timestamps();
         });
     }

@@ -70,7 +70,7 @@
                             <input
                                 type="text" class="form-control datepicker password" name="password"
                                 value="<?php echo e(old('password',request()->password)); ?>" placeholder="<?php echo app('translator')->get('password'); ?>"
-                                autocomplete="off" />
+                                autocomplete="off"/>
                         </div>
 
                         <div class="input-box col-lg-2">
@@ -81,10 +81,12 @@
                 </form>
             </div>
 
-            <div class="d-flex justify-content-end mb-4">
-                <a href="<?php echo e(route('user.role.staffCreate')); ?>" class="btn btn-custom text-white"> <i
-                        class="fa fa-plus-circle"></i> <?php echo app('translator')->get('Create Staff'); ?></a>
-            </div>
+            <?php if(adminAccessRoute(config('permissionList.Manage_Role_And_Permissions.Manage_Staff.permission.add'))): ?>
+                <div class="d-flex justify-content-end mb-4">
+                    <a href="<?php echo e(route('user.role.staffCreate')); ?>" class="btn btn-custom text-white"> <i
+                            class="fa fa-plus-circle"></i> <?php echo app('translator')->get('Create Staff'); ?></a>
+                </div>
+            <?php endif; ?>
 
             <div class="table-parent table-responsive me-2 ms-2 mt-4">
                 <table class="table table-striped">
@@ -94,7 +96,9 @@
                         <th scope="col"><?php echo app('translator')->get('User'); ?></th>
                         <th scope="col"><?php echo app('translator')->get('Role'); ?></th>
                         <th scope="col"><?php echo app('translator')->get('Status'); ?></th>
-                        <th scope="col"><?php echo app('translator')->get('Action'); ?></th>
+                        <?php if(adminAccessRoute(array_merge(config('permissionList.Manage_Role_And_Permissions.Manage_Staff.permission.edit'), config('permissionList.Manage_Role_And_Permissions.Manage_Staff.permission.delete')))): ?>
+                            <th scope="col"><?php echo app('translator')->get('Action'); ?></th>
+                        <?php endif; ?>
                     </tr>
                     </thead>
                     <tbody>
@@ -102,9 +106,22 @@
                         <tr>
                             <td data-label="<?php echo app('translator')->get('SL'); ?>"><?php echo e(loopIndex($roleUsers) + $key); ?></td>
 
-                            <td data-label="<?php echo app('translator')->get('User'); ?>">
-                                <?php echo e($value->name); ?>
-
+                            <td class="company-logo" data-label="<?php echo app('translator')->get('User'); ?>">
+                                <div>
+                                    <a href="" target="_blank">
+                                        <img src="<?php echo e(getFile($value->driver, $value->image)); ?>">
+                                    </a>
+                                </div>
+                                <div>
+                                    <a href=""
+                                       target="_blank"> <?php echo e($value->name); ?></a>
+                                    <br>
+                                    <?php if($value->email): ?>
+                                        <span class="text-muted font-14">
+                                        <span> <?php echo e($value->email); ?></span>
+                                    </span>
+                                    <?php endif; ?>
+                                </div>
                             </td>
 
                             <td data-label="<?php echo app('translator')->get('Role'); ?>">
@@ -121,26 +138,31 @@
                                 <?php endif; ?>
                             </td>
 
-                            <td data-label="Action">
-                                <div class="sidebar-dropdown-items">
-                                    <button
-                                        type="button"
-                                        class="dropdown-toggle"
-                                        data-bs-toggle="dropdown"
-                                        aria-expanded="false"
-                                    >
-                                        <i class="fal fa-cog"></i>
-                                    </button>
+                            <?php if(adminAccessRoute(array_merge(config('permissionList.Manage_Role_And_Permissions.Manage_Staff.permission.edit'), config('permissionList.Manage_Role_And_Permissions.Manage_Staff.permission.delete')))): ?>
+                                <td data-label="Action">
+                                    <div class="sidebar-dropdown-items">
+                                        <button
+                                            type="button"
+                                            class="dropdown-toggle"
+                                            data-bs-toggle="dropdown"
+                                            aria-expanded="false"
+                                        >
+                                            <i class="fal fa-cog"></i>
+                                        </button>
 
-                                    <ul class="dropdown-menu dropdown-menu-end">
-                                        <li>
-                                            <a class="dropdown-item btn" href="<?php echo e(route('user.role.staffEdit', $value->id)); ?>">
-                                                <i class="fas fa-edit"></i> <?php echo app('translator')->get('Edit'); ?>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </td>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            <?php if(adminAccessRoute(array_merge(config('permissionList.Manage_Role_And_Permissions.Manage_Staff.permission.edit')))): ?>
+                                                <li>
+                                                    <a class="dropdown-item btn"
+                                                       href="<?php echo e(route('user.role.staffEdit', $value->id)); ?>">
+                                                        <i class="fas fa-edit"></i> <?php echo app('translator')->get('Edit'); ?>
+                                                    </a>
+                                                </li>
+                                            <?php endif; ?>
+                                        </ul>
+                                    </div>
+                                </td>
+                            <?php endif; ?>
                         </tr>
                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                         <tr class="text-center">
@@ -149,6 +171,8 @@
                     <?php endif; ?>
                     </tbody>
                 </table>
+                <?php echo e($roleUsers->appends($_GET)->links($theme.'partials.pagination')); ?>
+
             </div>
         </div>
     </section>

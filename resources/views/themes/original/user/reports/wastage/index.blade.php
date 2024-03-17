@@ -94,8 +94,9 @@
             @if(isset($wastageReportRecords) && count($search) > 0)
                 <div class="card card-table">
                     @if(count($wastageReportRecords) > 0)
-                        <div class="card-header custom-card-header bg-white d-flex flex-wrap justify-content-between align-items-center">
-                            <h5 class="m-0 text-primary">@lang('All Stocks')</h5>
+                        <div
+                            class="card-header custom-card-header bg-white d-flex flex-wrap justify-content-between align-items-center">
+                            <h5 class="m-0 text-primary">@lang('All Wastage')</h5>
 
                             <div class="total-price">
                                 <ul class="m-0 list-unstyled">
@@ -109,9 +110,11 @@
                                 </ul>
                             </div>
 
-                            <a href="javascript:void(0)" data-route="{{route('user.export.wastageReports')}}"
-                               class="btn text-white btn-custom2 reportsDownload downloadExcel"> <i
-                                    class="fa fa-download"></i> @lang('Download Excel File')</a>
+                            @if(adminAccessRoute(config('permissionList.Manage_Reports.Wastage_Report.permission.export')))
+                                <a href="javascript:void(0)" data-route="{{route('user.export.wastageReports')}}"
+                                   class="btn text-white btn-custom2 reportsDownload downloadExcel"> <i
+                                        class="fa fa-download"></i> @lang('Download Excel File')</a>
+                            @endif
 
                         </div>
                     @endif

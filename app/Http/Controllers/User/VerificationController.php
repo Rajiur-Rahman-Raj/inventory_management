@@ -47,10 +47,6 @@ class VerificationController extends Controller
                 $user->verify_code = code(6);
                 $user->sent_at = Carbon::now();
                 $user->save();
-                $this->mailVerification($user, 'VERIFICATION_CODE', [
-                    'code' => $user->verify_code
-                ]);
-                  session()->flash('success', 'Email verification code has been sent');
             }
             $templateSection = ['news-letter'];
             $data['templates'] = Template::templateMedia()->whereIn('section_name', $templateSection)->get()->groupBy('section_name');
@@ -62,11 +58,6 @@ class VerificationController extends Controller
                 $user->verify_code = code(6);
                 $user->sent_at = Carbon::now();
                 $user->save();
-
-                $this->smsVerification($user, 'VERIFICATION_CODE', [
-                    'code' => $user->verify_code
-                ]);
-                 session()->flash('success', 'SMS verification code has been sent');
             }
             $templateSection = ['news-letter'];
             $data['templates'] = Template::templateMedia()->whereIn('section_name', $templateSection)->get()->groupBy('section_name');
@@ -107,15 +98,8 @@ class VerificationController extends Controller
 
 
         if ($type === 'email') {
-            $this->mailVerification($user,'VERIFICATION_CODE',[
-               'code' => $user->verify_code
-            ]);
-
             return back()->with('success', 'Email verification code has been sent');
         } elseif ($type === 'mobile') {
-            $this->smsVerification($user,'VERIFICATION_CODE',[
-                'code' => $user->verify_code
-            ]);
             return back()->with('success', 'SMS verification code has been sent');
         } else {
             throw ValidationException::withMessages(['error' => 'Sending Failed']);

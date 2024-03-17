@@ -18,6 +18,8 @@ class CreateWastagesTable extends Migration
             $table->foreignId('company_id')->index()->nullable();
             $table->foreignId('raw_item_id')->index()->nullable();
             $table->integer('quantity')->nullable();
+            $table->decimal('cost_per_unit', 11,2)->nullable();
+            $table->decimal('total_cost', 11,2)->nullable();
             $table->timestamp('wastage_date')->nullable();
             $table->timestamps();
         });

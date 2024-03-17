@@ -70,7 +70,7 @@
                                 <div class="d-flex gap-2">
                                     <div class="logo-brand">
                                         <img
-                                            src="{{ getFile(config('location.rawItemImage.path').optional($purchaseItem->rawItem)->image) }}"
+                                            src="{{ getFile(optional($purchaseItem->rawItem)->driver, optional($purchaseItem->rawItem)->image) }}"
                                             alt="">
                                     </div>
                                     <div class="product-summary">
@@ -79,10 +79,8 @@
                                 </div>
                             </td>
                             <td data-label="@lang('Quantity')" class="font-weight-bold">
-                                <span
-                                    class="badge {{ $purchaseItem->quantity > 0 ? 'bg-info' : 'bg-danger' }}">{{ $purchaseItem->quantity }} </span>
+                                <span class="badge {{ $purchaseItem->quantity > 0 ? 'bg-info' : 'bg-danger' }}">{{ $purchaseItem->quantity }} </span>
                             </td>
-
                         </tr>
                     @empty
                         <tr class="text-center">
@@ -91,6 +89,7 @@
                     @endforelse
                     </tbody>
                 </table>
+                {{ $purchasedItems->appends($_GET)->links($theme.'partials.pagination') }}
             </div>
         </div>
     </section>

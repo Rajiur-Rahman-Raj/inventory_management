@@ -108,9 +108,11 @@ unset($__errorArgs, $__bag); ?>
 
                             </div>
 
-                            <a href="javascript:void(0)" data-route="<?php echo e(route('user.export.stockReports')); ?>"
-                               class="btn text-white btn-custom2 reportsDownload downloadExcel"> <i
-                                    class="fa fa-download"></i> <?php echo app('translator')->get('Download Excel File'); ?></a>
+                            <?php if(adminAccessRoute(config('permissionList.Manage_Reports.Stock_Report.permission.export'))): ?>
+                                <a href="javascript:void(0)" data-route="<?php echo e(route('user.export.stockReports')); ?>"
+                                   class="btn text-white btn-custom2 reportsDownload downloadExcel"> <i
+                                        class="fa fa-download"></i> <?php echo app('translator')->get('Download Excel File'); ?></a>
+                            <?php endif; ?>
 
                         </div>
                     <?php endif; ?>

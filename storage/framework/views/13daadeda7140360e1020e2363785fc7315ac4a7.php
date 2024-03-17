@@ -122,10 +122,12 @@ unset($__errorArgs, $__bag); ?>
                                 </ul>
 
                             </div>
-
-                            <a href="javascript:void(0)" data-route="<?php echo e(route('user.export.purchasePaymentReports')); ?>"
-                               class="btn btn-custom2 text-white reportsDownload downloadExcel"> <i
-                                    class="fa fa-download"></i> <?php echo app('translator')->get('Download Excel File'); ?></a>
+                            <?php if(adminAccessRoute(config('permissionList.Manage_Reports.Purchase_Payment_Report.permission.export'))): ?>
+                                <a href="javascript:void(0)"
+                                   data-route="<?php echo e(route('user.export.purchasePaymentReports')); ?>"
+                                   class="btn btn-custom2 text-white reportsDownload downloadExcel"> <i
+                                        class="fa fa-download"></i> <?php echo app('translator')->get('Download Excel File'); ?></a>
+                            <?php endif; ?>
 
                         </div>
                     <?php endif; ?>

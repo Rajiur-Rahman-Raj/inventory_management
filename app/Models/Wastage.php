@@ -18,4 +18,5 @@ class Wastage extends Model
     public function rawItemStock(){
         return $this->belongsTo(RawItemPurchaseStock::class, 'raw_item_id', 'raw_item_id');
     }
+
 }

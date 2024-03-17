@@ -183,6 +183,8 @@
                     <?php endif; ?>
                     </tbody>
                 </table>
+                <?php echo e($salesLists->appends($_GET)->links($theme.'partials.pagination')); ?>
+
             </div>
         </div>
     </section>

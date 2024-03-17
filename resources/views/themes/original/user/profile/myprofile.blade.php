@@ -32,14 +32,12 @@
                         <div class="col-lg-4">
                             <div class="sidebar-wrapper">
                                 <div class="profile">
+
                                     <div class="img">
-                                        <img id="profile" src="{{getFile(config('location.user.path'). $user->image)}}"
-                                             alt="@lang('not found')" class="img-fluid profile-image-preview"/>
+                                        <img id="profile" src="{{getFile($user->driver, $user->image)}}" alt="@lang('not found')" class="img-fluid profile-image-preview"/>
                                         <button class="upload-img">
                                             <i class="fal fa-camera"></i>
-                                            <input
-                                                class="form-control" id="userPorfileImage" name="image"
-                                                accept="image/*" type="file"/>
+                                            <input class="form-control" id="userPorfileImage" name="image" accept="image/*" type="file"/>
                                         </button>
                                     </div>
                                     <div class="text">
@@ -137,7 +135,7 @@
                                         </div>
 
                                         <div class="input-box col-12">
-                                            <button class="btn-custom" type="submit">@lang('Update User')</button>
+                                            <button class="btn-custom w-100" type="submit">@lang('Update User')</button>
                                         </div>
                                     </div>
                                 </form>
@@ -182,13 +180,12 @@
                                                    class="form-control"
                                                    placeholder="@lang('Confirm Password')"/>
                                             @if($errors->has('password_confirmation'))
-                                                <div
-                                                    class="error text-danger">@lang($errors->first('password_confirmation'))</div>
+                                                <div class="error text-danger">@lang($errors->first('password_confirmation'))</div>
                                             @endif
                                         </div>
 
                                         <div class="input-box col-12">
-                                            <button class="btn-custom" type="submit">@lang('Update Password')</button>
+                                            <button class="btn-custom w-100" type="submit">@lang('Update Password')</button>
                                         </div>
                                     </div>
                                 </form>
@@ -366,7 +363,6 @@
             $(document).on('click', '.profile-image-save', function () {
                 $('#profileImage').modal('hide');
                 let formData = new FormData();
-                console.log(formData);
                 formData.append('profile_image', document.getElementById('userPorfileImage').files[0]);
 
                 $.ajaxSetup({
@@ -384,6 +380,7 @@
                     contentType: false,
                     processData: false,
                     success: function (data) {
+                        console.log(data);
                         if (data.src) {
                             $('.profile-image-preview').attr('src', data.src);
                         }

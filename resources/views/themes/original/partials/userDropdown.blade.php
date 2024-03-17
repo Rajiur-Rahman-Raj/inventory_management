@@ -1,6 +1,6 @@
-<div class="user-panel d-none d-lg-inline-block">
+<div class="user-panel">
        <span class="profile">
-          <img src="{{getFile(config('location.user.path').auth()->user()->image)}}"
+          <img src="{{getFile(auth()->user()->driver, auth()->user()->image)}}"
                class="img-fluid"
                alt="@lang('user img')" />
        </span>
@@ -15,7 +15,6 @@
                     <i class="fal fa-user"></i> @lang('Profile')
                 </a>
             </li>
-
 
             <li>
                 <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">

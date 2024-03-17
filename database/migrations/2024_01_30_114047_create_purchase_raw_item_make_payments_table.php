@@ -17,6 +17,7 @@ class CreatePurchaseRawItemMakePaymentsTable extends Migration
             $table->id();
             $table->foreignId('raw_item_purchase_in_id')->index()->nullable();
             $table->decimal('amount', 11,2)->nullable();
+            $table->decimal('due', 11,2)->default(0);
             $table->timestamp('payment_date')->nullable();
             $table->timestamp('note')->nullable();
             $table->integer('paid_by')->nullable();

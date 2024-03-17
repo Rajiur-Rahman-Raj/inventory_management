@@ -109,10 +109,12 @@
                                 </ul>
 
                             </div>
-
-                            <a href="javascript:void(0)" data-route="{{route('user.export.purchasePaymentReports')}}"
-                               class="btn btn-custom2 text-white reportsDownload downloadExcel"> <i
-                                    class="fa fa-download"></i> @lang('Download Excel File')</a>
+                            @if(adminAccessRoute(config('permissionList.Manage_Reports.Purchase_Payment_Report.permission.export')))
+                                <a href="javascript:void(0)"
+                                   data-route="{{route('user.export.purchasePaymentReports')}}"
+                                   class="btn btn-custom2 text-white reportsDownload downloadExcel"> <i
+                                        class="fa fa-download"></i> @lang('Download Excel File')</a>
+                            @endif
 
                         </div>
                     @endif

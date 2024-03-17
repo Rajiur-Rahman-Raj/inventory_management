@@ -31,14 +31,12 @@
                         <div class="col-lg-4">
                             <div class="sidebar-wrapper">
                                 <div class="profile">
+
                                     <div class="img">
-                                        <img id="profile" src="<?php echo e(getFile(config('location.user.path'). $user->image)); ?>"
-                                             alt="<?php echo app('translator')->get('not found'); ?>" class="img-fluid profile-image-preview"/>
+                                        <img id="profile" src="<?php echo e(getFile($user->driver, $user->image)); ?>" alt="<?php echo app('translator')->get('not found'); ?>" class="img-fluid profile-image-preview"/>
                                         <button class="upload-img">
                                             <i class="fal fa-camera"></i>
-                                            <input
-                                                class="form-control" id="userPorfileImage" name="image"
-                                                accept="image/*" type="file"/>
+                                            <input class="form-control" id="userPorfileImage" name="image" accept="image/*" type="file"/>
                                         </button>
                                     </div>
                                     <div class="text">
@@ -143,7 +141,7 @@ unset($__errorArgs, $__bag); ?>"
                                         </div>
 
                                         <div class="input-box col-12">
-                                            <button class="btn-custom" type="submit"><?php echo app('translator')->get('Update User'); ?></button>
+                                            <button class="btn-custom w-100" type="submit"><?php echo app('translator')->get('Update User'); ?></button>
                                         </div>
                                     </div>
                                 </form>
@@ -188,13 +186,12 @@ unset($__errorArgs, $__bag); ?>"
                                                    class="form-control"
                                                    placeholder="<?php echo app('translator')->get('Confirm Password'); ?>"/>
                                             <?php if($errors->has('password_confirmation')): ?>
-                                                <div
-                                                    class="error text-danger"><?php echo app('translator')->get($errors->first('password_confirmation')); ?></div>
+                                                <div class="error text-danger"><?php echo app('translator')->get($errors->first('password_confirmation')); ?></div>
                                             <?php endif; ?>
                                         </div>
 
                                         <div class="input-box col-12">
-                                            <button class="btn-custom" type="submit"><?php echo app('translator')->get('Update Password'); ?></button>
+                                            <button class="btn-custom w-100" type="submit"><?php echo app('translator')->get('Update Password'); ?></button>
                                         </div>
                                     </div>
                                 </form>
@@ -372,7 +369,6 @@ unset($__errorArgs, $__bag); ?>"
             $(document).on('click', '.profile-image-save', function () {
                 $('#profileImage').modal('hide');
                 let formData = new FormData();
-                console.log(formData);
                 formData.append('profile_image', document.getElementById('userPorfileImage').files[0]);
 
                 $.ajaxSetup({
@@ -390,6 +386,7 @@ unset($__errorArgs, $__bag); ?>"
                     contentType: false,
                     processData: false,
                     success: function (data) {
+                        console.log(data);
                         if (data.src) {
                             $('.profile-image-preview').attr('src', data.src);
                         }

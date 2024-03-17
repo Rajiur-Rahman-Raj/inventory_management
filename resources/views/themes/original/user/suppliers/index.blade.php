@@ -108,6 +108,11 @@
 
                             <td class="company-logo" data-label="@lang('Name')">
                                 <div>
+                                    <a href="" target="_blank">
+                                        <img src="{{ getFile($supplier->driver, $supplier->image) }}">
+                                    </a>
+                                </div>
+                                <div>
                                     <a href=""
                                        target="_blank">{{ $supplier->name }}</a>
                                     <br>
@@ -170,6 +175,7 @@
                     @endforelse
                     </tbody>
                 </table>
+                {{ $suppliers->appends($_GET)->links($theme.'partials.pagination') }}
             </div>
         </div>
     </section>

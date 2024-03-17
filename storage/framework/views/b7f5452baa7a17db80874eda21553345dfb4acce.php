@@ -1,3 +1,4 @@
+
 <?php $__env->startSection('title', 'Manage Sales'); ?>
 
 <?php $__env->startPush('style'); ?>
@@ -57,7 +58,7 @@
                                             <div class="product-img">
                                                 <a href="javascript:void(0)">
                                                     <img class="img-fluid"
-                                                         src="<?php echo e(getFile(config('location.itemImage.path').optional($stock->item)->image)); ?>"
+                                                         src="<?php echo e(getFile(optional($stock->item)->driver,optional($stock->item)->image)); ?>"
                                                          alt="">
                                                 </a>
                                             </div>

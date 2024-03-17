@@ -59,9 +59,11 @@
             </div>
 
             <div class="d-flex justify-content-end mb-4">
-                @if(userType() == 1)
-                    <a href="{{route('user.createRole')}}" class="btn btn-custom text-white"> <i
-                            class="fa fa-plus-circle"></i> @lang('Create Role')</a>
+                @if(adminAccessRoute(config('permissionList.Manage_Role_And_Permissions.Available_Roles.permission.add')))
+                    @if(userType() == 1)
+                        <a href="{{route('user.createRole')}}" class="btn btn-custom text-white"> <i
+                                class="fa fa-plus-circle"></i> @lang('Create Role')</a>
+                    @endif
                 @endif
             </div>
 
@@ -72,7 +74,9 @@
                         <th scope="col">@lang('SL')</th>
                         <th scope="col">@lang('Name')</th>
                         <th scope="col">@lang('Status')</th>
-                        <th scope="col">@lang('Action')</th>
+                        @if(adminAccessRoute(array_merge(config('permissionList.Manage_Role_And_Permissions.Available_Roles.permission.edit'), config('permissionList.Manage_Role_And_Permissions.Available_Roles.permission.delete'))))
+                            <th scope="col">@lang('Action')</th>
+                        @endif
                     </tr>
                     </thead>
                     <tbody>
@@ -86,35 +90,38 @@
                                     class="badge {{ $role->status == 1 ? 'bg-success' : 'bg-danger' }}">{{ $role->status == 1 ? 'Active' : 'Deactive' }} </span>
                             </td>
 
-                            <td data-label="Action">
-                                <div class="sidebar-dropdown-items">
-                                    <button
-                                        type="button"
-                                        class="dropdown-toggle"
-                                        data-bs-toggle="dropdown"
-                                        aria-expanded="false">
-                                        <i class="fal fa-cog"></i>
-                                    </button>
+                            @if(adminAccessRoute(array_merge(config('permissionList.Manage_Role_And_Permissions.Available_Roles.permission.edit'), config('permissionList.Manage_Role_And_Permissions.Available_Roles.permission.delete'))))
+                                <td data-label="Action">
+                                    <div class="sidebar-dropdown-items">
+                                        <button
+                                            type="button"
+                                            class="dropdown-toggle"
+                                            data-bs-toggle="dropdown"
+                                            aria-expanded="false">
+                                            <i class="fal fa-cog"></i>
+                                        </button>
 
-                                    <ul class="dropdown-menu dropdown-menu-end">
-                                        @if(userType() == 1)
-                                            <li>
-                                                <a href="{{ route('user.editRole', $role->id) }}"
-                                                   class="dropdown-item"> <i class="fal fa-edit"></i> @lang('Edit')
-                                                </a>
-                                            </li>
-                                        @else
-                                            <li>
-                                                <a class="dropdown-item btn deleteRole"
-                                                   data-route="{{route('user.deleteRole', $role->id)}}"
-                                                   data-property="{{ $role }}">
-                                                    <i class="fas fa-trash-alt"></i> @lang('Delete')
-                                                </a>
-                                            </li>
-                                        @endif
-                                    </ul>
-                                </div>
-                            </td>
+                                        <ul class="dropdown-menu dropdown-menu-end">
+                                            @if(adminAccessRoute(array_merge(config('permissionList.Manage_Role_And_Permissions.Available_Roles.permission.edit'))))
+                                                <li>
+                                                    <a href="{{ route('user.editRole', $role->id) }}"
+                                                       class="dropdown-item"> <i class="fal fa-edit"></i> @lang('Edit')
+                                                    </a>
+                                                </li>
+                                            @endif
+                                            @if(adminAccessRoute(array_merge(config('permissionList.Manage_Role_And_Permissions.Available_Roles.permission.delete'))))
+                                                <li>
+                                                    <a class="dropdown-item btn deleteRole"
+                                                       data-route="{{route('user.deleteRole', $role->id)}}"
+                                                       data-property="{{ $role }}">
+                                                        <i class="fas fa-trash-alt"></i> @lang('Delete')
+                                                    </a>
+                                                </li>
+                                            @endif
+                                        </ul>
+                                    </div>
+                                </td>
+                            @endif
                         </tr>
                     @empty
                         <tr class="text-center">
@@ -123,12 +130,12 @@
                     @endforelse
                     </tbody>
                 </table>
+                {{ $roles->appends($_GET)->links($theme.'partials.pagination') }}
             </div>
         </div>
     </section>
 
     @push('loadModal')
-
         <!--Delete Role Modal -->
         <div class="modal fade" id="deleteRoleModal" tabindex="-1" aria-labelledby="editModalLabel"
              aria-hidden="true">

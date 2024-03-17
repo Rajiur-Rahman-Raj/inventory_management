@@ -50,29 +50,6 @@ class SendMailController extends Controller
         $contactMessage->message = $request->message;
         $contactMessage->save();
 
-        $userMsg = [
-            'from' => $senderName??null,
-            'site' => '['.config('basic.site_title').']',
-        ];
-
-        $adminMsg = [
-            'from' => $senderName??null,
-            'to' => $reciverName,
-        ];
-
-        $userAction = [
-            "link" => "#",
-            "icon" => "fa fa-sms text-white"
-        ];
-
-        $adminAction = [
-            "link" => '#',
-            "icon" => "fa fa-sms text-white"
-        ];
-
-        $this->userPushNotification($investor, 'NOTIFY_INVESTOR_CLIENT_SEND_CONTACT_MESSAGE_TO_INVESTOR', $userMsg, $userAction);
-        $this->adminPushNotification('NOTIFY_ADMIN_CLIENT_SEND_CONTACT_MESSAGE_TO_INVESTOR', $adminMsg, $adminAction);
-
         $details = [
             'sub'          => '['.config('basic.site_title').']'.' Contact Message sent from '.$senderName,
             'replyToEmail' => Auth::user()->email,

@@ -770,13 +770,39 @@ unset($__errorArgs, $__bag); ?>
             });
         });
 
-        $(document).on('click', '.rawItemFieldGenerate', function () {
+        // $(document).on('click', '.rawItemFieldGenerate', function () {
+        //     var closestParentRawItemRow = $('.parentRawItemRow').last();
+        //     var parentItemRowIndex = closestParentRawItemRow.prevAll('.parentItemRow').not('.parentRawItemRow').length;
+        //     var parentLength = $('.parentItemRow').length;
+        //
+        //     var rawItemMarkup = closestParentRawItemRow.clone();
+        //     rawItemMarkup.find('input').val('');
+        //     rawItemMarkup.find('.raw_item_id').attr('name', `raw_item_id[${parentItemRowIndex}][]`);
+        //     rawItemMarkup.find('.raw_item_quantity').attr('name', `raw_item_quantity[${parentItemRowIndex}][]`);
+        //     rawItemMarkup.find('.input-group-append > .raw_item_unit').text('');
+        //     rawItemMarkup.find('.rawItemFieldBtn').removeClass('btn-outline-success rawItemFieldGenerate').addClass('btn-outline-danger rawItemFieldRemove').find('i').removeClass('fa-plus').addClass('fa-minus');
+        //     closestParentRawItemRow.after(rawItemMarkup);
+        //
+        //     // Initialize select2 for newly added elements
+        //     rawItemMarkup.find('.js-example-basic-single').each(function () {
+        //         $(this).select2({
+        //             width: '100%',
+        //         });
+        //
+        //         if ($(this).siblings('.select2').length > 1)
+        //             $(this).siblings('.select2').not(':first').remove();
+        //     });
+        // });
 
+
+
+        $(document).on('click', '.rawItemFieldGenerate', function () {
             var closestParentRawItemRow = $(this).closest('.parentRawItemRow');
             var parentItemRowIndex = closestParentRawItemRow.prevAll('.parentItemRow').not('.parentRawItemRow').length - 1;
             let parentLength = $('.parentItemRow').length;
 
             let rawItemMarkup = $('.parentRawItemRow:eq(0)').clone();
+            console.log(rawItemMarkup);
             rawItemMarkup.find('input').val('');
             rawItemMarkup.find('.raw_item_id').attr('name', `raw_item_id[${parentItemRowIndex}][]`);
             rawItemMarkup.find('.raw_item_quantity').attr('name', `raw_item_quantity[${parentItemRowIndex}][]`);
@@ -792,6 +818,10 @@ unset($__errorArgs, $__bag); ?>
                     $(this).siblings('.select2').not(':first').remove();
             });
         });
+
+
+
+
 
         $(document).on('click', '.itemRemoveBtn', function () {
             $(this).parents('.parentItemRow').nextUntil('.parentItemRow').remove();

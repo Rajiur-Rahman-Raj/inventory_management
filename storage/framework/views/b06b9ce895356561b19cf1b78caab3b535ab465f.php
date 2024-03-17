@@ -1,6 +1,6 @@
-<div class="user-panel d-none d-lg-inline-block">
+<div class="user-panel">
        <span class="profile">
-          <img src="<?php echo e(getFile(config('location.user.path').auth()->user()->image)); ?>"
+          <img src="<?php echo e(getFile(auth()->user()->driver, auth()->user()->image)); ?>"
                class="img-fluid"
                alt="<?php echo app('translator')->get('user img'); ?>" />
        </span>
@@ -16,7 +16,6 @@
                     <i class="fal fa-user"></i> <?php echo app('translator')->get('Profile'); ?>
                 </a>
             </li>
-
 
             <li>
                 <a href="<?php echo e(route('logout')); ?>" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">

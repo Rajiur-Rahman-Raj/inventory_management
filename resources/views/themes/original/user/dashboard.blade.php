@@ -14,7 +14,7 @@
             <div class="main row">
                 <div class="col-12">
                     <div class="row">
-                        <div class="col-12 d-flex justify-content-end mb-3">
+                        <div class="col-12 d-flex justify-content-end mb-5">
                             <a href="#" class="show-hide  me-3" data-info="1"> <i
                                     class="fal fa-eye showHideEye"></i></a>
                         </div>
@@ -113,16 +113,6 @@
                         <div class="col-xl-4 d-sm-block d-none">
                             <div class="row g-3">
                                 @if(userType() == 1)
-
-                                    {{--                                <div class="col-xl-12 col-6 sales-statistics">--}}
-                                    {{--                                    <div class="dashboard-box gr-bg-3">--}}
-                                    {{--                                        <h5 class="text-white">@lang('Affiliate Member Commission')</h5>--}}
-                                    {{--                                        <h3 class="text-white affiliateMemberCommission infoShowHide"></span>--}}
-                                    {{--                                        </h3>--}}
-                                    {{--                                        <i class="fal fa-hand-holding-usd text-white"></i>--}}
-                                    {{--                                    </div>--}}
-                                    {{--                                </div>--}}
-
                                     <div class="col-xl-12 col-6 raw-item-statistics">
                                         <div class="dashboard-box gr-bg-3">
                                             <h5 class="text-white">@lang('Raw Item Due')</h5>
@@ -131,15 +121,6 @@
                                             <i class="fal fa-hand-holding-usd text-white"></i>
                                         </div>
                                     </div>
-
-                                    {{--                                <div class="col-xl-12 col-6 box customer-statistics">--}}
-                                    {{--                                    <div class="dashboard-box gr-bg-4">--}}
-                                    {{--                                        <h5 class="text-white">@lang('Total Expense')</h5>--}}
-                                    {{--                                        <h3 class="text-white totalExpenseAmount infoShowHide"></span>--}}
-                                    {{--                                        </h3>--}}
-                                    {{--                                        <i class="fal fa-hand-holding-usd text-white" aria-hidden="true"></i>--}}
-                                    {{--                                    </div>--}}
-                                    {{--                                </div>--}}
 
                                     <div class="col-xl-12 col-6 box customer-statistics">
                                         <div class="dashboard-box gr-bg-4">
@@ -154,8 +135,7 @@
                                         <div class="dashboard-box gr-bg-3">
                                             <h5 class="text-white">@lang('Total Items')</h5>
                                             <h3 class="text-white totalItems infoShowHide"></h3>
-                                            {{--                                        <i class="far fa-funnel-dollar text-white"></i>--}}
-                                            <i class="far fa-network-wired text-white"></i>
+                                            <i class="fal fa-list-ol text-white" aria-hidden="true"></i>
                                         </div>
                                     </div>
                                     <div class="col-xl-12 col-6 box item-statistics">
@@ -163,7 +143,6 @@
                                             <h5 class="text-white">@lang('Stock Out Items')</h5>
                                             <h3 class="text-white stockOutItems infoShowHide"></span>
                                             </h3>
-                                            {{--                                        <i class="far fa-funnel-dollar text-white"></i>--}}
                                             <i class="far fa-times-circle text-white"></i>
                                         </div>
                                     </div>
@@ -187,7 +166,7 @@
                                     <div class="dashboard-box">
                                         <h5>@lang('Total Suppliers')</h5>
                                         <h3 class="totalSuppliers infoShowHide"></h3>
-                                        <i class="fal fa-shopping-cart" aria-hidden="true"></i>
+                                        <i class="fal fa-people-carry" aria-hidden="true"></i>
                                     </div>
                                 </div>
 
@@ -195,8 +174,7 @@
                                     <div class="dashboard-box">
                                         <h5>@lang('Total Raw Items')</h5>
                                         <h3 class="totalRawItems infoShowHide"></h3>
-                                        {{--                                    <i class="fal fa-lightbulb-dollar"></i>--}}
-                                        <i class="far fa-network-wired" aria-hidden="true"></i>
+                                        <i class="fal fa-rectangle-list" aria-hidden="true"></i>
                                     </div>
                                 </div>
 
@@ -205,7 +183,6 @@
                                         <h5>@lang('Stock Out Raw Items')</h5>
                                         <h3 class="outOfStockRawItems infoShowHide"></h3>
                                         <i class="far fa-times-circle" aria-hidden="true"></i>
-                                        {{--                                    <i class="far fa-badge-dollar"></i>--}}
                                     </div>
                                 </div>
 
@@ -221,8 +198,7 @@
                                     <div class="dashboard-box">
                                         <h5>@lang('Total Sales Center')</h5>
                                         <h3 class="totalSalesCenter infoShowHide"></h3>
-                                        {{--                                    <i class="fal fa-users" aria-hidden="true"></i>--}}
-                                        <i class="fal fa-shopping-cart"></i>
+                                        <i class="fal fa-shop" aria-hidden="true"></i>
                                     </div>
                                 </div>
 
@@ -230,8 +206,7 @@
                                     <div class="dashboard-box">
                                         <h5>@lang('Total Items')</h5>
                                         <h3 class="totalItems infoShowHide"></h3>
-                                        {{--                                    <i class="fal fa-lightbulb-dollar"></i>--}}
-                                        <i class="far fa-network-wired" aria-hidden="true"></i>
+                                        <i class="fal fa-list-ol" aria-hidden="true"></i>
                                     </div>
                                 </div>
 
@@ -243,38 +218,11 @@
                                     </div>
                                 </div>
 
-                                {{--                            <div class="col-xl-3 col-md-6 box customer-statistics">--}}
-                                {{--                                <div class="dashboard-box">--}}
-                                {{--                                    <h5>@lang('Total Customers')</h5>--}}
-                                {{--                                    <h3 class="totalCustomers infoShowHide"></h3>--}}
-                                {{--                                    <i class="fal fa-users" aria-hidden="true"></i>--}}
-                                {{--                                </div>--}}
-                                {{--                            </div>--}}
-
-                                {{--                            <div class="col-xl-3 col-md-6 box expense-statistics">--}}
-                                {{--                                <div class="dashboard-box">--}}
-                                {{--                                    <h5>@lang('Total Expense')</h5>--}}
-                                {{--                                    <h3 class="totalExpenseAmount infoShowHide"></h3>--}}
-                                {{--                                    <i class="fal fa-lightbulb-dollar"></i>--}}
-                                {{--                                </div>--}}
-                                {{--                            </div>--}}
-
-                                {{--                            <div class="col-xl-3 col-md-6 box raw-item-statistics">--}}
-                                {{--                                <div class="dashboard-box">--}}
-                                {{--                                    <h5>@lang('Raw Item Purchase')</h5>--}}
-                                {{--                                    <h3 class="rawItemPurchaseAmount infoShowHide"></h3>--}}
-                                {{--                                    --}}{{--                                    <i class="fal fa-lightbulb-dollar"></i>--}}
-                                {{--                                    <i class="fal fa-usd-circle" aria-hidden="true"></i>--}}
-                                {{--                                </div>--}}
-                                {{--                            </div>--}}
-
-
                                 <div class="col-xl-3 col-md-6 box ">
                                     <div class="dashboard-box affiliate-member-statistics">
                                         <h5>@lang('Total Affiliate Member')</h5>
                                         <h3 class="totalAffiliateMember infoShowHide"></h3>
-                                        {{--                                    <i class="fal fa-ticket"></i>--}}
-                                        <i class="far fa-network-wired" aria-hidden="true"></i>
+                                        <i class="fal fa-users" aria-hidden="true"></i>
                                     </div>
                                 </div>
 
@@ -282,8 +230,7 @@
                                     <div class="dashboard-box affiliate-member-statistics">
                                         <h5>@lang('Affiliate Member Commission')</h5>
                                         <h3 class="affiliateMemberCommission infoShowHide"></h3>
-                                        {{--                                    <i class="fal fa-ticket"></i>--}}
-                                        <i class="far fa-network-wired" aria-hidden="true"></i>
+                                        <i class="fal fa-usd-circle" aria-hidden="true"></i>
                                     </div>
                                 </div>
 
@@ -291,8 +238,7 @@
                                     <div class="dashboard-box affiliate-member-statistics">
                                         <h5>@lang('Central Promoter Commission')</h5>
                                         <h3 class="centralPromoterCommission infoShowHide"></h3>
-                                        {{--                                    <i class="fal fa-ticket"></i>--}}
-                                        <i class="far fa-network-wired" aria-hidden="true"></i>
+                                        <i class="fal fa-usd-circle" aria-hidden="true"></i>
                                     </div>
                                 </div>
 
@@ -300,8 +246,7 @@
                                     <div class="dashboard-box affiliate-member-statistics">
                                         <h5>@lang('Total Affiliate Commission')</h5>
                                         <h3 class="totalAffiliateCommission infoShowHide"></h3>
-                                        {{--                                    <i class="fal fa-ticket"></i>--}}
-                                        <i class="far fa-network-wired" aria-hidden="true"></i>
+                                        <i class="fal fa-usd-circle" aria-hidden="true"></i>
                                     </div>
                                 </div>
 
@@ -309,93 +254,84 @@
                                     <div class="dashboard-box affiliate-member-statistics">
                                         <h5>@lang('Total Expense')</h5>
                                         <h3 class="totalExpenseAmount infoShowHide"></h3>
-                                        {{--                                    <i class="fal fa-ticket"></i>--}}
-                                        <i class="far fa-network-wired" aria-hidden="true"></i>
+                                        <i class="fal fa-usd-circle" aria-hidden="true"></i>
                                     </div>
                                 </div>
-
-                                {{--                            <div class="col-xl-3 col-md-6 box affiliate-member-statistics">--}}
-                                {{--                                <div class="dashboard-box">--}}
-                                {{--                                    <h5>@lang('Affiliate Member Commission')</h5>--}}
-                                {{--                                    <h3 class="affiliateMemberCommission infoShowHide"></h3>--}}
-                                {{--                                    <i class="fal fa-usd-circle" aria-hidden="true"></i>--}}
-
-                                {{--                                </div>--}}
-                                {{--                            </div>--}}
                             </div>
                         @endif
                     </div>
                     <div class="d-lg-none mb-4">
                         <div class="card-box-wrapper owl-carousel card-boxes">
-                            <div class="dashboard-box gr-bg-1">
-                                <h5 class="text-white">@lang('Total Sales Amount')</h5>
-                                <h3 class="text-white infoShowHide">
-                                    <small><sup>{{trans(config('basic.currency_symbol'))}}</sup></small>{{getAmount($walletBalance, config('basic.fraction_number'))}}
-                                </h3>
-                                <i class="fal fa-funnel-dollar text-white"></i>
-                            </div>
-                            <div class="dashboard-box gr-bg-2">
-                                <h5 class="text-white">@lang('Interest Balance')</h5>
-                                <h3 class="text-white infoShowHide">
-                                    <small><sup>{{trans(config('basic.currency_symbol'))}}</sup></small>{{getAmount($interestBalance, config('basic.fraction_number'))}}
-                                </h3>
-                                <i class="fal fa-hand-holding-usd text-white"></i>
-                            </div>
-                            <div class="dashboard-box gr-bg-3">
-                                <h5 class="text-white">@lang('Total Deposit')</h5>
-                                <h3 class="text-white infoShowHide">
-                                    <small><sup>{{trans(config('basic.currency_symbol'))}}</sup></small>{{getAmount($totalDeposit, config('basic.fraction_number'))}}
-                                </h3>
-                                <i class="fal fa-box-usd text-white"></i>
-                            </div>
-                            <div class="dashboard-box gr-bg-5">
-                                <h5 class="text-white">@lang('Total Invest')</h5>
-                                <h3 class="text-white infoShowHide">
-                                    <small><sup>{{trans(config('basic.currency_symbol'))}}</sup></small>{{getAmount($investment['totalInvestAmount'])}}
-                                </h3>
-                                <i class="fal fa-search-dollar text-white"></i>
-                            </div>
-                            <div class="dashboard-box gr-bg-5">
-                                <h5 class="text-white">@lang('Running Invest')</h5>
-                                <h3 class="text-white infoShowHide">
-                                    <small><sup>{{trans(config('basic.currency_symbol'))}}</sup></small>{{getAmount($investment['runningInvestAmount'])}}
-                                </h3>
-                                <i class="fal fa-search-dollar text-white"></i>
-                            </div>
-                            <div class="dashboard-box gr-bg-4">
-                                <h5 class="text-white">@lang('Total Earn')</h5>
-                                <h3 class="text-white infoShowHide">
-                                    <small><sup>{{trans(config('basic.currency_symbol'))}}</sup></small>{{getAmount($totalInterestProfit, config('basic.fraction_number'))}}
-                                </h3>
-                                <i class="fal fa-badge-dollar text-white"></i>
-                            </div>
-                            <div class="dashboard-box gr-bg-6">
-                                <h5 class="text-white">@lang('Total Payout')</h5>
-                                <h3 class="text-white infoShowHide">
-                                    <small><sup>{{trans(config('basic.currency_symbol'))}}</sup></small>{{getAmount($totalPayout)}}
-                                </h3>
-                                <i class="fal fa-usd-circle text-white"></i>
-                            </div>
-                            <div class="dashboard-box gr-bg-7">
-                                <h5 class="text-white">@lang('Total Referral Bonus')</h5>
-                                <h3 class="text-white">
-                                    <small><sup>{{trans(config('basic.currency_symbol'))}}</sup></small>{{getAmount($depositBonus + $investBonus)}}
-                                </h3>
-                                <i class="fal fa-lightbulb-dollar text-white"></i>
+                            <div class="dashboard-box gr-bg-1 item-statistics">
+                                <h5 class="text-white">@lang('Total Suppliers')</h5>
+                                <h3 class="text-white totalSuppliers infoShowHide"></h3>
+                                <i class="fal fa-people-carry text-white" aria-hidden="true"></i>
                             </div>
 
-                            <div class="dashboard-box gr-bg-8">
-                                <h5 class="text-white">@lang('Last Referral Bonus')</h5>
-                                <h3 class="text-white">
-                                    <small><sup>{{trans(config('basic.currency_symbol'))}}</sup></small>{{getAmount($lastBonus, config('basic.fraction_number'))}}
-                                </h3>
-                                <i class="fal fa-box-open text-white"></i>
+                            <div class="dashboard-box gr-bg-2 item-statistics">
+                                <h5 class="text-white">@lang('Total Raw Items')</h5>
+                                <h3 class="text-white totalRawItems infoShowHide"></h3>
+                                <i class="fal fa-rectangle-list text-white" aria-hidden="true"></i>
                             </div>
 
-                            <div class="dashboard-box gr-bg-9">
-                                <h5 class="text-white">@lang('Total Ticket')</h5>
-                                <h3 class="text-white">{{$ticket}}</h3>
-                                <i class="fal fa-ticket text-white"></i>
+                            <div class="dashboard-box gr-bg-3 item-statistics">
+                                <h5 class="text-white">@lang('Stock Out Raw Items')</h5>
+                                <h3 class="text-white outOfStockRawItems infoShowHide"></h3>
+                                <i class="far fa-times-circle text-white" aria-hidden="true"></i>
+                            </div>
+
+                            <div class="dashboard-box gr-bg-5 item-statistics">
+                                <h5 class="text-white">@lang('Wastage Raw Items')</h5>
+                                <h3 class="text-white wastageRawItemsAmount infoShowHide"></h3>
+                                <i class="far fa-badge-dollar text-white"></i>
+                            </div>
+
+                            <div class="dashboard-box gr-bg-5 item-statistics">
+                                <h5 class="text-white">@lang('Total Sales Center')</h5>
+                                <h3 class="text-white totalSalesCenter infoShowHide"></h3>
+                                <i class="fal fa-shop text-white" aria-hidden="true"></i>
+                            </div>
+
+                            <div class="dashboard-box gr-bg-4 item-statistics">
+                                <h5 class="text-white">@lang('Total Items')</h5>
+                                <h3 class="text-white totalItems infoShowHide"></h3>
+                                <i class="fal fa-list-ol text-white" aria-hidden="true"></i>
+                            </div>
+
+                            <div class="dashboard-box gr-bg-6 item-statistics">
+                                <h5 class="text-white">@lang('Stock Out Items')</h5>
+                                <h3 class="text-white stockOutItems infoShowHide"></h3>
+                                <i class="far fa-times-circle text-white" aria-hidden="true"></i>
+                            </div>
+
+                            <div class="dashboard-box gr-bg-6 item-statistics">
+                                <h5 class="text-white">@lang('Total Affiliate Member')</h5>
+                                <h3 class="text-white totalAffiliateMember infoShowHide"></h3>
+                                <i class="fal fa-users text-white" aria-hidden="true"></i>
+                            </div>
+
+                            <div class="dashboard-box gr-bg-6 item-statistics">
+                                <h5 class="text-white">@lang('Affiliate Member Commission')</h5>
+                                <h3 class="text-white affiliateMemberCommission infoShowHide"></h3>
+                                <i class="fal fa-usd-circle text-white" aria-hidden="true"></i>
+                            </div>
+
+                            <div class="dashboard-box gr-bg-6 item-statistics">
+                                <h5 class="text-white">@lang('Central Promoter Commission')</h5>
+                                <h3 class="text-white centralPromoterCommission infoShowHide"></h3>
+                                <i class="fal fa-usd-circle text-white" aria-hidden="true"></i>
+                            </div>
+
+                            <div class="dashboard-box gr-bg-6 item-statistics">
+                                <h5 class="text-white">@lang('Total Affiliate Commission')</h5>
+                                <h3 class="text-white totalAffiliateCommission infoShowHide"></h3>
+                                <i class="fal fa-usd-circle text-white" aria-hidden="true"></i>
+                            </div>
+
+                            <div class="dashboard-box gr-bg-7 item-statistics">
+                                <h5 class="text-white">@lang('Total Expense')</h5>
+                                <h3 class="text-white totalExpenseAmount infoShowHide"></h3>
+                                <i class="fal fa-usd-circle text-white" aria-hidden="true"></i>
                             </div>
                         </div>
                     </div>
@@ -435,7 +371,6 @@
 @push('script')
     <script src="{{ asset('assets/global/js/Chart.min.js') }}"></script>
     <script src="{{ asset('assets/global/js/moment.min.js') }}"></script>
-    {{--    <script src="{{asset($themeTrue.'js/apexcharts.js')}}"></script>--}}
 
 
     <script defer>
@@ -551,7 +486,6 @@
                     url: "{{ route('user.getYearSalesTransactionChartRecords') }}",
                     method: 'GET',
                     success: function (response) {
-                        console.log(response);
                         Notiflix.Block.remove('.yearly-sales-transaction-statistics');
                         let basic = response.basic;
                         let yearSalesTransactionChartRecords = response.data.yearSalesTransactionChartRecords;
@@ -588,24 +522,6 @@
                             borderColor: "#CE5A67",
                             backgroundColor: "#CE5A67",
                         },
-                        // {
-                        //     data: yearSalesTransactionChartRecords.yearTotalSoldSalesCenterAmount,
-                        //     label: "Sold To Sales Centers",
-                        //     borderColor: "#163020",
-                        //     backgroundColor: "#163020",
-                        // },
-                        // {
-                        //     data: yearSalesTransactionChartRecords.yearTotalSoldCustomerAmount,
-                        //     label: "Sold To Customers",
-                        //     borderColor: "#37B5B6",
-                        //     backgroundColor: "#37B5B6",
-                        // },
-                        // {
-                        //     data: yearSalesTransactionChartRecords.yearTotalDueSalesCenterAmount,
-                        //     label: "Sales Center Due",
-                        //     borderColor: "#FDC72E",
-                        //     backgroundColor: "#FDC72E",
-                        // },
                         {
                             data: yearSalesTransactionChartRecords.yearTotalDueCustomerAmount,
                             label: "Sales Due",
@@ -629,13 +545,12 @@
 
 
         function expenseRecords() {
-            delayProcess('expense-statistics', '#000000');
             setTimeout(function () {
                 $.ajax({
                     url: "{{ route('user.getExpenseRecords') }}",
                     method: 'GET',
                     success: function (response) {
-                        removeProcess('expense-statistics');
+                        // removeProcess('expense-statistics');
                         let expenseStatRecords = response.data.expenseStatRecords;
                         let currency = response.currency;
                         expenseStatistics(expenseStatRecords, currency);
@@ -823,142 +738,5 @@
             $('.totalItems').text(`${itemRecords.totalItems ? itemRecords.totalItems : 0}`);
             $('.stockOutItems').text(`${itemRecords.totalOutOfStockItems ? itemRecords.totalOutOfStockItems : 0}`);
         }
-
     </script>
-
-    {{--    <script>--}}
-    {{--        "use strict";--}}
-    {{--        var options = {--}}
-    {{--            theme: {--}}
-    {{--                mode: "light",--}}
-    {{--            },--}}
-
-    {{--            series: [--}}
-    {{--                {--}}
-    {{--                    name: "{{trans('Deposit')}}",--}}
-    {{--                    color: 'rgba(255, 72, 0, 1)',--}}
-    {{--                    data: {!! $monthly['funding']->flatten() !!}--}}
-    {{--                },--}}
-    {{--                {--}}
-    {{--                    name: "{{trans('Deposit Bonus')}}",--}}
-    {{--                    color: 'rgba(39, 144, 195, 1)',--}}
-    {{--                    data: {!! $monthly['referralFundBonus']->flatten() !!}--}}
-    {{--                },--}}
-    {{--                {--}}
-    {{--                    name: "{{trans('Investment')}}",--}}
-    {{--                    color: 'rgba(247, 147, 26, 1)',--}}
-    {{--                    data: {!! $monthly['investment']->flatten() !!}--}}
-    {{--                },--}}
-    {{--                {--}}
-    {{--                    name: "{{trans('Investment Bonus')}}",--}}
-    {{--                    color: 'rgba(136, 203, 245, 1)',--}}
-    {{--                    data: {!! $monthly['referralInvestBonus']->flatten() !!}--}}
-    {{--                },--}}
-    {{--                {--}}
-    {{--                    name: "{{trans('Profit')}}",--}}
-    {{--                    color: 'rgba(247, 147, 26, 1)',--}}
-    {{--                    data: {!! $monthly['monthlyGaveProfit']->flatten() !!}--}}
-    {{--                },--}}
-    {{--                {--}}
-    {{--                    name: "{{trans('Payout')}}",--}}
-    {{--                    color: 'rgba(240, 16, 16, 1)',--}}
-    {{--                    data: {!! $monthly['payout']->flatten() !!}--}}
-    {{--                },--}}
-    {{--            ],--}}
-    {{--            chart: {--}}
-    {{--                type: 'bar',--}}
-    {{--                height: 350,--}}
-    {{--                background: '#fff',--}}
-    {{--                toolbar: {--}}
-    {{--                    show: false--}}
-    {{--                }--}}
-
-    {{--            },--}}
-    {{--            plotOptions: {--}}
-    {{--                bar: {--}}
-    {{--                    horizontal: false,--}}
-    {{--                    columnWidth: '55%',--}}
-    {{--                    endingShape: 'rounded'--}}
-    {{--                },--}}
-    {{--            },--}}
-    {{--            dataLabels: {--}}
-    {{--                enabled: false--}}
-    {{--            },--}}
-    {{--            stroke: {--}}
-    {{--                show: true,--}}
-    {{--                width: 2,--}}
-    {{--                colors: ['transparent']--}}
-    {{--            },--}}
-    {{--            xaxis: {--}}
-    {{--                categories: {!! $monthly['investment']->keys() !!},--}}
-
-    {{--            },--}}
-    {{--            yaxis: {--}}
-    {{--                title: {--}}
-    {{--                    text: ""--}}
-    {{--                }--}}
-    {{--            },--}}
-    {{--            fill: {--}}
-    {{--                opacity: 1--}}
-    {{--            },--}}
-    {{--            tooltip: {--}}
-    {{--                colors: ['#000'],--}}
-    {{--                y: {--}}
-    {{--                    formatter: function (val) {--}}
-    {{--                        return "{{trans($basic->currency_symbol)}}" + val + ""--}}
-    {{--                    }--}}
-    {{--                }--}}
-    {{--            }--}}
-    {{--        };--}}
-
-    {{--        var chart = new ApexCharts(document.querySelector("#container"), options);--}}
-    {{--        chart.render();--}}
-
-    {{--        $(document).on('click', '#details', function () {--}}
-    {{--            var title = $(this).data('servicetitle');--}}
-    {{--            var description = $(this).data('description');--}}
-    {{--            $('#title').text(title);--}}
-    {{--            $('#servicedescription').text(description);--}}
-    {{--        });--}}
-
-    {{--        $(document).ready(function () {--}}
-    {{--            let isActiveCronNotification = '{{ $basic->is_active_cron_notification }}';--}}
-    {{--            if (isActiveCronNotification == 1)--}}
-    {{--                $('#cron-info').modal('show');--}}
-    {{--            $(document).on('click', '.copy-btn', function () {--}}
-    {{--                var _this = $(this)[0];--}}
-    {{--                var copyText = $(this).parents('.input-group-append').siblings('input');--}}
-    {{--                $(copyText).prop('disabled', false);--}}
-    {{--                copyText.select();--}}
-    {{--                document.execCommand("copy");--}}
-    {{--                $(copyText).prop('disabled', true);--}}
-    {{--                $(this).text('Coppied');--}}
-    {{--                setTimeout(function () {--}}
-    {{--                    $(_this).text('');--}}
-    {{--                    $(_this).html('<i class="fas fa-copy"></i>');--}}
-    {{--                }, 500)--}}
-    {{--            });--}}
-
-
-    {{--            $(document).on('click', '.loginAccount', function () {--}}
-    {{--                var route = $(this).data('route');--}}
-    {{--                $('.loginAccountAction').attr('action', route)--}}
-    {{--            });--}}
-
-    {{--            $(document).on('click', '.copyReferalLink', function () {--}}
-    {{--                var _this = $(this)[0];--}}
-    {{--                var copyText = $(this).siblings('input');--}}
-    {{--                $(copyText).prop('disabled', false);--}}
-    {{--                copyText.select();--}}
-    {{--                document.execCommand("copy");--}}
-    {{--                $(copyText).prop('disabled', true);--}}
-    {{--                $(this).text('Copied');--}}
-    {{--                setTimeout(function () {--}}
-    {{--                    $(_this).text('');--}}
-    {{--                    $(_this).html('<i class="fal fa-copy"></i>');--}}
-    {{--                }, 500)--}}
-    {{--            });--}}
-    {{--        })--}}
-    {{--    </script>--}}
-
 @endpush

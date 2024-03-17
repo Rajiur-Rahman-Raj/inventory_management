@@ -9,6 +9,7 @@ use App\Models\Expense;
 use App\Models\RawItemPurchaseIn;
 use App\Models\Sale;
 use App\Models\StockIn;
+use App\Models\StockMissing;
 use App\Models\Wastage;
 use Carbon\Carbon;
 use Maatwebsite\Excel\Concerns\FromCollection;
@@ -94,6 +95,11 @@ class ProfitLossReport implements FromCollection, WithHeadings, ShouldAutoSize, 
             ->where('company_id', $admin->active_company_id)->sum('total_cost');
 
 
+        $data['profitLossReportRecords']['totalStockMissing'] = StockMissing::when(isset($search['from_date']), fn($query) => $query->whereDate('missing_date', '>=', $fromDate))
+            ->when(isset($search['to_date']), fn($query) => $query->whereBetween('missing_date', [$fromDate, $toDate]))
+            ->where('company_id', $admin->active_company_id)->sum('total_cost');
+
+
         $data['profitLossReportRecords']['affiliateMemberCommission'] = AffiliateMemberCommission::when(isset($search['from_date']), fn($query) => $query->whereDate('commission_date', '>=', $fromDate))
             ->when(isset($search['to_date']), fn($query) => $query->whereBetween('commission_date', [$fromDate, $toDate]))
             ->where('company_id', $admin->active_company_id)->sum('amount');
@@ -110,6 +116,10 @@ class ProfitLossReport implements FromCollection, WithHeadings, ShouldAutoSize, 
             ->when(isset($search['to_date']), fn($query) => $query->whereBetween('expense_date', [$fromDate, $toDate]))
             ->where('company_id', $admin->active_company_id)->sum('amount');
 
+        $data['profitLossReportRecords']['totalSalary'] = Expense::when(isset($search['from_date']), fn($query) => $query->whereDate('payment_date', '>=', $fromDate))
+            ->when(isset($search['to_date']), fn($query) => $query->whereBetween('payment_date', [$fromDate, $toDate]))
+            ->where('company_id', $admin->active_company_id)->sum('amount');
+
         $data['profitLossReportRecords']['netProfit'] = $data['profitLossReportRecords']['revenue'] - $data['profitLossReportRecords']['totalAffiliateCommission'] - $data['profitLossReportRecords']['totalExpense'];
 
         $myData = [];
@@ -121,8 +131,10 @@ class ProfitLossReport implements FromCollection, WithHeadings, ShouldAutoSize, 
         $myData[] = ['Total Sales', config('basic.currency_text').' '.$data['profitLossReportRecords']['totalSales']];
         $myData[] = ['Total Sales Due', config('basic.currency_text').' '.$data['profitLossReportRecords']['totalSalesDue']];
         $myData[] = ['Total Wastage', config('basic.currency_text').' '.$data['profitLossReportRecords']['totalWastage']];
+        $myData[] = ['Total Stock Missing', config('basic.currency_text').' '.$data['profitLossReportRecords']['totalStockMissing']];
         $myData[] = ['Total Affiliate Commission', config('basic.currency_text').' '.$data['profitLossReportRecords']['totalAffiliateCommission']];
         $myData[] = ['Total Expense', config('basic.currency_text').' '.$data['profitLossReportRecords']['totalExpense']];
+        $myData[] = ['Total Salary', config('basic.currency_text').' '.$data['profitLossReportRecords']['totalSalary']];
         $myData[] = ['Revenue', config('basic.currency_text').' '.$data['profitLossReportRecords']['revenue']];
         $myData[] = ['Net Profit', config('basic.currency_text').' '.$data['profitLossReportRecords']['netProfit']];
 

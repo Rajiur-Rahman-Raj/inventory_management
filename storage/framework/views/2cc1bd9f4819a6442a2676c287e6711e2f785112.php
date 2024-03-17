@@ -12,7 +12,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>" />
+    <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>"/>
     <?php echo $__env->make('partials.seo', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 
     <link rel="stylesheet" type="text/css" href="<?php echo e(asset($themeTrue.'css/bootstrap.min.css')); ?>"/>
@@ -23,6 +23,7 @@
     <link rel="stylesheet" type="text/css" href="<?php echo e(asset($themeTrue.'css/range-slider.css')); ?>">
     <link rel="stylesheet" type="text/css" href="<?php echo e(asset($themeTrue.'css/fancybox.css')); ?>">
     <link rel="stylesheet" href="<?php echo e(asset('assets/global/css/notiflix-3.2.6.min.css')); ?>">
+    <link rel="stylesheet" href="<?php echo e(asset('assets/global/css/all.min.css')); ?>">
 
     <?php echo $__env->yieldPushContent('css-lib'); ?>
 
@@ -36,56 +37,96 @@
 <body <?php if(session()->get('rtl') == 1): ?> class="rtl" <?php endif; ?> id="body">
 
 <div class="bottom-nav fixed-bottom d-lg-none">
-    <div class="link-item <?php echo e(menuActive(['user.propertyMarket'])); ?>">
-        <a href="#">
-            <i class="fal fa-project-diagram" aria-hidden="true"></i>
-            <span><?php echo app('translator')->get('Invest'); ?></span>
-        </a>
-    </div>
+    <?php if(userType() == 1): ?>
+        <div class="link-item <?php echo e(menuActive(['user.purchaseRawItem'])); ?>">
+            <a href="<?php echo e(route('user.purchaseRawItem')); ?>">
+                <i class="fal fa-rectangle-list" aria-hidden="true"></i>
+                <span><?php echo app('translator')->get('Purchase'); ?></span>
+            </a>
+        </div>
+    <?php else: ?>
+        <div class="link-item <?php echo e(menuActive(['user.stockList'])); ?>">
+            <a href="<?php echo e(route('user.stockList')); ?>">
+                <i class="fal fa-rectangle-list" aria-hidden="true"></i>
+                <span><?php echo app('translator')->get('Stocks'); ?></span>
+            </a>
+        </div>
+    <?php endif; ?>
 
-    <div class="link-item">
+    <?php if(userType() == 1): ?>
+        <div class="link-item <?php echo e(menuActive(['user.addStock'])); ?>">
+            <a href="<?php echo e(route('user.addStock')); ?>">
+                <i class="fal fa-inventory" aria-hidden="true"></i>
+                <span><?php echo app('translator')->get('Stock In'); ?></span>
+            </a>
+        </div>
+    <?php else: ?>
+        <div class="link-item <?php echo e(menuActive(['user.salesList'])); ?>">
+            <a href="<?php echo e(route('user.salesList')); ?>">
+                <i class="fal fa-inventory" aria-hidden="true"></i>
+                <span><?php echo app('translator')->get('Sales'); ?></span>
+            </a>
+        </div>
+    <?php endif; ?>
 
-        <a href="<?php echo e(route('user.addFund')); ?>">
-            <i class="fal fa-funnel-dollar" aria-hidden="true"></i>
-            <span><?php echo app('translator')->get('Deposit'); ?></span>
-        </a>
-    </div>
-
-    <div class="link-item">
+    <div class="link-item <?php echo e(menuActive(['user.home'])); ?>">
         <a href="<?php echo e(route('user.home')); ?>">
             <i class="fal fa-home-lg-alt"></i>
             <span><?php echo app('translator')->get('Home'); ?></span>
         </a>
     </div>
 
-    <div class="link-item">
-        <a href="#">
-            <i class="fal fa-hand-holding-usd" aria-hidden="true"></i>
-            <span><?php echo app('translator')->get('Withdraw'); ?></span>
-        </a>
-    </div>
+    <?php if(userType() == 1): ?>
+        <div class="link-item <?php echo e(menuActive(['user.salesList'])); ?>">
+            <a href="<?php echo e(route('user.salesList')); ?>">
+                <i class="fal fa-cart-plus" aria-hidden="true"></i>
+                <span><?php echo app('translator')->get('Sales'); ?></span>
+            </a>
+        </div>
+    <?php else: ?>
+            <div class="link-item <?php echo e(menuActive(['user.customerList'])); ?>">
+                <a href="<?php echo e(route('user.customerList')); ?>">
+                    <i class="fal fa-cart-plus" aria-hidden="true"></i>
+                    <span><?php echo app('translator')->get('Customers'); ?></span>
+                </a>
+            </div>
+    <?php endif; ?>
+
     <div class="link-item">
         <button onclick="toggleSideMenu()">
             <i class="fal fa-ellipsis-v-alt"></i>
             <span><?php echo app('translator')->get('Menu'); ?></span>
         </button>
     </div>
+
 </div>
 
 <div class="wrapper">
     <!------ sidebar ------->
     <?php echo $__env->make($theme.'partials.sidebar', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+    <?php
+        $user = \Illuminate\Support\Facades\Auth::user();
+    ?>
 
-    <!-- content -->
+        <!-- content -->
     <div id="content">
         <div class="overlay">
             <!-- navbar -->
             <nav class="navbar navbar-expand-lg">
                 <div class="container-fluid">
-                    <a class="navbar-brand d-lg-none" href="<?php echo e(route('home')); ?>">
-                        <img src="<?php echo e(getFile(config('location.logoIcon.path').'logo.png')); ?>"
-                             alt="<?php echo e(config('basic.site_title')); ?>">
-                    </a>
+                    <?php if(userType() == 1 && (optional(auth()->user()->role)->company == null || optional(auth()->user()->role)->company != null)): ?>
+                        <a class="navbar-brand d-lg-none" href="<?php echo e(route('user.home')); ?>">
+                            <img
+                                src="<?php echo e(getFile(optional($user->activeCompany)->driver, optional($user->activeCompany)->logo)); ?>"
+                                alt="<?php echo e(optional($user->activeCompany)->name); ?>">
+                        </a>
+                    <?php elseif(userType() == 2): ?>
+                        <a class="navbar-brand d-lg-none" href="<?php echo e(route('user.home')); ?>">
+                            <img
+                                src="<?php echo e(getFile(optional(optional($user->salesCenter)->company)->driver, optional(optional($user->salesCenter)->company)->logo)); ?>"
+                                alt="<?php echo e(optional(optional($user->salesCenter)->company)->name); ?>">
+                        </a>
+                    <?php endif; ?>
                     <button class="sidebar-toggler d-none d-lg-block" onclick="toggleSideMenu()">
                         <i class="far fa-bars"></i>
                     </button>
@@ -93,7 +134,7 @@
                     <span class="navbar-text" id="pushNotificationArea">
                             <!-- notification panel -->
                             <?php if(config('basic.push_notification') == 1): ?>
-
+                            
                         <?php endif; ?>
                         <!-- User panel -->
                         <?php echo $__env->make($theme.'partials.userDropdown', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>

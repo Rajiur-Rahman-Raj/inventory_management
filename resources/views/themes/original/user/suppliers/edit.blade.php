@@ -177,6 +177,19 @@
                                             @endif
                                         </div>
 
+                                        <div class="col-md-12 mb-4 input-box">
+                                            <label for="" class="golden-text">@lang('Photo') <span class="text-muted"> <sub>(optional)</sub></span> </label>
+                                            <div class="attach-file">
+                                               <span class="prev">
+                                                  @lang('Upload Photo')
+                                               </span>
+                                                <input type="file" name="image" class="form-control"/>
+                                            </div>
+                                            @error('image')
+                                            <span class="text-danger">{{trans($message)}}</span>
+                                            @enderror
+                                        </div>
+
                                         <div class="input-box col-12">
                                             <button class="btn-custom w-100"
                                                     type="submit">@lang('Update Supplier')</button>

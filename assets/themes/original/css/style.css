@@ -308,7 +308,7 @@ button {
     font-size: 14px;
     font-weight: 500;
     height: 55px;
-    width: 180px;
+    /*width: 180px;*/
     border-radius: 5px;
     transition: 0.4s;
 }
@@ -6065,6 +6065,7 @@ a.btn-custom {
     object-fit: contain;
     width: 100%;
     border-radius: 5px;
+    max-height: 200px;
 }
 
 #content .badge-box h5 {
@@ -6712,7 +6713,7 @@ a.btn-custom {
     top: 0;
     bottom: 0;
     margin: auto;
-    width: 120px;
+    /*width: 120px;*/
     background: var(--primary);
     border-top-left-radius: 5px;
     border-bottom-left-radius: 5px;
@@ -6964,6 +6965,10 @@ a.btn-custom {
         display: none;
     }
 
+    #sidebar .sidebar-top{
+        border-bottom: none;
+    }
+
     .about-section .img-wrapper .img-box {
         width: 100%;
         height: auto;
@@ -7007,6 +7012,8 @@ a.btn-custom {
 
     .navbar .navbar-brand img {
         width: 90px;
+        margin-top: -20px;
+
     }
 
     .rtl .navbar .navbar-text {

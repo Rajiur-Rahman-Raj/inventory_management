@@ -6,7 +6,8 @@
             class="dropdown-toggle"
             data-bs-toggle="dropdown"
             aria-expanded="false">
-            <img src="{{getFile(config('location.companyLogo.path').@Auth::user()->activeCompany->logo)}}"
+            <img
+                src="{{ getFile(@Auth::user()->activeCompany->driver, @Auth::user()->activeCompany->logo) }}"
                  alt="..."/> {{@Auth::user()->activeCompany->name}}
             @if(@Auth::user()->activeCompany == null)
                <sapn class="text-muted ml-0">
@@ -21,7 +22,8 @@
                 @forelse($companies as $item)
                     <li>
                         <a class="dropdown-item" href="{{route('user.companyActive',$item->id)}}">
-                            <img src="{{getFile(config('location.companyLogo.path').$item->logo)}}"
+                            <img
+                                src="{{ getFile($item->driver, $item->logo) }}"
                                  alt="{{ $item->name }}"/>
                             {{ $item->name }}
                         </a>

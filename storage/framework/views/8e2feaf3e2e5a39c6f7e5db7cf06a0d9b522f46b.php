@@ -1,3 +1,4 @@
+
 <?php $__env->startSection('title', trans('Customer List')); ?>
 <?php $__env->startSection('content'); ?>
     <?php $__env->startPush('style'); ?>
@@ -107,9 +108,10 @@
                             <td class="company-logo" data-label="<?php echo app('translator')->get('Name'); ?>">
                                 <div>
                                     <a href="" target="_blank">
-                                        <img src="<?php echo e(getFile(config('location.customer.path').$customer->image)); ?>">
+                                        <img src="<?php echo e(getFile($customer->driver, $customer->image)); ?>">
                                     </a>
                                 </div>
+
                                 <div>
                                     <a href="" target="_blank"><?php echo e($customer->name); ?></a>
                                     <br>

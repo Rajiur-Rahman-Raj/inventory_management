@@ -82,16 +82,16 @@
                             </select>
                         </div>
 
-{{--                        <div class="input-box col-lg-3">--}}
-{{--                            <select class="form-control js-example-basic-single" name="customer_id"--}}
-{{--                                    aria-label="Default select example">--}}
-{{--                                <option value="">@lang('All Customers')</option>--}}
-{{--                                @foreach($customers as $customer)--}}
-{{--                                    <option--}}
-{{--                                        value="{{ $customer->id }}" {{ @request()->customer_id == $customer->id ? 'selected' : '' }}>{{ $customer->name }}</option>--}}
-{{--                                @endforeach--}}
-{{--                            </select>--}}
-{{--                        </div>--}}
+                        {{--                        <div class="input-box col-lg-3">--}}
+                        {{--                            <select class="form-control js-example-basic-single" name="customer_id"--}}
+                        {{--                                    aria-label="Default select example">--}}
+                        {{--                                <option value="">@lang('All Customers')</option>--}}
+                        {{--                                @foreach($customers as $customer)--}}
+                        {{--                                    <option--}}
+                        {{--                                        value="{{ $customer->id }}" {{ @request()->customer_id == $customer->id ? 'selected' : '' }}>{{ $customer->name }}</option>--}}
+                        {{--                                @endforeach--}}
+                        {{--                            </select>--}}
+                        {{--                        </div>--}}
 
                         <div class="input-box col-lg-3">
                             <button class="btn-custom w-100" type="submit"><i class="fal fa-search"></i>@lang('Search')
@@ -116,9 +116,12 @@
                                 </ul>
                             </div>
 
-                            <a href="javascript:void(0)" data-route="{{route('user.export.salesReports')}}"
-                               class="btn text-white btn-custom2 reportsDownload downloadExcel"> <i
-                                    class="fa fa-download"></i> @lang('Download Excel File')</a>
+                            @if(adminAccessRoute(config('permissionList.Manage_Reports.Sales_Report.permission.export')))
+                                <a href="javascript:void(0)" data-route="{{route('user.export.salesReports')}}"
+                                   class="btn text-white btn-custom2 reportsDownload downloadExcel"> <i
+                                        class="fa fa-download"></i> @lang('Download Excel File')</a>
+                            @endif
+
                         </div>
                     @endif
                     <ul class="list-style-none p-0 stock_list_style">
@@ -161,17 +164,12 @@
                                 </tbody>
                             </table>
                         </div>
-
                     </ul>
                 </div>
-
             @endif
         </div>
     </section>
 
-    @push('loadModal')
-
-    @endpush
 @endsection
 
 @push('script')

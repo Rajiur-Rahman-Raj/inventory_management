@@ -122,7 +122,8 @@
                                                                                id="singlePermissionSelect{{$i}}"
                                                                                value="{{join(",",collect($permission)->collapse()['permission']['view'])}}"
                                                                                onclick="singlePermissionSelectAll({{$i}})"
-                                                                               name="permissions[]"/>
+                                                                               name="permissions[]"
+                                                                        />
                                                                         <label
                                                                             for="singlePermissionSelect{{$i}}">{{ str_replace('_', ' ', collect($permission)->keys()[0]) }}</label>
                                                                     </td>
@@ -247,7 +248,8 @@
                                                                                                id="multiplePermissionSelectAll{{$j}}"
 {{--                                                                                               value="{{join(",",$subMenu['permission']['view'])}}"--}}
                                                                                                onclick="multiplePermissionSelectAll({{$j}})"
-                                                                                               name="permissions[]">
+{{--                                                                                               name="permissions[]"--}}
+                                                                                        >
                                                                                         <label class="mb-0"
                                                                                                for="multiplePermissionSelectAll{{$j}}">@lang(str_replace('_', ' ', $key2))</label>
                                                                                     </td>

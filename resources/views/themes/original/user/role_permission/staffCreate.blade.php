@@ -124,7 +124,20 @@
                                             @endif
                                         </div>
 
-                                        <div class="input-box col-md-12">
+                                        <div class="input-box col-md-6">
+                                            <label for="" class="golden-text">@lang('Photo') <span class="text-muted"> <sub>(optional)</sub></span> </label>
+                                            <div class="attach-file">
+                                               <span class="prev">
+                                                  @lang('Upload Photo')
+                                               </span>
+                                                <input type="file" name="image" class="form-control"/>
+                                            </div>
+                                            @error('image')
+                                            <span class="text-danger">{{trans($message)}}</span>
+                                            @enderror
+                                        </div>
+
+                                        <div class="input-box col-md-6">
                                             <label for="status">@lang('Status') </label>
                                             <select class="form-select js-example-basic-single" name="status"
                                                     aria-label="Default select example">

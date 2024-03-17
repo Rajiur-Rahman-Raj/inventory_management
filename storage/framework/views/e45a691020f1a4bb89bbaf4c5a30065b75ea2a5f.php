@@ -123,7 +123,27 @@
                                             <?php endif; ?>
                                         </div>
 
-                                        <div class="input-box col-md-12">
+                                        <div class="input-box col-md-6">
+                                            <label for="" class="golden-text"><?php echo app('translator')->get('Photo'); ?> <span class="text-muted"> <sub>(optional)</sub></span> </label>
+                                            <div class="attach-file">
+                                               <span class="prev">
+                                                  <?php echo app('translator')->get('Upload Photo'); ?>
+                                               </span>
+                                                <input type="file" name="image" class="form-control"/>
+                                            </div>
+                                            <?php $__errorArgs = ['image'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                            <span class="text-danger"><?php echo e(trans($message)); ?></span>
+                                            <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                                        </div>
+
+                                        <div class="input-box col-md-6">
                                             <label for="status"><?php echo app('translator')->get('Status'); ?> </label>
                                             <select class="form-select js-example-basic-single" name="status"
                                                     aria-label="Default select example">

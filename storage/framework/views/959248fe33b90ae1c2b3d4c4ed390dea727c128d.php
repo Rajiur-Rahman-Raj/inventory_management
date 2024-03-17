@@ -97,16 +97,16 @@ unset($__errorArgs, $__bag); ?>
                                                        id="flexCheckDefault"/>
                                                 <label class="form-check-label" for="flexCheckDefault"> <?php echo app('translator')->get('Remember me'); ?> </label>
                                             </div>
-                                            <a href="<?php echo e(route('password.request')); ?>"><?php echo app('translator')->get('Forget password?'); ?></a>
+
                                         </div>
                                     </div>
                                 </div>
-                                <button class="btn-custom" type="submit"><?php echo app('translator')->get('Sign in'); ?></button>
-                                <div class="bottom">
-                                    <?php echo app('translator')->get("Don't have an account?"); ?>
+                                <button class="btn-custom w-100" type="submit"><?php echo app('translator')->get('Sign in'); ?></button>
 
-                                    <a href="<?php echo e(route('register')); ?>"><?php echo app('translator')->get('Create account'); ?></a>
-                                </div>
+
+
+
+
                             </form>
                         </div>
                     </div>

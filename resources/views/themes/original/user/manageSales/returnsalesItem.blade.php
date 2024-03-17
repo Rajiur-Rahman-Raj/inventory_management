@@ -51,7 +51,7 @@
                                             <div class="product-img">
                                                 <a href="javascript:void(0)">
                                                     <img class="img-fluid"
-                                                         src="{{ getFile(config('location.itemImage.path').optional($stock->item)->image) }}"
+                                                         src="{{ getFile(optional($stock->item)->driver, optional($stock->item)->image) }}"
                                                          alt="">
                                                 </a>
                                             </div>
@@ -62,11 +62,13 @@
                                                     </h6>
 
                                                 </div>
+
                                                 <div
                                                     class="shopping-icon d-flex align-items-center justify-content-between">
                                                     <h4>
                                                         <button class="sellingPriceButton updateUnitPrice"
                                                                 data-sellingprice="{{ $stock->selling_price }}"
+                                                                data-filteritemid="{{ $stock->item_id }}"
                                                                 data-route="{{ route('user.updateItemUnitPrice', $stock->id) }}">{{ $stock->selling_price }} {{ $basic->currency_symbol }}</button>
                                                     </h4>
                                                     @if($stock->quantity > 0)
@@ -295,7 +297,7 @@
                                                                             class="enter-amount d-flex justify-content-between align-items-center">
                                                                             <h6>@lang('Customer Paid Amount')</h6>
                                                                             <input type="text"
-                                                                                   class="form-control customer-paid-amount"
+                                                                                   class="form-control customer-paid-amount w-25"
                                                                                    value="0" min="0"
                                                                                    onkeyup="this.value = this.value.replace (/^\.|[^\d\.]/g, '')"
                                                                                    id="exampleFormControlInput1"
@@ -408,6 +410,7 @@
                                 <label for="selling_price">@lang('Cost Per Unit')</label>
                                 <div class="input-group">
                                     <input type="hidden" name="filter_item_id" class="filter_item_id" value="">
+                                    <input type="hidden" name="filter_by" class="filterBy" value="">
                                     <input type="text" name="selling_price"
                                            class="form-control selling_cost_per_unit @error('selling_price') is-invalid @enderror"
                                            onkeyup="this.value = this.value.replace (/^\.|[^\d\.]/g, '')"
@@ -633,7 +636,7 @@
                                     class="shopping-icon d-flex align-items-center justify-content-between">
                                     <h4>
                                         <button class="sellingPriceButton updateUnitPrice"
-                                                data-filteritemid=${value}
+                                                data-filteritemid=${stock.item_id}
                                                 data-sellingprice="${stock.selling_price}"
                                                 data-route="${stock.item_price_route}">${stock.selling_price} {{ $basic->currency_symbol }}</button>
                                     </h4>
@@ -726,9 +729,9 @@
                 },
                 success: function (response) {
                     if (response.status) {
-                        Notiflix.Notify.Success(response.message);
+                        Notiflix.Notify.success(response.message);
                     } else {
-                        Notiflix.Notify.Warning(response.message);
+                        Notiflix.Notify.warning(response.message);
                     }
 
                     let cartItems = response.cartItems;
@@ -848,10 +851,12 @@
             let dataRoute = $(this).data('route');
             let dataSellingPrice = $(this).data('sellingprice');
             let datafilteritemid = $(this).data('filteritemid');
+            let whichFilterBy = $('.selectedItems').val();
 
             $('.updateItemUnitPriceRoute').attr('action', dataRoute)
             $('.selling_cost_per_unit').val(dataSellingPrice);
             $('.filter_item_id').val(datafilteritemid);
+            $('.filterBy').val(whichFilterBy);
 
         });
 
@@ -956,7 +961,7 @@
             // Recalculate total after updating the discount
             let discount = $(this).val();
             if (discount > 100) {
-                Notiflix.Notify.Warning('Discount cannot exceed 100%');
+                Notiflix.Notify.warning('Discount cannot exceed 100%');
                 thisClass.attr('max', 100)
                 return;
             }
@@ -1028,7 +1033,7 @@
                         thisClass.val(response.stockQuantity)
 
                         if (!response.status && canShowWarning) {
-                            Notiflix.Notify.Warning(response.message);
+                            Notiflix.Notify.warning(response.message);
                             canShowWarning = false;
                             setTimeout(() => {
                                 canShowWarning = true;

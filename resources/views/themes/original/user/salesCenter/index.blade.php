@@ -89,7 +89,7 @@
                                 <div>
                                     <a href="" target="_blank">
                                         <img
-                                            src="{{ getFile(config('location.user.path').optional($centerList->user)->image) }}">
+                                            src="{{ getFile(optional($centerList->user)->driver,optional($centerList->user)->image) }}">
                                     </a>
                                 </div>
                                 <div>
@@ -150,6 +150,7 @@
                     @endforelse
                     </tbody>
                 </table>
+                {{ $centerLists->appends($_GET)->links($theme.'partials.pagination') }}
             </div>
         </div>
     </section>

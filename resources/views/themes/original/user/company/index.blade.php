@@ -36,7 +36,8 @@
                                 <div
                                     class="badge-box  {{ Auth()->user()->active_company_id == null || Auth()->user()->active_company_id != $company->id ? 'locked' : '' }}">
                                     <img class="img-fluid"
-                                         src="{{ getFile(config('location.companyLogo.path').$company->logo) }}"
+{{--                                         src="{{ getFile(config('location.companyLogo.path').$company->logo) }}"--}}
+                                         src="{{ getFile($company->driver, $company->logo) }}"
                                          alt=""/>
                                     <h3 class="m-0">@lang($company->name)</h3>
                                     <p class="">@lang($company->email)</p>
