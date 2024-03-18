@@ -1172,7 +1172,7 @@ class CompanyController extends Controller
     {
         $admin = $this->user;
         $data['items'] = Item::where('company_id', $admin->active_company_id)->get();
-        $data['rawItems'] = RawItem::where('company_id', $admin->active_company_id)->get();
+        $data['rawItemPurchaseStocks'] = RawItemPurchaseStock::with('rawItem')->where('company_id', $admin->active_company_id)->get();
         return view($this->theme . 'user.stock.create', $data);
     }
 
@@ -1195,7 +1195,7 @@ class CompanyController extends Controller
             return back()->withInput()->withErrors($validate);
         }
 
-//        try {
+        try {
             DB::beginTransaction();
             $stockIn = new StockIn();
             $stockIn->company_id = $admin->active_company_id;
@@ -1209,10 +1209,10 @@ class CompanyController extends Controller
             DB::commit();
             return back()->with('success', 'Item stock added successfully');
 
-//        } catch (\Exception $e) {
-//            DB::rollBack();
-//            return back()->with('error', $e->getMessage());
-//        }
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', $e->getMessage());
+        }
     }
 
     public function stockList(Request $request)

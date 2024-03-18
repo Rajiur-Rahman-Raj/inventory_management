@@ -263,11 +263,9 @@ endif;
 unset($__errorArgs, $__bag); ?>"
                                                     name="raw_item_id[0][]"
                                                     aria-label="Default select example">
-                                                    <option value="" selected
-                                                            disabled><?php echo app('translator')->get('Select Raw Item'); ?></option>
-                                                    <?php $__currentLoopData = $rawItems; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $rawItem): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                        <option
-                                                            value="<?php echo e($rawItem->id); ?>" <?php echo e(old('raw_item_id.0') == $rawItem->id ? 'selected' : ''); ?>><?php echo e($rawItem->name); ?></option>
+                                                    <option value="" selected disabled><?php echo app('translator')->get('Select Raw Item'); ?></option>
+                                                    <?php $__currentLoopData = $rawItemPurchaseStocks; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $rawItemPurchaseStock): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                        <option value="<?php echo e($rawItemPurchaseStock->raw_item_id); ?>" <?php echo e(old('raw_item_id.0') == $rawItemPurchaseStock->raw_item_id ? 'selected' : ''); ?>><?php echo e(optional($rawItemPurchaseStock->rawItem)->name); ?></option>
                                                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                                 </select>
 
@@ -344,9 +342,8 @@ unset($__errorArgs, $__bag); ?>"
                                                             aria-label="Default select example">
                                                             <option value="" selected
                                                                     disabled><?php echo app('translator')->get('Select Raw Item'); ?></option>
-                                                            <?php $__currentLoopData = $rawItems; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $rawItem): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                                <option
-                                                                    value="<?php echo e($rawItem->id); ?>" <?php echo e(old("raw_item_id.$i") == $rawItem->id ? 'selected' : ''); ?>><?php echo e($rawItem->name); ?></option>
+                                                            <?php $__currentLoopData = $rawItemPurchaseStocks; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $rawItemPurchaseStock): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                                <option value="<?php echo e($rawItemPurchaseStock->raw_item_id); ?>" <?php echo e(old("raw_item_id.$i") == $rawItemPurchaseStock->raw_item_id ? 'selected' : ''); ?>><?php echo e(optional($rawItemPurchaseStock->rawItem)->name); ?></option>
                                                             <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                                         </select>
                                                         <?php if($errors->has("raw_item_id.$i")): ?>
@@ -603,9 +600,8 @@ unset($__errorArgs, $__bag); ?>"
                                                                 aria-label="Default select example">
                                                                 <option value="" selected
                                                                         disabled><?php echo app('translator')->get('Select Raw Item'); ?></option>
-                                                                <?php $__currentLoopData = $rawItems; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $rawItem): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                                    <option
-                                                                        value="<?php echo e($rawItem->id); ?>" <?php echo e(old("raw_item_id.$i") == $rawItem->id ? 'selected' : ''); ?>><?php echo e($rawItem->name); ?></option>
+                                                                <?php $__currentLoopData = $rawItemPurchaseStocks; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $key => $rawItemPurchaseStock): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                                    <option value="<?php echo e($rawItemPurchaseStock->raw_item_id); ?>" <?php echo e(old("raw_item_id.$i") == $rawItemPurchaseStock->raw_item_id ? 'selected' : ''); ?>><?php echo e(optional($rawItemPurchaseStock->rawItem)->name); ?></option>
                                                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                                             </select>
 

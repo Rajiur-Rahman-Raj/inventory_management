@@ -26,36 +26,24 @@ trait StockInTrait
             $stockInDetails->stock_date = $request->stock_date;
             $stockInDetails->save();
 
-//            foreach ($request->raw_item_id as $rawItemKey => $rawItemId) {
-//                StockInExpenseRawItem::create([
-//                    'stock_in_details_id' => $stockInDetails->id,
-//                    'raw_item_id' => $rawItemId[$itemKey],
-//                    'quantity' => $request->raw_item_quantity[$rawItemKey][$itemKey],
-//                ]);
-//
-//                $rawItemPurchaseStock = RawItemPurchaseStock::where('company_id', $this->user->active_company_id)
-//                    ->findOrFail($rawItemId[$itemKey]);
-//
-//                throw_if($rawItemPurchaseStock->quantity <= 0, 'Raw item stock quantity finished');
-//
-//                $rawItemPurchaseStock->quantity = $rawItemPurchaseStock->quantity - (int)$request->raw_item_quantity[$rawItemKey][$itemKey];
-//                $rawItemPurchaseStock->save();
-//            }
-
             $rawItems = $request->raw_item_id[$itemKey];
+
             foreach ($rawItems as $rawItemKey => $rawItemId) {
                 StockInExpenseRawItem::create([
                     'stock_in_details_id' => $stockInDetails->id,
                     'raw_item_id' => $rawItemId,
-                    'quantity' => $request->raw_item_quantity[$itemKey][$rawItemKey],
+                    'quantity' => (int)$request->raw_item_quantity[$itemKey][$rawItemKey],
                 ]);
 
-                $rawItemPurchaseStock = RawItemPurchaseStock::where('company_id', $this->user->active_company_id)
-                    ->findOrFail($rawItemId);
+                $rawItemPurchaseStock = RawItemPurchaseStock::with('rawItem')->where('company_id', $this->user->active_company_id)->find($rawItemId);
 
-                throw_if($rawItemPurchaseStock->quantity <= 0, 'Raw item stock quantity finished');
+                throw_if(!$rawItemPurchaseStock, 'Raw item not available in stock');
 
-                $rawItemPurchaseStock->decrement('quantity', $request->raw_item_quantity[$itemKey][$rawItemKey]);
+                if ($rawItemPurchaseStock->quantity < (int)$request->raw_item_quantity[$itemKey][$rawItemKey]){
+                    throw new \Exception("{$rawItemPurchaseStock->rawItem->name} raw item has only {$rawItemPurchaseStock->quantity} in stock. You gave {$request->raw_item_quantity[$itemKey][$rawItemKey]}");
+                }
+
+                $rawItemPurchaseStock->decrement('quantity', (int)$request->raw_item_quantity[$itemKey][$rawItemKey]);
             }
         }
     }

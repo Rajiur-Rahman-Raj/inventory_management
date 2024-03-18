@@ -183,11 +183,9 @@
                                                     class="form-select js-example-basic-single selectedRawItem raw_item_id @error('raw_item_id.0.0') is-invalid @enderror"
                                                     name="raw_item_id[0][]"
                                                     aria-label="Default select example">
-                                                    <option value="" selected
-                                                            disabled>@lang('Select Raw Item')</option>
-                                                    @foreach($rawItems as $key => $rawItem)
-                                                        <option
-                                                            value="{{ $rawItem->id }}" {{ old('raw_item_id.0') == $rawItem->id ? 'selected' : '' }}>{{ $rawItem->name }}</option>
+                                                    <option value="" selected disabled>@lang('Select Raw Item')</option>
+                                                    @foreach($rawItemPurchaseStocks as $key => $rawItemPurchaseStock)
+                                                        <option value="{{ $rawItemPurchaseStock->raw_item_id }}" {{ old('raw_item_id.0') == $rawItemPurchaseStock->raw_item_id ? 'selected' : '' }}>{{ optional($rawItemPurchaseStock->rawItem)->name }}</option>
                                                     @endforeach
                                                 </select>
 
@@ -243,9 +241,8 @@
                                                             aria-label="Default select example">
                                                             <option value="" selected
                                                                     disabled>@lang('Select Raw Item')</option>
-                                                            @foreach($rawItems as $key => $rawItem)
-                                                                <option
-                                                                    value="{{ $rawItem->id }}" {{ old("raw_item_id.$i") == $rawItem->id ? 'selected' : '' }}>{{ $rawItem->name }}</option>
+                                                            @foreach($rawItemPurchaseStocks as $key => $rawItemPurchaseStock)
+                                                                <option value="{{ $rawItemPurchaseStock->raw_item_id }}" {{ old("raw_item_id.$i") == $rawItemPurchaseStock->raw_item_id ? 'selected' : '' }}>{{ optional($rawItemPurchaseStock->rawItem)->name }}</option>
                                                             @endforeach
                                                         </select>
                                                         @if($errors->has("raw_item_id.$i"))
@@ -415,9 +412,8 @@
                                                                 aria-label="Default select example">
                                                                 <option value="" selected
                                                                         disabled>@lang('Select Raw Item')</option>
-                                                                @foreach($rawItems as $key => $rawItem)
-                                                                    <option
-                                                                        value="{{ $rawItem->id }}" {{ old("raw_item_id.$i") == $rawItem->id ? 'selected' : '' }}>{{ $rawItem->name }}</option>
+                                                                @foreach($rawItemPurchaseStocks as $key => $rawItemPurchaseStock)
+                                                                    <option value="{{ $rawItemPurchaseStock->raw_item_id }}" {{ old("raw_item_id.$i") == $rawItemPurchaseStock->raw_item_id ? 'selected' : '' }}>{{ optional($rawItemPurchaseStock->rawItem)->name }}</option>
                                                                 @endforeach
                                                             </select>
 
